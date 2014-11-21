@@ -9,6 +9,7 @@ directive attributes to use with live data.
 To install required dependencies run:
 
 `npm install`
+
 `bower install`
 
 To start the server and watch files for changes run:
