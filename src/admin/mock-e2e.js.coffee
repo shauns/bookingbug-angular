@@ -283,5 +283,5 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
        self:
          href: "http://www.bookingbug.com/api/v1/123/members/123456/bookings?start_date=2014-11-21&page=1&per_page=30"
      total_entries: 1
-   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/123/members/123456/bookings?start_date=2014-11-21').respond () ->
+   $httpBackend.whenGET("http://www.bookingbug.com/api/v1/123/members/123456/bookings?start_date=#{moment().format("YYYY-MM-DD")}").respond () ->
      [200, member_bookings, {}]
