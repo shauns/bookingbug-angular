@@ -1,0 +1,21 @@
+<div bb-services ng-init="checkStepTitle('Select a service')"
+  id="service_list_page" class="bb_wrap">
+
+  <div class="bb-services bb-list">
+    <div class="bb-list-item container">
+      <div class="bb-item" ng-click="selectItem(item)" ng-repeat="item in items">
+        <div class="bb-desc form-control">
+          <div class="bb-txt col-sm-10">
+            <h5>{{item.name}}</h5>
+            <small>{{item.description}}</small>
+          </div> 
+          <div class="bb-price col-sm-2 btn-default">
+            <span ng-show="item.price > 0">{{item.price | currency:"GBP"}}</span>
+            <span ng-show="item.price == 0">Free</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</div>

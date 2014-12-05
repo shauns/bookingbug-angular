@@ -1,0 +1,26 @@
+<div bb-times ng-init="checkStepTitle('Select a time')" id="time_page">
+
+  <div class="bb-navigation container">
+    <div class="bb-nav text-center">
+      <button type="button" class="bb-btn-prev btn btn-primary pull-left" ng-click="subtract('days',1)">Previous Day</button>
+      <span class="bb-date">{{format_date('Do MMM YYYY')}}</span>
+      <button type="button" class="bb-btn-next btn btn-primary pull-right" ng-click="add('days',1)">Next Day</button>
+    </div>
+  </div>
+
+  <div>
+    <div ng-hide="slots">
+      <span class="no_value">No available times</span>
+    </div>
+    <div class="bb-times container">
+      <div class="bb-time panel panel-default">
+        <div class="clearfix">
+          <div class="time-slot col-sm-2" ng-repeat="slot in slots">
+            <button type="button" class="btn btn-default btn-block" ng-click="selectSlot(slot)">{{slot.print_time()}}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

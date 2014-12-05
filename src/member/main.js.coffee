@@ -2,16 +2,21 @@
 
 angular.module('BBMember', [
   'BB',
+  'BBMember.Directives',
   'BBMember.Services',
   'BBMember.Filters',
   'BBMember.Controllers',
   'BBMember.Models',
-  'ui.state',
   'trNgGrid',
+  'pascalprecht.translate'
 ])
 
 angular.module('BBMember').config ($logProvider) ->
   $logProvider.debugEnabled(true)
+
+angular.module('BBMember').run () ->
+  TrNgGrid.defaultColumnOptions =
+    enableFiltering: false
 
 angular.module('BBMember.Directives', [])
 

@@ -1,0 +1,12 @@
+<div class="bb-mini-basket">
+  <span class='glyphicon glyphicon-shopping-cart'></span>
+  <span>{{basketStatus}}</span>
+  <span ng-if="basketItemCount">
+    <a href='#' ng-click="BasketCtrl.empty()" class="btn btn-default btn-xs">
+      <span class="glyphicon glyphicon-remove-circle"></span>
+    </a>
+    <a href='#' ng-click="BasketCtrl.view()" class="btn btn-default btn-xs">
+      <span class="glyphicon glyphicon-edit"></span>
+    </a>
+  </span>
+</div>

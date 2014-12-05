@@ -1,0 +1,28 @@
+<div bb-month-availability ng-init="checkStepTitle('Pick a date')" id="day_page">
+  <div class="bb-navigation container">
+      <div class="bb-nav">
+          <a href="" class="bb-btn-prev btn btn-default pull-left" ng-click="subtract('months',1)" ng-disabled="isPast()">Prev Month</a>
+          <span class="bb-date">{{format_date('MMMM YYYY')}}</span>
+          <a href="" class="bb-btn-next btn btn-default pull-right" ng-click="add('months',1)">Next Month</a>
+      </div>
+  </div>
+
+  <div class="bb-date-pick container">
+    <div class="bb-month-frame panel panel-default" id="frame">
+      <div class="bb-month-name panel-heading text-primary">
+        <h2>{{format_date('MMMM')}}<h2>
+      </div>
+      <table class="bb-month">
+        <tr ng-repeat="week in weeks">
+          <td ng-repeat="day in week">    
+            <a href="" ng-disabled="day.off(month)" class="time-slot
+              {{day.class(month)}} btn btn-default" ng-click="selectDay(day)">
+              {{day.day()}}
+            </a>
+          </td>
+        <tr>  
+      </table>
+    </div>
+  </div>
+  
+</div>

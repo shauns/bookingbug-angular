@@ -1,0 +1,40 @@
+@import "bootstrap/bb-sass/bootstrap.scss";
+
+#service_list_page {
+  .bb-item {
+    margin-top: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    .bb-desc {
+      border-radius: 8px;
+      overflow: hidden;
+      padding: 0;
+      min-height: 60px;
+      position: relative;
+      .bb-txt {
+        h5 {
+          line-height: 60px;
+          margin: 0;
+        }
+      }
+      .bb-big-txt {
+        float: left;
+        padding: 0 10px;
+        line-height: 60px;
+      }
+      .bb-price {
+        text-align: center;
+        line-height: 60px;
+        position: absolute;
+        right: 0;
+        height: 100%;
+      } 
+      &:hover {
+        background-color: $gray-lighter;
+      }
+    } 
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+}

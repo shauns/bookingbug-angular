@@ -10,6 +10,7 @@ var gulp = require('gulp');
     imagemin = require('gulp-imagemin');
     rename = require('gulp-rename');
     flatten = require('gulp-flatten');
+    sass = require('gulp-sass');
 
 gulp.task('clean', function(cb) {
   del(['release'], cb);
@@ -22,10 +23,13 @@ gulp.task('templateCache', function() {
   gulp.src('./src/person-table/templates/**/*.html')
     .pipe(templateCache('templates.js', {module: 'BBPersonTable'}))
     .pipe(gulp.dest('./src/person-table'));
+  gulp.src('./src/widget/templates/**/*.html')
+    .pipe(templateCache('templates.js', {module: 'BB'}))
+    .pipe(gulp.dest('./src/widget'));
 });
 
-gulp.task('scripts', ['clean', 'templateCache'], function() {
-  return gulp.src(['./src/*/main.js.coffee', './src/**/*', './src/*/template.js', '!./**/*~', '!./src/*/templates/*', '!./src/*/images/*'])
+gulp.task('scripts', function() {
+  return gulp.src(['./src/core/main.js.coffee', './src/*/main.js.coffee', './src/core/services/widget.js.coffee', './src/core/collections/base.js.coffee', './src/widget/templates.js', './src/**/*', './src/*/templates.js', '!./**/*~', '!./src/*/templates/*', '!./src/*/images/*', '!./src/*/stylesheets/**'])
     // .pipe(filelog())
     .pipe(gulpif(/.*coffee$/, coffee().on('error', function (e) {
       gutil.log(e)
@@ -42,8 +46,15 @@ gulp.task('images', function() {
     .pipe(gulp.dest('release'));
 });
 
+gulp.task('stylesheets', function() {
+  return gulp.src('src/*/stylesheets/main.scss')
+    .pipe(sass({errLogToConsole: true}))
+    .pipe(flatten())
+    .pipe(gulp.dest('release'));
+});
+
 gulp.task('watch', function() {
-  gulp.watch(['./src/**/*', '!./**/*~'], ['scripts', 'images']);
+  gulp.watch(['./src/**/*', '!./**/*~', '!./**/templates.js'], ['assets']);
 });
 
 gulp.task('webserver', function() {
@@ -53,4 +64,6 @@ gulp.task('webserver', function() {
   });
 });
 
-gulp.task('default', ['scripts', 'watch', 'webserver']);
+gulp.task('assets', ['clean', 'templateCache', 'scripts', 'images', 'stylesheets']);
+
+gulp.task('default', ['assets', 'watch', 'webserver']);

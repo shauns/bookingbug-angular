@@ -1,0 +1,77 @@
+<div ng-controller="ItemDetails" ng-init="checkStepTitle('Confirm Details')">
+  <div class="bb-booking">
+    <div class="bb-frame">
+      <div class="bb-head">
+        <h2>Your details</h2>
+      </div>
+      <form name="client_form" class="bb-form" role="form">
+        <div class="bb-node">
+          <h3>Client</h3>
+          <ul>
+            <li>
+              <label>Name:</label><span>{{client.getName()}}</span>
+            </li>
+            <li>
+              <label>Email:</label><span>{{client.email}}</span>
+            </li>
+            <li>
+              <label>Address:</label><span>{{client.addressSingleLine()}}</span>
+            </li>
+          </ul>
+        </div>
+        <div class="bb-node" ng-if="!product">
+          <h3>Booking</h3>
+            <ul>
+              <li>
+                <label>Details:</label><span>{{item.describe()}}</span>
+              </li>
+              <li>
+                <label>Date:</label>
+                <span>{{item.booking_date("dddd, MMMM Do YYYY")}}</span>
+              </li>
+              <li>
+                <label>Time:</label><span>{{item.booking_time()}}</span>
+              </li>
+              <li ng-show="item.hasPrice()">
+                <label>Price:</label><span>{{item.printed_price}}</span>
+              </li>
+            </ul>
+        </div>
+        <div class="bb-node" ng-if="product">
+          <h3>Product</h3>
+          <ul>
+            <li>
+              <label>Name:</label><span>{{product.name}}</span>
+            </li>
+          </ul>
+        </div>
+        <div ng-controller='CustomBookingText' class="message-node">
+          <div ng-repeat="msg in messages">{{msg}}</div>
+        </div>
+        <div ng-show="item_details.hasQuestions" class="question-node">
+          <h3>Questions</h3>
+          <ul>
+            <li ng-repeat="question in item_details.questions"
+              bb-question-line ng-show="question.currentlyShown">
+              <label>{{question.name}}:</label> 
+              <span>
+                <input bb-question="question" class="form-control"/><br/>
+                <small>{{question.help_text}}</small>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </form>
+    </div>
+    <div class="bb-actions">
+      <div class="bb-prev">
+      </div>
+      <div class="bb-current">
+      </div>
+      <div class="bb-next">
+        <a href="" class="bb-btn-next" ng-disabled="!client_form.$valid"
+          ng-click="confirm(client_form)">Confirm</a>
+      </div>
+    </div>
+  </div>
+</div>

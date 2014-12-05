@@ -1,4 +1,4 @@
-angular.module('BBMember.Services').factory "MemberBookingService", ($q, $window,
+angular.module('BBMember.Services').factory "MemberBookingService", ($q,
     SpaceCollections, $rootScope, MemberService, BBModel) ->
 
   query: (member, params) ->
@@ -7,7 +7,7 @@ angular.module('BBMember.Services').factory "MemberBookingService", ($q, $window
       deferred.reject("member does not have bookings")
     else
       member.$get('bookings', params).then (bookings) =>
-        if $window.typeIsArray bookings
+        if angular.isArray bookings
           bookings = for booking in bookings
             new BBModel.Member.Booking(booking)
           deferred.resolve(bookings)
