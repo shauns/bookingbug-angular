@@ -44,7 +44,8 @@ angular.module('BB.Directives').directive 'bbWidget', (PathSvc, $http,
 
   restrict: 'A'
   scope:
-    client: '='
+    client: '=?'
+    apiUrl: '@?'
   controller: 'BBCtrl'
   link: (scope, element, attrs) ->
     scope.initWidget(scope.$eval( attrs.bbWidget ))
@@ -97,6 +98,9 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
   $scope.qs =  QueryStringService
 
   $scope.has_content = $element[0].children.length != 0
+  if $scope.apiUrl
+    $rootScope.bb ||= {}
+    $rootScope.bb.api_url = $scope.apiUrl
   if $rootScope.bb && $rootScope.bb.api_url
     $scope.bb.api_url = $rootScope.bb.api_url
     unless $rootScope.bb.partial_url

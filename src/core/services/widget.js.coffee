@@ -23,7 +23,7 @@ angular.module('BB.Models').factory "BBWidget", ($q, BBModel, BasketService, $ur
 
 
     pageURL: (route) ->
-      @partial_url  + route + @page_suffix
+      route + '.html'
 
 
 
