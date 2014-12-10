@@ -231,7 +231,7 @@
       }
 
       Widget.prototype.pageURL = function(route) {
-        return this.partial_url + route + this.page_suffix;
+        return route + '.html';
       };
 
       Widget.prototype.updateRoute = function(page) {
@@ -15574,7 +15574,8 @@ bbAdminDirectives.controller('CalController', function($scope) {
     return {
       restrict: 'A',
       scope: {
-        client: '='
+        client: '=?',
+        apiUrl: '@?'
       },
       controller: 'BBCtrl',
       link: function(scope, element, attrs) {
@@ -15638,6 +15639,10 @@ bbAdminDirectives.controller('CalController', function($scope) {
     AppConfig.uid = $scope.bb.uid;
     $scope.qs = QueryStringService;
     $scope.has_content = $element[0].children.length !== 0;
+    if ($scope.apiUrl) {
+      $rootScope.bb || ($rootScope.bb = {});
+      $rootScope.bb.api_url = $scope.apiUrl;
+    }
     if ($rootScope.bb && $rootScope.bb.api_url) {
       $scope.bb.api_url = $rootScope.bb.api_url;
       if (!$rootScope.bb.partial_url) {
