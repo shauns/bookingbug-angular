@@ -46,6 +46,10 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
        new_person:
          href: 'http://www.bookingbug.com/api/v1/admin/123/people/new{?signup}'
          templated: true
+       administrators:
+         href: 'http://www.bookingbug.com/api/v1/admin/123/administrators'
+       new_administrator:
+         href: 'http://www.bookingbug.com/api/v1/admin/123/administrators/new'
    $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/company').respond(company)
 
    people =
@@ -138,6 +142,118 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
      console.log url
      console.log data
      [200, people.concat([data]), {}]
+
+   administrators =
+     _embedded:
+       administrators: [{
+         name: "Dave"
+         email: "dave@example.com"
+         role: 'admin'
+         company_id: 123
+         company_name: "Tom's Tennis"
+         _links:
+           self:
+             href: 'http://www.bookingbug.com/api/v1/admin/123/administrators/1'
+           edit:
+             href: 'http://www.bookingbug.com/api/v1/admin/123/administrators/1/edit'
+           company:
+             href: 'http://www.bookingbug.com/api/v1/admin/123/company'
+           login:
+             href: 'http://www.bookingbug.com/api/v1/login/admin/123'
+       },{
+         name: "Sue"
+         email: "sue@example.com"
+         role: 'owner'
+         company_id: 123
+         company_name: "Tom's Tennis"
+         _links:
+           self:
+             href: 'http://www.bookingbug.com/api/v1/admin/123/administrators/2'
+           edit:
+             href: 'http://www.bookingbug.com/api/v1/admin/123/administrators/2/edit'
+           company:
+             href: 'http://www.bookingbug.com/api/v1/admin/123/company'
+           login:
+             href: 'http://www.bookingbug.com/api/v1/login/admin/123'
+       }]
+     _links:
+       self:
+         href: 'http://www.bookingbug.com/api/v1/admin/123/administrators'
+       new:
+         href: 'http://www.bookingbug.com/api/v1/admin/123/administrators/new'
+         templated: true
+   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/administrators').respond(administrators)
+
+   admin_schema =
+     form: [{
+       key: 'name'
+       type: 'text'
+       feedback: false
+     },{
+       key: 'email'
+       type: 'text'
+       feedback: false
+     },{
+       key: 'role'
+       type: 'select'
+       feedback: false
+       titleMap:
+         owner: 'Owner'
+         admin: 'Admin'
+         user: 'User'
+     },{
+       type: 'submit'
+       title: 'Save'
+     }]
+     schema:
+       properties:
+         name:
+           title: 'Name *'
+           type: 'string'
+         email:
+           title: 'Email *'
+           type: 'string'
+         role:
+           title: 'Role'
+           type: 'string'
+           enum: ['owner','admin','user','callcenter']
+       required: ['name', 'email']
+       title: 'Administrator'
+       type: 'object'
+   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/administrators/new').respond () ->
+     [200, admin_schema, {}]
+
+   admin_schema =
+     form: [{
+       key: 'name'
+       type: 'text'
+       feedback: false
+     },{
+       key: 'role'
+       type: 'select'
+       feedback: false
+       titleMap:
+         owner: 'Owner'
+         admin: 'Admin'
+         user: 'User'
+     },{
+       type: 'submit'
+       title: 'Save'
+     }]
+     schema:
+       properties:
+         name:
+           title: 'Name *'
+           type: 'string'
+         role:
+           title: 'Role'
+           type: 'string'
+           enum: ['owner','admin','user','callcenter']
+       title: 'Administrator'
+       type: 'object'
+   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/administrators/1/edit').respond () ->
+     [200, admin_schema, {}]
+
 
 
   # Member
@@ -285,3 +401,6 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
      total_entries: 1
    $httpBackend.whenGET("http://www.bookingbug.com/api/v1/123/members/123456/bookings?start_date=#{moment().format("YYYY-MM-DD")}").respond () ->
      [200, member_bookings, {}]
+
+
+

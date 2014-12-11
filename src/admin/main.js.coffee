@@ -5,7 +5,7 @@ angular.module('BBAdmin', [
   'BBAdmin.Services',
   'BBAdmin.Filters',
   'BBAdmin.Controllers',
-  'ui.state',
+  # 'ui.state',
   'ui.calendar',
 ])
 

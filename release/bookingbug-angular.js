@@ -142,7 +142,7 @@
 
 (function() {
   'use strict';
-  angular.module('BBAdmin', ['BB', 'BBAdmin.Services', 'BBAdmin.Filters', 'BBAdmin.Controllers', 'ui.state', 'ui.calendar']);
+  angular.module('BBAdmin', ['BB', 'BBAdmin.Services', 'BBAdmin.Filters', 'BBAdmin.Controllers', 'ui.calendar']);
 
   angular.module('BBAdmin').config(function($logProvider) {
     return $logProvider.debugEnabled(true);
@@ -155,6 +155,18 @@
   angular.module('BBAdmin.Services', ['ngResource', 'ngSanitize', 'ngLocalData']);
 
   angular.module('BBAdmin.Controllers', ['ngLocalData', 'ngSanitize']);
+
+}).call(this);
+
+(function() {
+  'use strict';
+  angular.module('BBAdminTable', ['BB', 'BBAdmin.Services', 'BBAdmin.Filters', 'BBAdmin.Controllers', 'trNgGrid']);
+
+  angular.module('BBAdminTable').config(function($logProvider) {
+    return $logProvider.debugEnabled(true);
+  });
+
+  angular.module('BBAdminTableMockE2E', ['BBAdminTable', 'BBAdminMockE2E']);
 
 }).call(this);
 
@@ -669,7 +681,7 @@ $templateCache.put("time.html","<div bb-times ng-init=\"checkStepTitle(\'Select 
   angular.module('BBAdminMockE2E', ['BBAdmin', 'ngMockE2E']);
 
   angular.module('BBAdminMockE2E').run(function($httpBackend) {
-    var company, member_bookings, member_schema, people, person_schema;
+    var admin_schema, administrators, company, member_bookings, member_schema, people, person_schema;
     $httpBackend.whenPOST('http://www.bookingbug.com/api/v1/login/admin/123').respond(function(method, url, data) {
       var login;
       console.log('login post');
@@ -725,6 +737,12 @@ $templateCache.put("time.html","<div bb-times ng-init=\"checkStepTitle(\'Select 
         new_person: {
           href: 'http://www.bookingbug.com/api/v1/admin/123/people/new{?signup}',
           templated: true
+        },
+        administrators: {
+          href: 'http://www.bookingbug.com/api/v1/admin/123/administrators'
+        },
+        new_administrator: {
+          href: 'http://www.bookingbug.com/api/v1/admin/123/administrators/new'
         }
       }
     };
@@ -848,6 +866,150 @@ $templateCache.put("time.html","<div bb-times ng-init=\"checkStepTitle(\'Select 
       console.log(url);
       console.log(data);
       return [200, people.concat([data]), {}];
+    });
+    administrators = {
+      _embedded: {
+        administrators: [
+          {
+            name: "Dave",
+            email: "dave@example.com",
+            role: 'admin',
+            company_id: 123,
+            company_name: "Tom's Tennis",
+            _links: {
+              self: {
+                href: 'http://www.bookingbug.com/api/v1/admin/123/administrators/1'
+              },
+              edit: {
+                href: 'http://www.bookingbug.com/api/v1/admin/123/administrators/1/edit'
+              },
+              company: {
+                href: 'http://www.bookingbug.com/api/v1/admin/123/company'
+              },
+              login: {
+                href: 'http://www.bookingbug.com/api/v1/login/admin/123'
+              }
+            }
+          }, {
+            name: "Sue",
+            email: "sue@example.com",
+            role: 'owner',
+            company_id: 123,
+            company_name: "Tom's Tennis",
+            _links: {
+              self: {
+                href: 'http://www.bookingbug.com/api/v1/admin/123/administrators/2'
+              },
+              edit: {
+                href: 'http://www.bookingbug.com/api/v1/admin/123/administrators/2/edit'
+              },
+              company: {
+                href: 'http://www.bookingbug.com/api/v1/admin/123/company'
+              },
+              login: {
+                href: 'http://www.bookingbug.com/api/v1/login/admin/123'
+              }
+            }
+          }
+        ]
+      },
+      _links: {
+        self: {
+          href: 'http://www.bookingbug.com/api/v1/admin/123/administrators'
+        },
+        "new": {
+          href: 'http://www.bookingbug.com/api/v1/admin/123/administrators/new',
+          templated: true
+        }
+      }
+    };
+    $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/administrators').respond(administrators);
+    admin_schema = {
+      form: [
+        {
+          key: 'name',
+          type: 'text',
+          feedback: false
+        }, {
+          key: 'email',
+          type: 'text',
+          feedback: false
+        }, {
+          key: 'role',
+          type: 'select',
+          feedback: false,
+          titleMap: {
+            owner: 'Owner',
+            admin: 'Admin',
+            user: 'User'
+          }
+        }, {
+          type: 'submit',
+          title: 'Save'
+        }
+      ],
+      schema: {
+        properties: {
+          name: {
+            title: 'Name *',
+            type: 'string'
+          },
+          email: {
+            title: 'Email *',
+            type: 'string'
+          },
+          role: {
+            title: 'Role',
+            type: 'string',
+            "enum": ['owner', 'admin', 'user', 'callcenter']
+          }
+        },
+        required: ['name', 'email'],
+        title: 'Administrator',
+        type: 'object'
+      }
+    };
+    $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/administrators/new').respond(function() {
+      return [200, admin_schema, {}];
+    });
+    admin_schema = {
+      form: [
+        {
+          key: 'name',
+          type: 'text',
+          feedback: false
+        }, {
+          key: 'role',
+          type: 'select',
+          feedback: false,
+          titleMap: {
+            owner: 'Owner',
+            admin: 'Admin',
+            user: 'User'
+          }
+        }, {
+          type: 'submit',
+          title: 'Save'
+        }
+      ],
+      schema: {
+        properties: {
+          name: {
+            title: 'Name *',
+            type: 'string'
+          },
+          role: {
+            title: 'Role',
+            type: 'string',
+            "enum": ['owner', 'admin', 'user', 'callcenter']
+          }
+        },
+        title: 'Administrator',
+        type: 'object'
+      }
+    };
+    $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/administrators/1/edit').respond(function() {
+      return [200, admin_schema, {}];
     });
     $httpBackend.whenPOST('http://www.bookingbug.com/api/v1/login/member/123').respond(function(method, url, data) {
       var login;
@@ -1065,6 +1227,118 @@ $templateCache.put("time.html","<div bb-times ng-init=\"checkStepTitle(\'Select 
 
 }).call(this);
 
+(function() {
+  angular.module('BBAdminTable').directive('adminTable', function(AdminLoginService, AdminAdministratorService, $modal, $log, $rootScope) {
+    var editAdministratorForm, link, newAdministratorForm;
+    newAdministratorForm = function($scope, $modalInstance, company) {
+      $scope.title = 'New Administrator';
+      $scope.company = company;
+      $scope.company.$get('new_administrator').then(function(admin_schema) {
+        $scope.form = _.reject(admin_schema.form, function(x) {
+          return x.type === 'submit';
+        });
+        $scope.schema = admin_schema.schema;
+        return $scope.admin = {};
+      });
+      $scope.cancel = function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        return $modalInstance.dismiss('cancel');
+      };
+      return $scope.submit = function(person_form) {
+        $scope.$broadcast('schemaFormValidate');
+        return $scope.company.$post('administrators', {}, $scope.admin).then(function(admin) {
+          $modalInstance.close(admin);
+          return $scope.$parent.people.push(admin);
+        }, function(err) {
+          $modalInstance.close(admin);
+          return $log.error('Failed to create admin');
+        });
+      };
+    };
+    editAdministratorForm = function($scope, $modalInstance, admin) {
+      console.log(admin);
+      $scope.title = 'Edit Administrator';
+      $scope.admin = admin;
+      $scope.admin.$get('edit').then(function(admin_schema) {
+        $scope.form = _.reject(admin_schema.form, function(x) {
+          return x.type === 'submit';
+        });
+        return $scope.schema = admin_schema.schema;
+      });
+      $scope.ok = function() {
+        return $modalInstance.close($scope.admin);
+      };
+      return $scope.cancel = function() {
+        return $modalInstance.dismiss('cancel');
+      };
+    };
+    link = function(scope, element, attrs) {
+      var login_form, options, _base, _base1;
+      scope.newAdministrator = function() {
+        return $modal.open({
+          templateUrl: 'admin_form.html',
+          controller: newAdministratorForm,
+          resolve: {
+            company: function() {
+              return scope.company;
+            }
+          }
+        });
+      };
+      scope.edit = function(id) {
+        var admin;
+        console.log('id ', id);
+        admin = _.find(scope.admin_models, function(p) {
+          return p.id === id;
+        });
+        console.log('admin ', admin);
+        return $modal.open({
+          templateUrl: 'admin_form.html',
+          controller: editAdministratorForm,
+          resolve: {
+            admin: function() {
+              return admin;
+            }
+          }
+        });
+      };
+      $rootScope.bb || ($rootScope.bb = {});
+      (_base = $rootScope.bb).api_url || (_base.api_url = attrs.apiUrl);
+      (_base1 = $rootScope.bb).api_url || (_base1.api_url = "http://www.bookingbug.com");
+      login_form = {
+        email: attrs.adminEmail,
+        password: attrs.adminPassword
+      };
+      options = {
+        company_id: attrs.companyId
+      };
+      return AdminLoginService.login(login_form, options).then(function(user) {
+        return user.$get('company').then(function(company) {
+          var params;
+          scope.company = company;
+          params = {
+            company: company
+          };
+          return AdminAdministratorService.query(params).then(function(administrators) {
+            scope.admin_models = administrators;
+            return scope.administrators = _.map(administrators, function(administrator) {
+              return _.pick(administrator, 'id', 'name', 'email', 'role');
+            });
+          });
+        });
+      });
+    };
+    return {
+      link: link,
+      templateUrl: 'admin_table_main.html'
+    };
+  });
+
+}).call(this);
+
+angular.module("BBAdminTable").run(["$templateCache", function($templateCache) {$templateCache.put("admin_form.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"administrator_form\" ng-submit=\"submit(administrator_form)\">\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\"\n    sf-model=\"admin\">\n  </div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\n  </div>\n</form>\n");
+$templateCache.put("admin_table_main.html","<button class=\"btn btn-default\" ng-click=\"newAdministrator()\">New Administrator</button>\n<table tr-ng-grid=\"\" items=\"administrators\">\n   <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"edit(gridDisplayItem.id)\">\n            Edit\n        </button>\n      </td>\n    </tr>\n  </tbody>\n</table>\n");}]);
 
 angular
 .module('angular-hal', []).provider('data_cache', function() {
@@ -14531,6 +14805,27 @@ bbAdminDirectives.controller('CalController', function($scope) {
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
+  angular.module('BB.Models').factory("Admin.AdministratorModel", function($q, BBModel, BaseModel) {
+    var Admin_Administrator;
+    return Admin_Administrator = (function(_super) {
+      __extends(Admin_Administrator, _super);
+
+      function Admin_Administrator(data) {
+        Admin_Administrator.__super__.constructor.call(this, data);
+      }
+
+      return Admin_Administrator;
+
+    })(BaseModel);
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
   angular.module('BB.Models').factory("Admin.BookingModel", function($q, BBModel, BaseModel) {
     var Admin_Booking;
     return Admin_Booking = (function(_super) {
@@ -14641,6 +14936,39 @@ bbAdminDirectives.controller('CalController', function($scope) {
       return Admin_User;
 
     })(BaseModel);
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdmin.Services').factory('AdminAdministratorService', function($q, BBModel) {
+    return {
+      query: function(params) {
+        var company, defer;
+        company = params.company;
+        defer = $q.defer();
+        company.$get('administrators').then(function(collection) {
+          return collection.$get('administrators').then(function(administrators) {
+            var a, models;
+            models = (function() {
+              var _i, _len, _results;
+              _results = [];
+              for (_i = 0, _len = administrators.length; _i < _len; _i++) {
+                a = administrators[_i];
+                _results.push(new BBModel.Admin.Administrator(a));
+              }
+              return _results;
+            })();
+            return defer.resolve(models);
+          }, function(err) {
+            return defer.reject(err);
+          });
+        }, function(err) {
+          return defer.reject(err);
+        });
+        return defer.promise;
+      }
+    };
   });
 
 }).call(this);
@@ -22780,7 +23108,7 @@ bbAdminDirectives.controller('CalController', function($scope) {
       _fn2(model);
     }
     funcs['Member'] = mfuncs;
-    admin_models = ['Booking', 'Slot', 'User'];
+    admin_models = ['Booking', 'Slot', 'User', 'Administrator'];
     afuncs = {};
     _fn3 = (function(_this) {
       return function(model) {

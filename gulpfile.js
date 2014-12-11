@@ -26,6 +26,9 @@ gulp.task('templateCache', function() {
   gulp.src('./src/widget/templates/**/*.html')
     .pipe(templateCache('templates.js', {module: 'BB'}))
     .pipe(gulp.dest('./src/widget'));
+  gulp.src('./src/admin-table/templates/**/*.html')
+    .pipe(templateCache('templates.js', {module: 'BBAdminTable'}))
+    .pipe(gulp.dest('./src/admin-table'));
 });
 
 gulp.task('scripts', function() {
