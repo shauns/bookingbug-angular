@@ -26,6 +26,7 @@
     "merge-stream": "^0.1.6",
     "orchestrator": "^0.3.7",
     "serve-static": "^1.7.1",
+    "streamqueue": "^0.1.1",
     "vinyl-fs": "^0.3.13"
   },
   "scripts": {

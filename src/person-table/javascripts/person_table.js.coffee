@@ -5,11 +5,8 @@ angular.module('BBPersonTable').directive 'personTable', (AdminLoginService,
     $scope.title = 'New Person'
     $scope.company = company
     $scope.company.$get('new_person').then (person_schema) ->
-      console.log 'new person schema ', person_schema
       $scope.form = _.reject person_schema.form, (x) -> x.type == 'submit'
-      console.log $scope.form
       $scope.schema = person_schema.schema
-      console.log $scope.schema
       $scope.person = {}
 
     $scope.cancel = (event) ->
@@ -78,5 +75,5 @@ angular.module('BBPersonTable').directive 'personTable', (AdminLoginService,
 
   {
     link: link
-    templateUrl: 'main.html'
+    templateUrl: 'person_table_main.html'
   }

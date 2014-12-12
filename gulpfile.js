@@ -13,33 +13,23 @@ var gulp = require('gulp');
     sass = require('gulp-sass');
     merge = require('merge-stream');
     mainBowerFiles = require('main-bower-files');
+    streamqueue = require('streamqueue');
 
 gulp.task('clean', function(cb) {
   del(['release'], cb);
 });
 
-gulp.task('templateCache', function() {
-  gulp.src('./src/member/templates/**/*.html')
-    .pipe(templateCache('templates.js', {module: 'BBMember'}))
-    .pipe(gulp.dest('./src/member/'));
-  gulp.src('./src/person-table/templates/**/*.html')
-    .pipe(templateCache('templates.js', {module: 'BBPersonTable'}))
-    .pipe(gulp.dest('./src/person-table'));
-  gulp.src('./src/widget/templates/**/*.html')
-    .pipe(templateCache('templates.js', {module: 'BB'}))
-    .pipe(gulp.dest('./src/widget'));
-  gulp.src('./src/admin-table/templates/**/*.html')
-    .pipe(templateCache('templates.js', {module: 'BBAdminTable'}))
-    .pipe(gulp.dest('./src/admin-table'));
-});
-
 gulp.task('javascripts', function() {
-  gulp.src(mainBowerFiles({filter: new RegExp('.js$')}).concat(['./src/javascripts/core/main.js.coffee', './src/*/javascripts/main.js.coffee', './src/core/javascripts/services/widget.js.coffee', './src/core/javascripts/collections/base.js.coffee', './src/widget/templates.js', './src/*/javascripts/**/*', './src/*/templates.js', '!./**/*~',]))
+  javascripts = gulp.src(mainBowerFiles({filter: new RegExp('.js$')}).concat(['./src/javascripts/core/main.js.coffee', './src/*/javascripts/main.js.coffee', './src/core/javascripts/services/widget.js.coffee', './src/core/javascripts/collections/base.js.coffee', './src/widget/templates.js', './src/*/javascripts/**/*', './src/*/templates.js', '!./**/*~',]))
     // .pipe(filelog())
     .pipe(gulpif(/.*coffee$/, coffee().on('error', function (e) {
       gutil.log(e)
       this.emit('end')
     })))
+  templates = gulp.src('./src/*/templates/**/*.html')
+    .pipe(flatten())
+    .pipe(templateCache({module: 'BB'}))
+  streamqueue({objectMode: true}, javascripts, templates)
     .pipe(concat('bookingbug-angular.js'))
     .pipe(gulp.dest('release'));
 });
@@ -59,7 +49,7 @@ gulp.task('stylesheets', function() {
 });
 
 gulp.task('watch', function() {
-  gulp.watch(['./src/**/*', '!./**/*~', '!./**/templates.js'], ['assets']);
+  gulp.watch(['./src/**/*', '!./**/*~'], ['assets']);
 });
 
 gulp.task('webserver', function() {
@@ -69,6 +59,6 @@ gulp.task('webserver', function() {
   });
 });
 
-gulp.task('assets', ['clean', 'templateCache', 'javascripts', 'images', 'stylesheets']);
+gulp.task('assets', ['clean', 'javascripts', 'images', 'stylesheets']);
 
 gulp.task('default', ['assets', 'watch', 'webserver']);
