@@ -33,8 +33,8 @@ gulp.task('templateCache', function() {
     .pipe(gulp.dest('./src/admin-table'));
 });
 
-gulp.task('scripts', function() {
-  gulp.src(mainBowerFiles({filter: new RegExp('.js$')}).concat(['./src/core/main.js.coffee', './src/*/main.js.coffee', './src/core/services/widget.js.coffee', './src/core/collections/base.js.coffee', './src/widget/templates.js', './src/**/*', './src/*/templates.js', '!./**/*~', '!./src/*/templates/*', '!./src/*/images/*', '!./src/*/stylesheets/**']))
+gulp.task('javascripts', function() {
+  gulp.src(mainBowerFiles({filter: new RegExp('.js$')}).concat(['./src/javascripts/core/main.js.coffee', './src/*/javascripts/main.js.coffee', './src/core/javascripts/services/widget.js.coffee', './src/core/javascripts/collections/base.js.coffee', './src/widget/templates.js', './src/*/javascripts/**/*', './src/*/templates.js', '!./**/*~',]))
     // .pipe(filelog())
     .pipe(gulpif(/.*coffee$/, coffee().on('error', function (e) {
       gutil.log(e)
@@ -69,6 +69,6 @@ gulp.task('webserver', function() {
   });
 });
 
-gulp.task('assets', ['clean', 'templateCache', 'scripts', 'images', 'stylesheets']);
+gulp.task('assets', ['clean', 'templateCache', 'javascripts', 'images', 'stylesheets']);
 
 gulp.task('default', ['assets', 'watch', 'webserver']);
