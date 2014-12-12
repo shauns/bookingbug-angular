@@ -5,8 +5,6 @@ angular.module('BBPersonTable', [
   'BBAdmin.Services',
   'BBAdmin.Filters',
   'BBAdmin.Controllers',
-  'ui.state',
-  'ui.calendar',
   'trNgGrid'
 ])
 

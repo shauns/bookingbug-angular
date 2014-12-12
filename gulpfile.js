@@ -11,6 +11,8 @@ var gulp = require('gulp');
     rename = require('gulp-rename');
     flatten = require('gulp-flatten');
     sass = require('gulp-sass');
+    merge = require('merge-stream');
+    mainBowerFiles = require('main-bower-files');
 
 gulp.task('clean', function(cb) {
   del(['release'], cb);
@@ -32,7 +34,7 @@ gulp.task('templateCache', function() {
 });
 
 gulp.task('scripts', function() {
-  return gulp.src(['./src/core/main.js.coffee', './src/*/main.js.coffee', './src/core/services/widget.js.coffee', './src/core/collections/base.js.coffee', './src/widget/templates.js', './src/**/*', './src/*/templates.js', '!./**/*~', '!./src/*/templates/*', '!./src/*/images/*', '!./src/*/stylesheets/**'])
+  gulp.src(mainBowerFiles({filter: new RegExp('.js$')}).concat(['./src/core/main.js.coffee', './src/*/main.js.coffee', './src/core/services/widget.js.coffee', './src/core/collections/base.js.coffee', './src/widget/templates.js', './src/**/*', './src/*/templates.js', '!./**/*~', '!./src/*/templates/*', '!./src/*/images/*', '!./src/*/stylesheets/**']))
     // .pipe(filelog())
     .pipe(gulpif(/.*coffee$/, coffee().on('error', function (e) {
       gutil.log(e)

@@ -22,6 +22,8 @@
     "gulp-rename": "^1.2.0",
     "gulp-sass": "^1.2.4",
     "gulp-util": "^3.0.1",
+    "main-bower-files": "^2.4.1",
+    "merge-stream": "^0.1.6",
     "orchestrator": "^0.3.7",
     "serve-static": "^1.7.1",
     "vinyl-fs": "^0.3.13"
