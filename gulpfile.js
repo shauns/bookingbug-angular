@@ -19,6 +19,11 @@ gulp.task('clean', function(cb) {
   del(['release'], cb);
 });
 
+gulp.task('list', function() {
+  gulp.src(mainBowerFiles({filter: new RegExp('.js$')}))
+    .pipe(filelog())
+});
+
 gulp.task('javascripts', function() {
   javascripts = gulp.src(mainBowerFiles({filter: new RegExp('.js$')}).concat(['./src/javascripts/core/main.js.coffee', './src/*/javascripts/main.js.coffee', './src/core/javascripts/services/widget.js.coffee', './src/core/javascripts/collections/base.js.coffee', './src/widget/templates.js', './src/*/javascripts/**/*', './src/*/templates.js', '!./**/*~',]))
     // .pipe(filelog())
@@ -42,9 +47,12 @@ gulp.task('images', function() {
 });
 
 gulp.task('stylesheets', function() {
-  return gulp.src('src/*/stylesheets/main.scss')
+  css_stream = gulp.src(mainBowerFiles({filter: new RegExp('.css$')}))
+  sass_stream = gulp.src('src/*/stylesheets/main.scss')
     .pipe(sass({errLogToConsole: true}))
     .pipe(flatten())
+  streamqueue({objectMode: true}, css_stream, sass_stream)
+    .pipe(concat('bookingbug-angular.css'))
     .pipe(gulp.dest('release'));
 });
 
