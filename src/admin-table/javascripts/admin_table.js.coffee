@@ -1,5 +1,5 @@
-angular.module('BBAdminTable').directive 'adminTable', (AdminLoginService,
-    AdminAdministratorService, $modal, $log, $rootScope) ->
+angular.module('BBAdminTable').directive 'adminTable', (AdminCompanyService,
+    AdminAdministratorService, $modal, $log) ->
 
   newAdministratorForm = ($scope, $modalInstance, company) ->
     $scope.title = 'New Administrator'
@@ -37,44 +37,42 @@ angular.module('BBAdminTable').directive 'adminTable', (AdminLoginService,
     $scope.cancel = () ->
       $modalInstance.dismiss('cancel')
 
-  link = (scope, element, attrs) ->
+  controller = ($scope) ->
 
-    scope.newAdministrator = () ->
+    $scope.getAdministrators = () ->
+      params =
+        company: $scope.company
+      AdminAdministratorService.query(params).then (administrators) ->
+        $scope.admin_models = administrators
+        $scope.administrators = _.map administrators, (administrator) ->
+          _.pick administrator, 'id', 'name', 'email', 'role'
+
+    $scope.newAdministrator = () ->
       $modal.open
         templateUrl: 'admin_form.html'
         controller: newAdministratorForm
         resolve:
-          company: () -> scope.company
+          company: () -> $scope.company
 
-    scope.edit = (id) ->
-      console.log 'id ', id
-      admin = _.find scope.admin_models, (p) -> p.id == id
-      console.log 'admin ', admin
+    $scope.edit = (id) ->
+      admin = _.find $scope.admin_models, (p) -> p.id == id
       $modal.open
         templateUrl: 'admin_form.html'
         controller: editAdministratorForm
         resolve:
           admin: () -> admin
 
-    $rootScope.bb ||= {}
-    $rootScope.bb.api_url ||= attrs.apiUrl
-    $rootScope.bb.api_url ||= "http://www.bookingbug.com"
-    login_form =
-      email: attrs.adminEmail
-      password: attrs.adminPassword
-    options =
-      company_id: attrs.companyId
-    AdminLoginService.login(login_form, options).then (user) ->
-      user.$get('company').then (company) ->
+
+  link = (scope, element, attrs) ->
+    if scope.company
+      scope.getAdministrators()
+    else
+      AdminCompanyService.query(attrs).then (company) ->
         scope.company = company
-        params =
-          company: company
-        AdminAdministratorService.query(params).then (administrators) ->
-          scope.admin_models = administrators
-          scope.administrators = _.map administrators, (administrator) ->
-            _.pick administrator, 'id', 'name', 'email', 'role'
+        scope.getAdministrators()
 
   {
+    controller: controller
     link: link
     templateUrl: 'admin_table_main.html'
   }

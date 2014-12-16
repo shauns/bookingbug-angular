@@ -1,5 +1,5 @@
-angular.module('BBPersonTable').directive 'personTable', (AdminLoginService,
-    AdminPersonService, $modal, $log, $rootScope) ->
+angular.module('BBPersonTable').directive 'personTable', (AdminCompanyService,
+    AdminPersonService, $modal, $log) ->
 
   newPersonForm = ($scope, $modalInstance, company) ->
     $scope.title = 'New Person'
@@ -31,49 +31,48 @@ angular.module('BBPersonTable').directive 'personTable', (AdminLoginService,
     $scope.cancel = () ->
       $modalInstance.dismiss('cancel')
 
-  link = (scope, element, attrs) ->
+  controller = ($scope) ->
 
-    scope.newPerson = () ->
+    $scope.getPeople = () ->
+      params =
+        company: $scope.company
+      AdminPersonService.query(params).then (people) ->
+        $scope.people_models = people
+        $scope.people = _.map people, (person) ->
+          _.pick person, 'id', 'name', 'mobile'
+
+    $scope.newPerson = () ->
       $modal.open
         templateUrl: 'person_form.html'
         controller: newPersonForm
         resolve:
-          company: () -> scope.company
+          company: () -> $scope.company
 
-    scope.delete = (id) ->
-      person = _.find scope.people_models, (p) -> p.id == id
+    $scope.delete = (id) ->
+      person = _.find $scope.people_models, (p) -> p.id == id
       person.$del('self').then () ->
-        scope.people = _.reject scope.people, (p) -> p.id == id
+        $scope.people = _.reject $scope.people, (p) -> p.id == id
       , (err) ->
         $log.error "Failed to delete person"
 
-    scope.edit = (id) ->
-      person = _.find scope.people_models, (p) -> p.id == id
+    $scope.edit = (id) ->
+      person = _.find $scope.people_models, (p) -> p.id == id
       $modal.open
         templateUrl: 'person_form.html'
         controller: editPersonForm
         resolve:
           person: () -> person
 
-    $rootScope.bb ||= {}
-    $rootScope.bb.api_url ||= attrs.apiUrl
-    $rootScope.bb.api_url ||= "http://www.bookingbug.com"
-    login_form =
-      email: attrs.adminEmail
-      password: attrs.adminPassword
-    options =
-      company_id: attrs.companyId
-    AdminLoginService.login(login_form, options).then (user) ->
-      user.$get('company').then (company) ->
+  link = (scope, element, attrs) ->
+    if scope.company
+      scope.getPeople()
+    else
+      AdminCompanyService.query(attrs).then (company) ->
         scope.company = company
-        params =
-          company: company
-        AdminPersonService.query(params).then (people) ->
-          scope.people_models = people
-          scope.people = _.map people, (person) ->
-            _.pick person, 'id', 'name', 'mobile'
+        scope.getPeople()
 
   {
+    controller: controller
     link: link
     templateUrl: 'person_table_main.html'
   }
