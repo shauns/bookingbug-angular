@@ -16,6 +16,7 @@
   ],
   "dependencies": {
     "jquery": "~2.1.1",
+    "jquery-visible": "~1.1.0",
     "jquery-ui": "~1.11.2",
     "moment": "~2.8.4",
     "accounting": "~0.3.2",
