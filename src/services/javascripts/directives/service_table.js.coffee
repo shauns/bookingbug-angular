@@ -3,10 +3,8 @@ angular.module('BBAdminServices').directive 'serviceTable', (AdminCompanyService
 
 	controller = ($scope) ->
 
-		console.log "loading service table"
-
 		$scope.getServices = () ->
-			params = 
+			params =
 				company: $scope.company
 			AdminServiceService.query(params).then (services) ->
 				console.log services
