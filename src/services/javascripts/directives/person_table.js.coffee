@@ -3,7 +3,7 @@ angular.module('BBAdminServices').directive 'personTable', (AdminCompanyService,
 
   controller = ($scope) ->
 
-    console.log "loading person tabl"
+    console.log "loading person table"
 
     $scope.getPeople = () ->
       params =

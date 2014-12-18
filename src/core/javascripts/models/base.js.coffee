@@ -8,9 +8,11 @@
 angular.module('BB.Models').service "BBModel", ($q, $injector) ->
 
   # the top level models
-  models = ['Address', 'Answer', 'Basket', 'BasketItem', 'BookableItem', 'Category', 'Client', 'ClientDetails', 'Company', 'CompanySettings',
-  'Day', 'Event', 'EventChain', 'EventGroup', 'EventTicket', 'EventSequence', 'ItemDetails', 'Person', 'PurchaseItem', 'PurchaseTotal', 
-  'Question', 'Resource', 'Service', 'Space', 'SurveyQuestion','TimeSlot']
+  models = ['Address', 'Answer', 'Basket', 'BasketItem', 'BookableItem',
+    'Category', 'Client', 'ClientDetails', 'Company', 'CompanySettings',
+    'Day', 'Event', 'EventChain', 'EventGroup', 'EventTicket', 'EventSequence',
+    'ItemDetails', 'Person', 'PurchaseItem', 'PurchaseTotal',
+    'Question', 'Resource', 'Service', 'Space', 'SurveyQuestion','TimeSlot']
 
   funcs = {}
   for model in models
@@ -38,7 +40,8 @@ angular.module('BB.Models').service "BBModel", ($q, $injector) ->
   funcs['Member'] = mfuncs
 
   # admin models
-  admin_models = ['Booking', 'Slot', 'User', 'Administrator', 'Schedule', 'Resource', 'Person']
+  admin_models = ['Booking', 'Slot', 'User', 'Administrator', 'Schedule',
+    'Resource', 'Person', 'Service']
   afuncs = {}
   for model in admin_models
     do (model) =>  

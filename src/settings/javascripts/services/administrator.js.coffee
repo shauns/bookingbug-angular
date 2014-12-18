@@ -1,5 +1,4 @@
-angular.module('BBAdmin.Services').factory 'AdminAdministratorService', ($q,
-    BBModel) ->
+angular.module('BBAdmin.Services').factory 'AdminAdministratorService', ($q, BBModel) ->
 
   query: (params) ->
     company = params.company
