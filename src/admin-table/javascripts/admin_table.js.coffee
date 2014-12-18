@@ -1,41 +1,5 @@
 angular.module('BBAdminTable').directive 'adminTable', (AdminCompanyService,
-    AdminAdministratorService, $modal, $log) ->
-
-  newAdministratorForm = ($scope, $modalInstance, company) ->
-    $scope.title = 'New Administrator'
-    $scope.company = company
-    $scope.company.$get('new_administrator').then (admin_schema) ->
-      $scope.form = _.reject admin_schema.form, (x) -> x.type == 'submit'
-      $scope.schema = admin_schema.schema
-      $scope.admin = {}
-
-    $scope.cancel = (event) ->
-      event.preventDefault()
-      event.stopPropagation()
-      $modalInstance.dismiss('cancel')
-
-    $scope.submit = (person_form) ->
-      $scope.$broadcast('schemaFormValidate')
-      $scope.company.$post('administrators', {}, $scope.admin).then (admin) ->
-        $modalInstance.close(admin)
-        $scope.$parent.people.push(admin)
-      , (err) ->
-        $modalInstance.close(admin)
-        $log.error 'Failed to create admin'
-
-  editAdministratorForm = ($scope, $modalInstance, admin) ->
-    console.log admin
-    $scope.title = 'Edit Administrator'
-    $scope.admin = admin
-    $scope.admin.$get('edit').then (admin_schema) ->
-      $scope.form = _.reject admin_schema.form, (x) -> x.type == 'submit'
-      $scope.schema = admin_schema.schema
-
-    $scope.ok = () ->
-      $modalInstance.close($scope.admin)
-
-    $scope.cancel = () ->
-      $modalInstance.dismiss('cancel')
+    AdminAdministratorService, $modal, $log, ModalForm) ->
 
   controller = ($scope) ->
 
@@ -48,20 +12,19 @@ angular.module('BBAdminTable').directive 'adminTable', (AdminCompanyService,
           _.pick administrator, 'id', 'name', 'email', 'role'
 
     $scope.newAdministrator = () ->
-      $modal.open
-        templateUrl: 'admin_form.html'
-        controller: newAdministratorForm
-        resolve:
-          company: () -> $scope.company
+      ModalForm.new
+        company: $scope.company
+        title: 'New Administrator'
+        new_rel: 'new_administrator'
+        post_rel: 'administrators'
+        success: (administrator) ->
+          $scope.administrators.push(administrator)
 
     $scope.edit = (id) ->
       admin = _.find $scope.admin_models, (p) -> p.id == id
-      $modal.open
-        templateUrl: 'admin_form.html'
-        controller: editAdministratorForm
-        resolve:
-          admin: () -> admin
-
+      ModalForm.edit
+        model: admin
+        title: 'Edit Administrator'
 
   link = (scope, element, attrs) ->
     if scope.company
