@@ -35,8 +35,9 @@ angular.module('BB.Controllers').controller 'MapCtrl',
   $scope.address              = $scope.$eval $attrs.bbAddress or null
   $scope.notLoaded $scope
   
-  webshim.setOptions({'basePath': $scope.bb.api_url + '/assets/webshims/shims/', 'waitReady': false})
-  webshim.polyfill( "geolocation" )
+  #TODO: webshim for gulp
+  # webshim.setOptions({'basePath': $scope.bb.api_url + '/assets/webshims/shims/', 'waitReady': false})
+  # webshim.polyfill( "geolocation" )
 
   # check if company is parent
   #if $scope.bb.company.$has('parent')
@@ -282,10 +283,13 @@ angular.module('BB.Controllers').controller 'MapCtrl',
   $scope.geolocate = () ->
     return false if !navigator.geolocation || ($scope.reverse_geocode_address && $scope.reverse_geocode_address == $scope.address)
 
-    webshim.ready 'geolocation', ->
-      # set timeout as 5 seconds and max age as 1 hour
-      options = {timeout: 5000, maximumAge: 3600000}
-      navigator.geolocation.getCurrentPosition(reverseGeocode, geolocateFail, options)
+    #TODO: webshim for gulp
+    # webshim.ready 'geolocation', ->
+    #   # set timeout as 5 seconds and max age as 1 hour
+    #   options = {timeout: 5000, maximumAge: 3600000}
+    #   navigator.geolocation.getCurrentPosition(reverseGeocode, geolocateFail, options)
+    options = {timeout: 5000, maximumAge: 3600000}
+    navigator.geolocation.getCurrentPosition(reverseGeocode, geolocateFail, options)
 
 
   geolocateFail = (error) ->
