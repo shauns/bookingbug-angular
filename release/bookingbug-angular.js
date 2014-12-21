@@ -70,7 +70,6 @@ function minErr(module) {
 
     message = message + '\nhttp://errors.angularjs.org/1.2.27/' +
       (module ? module + '/' : '') + code;
-    console.log(message);
     for (i = 2; i < arguments.length; i++) {
       message = message + (i == 2 ? '?' : '&') + 'p' + (i-2) + '=' +
         encodeURIComponent(stringify(arguments[i]));
@@ -22132,7 +22131,6 @@ var styleDirective = valueFn({
 })(window, document);
 
 !window.angular.$$csp() && window.angular.element(document).find('head').prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\\:form{display:block;}.ng-animate-block-transitions{transition:0s all!important;-webkit-transition:0s all!important;}.ng-hide-add-active,.ng-hide-remove{display:block!important;}</style>');
-
 "use strict";var TrNgGrid;(function(n){function ot(t){t.get(n.cellHeaderTemplateId)||t.put(n.cellHeaderTemplateId,'<div class="'+n.headerCellCssClass+'" ng-switch="isCustomized">  <div ng-switch-when="true">    <div ng-transclude=""><\/div>  <\/div>  <div ng-switch-default>    <div class="'+n.columnTitleCssClass+'">      {{columnTitle |'+n.translateFilter+":gridOptions.locale}}       <div "+n.columnSortDirectiveAttribute+'=""><\/div>    <\/div>    <div '+n.columnFilterDirectiveAttribute+'=""><\/div>  <\/div><\/div>');t.get(n.cellBodyTemplateId)||t.put(n.cellBodyTemplateId,'<div ng-attr-class="'+n.bodyCellCssClass+' text-{{columnOptions.displayAlign}}" ng-switch="isCustomized">  <div ng-switch-when="true">    <div ng-transclude=""><\/div>  <\/div>  <div ng-switch-default>{{gridDisplayItem[columnOptions.displayFieldName]}}<\/div><\/div>');t.get(n.columnFilterTemplateId)||t.put(n.columnFilterTemplateId,'<div ng-show="(gridOptions.enableFiltering&&columnOptions.enableFiltering!==false)||columnOptions.enableFiltering" class="'+n.columnFilterCssClass+'"> <div class="'+n.columnFilterInputWrapperCssClass+'">   <input class="form-control input-sm" type="text" ng-model="columnOptions.filter" ng-keypress="speedUpAsyncDataRetrieval($event)"><\/input> <\/div><\/div>');t.get(n.columnSortTemplateId)||t.put(n.columnSortTemplateId,"<div ng-attr-title=\"{{'Sort'|"+n.translateFilter+':gridOptions.locale}}" ng-show="(gridOptions.enableSorting&&columnOptions.enableSorting!==false)||columnOptions.enableSorting" ng-click="toggleSorting(columnOptions.fieldName)" class="'+n.columnSortCssClass+'" >   <div ng-class="{\''+n.columnSortActiveCssClass+"':gridOptions.orderBy==columnOptions.fieldName,'"+n.columnSortInactiveCssClass+"':gridOptions.orderBy!=columnOptions.fieldName,'"+n.columnSortNormalOrderCssClass+"':gridOptions.orderBy==columnOptions.fieldName&&!gridOptions.orderByReverse,'"+n.columnSortReverseOrderCssClass+"':gridOptions.orderBy==columnOptions.fieldName&&gridOptions.orderByReverse}\" >  <\/div><\/div>");t.put(n.cellFooterTemplateId)||t.put(n.cellFooterTemplateId,'<div class="'+n.footerCssClass+'" ng-switch="isCustomized">  <div ng-switch-when="true">    <div ng-transclude=""><\/div>  <\/div>  <div ng-switch-default>    <span '+n.globalFilterDirectiveAttribute+'=""><\/span>    <span '+n.pagerDirectiveAttribute+'=""><\/span>  <\/div><\/div>');t.get(n.footerGlobalFilterTemplateId)||t.put(n.footerGlobalFilterTemplateId,'<span ng-show="gridOptions.enableFiltering" class="pull-left form-group">  <input class="form-control" type="text" ng-model="gridOptions.filterBy" ng-keypress="speedUpAsyncDataRetrieval($event)" ng-attr-placeholder="{{\'Search\'|'+n.translateFilter+':gridOptions.locale}}"><\/input><\/span>');t.get(n.footerPagerTemplateId)||t.put(n.footerPagerTemplateId,'<span class="pull-right form-group"> <ul class="pagination">   <li ng-class="{disabled:!pageCanGoBack}" ng-if="extendedControlsActive">     <a href="" ng-click="pageCanGoBack&&navigateToPage(0)" ng-attr-title="{{\'First Page\'|'+n.translateFilter+':gridOptions.locale}}">         <span>&laquo;<\/span>     <\/a>   <\/li>   <li ng-class="{disabled:!pageCanGoBack}" ng-if="extendedControlsActive">     <a href="" ng-click="pageCanGoBack&&navigateToPage(gridOptions.currentPage - 1)" ng-attr-title="{{\'Previous Page\'|'+n.translateFilter+':gridOptions.locale}}">         <span>&lsaquo;<\/span>     <\/a>   <\/li>   <li ng-if="pageSelectionActive" ng-repeat="pageIndex in pageIndexes track by $index" ng-class="{disabled:pageIndex===null, active:pageIndex===gridOptions.currentPage}">      <span ng-if="pageIndex===null">...<\/span>      <a href="" ng-click="navigateToPage(pageIndex)" ng-if="pageIndex!==null" ng-attr-title="{{\'Page\'|'+n.translateFilter+':gridOptions.locale}}">{{pageIndex+1}}<\/a>   <\/li>   <li ng-class="{disabled:!pageCanGoForward}" ng-if="extendedControlsActive">     <a href="" ng-click="pageCanGoForward&&navigateToPage(gridOptions.currentPage + 1)" ng-attr-title="{{\'Next Page\'|'+n.translateFilter+':gridOptions.locale}}">         <span>&rsaquo;<\/span>     <\/a>   <\/li>   <li ng-class="{disabled:!pageCanGoForward}" ng-if="extendedControlsActive">     <a href="" ng-click="pageCanGoForward&&navigateToPage(lastPageIndex)" ng-attr-title="{{\'Last Page\'|'+n.translateFilter+':gridOptions.locale}}">         <span>&raquo;<\/span>     <\/a>   <\/li>   <li class="disabled" style="white-space: nowrap;">     <span ng-hide="totalItemsCount">{{\'No items to display\'|'+n.translateFilter+':gridOptions.locale}}<\/span>     <span ng-show="totalItemsCount" ng-attr-title="{{\'Select Page\'|'+n.translateFilter+":gridOptions.locale}}\">       {{startItemIndex+1}} - {{endItemIndex+1}} {{'displayed'|"+n.translateFilter+":gridOptions.locale}}       <span>, {{totalItemsCount}} {{'in total'|"+n.translateFilter+":gridOptions.locale}}<\/span>     <\/span >    <\/li> <\/ul><\/span>")}var i,u,t,f,e,o,s;(function(n){n[n.None=0]="None";n[n.SingleRow=1]="SingleRow";n[n.MultiRow=2]="MultiRow";n[n.MultiRowWithKeyModifiers=3]="MultiRowWithKeyModifiers"})(n.SelectionMode||(n.SelectionMode={}));i=n.SelectionMode;n.defaultColumnOptions={cellWidth:null,cellHeight:null,displayAlign:null,displayFormat:null,displayName:null,filter:null,enableFiltering:null,enableSorting:null};n.translations={};n.debugMode=!1;u=!1;t="trNgGrid";n.dataPagingFilter=t+"DataPagingFilter";n.translateFilter=t+"TranslateFilter";n.translationDateFormat=t+"DateFormat";n.dataFormattingFilter=t+"DataFormatFilter";var l="tr-ng-grid-body",a="field-name",d="is-customized",g="tr-ng-grid-footer-cell",v="trNgGridFooterCellTemplate",nt="tr-ng-grid-footer-cell-template";n.cellFooterTemplateId=v+".html";f="trNgGridGlobalFilter";n.globalFilterDirectiveAttribute="tr-ng-grid-global-filter";n.footerGlobalFilterTemplateId=f+".html";e="trNgGridPager";n.pagerDirectiveAttribute="tr-ng-grid-pager";n.footerPagerTemplateId=e+".html";var y="trNgGridHeaderCell",tt="tr-ng-grid-header-cell",p="trNgGridHeaderCellTemplate",it="tr-ng-grid-header-cell-template";n.cellHeaderTemplateId=p+".html";var w="trNgGridBodyCell",rt="tr-ng-grid-body-cell",b="trNgGridBodyCellTemplate",ut="tr-ng-grid-body-cell-template";n.cellBodyTemplateId=b+".html";o="trNgGridColumnSort";n.columnSortDirectiveAttribute="tr-ng-grid-column-sort";n.columnSortTemplateId=o+".html";s="trNgGridColumnFilter";n.columnFilterDirectiveAttribute="tr-ng-grid-column-filter";n.columnFilterTemplateId=s+".html";var k=function(n,t){var r,i,u;for(t=t.toUpperCase(),r=n.children(),i=0;i<r.length;i++)if(u=r[i],u.tagName==t)return angular.element(u);return null},st=function(n,t){var r,u,i,f;for(t=t.toUpperCase(),r=[],u=n.children(),i=0;i<u.length;i++)f=u[i],f.tagName==t&&r.push(angular.element(f));return r},r=function(n,t,i,r){var u=[],f=t.slice(0);return angular.forEach(n,function(n){for(var t=null,i=0;!t&&i<f.length;i++)t=f[i],t.fieldName===n.fieldName?f.splice(i,1):t=null;t?u.push(t):u.push(n)}),(i||r)&&angular.forEach(f,function(n){(i&&n.fieldName||r&&!n.fieldName)&&u.push(n)}),u},h=function(n,t,i,r){var u,e,f;i?(u=n.children(),e=angular.element(u[0]),u.length===1&&e.attr(r)||(n.empty(),f=angular.element("<div><\/div>").attr(r,""),n.append(f),angular.forEach(u,function(n){f.append(angular.element(n))}))):(n.empty(),n.append(angular.element("<div><\/div>").attr(r,"")))},ft=function(){function n(n,t){this.parent=n;this.cellElement=t;this.fieldName=t.attr(a);var i=t.children();this.isStandardColumn=i.length===0}return n}(),c=function(){function n(n,t,i,r,u){this.sectionTagName=n;this.sectionDirectiveAttribute=t;this.rowDirectiveAttribute=i;this.cellTagName=r;this.cellDirectiveAttribute=u;this.cellTagName=this.cellTagName.toUpperCase();this.cells=null}return n.prototype.configureSection=function(n,t){var i=this,u=this.getSectionElement(n,!0),f,e;return u.empty(),u.removeAttr("ng-non-bindable"),f=r(t,this.cells,!1,!1),e=this.getTemplatedRowElement(u,!0),angular.forEach(f,function(n,t){var r,u=n;r=u.parent===i&&u.cellElement?u.cellElement.clone(!0):angular.element("<table><"+i.cellTagName+"><\/"+i.cellTagName+"><\/table>").find(i.cellTagName);i.cellDirectiveAttribute&&r.attr(i.cellDirectiveAttribute,t);n.isStandardColumn||r.attr(d,"true");n.fieldName&&r.attr(a,n.fieldName);r.attr("ng-style","{'width':columnOptions.cellWidth,'height':columnOptions.cellHeight}");e.append(r)}),u},n.prototype.extractPartialColumnDefinitions=function(){return this.cells},n.prototype.discoverCells=function(n){var t=this,i;this.cells=[];i=this.getTemplatedRowElement(this.getSectionElement(n,!1),!1);i&&angular.forEach(i.children(),function(n){if(n=angular.element(n),n[0].tagName===t.cellTagName.toUpperCase()){var i=n.clone(!0);t.cells.push(new ft(t,i))}})},n.prototype.getSectionElement=function(n,t){var i=null;return n&&(i=k(n,this.sectionTagName)),!i&&t&&(i=angular.element("<table><"+this.sectionTagName+"><\/"+this.sectionTagName+"><\/table>").find(this.sectionTagName),n&&n.append(i)),t&&this.sectionDirectiveAttribute&&i.attr(this.sectionDirectiveAttribute,""),i},n.prototype.getTemplatedRowElement=function(n,t){var i=null;return n&&(i=k(n,"tr")),!i&&t&&(i=angular.element("<table><tr><\/tr><\/table>").find("tr"),n&&n.append(i)),t&&this.rowDirectiveAttribute&&i.attr(this.rowDirectiveAttribute,""),i},n}(),et=function(){function f(n,t,i,r){this.$compile=n;this.$parse=t;this.$timeout=i;u||(ot(r),u=!0)}return f.prototype.setupScope=function(t,r,u){var f=this,e=angular.element(r).scope().$new(),o;return this.gridOptions={immediateDataRetrieval:!0,items:[],fields:null,locale:"en",selectedItems:[],filterBy:null,filterByFields:{},orderBy:null,orderByReverse:!1,pageItems:null,currentPage:0,totalItems:null,enableFiltering:!0,enableSorting:!0,selectionMode:i[2],onDataRequiredDelay:1e3},this.gridOptions.onDataRequired=u.onDataRequired?t.onDataRequired:null,this.gridOptions.gridColumnDefs=[],e.gridOptions=this.gridOptions,e.TrNgGrid=n,this.linkScope(e,t,"gridOptions",u),this.gridOptions.onDataRequired&&(o=function(){f.dataRequestPromise=null;f.gridOptions.immediateDataRetrieval=!1;f.gridOptions.onDataRequired(f.gridOptions)},e.$watchCollection("[gridOptions.filterBy, gridOptions.filterByFields, gridOptions.orderBy, gridOptions.orderByReverse, gridOptions.pageItems, gridOptions.currentPage]",function(){f.dataRequestPromise&&(f.$timeout.cancel(f.dataRequestPromise),f.dataRequestPromise=null);f.gridOptions.immediateDataRetrieval?o():f.dataRequestPromise=f.$timeout(function(){o()},f.gridOptions.onDataRequiredDelay,!0)}),e.$watch("gridOptions.immediateDataRetrieval",function(n){n&&f.dataRequestPromise&&(f.$timeout.cancel(f.dataRequestPromise),o())})),e.$watch("gridOptions.selectionMode",function(n,t){if(n!==t)switch(n){case i[0]:f.gridOptions.selectedItems.splice(0);break;case i[1]:f.gridOptions.selectedItems.length>1&&f.gridOptions.selectedItems.splice(1)}}),e},f.prototype.speedUpAsyncDataRetrieval=function(n){n&&n.keyCode!=13||(this.gridOptions.immediateDataRetrieval=!0)},f.prototype.setColumnOptions=function(n,t){var i=this.gridOptions.gridColumnDefs[n];if(!i)throw"Invalid grid column options found for column index "+n+". Please report this error.";t=angular.extend(t,i);this.gridOptions.gridColumnDefs[n]=t},f.prototype.toggleSorting=function(n){this.gridOptions.orderBy!=n?this.gridOptions.orderBy=n:this.gridOptions.orderByReverse=!this.gridOptions.orderByReverse;this.speedUpAsyncDataRetrieval()},f.prototype.getFormattedFieldName=function(n){return n.replace(/[\.\[\]]/g,"_")},f.prototype.setFilter=function(n,t){t?this.gridOptions.filterByFields[n]=t:delete this.gridOptions.filterByFields[n];this.gridOptions.filterByFields=angular.extend({},this.gridOptions.filterByFields)},f.prototype.toggleItemSelection=function(n,t,r){var h,f,c,e,l,o,s,u;if(this.gridOptions.selectionMode!==i[0])switch(this.gridOptions.selectionMode){case i[3]:if(r.ctrlKey||r.shiftKey||r.metaKey){if(r.ctrlKey||r.metaKey)u=this.gridOptions.selectedItems.indexOf(t),u>=0?this.gridOptions.selectedItems.splice(u,1):this.gridOptions.selectedItems.push(t);else if(r.shiftKey){for(document.selection&&document.selection.empty?document.selection.empty():window.getSelection&&(h=window.getSelection(),h.removeAllRanges()),c=this.gridOptions.selectedItems[this.gridOptions.selectedItems.length-1],f=0;f<n.length&&n[f].$$_gridItem!==c;f++);for(f>=n.length&&(f=0),e=0;e<n.length&&n[e].$$_gridItem!==t;e++);if(e>=n.length)throw"Invalid selection on a key modifier selection mode";for(e<f&&(l=f,f=e,e=l),o=f;o<=e;o++)s=n[o].$$_gridItem,this.gridOptions.selectedItems.indexOf(s)<0&&this.gridOptions.selectedItems.push(s)}}else u=this.gridOptions.selectedItems.indexOf(t),this.gridOptions.selectedItems.splice(0),u<0&&this.gridOptions.selectedItems.push(t);break;case i[1]:u=this.gridOptions.selectedItems.indexOf(t);this.gridOptions.selectedItems.splice(0);u<0&&this.gridOptions.selectedItems.push(t);break;case i[2]:u=this.gridOptions.selectedItems.indexOf(t);u>=0?this.gridOptions.selectedItems.splice(u,1):this.gridOptions.selectedItems.push(t)}},f.prototype.discoverTemplates=function(n){this.templatedHeader=new c("thead",null,null,"th",tt);this.templatedBody=new c("tbody",l,null,"td",rt);this.templatedFooter=new c("tfoot",null,null,"td",g);this.templatedHeader.discoverCells(n);this.templatedFooter.discoverCells(n);this.templatedBody.discoverCells(n)},f.prototype.configureTableStructure=function(t,i,u){var h=this,e=t.$new(),y;i.empty();this.columnDefsItemsWatcherDeregistration&&(this.columnDefsItemsWatcherDeregistration(),this.columnDefsItemsWatcherDeregistration=null);this.columnDefsFieldsWatcherDeregistration&&(this.columnDefsFieldsWatcherDeregistration(),this.columnDefsFieldsWatcherDeregistration=null);this.columnDefsFieldsWatcherDeregistration=e.$watch("gridOptions.fields",function(n,r){angular.equals(n,r)||h.configureTableStructure(t,i,e)},!0);var c=this.templatedHeader.extractPartialColumnDefinitions(),a=this.templatedBody.extractPartialColumnDefinitions(),v=this.templatedFooter.extractPartialColumnDefinitions(),f=[],b=this.gridOptions.fields;if(b)angular.forEach(this.gridOptions.fields,function(n){n&&f.push({isStandardColumn:!0,fieldName:n})}),f=r(f,c,!1,!0),f=r(f,a,!1,!0);else if(c.length>0)f=r(c,a,!0,!0);else{if(!this.gridOptions.items||this.gridOptions.items.length==0){this.columnDefsItemsWatcherDeregistration=e.$watch("gridOptions.items.length",function(n){n&&h.configureTableStructure(t,i,e)});return}for(y in this.gridOptions.items[0])y.match(/^[_\$]/g)||f.push({isStandardColumn:!0,fieldName:y});f=r(f,a,!0,!0)}v.length==0&&v.push({isStandardColumn:!0});angular.forEach(f,function(n){n.fieldName&&(n.displayFieldName=h.getFormattedFieldName(n.fieldName))});this.gridOptions.gridColumnDefs=f;var p=this.templatedHeader.configureSection(i,f),w=this.templatedFooter.configureSection(i,v),o=this.templatedBody.configureSection(i,f),s=this.templatedBody.getTemplatedRowElement(o),k=this.templatedHeader.getTemplatedRowElement(p);o.attr(l,"");s.attr("ng-click","toggleItemSelection(gridItem, $event)");s.attr("ng-repeat","gridDisplayItem in filteredItems");s.attr("ng-init","gridItem=gridDisplayItem.$$_gridItem");s.attr("ng-class","{'"+n.rowSelectedCssClass+"':gridOptions.selectedItems.indexOf(gridItem)>=0}");p.replaceWith(this.$compile(p)(e));w.replaceWith(this.$compile(w)(e));o.replaceWith(this.$compile(o)(e));u&&this.$timeout(function(){return u.$destroy()})},f.prototype.computeFormattedItems=function(scope){var input=scope.gridOptions.items||[],formattedItems,gridColumnDefs,inputIndex,inputItem,outputItem,gridColumnDefIndex,gridColumnDef,fieldName,displayFormat;for(n.debugMode&&this.log("formatting items of length "+input.length),formattedItems=scope.formattedItems=scope.formattedItems||[],scope.gridOptions.onDataRequired?scope.filteredItems=formattedItems:scope.requiresReFilteringTrigger=!scope.requiresReFilteringTrigger,gridColumnDefs=scope.gridOptions.gridColumnDefs,inputIndex=0;inputIndex<input.length;inputIndex++){for(inputItem=input[inputIndex];formattedItems.length>input.length&&(outputItem=formattedItems[inputIndex]).$$_gridItem!==inputItem;)formattedItems.splice(inputIndex,1);for(inputIndex<formattedItems.length?(outputItem=formattedItems[inputIndex],outputItem.$$_gridItem!==inputItem&&(outputItem={$$_gridItem:inputItem},formattedItems[inputIndex]=outputItem)):(outputItem={$$_gridItem:inputItem},formattedItems.push(outputItem)),gridColumnDefIndex=0;gridColumnDefIndex<gridColumnDefs.length;gridColumnDefIndex++)try{gridColumnDef=gridColumnDefs[gridColumnDefIndex];fieldName=gridColumnDef.fieldName;fieldName&&(displayFormat=gridColumnDef.displayFormat,displayFormat?(displayFormat[0]!="."&&displayFormat[0]!="|"&&(displayFormat=" | "+displayFormat),outputItem[gridColumnDef.displayFieldName]=scope.$eval("gridOptions.items["+inputIndex+"]."+fieldName+displayFormat)):outputItem[gridColumnDef.displayFieldName]=eval("inputItem."+fieldName))}catch(ex){n.debugMode&&this.log("Field evaluation failed for <"+fieldName+"> with error "+ex)}}formattedItems.length>input.length&&formattedItems.splice(input.length,formattedItems.length-input.length)},f.prototype.computeFilteredItems=function(t){if(t.filterByDisplayFields={},t.gridOptions.filterByFields)for(var i in t.gridOptions.filterByFields)t.filterByDisplayFields[this.getFormattedFieldName(i)]=t.gridOptions.filterByFields[i];n.debugMode&&this.log("filtering items of length "+(t.formattedItems?t.formattedItems.length:0));t.filteredItems=t.$eval("formattedItems | filter:gridOptions.filterBy | filter:filterByDisplayFields | orderBy:'$$_gridItem.'+gridOptions.orderBy:gridOptions.orderByReverse | "+n.dataPagingFilter+":gridOptions")},f.prototype.setupDisplayItemsArray=function(t){var r=this,i="[gridOptions.items,gridOptions.gridColumnDefs.length";angular.forEach(t.gridOptions.gridColumnDefs,function(n){if(n.displayFormat&&n.displayFormat[0]!="."){var t=n.displayFormat.split("|");angular.forEach(t,function(n){var t=n.split(":");t.length>1&&angular.forEach(t.slice(1),function(n){n=n.trim();n&&(i+=","+n)})})}});i+="]";n.debugMode&&this.log("re-formatting is set to watch for changes in "+i);t.$watch(i,function(){return r.computeFormattedItems(t)},!0);t.gridOptions.onDataRequired||(i="[requiresReFilteringTrigger, gridOptions.filterBy, gridOptions.filterByFields, gridOptions.orderBy, gridOptions.orderByReverse, gridOptions.currentPage, gridOptions.pageItems]",t.$watch(i,function(){r.computeFilteredItems(t)},!0))},f.prototype.linkAttrs=function(n,t){var r=function(n,i){if(typeof i!="undefined"){switch(i){case"true":i=!0;break;case"false":i=!1}t[n]=i}};for(var i in t)r(i,n[i]),function(t){n.$observe(t,function(n){return r(t,n)})}(i)},f.prototype.linkScope=function(t,i,r,u){var c=this,e=t[r],f,s,h,o;for(f in e)if(s=typeof u[f]!="undefined"&&u[f]!=null,s){h=!1;typeof i[f]!="undefined"&&i[f]!=null&&(e[f]=i[f],h=e[f]instanceof Array);o=null;try{o=this.$parse(u[f])}catch(l){}(function(u,f){f&&f.constant||i.$watch(u,function(n){e[u]=n});var o=f&&f.assign?f.assign:null;o&&t.$watch(r+"."+u,function(t){try{i[u]=t}catch(r){if(n.debugMode){c.log("Mirroring the property on the external scope failed with "+r);throw r;}}})})(f,o)}},f.prototype.log=function(n){console.log(t+"("+(new Date).getTime()+"): "+n)},f}();angular.module("trNgGrid",[]).directive(t,[function(){return{restrict:"A",scope:{items:"=",selectedItems:"=?",filterBy:"=?",filterByFields:"=?",orderBy:"=?",orderByReverse:"=?",pageItems:"=?",currentPage:"=?",totalItems:"=?",enableFiltering:"=?",enableSorting:"=?",enableSelections:"=?",enableMultiRowSelections:"=?",selectionMode:"@",locale:"@",onDataRequired:"&",onDataRequiredDelay:"=?",fields:"=?"},template:function(t){t.addClass(n.tableCssClass);angular.forEach(t.children(),function(n){n=angular.element(n);n.attr("ng-non-bindable","")})},controller:["$compile","$parse","$timeout","$templateCache",et],compile:function(){return{pre:function(n,t,i,r){r.discoverTemplates(t)},post:function(n,t,i,r){var u=r.setupScope(n,t,i);u.speedUpAsyncDataRetrieval=function(n){return r.speedUpAsyncDataRetrieval(n)};r.configureTableStructure(u,t);r.setupDisplayItemsArray(u)}}}}}]).directive(y,[function(){var i=function(n){if(n.columnOptions.displayName)n.columnTitle=n.columnOptions.displayName;else if(n.columnOptions.fieldName){var t=n.columnOptions.fieldName.match(/^[^\.\[\]]*/);t=t[0].split(/(?=[A-Z])/);t.length&&t[0].length&&(t[0]=t[0][0].toLocaleUpperCase()+t[0].substr(1));n.columnTitle=t.join(" ")}else n.columnTitle="[Invalid Field Name]"};return{restrict:"A",require:"^"+t,scope:!0,compile:function(t,r){var u=r.isCustomized=="true";return h(t,r,u,it),{pre:function(t,r,f,e){var s=parseInt(f[y]),o=angular.extend(t.gridOptions.gridColumnDefs[s],n.defaultColumnOptions);e.linkAttrs(f,o);t.columnOptions=o;t.isCustomized=u;t.toggleSorting=function(n){e.toggleSorting(n)};i(t);t.$watch("columnOptions.filter",function(n,t){n!==t&&e.setFilter(o.fieldName,n)})}}}}}]).directive(p,[function(){return{restrict:"A",templateUrl:n.cellHeaderTemplateId,transclude:!0,replace:!0}}]).directive("trNgGridBody",[function(){return{restrict:"A",require:"^"+t,scope:!0,compile:function(){return{pre:function(n,t,i,r){n.toggleItemSelection=function(t,i){r.toggleItemSelection(n.filteredItems,t,i)}}}}}}]).directive(w,[function(){return{restrict:"A",require:"^"+t,scope:!0,compile:function(n,t){var i=t.isCustomized=="true";return h(n,t,i,ut),{pre:function(n,t,r){n.columnOptions=n.gridOptions.gridColumnDefs[parseInt(r[w])];n.gridItem=n.gridDisplayItem.$$_gridItem;n.isCustomized=i}}}}}]).directive(b,[function(){return{restrict:"A",templateUrl:n.cellBodyTemplateId,transclude:!0,replace:!0}}]).directive("trNgGridFooterCell",[function(){return{restrict:"A",require:"^"+t,scope:!0,compile:function(n,t){var i=t.isCustomized=="true";return h(n,t,i,nt),{pre:function(n,t){n.isCustomized=i;t.attr("colspan",n.gridOptions.gridColumnDefs.length)}}}}}]).directive(v,[function(){return{restrict:"A",templateUrl:n.cellFooterTemplateId,transclude:!0,replace:!0}}]).directive(o,[function(){return{restrict:"A",replace:!0,templateUrl:n.columnSortTemplateId}}]).directive(s,[function(){return{restrict:"A",replace:!0,templateUrl:n.columnFilterTemplateId}}]).directive(f,[function(){return{restrict:"A",scope:!1,templateUrl:n.footerGlobalFilterTemplateId}}]).directive(e,[function(){var i=function(t){var f,i;if(t.totalItemsCount=typeof t.gridOptions.totalItems!="undefined"&&t.gridOptions.totalItems!=null?t.gridOptions.totalItems:t.gridOptions.items?t.gridOptions.items.length:0,t.isPaged=!!t.gridOptions.pageItems&&t.gridOptions.pageItems<t.totalItemsCount,t.extendedControlsActive=!1,t.startItemIndex=t.isPaged?t.gridOptions.pageItems*t.gridOptions.currentPage:0,t.endItemIndex=t.isPaged?t.startItemIndex+t.gridOptions.pageItems-1:t.totalItemsCount-1,t.endItemIndex>=t.totalItemsCount&&(t.endItemIndex=t.totalItemsCount-1),t.endItemIndex<t.startItemIndex&&(t.endItemIndex=t.startItemIndex),t.lastPageIndex=!t.totalItemsCount||!t.isPaged?0:Math.floor(t.totalItemsCount/t.gridOptions.pageItems)+(t.totalItemsCount%t.gridOptions.pageItems?0:-1),t.pageCanGoBack=t.isPaged&&t.gridOptions.currentPage>0,t.pageCanGoForward=t.isPaged&&t.gridOptions.currentPage<t.lastPageIndex,t.pageIndexes=t.pageIndexes||[],t.pageIndexes.splice(0),t.isPaged)if(t.lastPageIndex+1>n.defaultPagerMinifiedPageCountThreshold){t.extendedControlsActive=!0;var e=Math.floor(n.defaultPagerMinifiedPageCountThreshold/2),r=t.gridOptions.currentPage-e,u=t.gridOptions.currentPage+e;for(r<0?(u+=-r,r=0):u>t.lastPageIndex&&(r-=u-t.lastPageIndex,u=t.lastPageIndex),r>0&&(t.pageIndexes.push(null),r++),f=!1,u<t.lastPageIndex&&(f=!0,u--),i=r;i<=u;i++)t.pageIndexes.push(i);f&&t.pageIndexes.push(null)}else for(t.extendedControlsActive=!1,i=0;i<=t.lastPageIndex;i++)t.pageIndexes.push(i);t.pageSelectionActive=t.pageIndexes.length>1;t.navigateToPage=function(n){t.gridOptions.currentPage=n;t.speedUpAsyncDataRetrieval()};t.switchPageSelection=function(n,i){t.pageSelectionActive=i;n&&(n.preventDefault(),n.stopPropagation())}};return{restrict:"A",scope:!0,require:"^"+t,templateUrl:n.footerPagerTemplateId,replace:!0,compile:function(){return{pre:function(n,t,r,u){i(n,u)},post:function(n,t,r,u){n.$watchCollection("[gridOptions.currentPage, gridOptions.items.length, gridOptions.totalItems, gridOptions.pageItems]",function(){i(n,u)})}}}}}]).filter(n.dataPagingFilter,function(){return function(n,t){var i,r;return(n&&(t.totalItems=n.length),!t.pageItems||!n||n.length==0)?n:(t.currentPage||(t.currentPage=0),i=t.currentPage*t.pageItems,i>=n.length&&(t.currentPage=0,i=0),r=t.currentPage*t.pageItems+t.pageItems,n.slice(i,r))}}).filter(n.translateFilter,["$filter",function(t){return function(i,r){var u,f,o,e,c,s,h;if(i instanceof Date)return(f=t(n.translateFilter)(n.translationDateFormat,r),f&&f!==n.translationDateFormat)?t("date")(i,f):i;if(!u)for(o=r.split(/[-_]/),e=o.length;e>0&&!u;e--)c=o.slice(0,e).join("-"),s=n.translations[c],s&&(u=s[i]);if(!u)try{h=t("translate");h&&(u=h(i))}catch(l){}return u||(u=i),u}}]).run(function(){n.tableCssClass="tr-ng-grid table table-bordered table-hover";n.cellCssClass="tr-ng-cell";n.headerCellCssClass="tr-ng-column-header "+n.cellCssClass;n.bodyCellCssClass=n.cellCssClass;n.columnTitleCssClass="tr-ng-title";n.columnSortCssClass="tr-ng-sort";n.columnFilterCssClass="tr-ng-column-filter";n.columnFilterInputWrapperCssClass="";n.columnSortActiveCssClass="tr-ng-sort-active text-info";n.columnSortInactiveCssClass="tr-ng-sort-inactive text-muted glyphicon glyphicon-chevron-down";n.columnSortReverseOrderCssClass="tr-ng-sort-order-reverse glyphicon glyphicon-chevron-down";n.columnSortNormalOrderCssClass="tr-ng-sort-order-normal glyphicon glyphicon-chevron-up";n.rowSelectedCssClass="active";n.footerCssClass="tr-ng-grid-footer form-inline"}).run(function(){n.defaultColumnOptions.displayAlign="left";n.defaultPagerMinifiedPageCountThreshold=3})})(TrNgGrid||(TrNgGrid={}));
 /*!
  * jQuery JavaScript Library v2.1.1
@@ -34263,7 +34261,7 @@ return jQuery;
 }).call(this);
 
 /**
- * @license AngularJS v1.3.4
+ * @license AngularJS v1.3.6
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -34892,7 +34890,7 @@ angular.module('ngSanitize', []).provider('$sanitize', $SanitizeProvider);
  */
 angular.module('ngSanitize').filter('linky', ['$sanitize', function($sanitize) {
   var LINKY_URL_REGEXP =
-        /((ftp|https?):\/\/|(mailto:)?[A-Za-z0-9._%+-]+@)\S*[^\s.;,(){}<>"]/,
+        /((ftp|https?):\/\/|(www\.)|(mailto:)?[A-Za-z0-9._%+-]+@)\S*[^\s.;,(){}<>"”’]/,
       MAILTO_REGEXP = /^mailto:/;
 
   return function(text, target) {
@@ -34905,8 +34903,10 @@ angular.module('ngSanitize').filter('linky', ['$sanitize', function($sanitize) {
     while ((match = raw.match(LINKY_URL_REGEXP))) {
       // We can not end in these as they are sometimes found at the end of the sentence
       url = match[0];
-      // if we did not match ftp/http/mailto then assume mailto
-      if (match[2] == match[3]) url = 'mailto:' + url;
+      // if we did not match ftp/http/www/mailto then assume mailto
+      if (!match[2] && !match[4]) {
+        url = (match[3] ? 'http://' : 'mailto:') + url;
+      }
       i = match.index;
       addText(raw.substr(0, i));
       addLink(url, match[0].replace(MAILTO_REGEXP, ''));
@@ -34930,7 +34930,7 @@ angular.module('ngSanitize').filter('linky', ['$sanitize', function($sanitize) {
                   '" ');
       }
       html.push('href="',
-                url.replace('"', '&quot;'),
+                url.replace(/"/g, '&quot;'),
                 '">');
       addText(text);
       html.push('</a>');
@@ -36998,7 +36998,7 @@ angular.module('ui.utils',  [
 ]);
 
 /**
- * @license AngularJS v1.3.4
+ * @license AngularJS v1.3.6
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -50262,14 +50262,14 @@ angular.module('ngAnimate', ['ng'])
 /**
 * @author Jason Dobry <jason.dobry@gmail.com>
 * @file angular-cache.min.js
-* @version 3.2.2 - Homepage <https://github.com/jmdobry/angular-cache>
+* @version 3.2.3 - Homepage <https://github.com/jmdobry/angular-cache>
 * @copyright (c) 2013-2014 Jason Dobry <http://www.pseudobry.com>
 * @license MIT <https://github.com/jmdobry/angular-cache/blob/master/LICENSE>
 *
 * @overview angular-cache is a very useful replacement for Angular's $cacheFactory.
 */
 
-!function a(b,c,d){function e(g,h){if(!c[g]){if(!b[g]){var i="function"==typeof require&&require;if(!h&&i)return i(g,!0);if(f)return f(g,!0);var j=new Error("Cannot find module '"+g+"'");throw j.code="MODULE_NOT_FOUND",j}var k=c[g]={exports:{}};b[g][0].call(k.exports,function(a){var c=b[g][1][a];return e(c?c:a)},k,k.exports,a,b,c,d)}return c[g].exports}for(var f="function"==typeof require&&require,g=0;g<d.length;g++)e(d[g]);return e}({1:[function(a,b){function c(a,b,c){for(var d=a[c],e=b(d);c>0;){var f=Math.floor((c+1)/2)-1,g=a[f];if(e>=b(g))break;a[f]=d,a[c]=g,c=f}}function d(a,b,c){for(var d=a.length,e=a[c],f=b(e);;){var g=2*(c+1),h=g-1,i=null;if(d>h){var j=a[h],k=b(j);f>k&&(i=h)}if(d>g){var l=a[g],m=b(l);m<(null===i?f:b(a[h]))&&(i=g)}if(null===i)break;a[c]=a[i],a[i]=e,c=i}}function e(a){if(a&&!angular.isFunction(a))throw new Error("DSBinaryHeap(weightFunc): weightFunc: must be a function!");a=a||function(a){return a},this.weightFunc=a,this.heap=[]}function f(){this.$get=function(){return e}}e.prototype.push=function(a){this.heap.push(a),c(this.heap,this.weightFunc,this.heap.length-1)},e.prototype.peek=function(){return this.heap[0]},e.prototype.pop=function(){var a=this.heap[0],b=this.heap.pop();return this.heap.length>0&&(this.heap[0]=b,d(this.heap,this.weightFunc,0)),a},e.prototype.remove=function(a){for(var b=this.heap.length,e=0;b>e;e++)if(angular.equals(this.heap[e],a)){var f=this.heap[e],g=this.heap.pop();return e!==b-1&&(this.heap[e]=g,c(this.heap,this.weightFunc,e),d(this.heap,this.weightFunc,e)),f}return null},e.prototype.removeAll=function(){this.heap=[]},e.prototype.size=function(){return this.heap.length},b.exports={DSBinaryHeapProvider:f,DSBinaryHeap:e}},{}],2:[function(a,b){b.exports=function(){var a=this;clearInterval(a.$$cacheFlushIntervalId),clearInterval(a.$$recycleFreqId),a.removeAll(),a.$$storage&&(a.$$storage.removeItem(a.$$prefix+".keys"),a.$$storage.removeItem(a.$$prefix)),a.$$storage=null,a.$$data=null,a.$$lruHeap=null,a.$$expiresHeap=null,a.$$prefix=null}},{}],3:[function(a,b){var c=a("../utils");b.exports=function(a,b){var d=this;if(angular.isArray(a)){var e=a,f=[];return angular.forEach(e,function(a){var c=d.get(a,b);null!==c&&void 0!==c&&f.push(c)}),f}if(a=c.stringifyNumber(a),!d.$$disabled){if(b=b||{},!angular.isString(a))throw angular.$$minErr("ng")("areq","Expected key to be a string! Found: {0}.",typeof a);if(b&&!angular.isObject(b))throw angular.$$minErr("ng")("areq","Expected options to be an object! Found: {0}.",typeof b);if(b.onExpire&&!angular.isFunction(b.onExpire))throw angular.$$minErr("ng")("areq","Expected options.onExpire to be a function! Found: {0}.",typeof b.onExpire);var g;if(d.$$storage){if(d.$$promises[a])return d.$$promises[a];var h=d.$$storage.getItem(d.$$prefix+".data."+a);if(!h)return;g=angular.fromJson(h)}else{if(!(a in d.$$data))return;g=d.$$data[a]}var i=g.value,j=(new Date).getTime();return d.$$storage?(d.$$lruHeap.remove({key:a,accessed:g.accessed}),g.accessed=j,d.$$lruHeap.push({key:a,accessed:j})):(d.$$lruHeap.remove(g),g.accessed=j,d.$$lruHeap.push(g)),"passive"===d.$$deleteOnExpire&&"expires"in g&&g.expires<j?(d.remove(a),d.$$onExpire?d.$$onExpire(a,g.value,b.onExpire):b.onExpire&&b.onExpire(a,g.value),i=void 0):d.$$storage&&d.$$storage.setItem(d.$$prefix+".data."+a,JSON.stringify(g)),i}}},{"../utils":21}],4:[function(a,b){function c(a,b){var c=this;if(!angular.isString(a))throw angular.$$minErr("ng")("areq","Expected storageMode to be a string! Found: {0}.",typeof a);if("memory"!==a&&"localStorage"!==a&&"sessionStorage"!==a)throw angular.$$minErr("ng")("areq",'Expected storageMode to be "memory", "localStorage" or "sessionStorage"! Found: {0}.',a);if(c.$$storageMode=a,b){if(!angular.isObject(b))throw angular.$$minErr("ng")("areq","Expected storageImpl to be an object! Found: {0}.",typeof b);if(!("setItem"in b&&"function"==typeof b.setItem))throw angular.$$minErr("ng")("areq",'Expected storageImpl to implement "setItem(key, value)"! Found: {0}.',typeof b.setItem);if(!("getItem"in b&&"function"==typeof b.getItem))throw angular.$$minErr("ng")("areq",'Expected storageImpl to implement "getItem(key)"! Found: {0}.',typeof b.getItem);if(!("removeItem"in b)||"function"!=typeof b.removeItem)throw angular.$$minErr("ng")("areq",'Expected storageImpl to implement "removeItem(key)"! Found: {0}.',typeof b.removeItem);c.$$storage=b}else if("localStorage"===c.$$storageMode)try{localStorage.setItem("angular-cache","angular-cache"),localStorage.removeItem("angular-cache"),c.$$storage=localStorage}catch(d){delete c.$$storage,c.$$storageMode="memory"}else if("sessionStorage"===c.$$storageMode)try{sessionStorage.setItem("angular-cache","angular-cache"),sessionStorage.removeItem("angular-cache"),c.$$storage=sessionStorage}catch(d){delete c.$$storage,c.$$storageMode="memory"}}function d(a,b){var c=this;if(a=a||{},b=!!b,!angular.isObject(a))throw angular.$$minErr("ng")("areq","Expected cacheOptions to be an object! Found: {0}.",typeof a);"disabled"in a?c.$$disabled=!!a.disabled:b&&delete c.$$disabled,"storeOnResolve"in a?c.$$storeOnResolve=!!a.storeOnResolve:b&&(c.$$storeOnResolve=!1),"storeOnReject"in a?c.$$storeOnReject=!!a.storeOnReject:b&&(c.$$storeOnReject=!1),"capacity"in a?c.setCapacity(a.capacity):b&&c.setCapacity(null),"deleteOnExpire"in a?c.setDeleteOnExpire(a.deleteOnExpire):b&&c.setDeleteOnExpire(null),"maxAge"in a?c.setMaxAge(a.maxAge):b&&c.setMaxAge(null),"recycleFreq"in a?c.setRecycleFreq(a.recycleFreq):b&&c.setRecycleFreq(null),"cacheFlushInterval"in a?c.setCacheFlushInterval(a.cacheFlushInterval):b&&c.setCacheFlushInterval(null),"onExpire"in a?c.setOnExpire(a.onExpire):b&&c.setOnExpire(null)}function e(a,b){var e=this;e.$$data={},e.$$promises={},e.$$id=a,e.$$storage=null,e.$$expiresHeap=new g(function(a){return a.expires}),e.$$lruHeap=new g(function(a){return a.accessed}),b=b||{},"storageMode"in b&&c.apply(e,[b.storageMode,b.storageImpl]),"storagePrefix"in b&&(e.$$storagePrefix=b.storagePrefix),e.$$prefix=e.$$storagePrefix+a,d.apply(e,[b,!0])}var f=a("../defaults"),g=a("../DSBinaryHeap").DSBinaryHeap;for(var h in f.defaults)e.prototype["$$"+h]=f.defaults[h];e.prototype.setOptions=d,e.prototype.setCapacity=a("./setCapacity"),e.prototype.setDeleteOnExpire=a("./setDeleteOnExpire"),e.prototype.setMaxAge=a("./setMaxAge"),e.prototype.setRecycleFreq=a("./setRecycleFreq"),e.prototype.setCacheFlushInterval=a("./setCacheFlushInterval"),e.prototype.setOnExpire=a("./setOnExpire"),e.prototype.put=a("./put"),e.prototype.get=a("./get"),e.prototype.remove=a("./remove"),e.prototype.removeAll=a("./removeAll"),e.prototype.removeExpired=a("./removeExpired"),e.prototype.destroy=a("./destroy"),e.prototype.info=a("./info"),e.prototype.keySet=a("./keySet"),e.prototype.keys=a("./keys"),e.prototype.disable=function(){this.$$disabled=!0},e.prototype.enable=function(){delete this.$$disabled},e.prototype.touch=function(a){var b=this;if(a){var c=b.get(a,{onExpire:function(a,c){b.put(a,c)}});c&&b.put(a,c)}else for(var d=b.keys(),e=0;e<d.length;e++)b.touch(d[e])},b.exports=e},{"../DSBinaryHeap":1,"../defaults":19,"./destroy":2,"./get":3,"./info":5,"./keySet":6,"./keys":7,"./put":8,"./remove":9,"./removeAll":10,"./removeExpired":11,"./setCacheFlushInterval":12,"./setCapacity":13,"./setDeleteOnExpire":14,"./setMaxAge":15,"./setOnExpire":16,"./setRecycleFreq":17}],5:[function(a,b){b.exports=function(a){var b=this;if(a){var c;if(b.$$storage){var d=b.$$storage.getItem(b.$$prefix+".data."+a);return d?(c=angular.fromJson(d),{created:c.created,accessed:c.accessed,expires:c.expires,isExpired:(new Date).getTime()-c.created>b.$$maxAge}):void 0}return a in b.$$data?(c=b.$$data[a],{created:c.created,accessed:c.accessed,expires:c.expires,isExpired:(new Date).getTime()-c.created>b.$$maxAge}):void 0}return{id:b.$$id,capacity:b.$$capacity,maxAge:b.$$maxAge,deleteOnExpire:b.$$deleteOnExpire,onExpire:b.$$onExpire,cacheFlushInterval:b.$$cacheFlushInterval,recycleFreq:b.$$recycleFreq,storageMode:b.$$storageMode,storageImpl:b.$$storage,disabled:b.$$disabled,size:b.$$lruHeap&&b.$$lruHeap.size()||0}}},{}],6:[function(a,b){var c=a("../utils");b.exports=function(){var a=this;if(a.$$storage){var b=a.$$storage.getItem(a.$$prefix+".keys"),d={};if(b)for(var e=angular.fromJson(b),f=0;f<e.length;f++)d[e[f]]=e[f];return d}return c.keySet(a.$$data)}},{"../utils":21}],7:[function(a,b){var c=a("../utils");b.exports=function(){var a=this;if(a.$$storage){var b=a.$$storage.getItem(a.$$prefix+".keys");return b?angular.fromJson(b):[]}return c.keys(a.$$data)}},{"../utils":21}],8:[function(a,b){function c(a){return a&&"function"==typeof a.then}var d=a("../utils");b.exports=function(a,b,e){function f(b,c){return function(d){return b&&(delete g.$$promises[a],angular.isObject(d)&&"status"in d&&"data"in d?(d=[d.status,d.data,d.headers(),d.statusText],g.put(a,d)):g.put(a,d)),c?g.$q.reject(d):d}}e=e||{};var g=this,h="storeOnResolve"in e?!!e.storeOnResolve:g.$$storeOnResolve,i="storeOnReject"in e?!!e.storeOnReject:g.$$storeOnReject;if(!g.$$disabled&&null!==b&&void 0!==b){if(a=d.stringifyNumber(a),!angular.isString(a))throw angular.$$minErr("ng")("areq","Expected key to be a string! Found: {0}.",typeof a);var j=(new Date).getTime(),k={key:a,value:c(b)?b.then(f(h,!1),f(i,!0)):b,created:j,accessed:j};if(k.expires=k.created+g.$$maxAge,g.$$storage){if(c(k.value))return g.$$promises[a]=k.value,g.$$promises[a];var l=g.$$storage.getItem(g.$$prefix+".keys"),m=l?angular.fromJson(l):[],n=g.$$storage.getItem(g.$$prefix+".data."+a);n&&g.remove(a),g.$$expiresHeap.push({key:a,expires:k.expires}),g.$$lruHeap.push({key:a,accessed:k.accessed}),g.$$storage.setItem(g.$$prefix+".data."+a,JSON.stringify(k));for(var o=!1,p=0;p<m.length;p++)if(m[p]===a){o=!0;break}o||m.push(a),g.$$storage.setItem(g.$$prefix+".keys",JSON.stringify(m))}else g.$$data[a]&&g.remove(a),g.$$expiresHeap.push(k),g.$$lruHeap.push(k),g.$$data[a]=k,delete g.$$promises[a];return g.$$lruHeap.size()>g.$$capacity&&g.remove(g.$$lruHeap.peek().key),b}}},{"../utils":21}],9:[function(a,b){b.exports=function(a){var b=this;if(delete b.$$promises[a],!b.$$storage){var c=b.$$data[a]?b.$$data[a].value:void 0;return b.$$lruHeap.remove(b.$$data[a]),b.$$expiresHeap.remove(b.$$data[a]),b.$$data[a]=null,delete b.$$data[a],c}var d=b.$$storage.getItem(b.$$prefix+".data."+a);if(d){var e=angular.fromJson(d);b.$$lruHeap.remove({key:a,accessed:e.accessed}),b.$$expiresHeap.remove({key:a,expires:e.expires}),b.$$storage.removeItem(b.$$prefix+".data."+a);var f=b.$$storage.getItem(b.$$prefix+".keys"),g=f?angular.fromJson(f):[],h=g.indexOf(a);return h>=0&&g.splice(h,1),b.$$storage.setItem(b.$$prefix+".keys",JSON.stringify(g)),e.value}}},{}],10:[function(a,b){b.exports=function(){var a=this;if(a.$$storage){a.$$lruHeap.removeAll(),a.$$expiresHeap.removeAll();var b=a.$$storage.getItem(a.$$prefix+".keys");if(b)for(var c=angular.fromJson(b),d=0;d<c.length;d++)a.remove(c[d]);a.$$storage.setItem(a.$$prefix+".keys",JSON.stringify([]))}else{a.$$lruHeap.removeAll(),a.$$expiresHeap.removeAll();for(var e in a.$$data)a.$$data[e]=null;a.$$data={}}}},{}],11:[function(a,b){b.exports=function(){for(var a,b,c=this,d=(new Date).getTime(),e={};(b=c.$$expiresHeap.peek())&&b.expires<d;)e[b.key]=b.value?b.value:null,c.$$expiresHeap.pop();if(c.$$storage)for(a in e){var f=c.$$storage.getItem(c.$$prefix+".data."+a);f&&(e[a]=angular.fromJson(f).value,c.remove(a))}else for(a in e)c.remove(a);if(c.$$onExpire)for(a in e)c.$$onExpire(a,e[a]);return e}},{}],12:[function(a,b){b.exports=function(a){var b=this;if(null===a)delete b.$$cacheFlushInterval;else{if(!angular.isNumber(a))throw angular.$$minErr("ng")("areq","Expected cacheFlushInterval to be a number! Found: {0}.",typeof a);if(0>a)throw angular.$$minErr("ng")("areq","Expected cacheFlushInterval to be greater than zero! Found: {0}.",a);a!==b.$$cacheFlushInterval&&(b.$$cacheFlushInterval=a,clearInterval(b.$$cacheFlushIntervalId),function(a){a.$$cacheFlushIntervalId=setInterval(function(){a.removeAll()},a.$$cacheFlushInterval)}(b))}}},{}],13:[function(a,b){b.exports=function(a){var b=this;if(null===a)delete b.$$capacity;else{if(!angular.isNumber(a))throw angular.$$minErr("ng")("areq","Expected capacity to be a number! Found: {0}.",typeof a);if(0>a)throw angular.$$minErr("ng")("areq","Expected capacity to be greater than zero! Found: {0}.",a);b.$$capacity=a}for(var c={};b.$$lruHeap.size()>b.$$capacity;)c[b.$$lruHeap.peek().key]=b.remove(b.$$lruHeap.peek().key);return c}},{}],14:[function(a,b){b.exports=function(a){var b=this;if(null===a)delete b.$$deleteOnExpire;else{if(!angular.isString(a))throw angular.$$minErr("ng")("areq","Expected deleteOnExpire to be a string! Found: {0}.",typeof a);if("none"!==a&&"passive"!==a&&"aggressive"!==a)throw angular.$$minErr("ng")("areq",'Expected deleteOnExpire to be "none", "passive" or "aggressive"! Found: {0}.',a);b.$$deleteOnExpire=a}b.setRecycleFreq(b.$$recycleFreq)}},{}],15:[function(a,b){var c=a("../utils");b.exports=function(a){var b=this;if(null===a)delete b.$$maxAge;else{if(!angular.isNumber(a))throw angular.$$minErr("ng")("areq","Expected maxAge to be a number! Found: {0}.",typeof a);if(0>a)throw angular.$$minErr("ng")("areq","Expected maxAge to be greater than zero! Found: {0}.",a);b.$$maxAge=a}var d,e,f;if(b.$$expiresHeap.removeAll(),b.$$storage){var g=b.$$storage.getItem(b.$$prefix+".keys");for(e=g?angular.fromJson(g):[],d=0;d<e.length;d++){f=e[d];var h=b.$$storage.getItem(b.$$prefix+".data."+f);if(h){var i=angular.fromJson(h);i.expires=b.$$maxAge===Number.MAX_VALUE?Number.MAX_VALUE:i.created+b.$$maxAge,b.$$expiresHeap.push({key:f,expires:i.expires})}}}else for(e=c.keys(b.$$data),d=0;d<e.length;d++)f=e[d],b.$$data[f].expires=b.$$maxAge===Number.MAX_VALUE?Number.MAX_VALUE:b.$$data[f].created+b.$$maxAge,b.$$expiresHeap.push(b.$$data[f]);return"aggressive"===b.$$deleteOnExpire?b.removeExpired():{}}},{"../utils":21}],16:[function(a,b){b.exports=function(a){if(null===a)delete this.$$onExpire;else{if(!angular.isFunction(a))throw angular.$$minErr("ng")("areq","Expected onExpire to be a function! Found: {0}.",typeof a);this.$$onExpire=a}}},{}],17:[function(a,b){b.exports=function(a){var b=this;if(null===a)delete b.$$recycleFreq;else{if(!angular.isNumber(a))throw angular.$$minErr("ng")("areq","Expected recycleFreq to be a number! Found: {0}.",typeof a);if(0>a)throw angular.$$minErr("ng")("areq","Expected recycleFreq to be greater than zero! Found: {0}.",a);b.$$recycleFreq=a}clearInterval(b.$$recycleFreqId),"aggressive"===b.$$deleteOnExpire?!function(a){a.$$recycleFreqId=setInterval(function(){a.removeExpired()},a.$$recycleFreq)}(b):delete b.$$recycleFreqId}},{}],18:[function(a,b){function c(){var a=this,b=new d.Config;a.version=f,a.setCacheDefaults=function(a){if(a=a||{},!angular.isObject(a))throw angular.$$minErr("ng")("areq","Expected options to be an object! Found: {0}.",typeof a);for(var c in d.defaults)c in a&&(b[c]=a[c]);"disabled"in a&&(b.$$disabled=!!a.disabled)},a.$get=["$q",function(a){function c(a){var b,c=[];for(b in a)a.hasOwnProperty(b)&&c.push(b);return c}function g(c,d){if(c in i)throw angular.$$minErr("$cacheFactory")("iid","CacheId '{0}' is already taken!",c);if(!angular.isString(c))throw angular.$$minErr("ng")("areq","Expected cacheId to be a string! Found: {0}.",typeof c);return i[c]=new e(c,angular.extend({},b,d)),i[c].destroy=function(){this.constructor.prototype.destroy.call(this),delete i[this.$$id]},i[c].$q=a,i[c]}function h(a,b){return g(a,b)}var i={};return h.createCache=g,h.version=f,h.info=function(){for(var a=c(i),e={size:a.length,caches:{}},f=0;f<a.length;f++){var g=a[f];e.caches[g]=i[g].info()}var h=e.cacheDefaults=angular.extend({},b);for(var j in d.defaults)j in h||(h[j]=b["$$"+j]);return e},h.get=function(a){if(!angular.isString(a))throw angular.$$minErr("ng")("areq","Expected cacheId to be a string! Found: {0}.",typeof a);return i[a]},h.keySet=function(){var a,b={};for(a in i)i.hasOwnProperty(a)&&(b[a]=a);return b},h.keys=function(){return c(i)},h.destroyAll=function(){for(var a in i)i[a].destroy();i={}},h.clearAll=function(){for(var a in i)i[a].removeAll()},h.enableAll=function(){for(var a in i)i[a].$$disabled=!1},h.disableAll=function(){for(var a in i)i[a].$$disabled=!0},h}]}var d=a("../defaults"),e=a("../DSCache"),f="3.2.2";b.exports=c},{"../DSCache":4,"../defaults":19}],19:[function(a,b){function c(){}var d={capacity:Number.MAX_VALUE,maxAge:Number.MAX_VALUE,deleteOnExpire:"none",onExpire:null,cacheFlushInterval:null,recycleFreq:1e3,storageMode:"memory",storageImpl:null,disabled:!1,storagePrefix:"angular-cache.caches.",storeOnResolve:!1,storeOnReject:!1};for(var e in d)c.prototype["$$"+e]=d[e];b.exports={Config:c,defaults:d}},{}],20:[function(a){!function(b,c){"use strict";c.$$minErr=c.$$minErr||function(a){return function(){var b,d,e=arguments[0],f="["+(a?a+":":"")+e+"] ",g=arguments[1],h=arguments,i=function(a){return"function"==typeof a?a.toString().replace(/ \{[\s\S]*$/,""):"undefined"==typeof a?"undefined":"string"!=typeof a?JSON.stringify(a):a};for(b=f+g.replace(/\{\d+\}/g,function(a){var b,d=+a.slice(1,-1);return d+2<h.length?(b=h[d+2],"function"==typeof b?b.toString().replace(/ ?\{[\s\S]*$/,""):"undefined"==typeof b?"undefined":"string"!=typeof b?c.toJson(b):b):a}),b=b+"\nhttp://errors.angularjs.org/"+c.version.full+"/"+(a?a+"/":"")+e,d=2;d<arguments.length;d++)b=b+(2==d?"?":"&")+"p"+(d-2)+"="+encodeURIComponent(i(arguments[d]));return new Error(b)}},c.module("angular-data.DSBinaryHeap",[]).provider("DSBinaryHeap",a("./DSBinaryHeap").DSBinaryHeapProvider),c.module("angular-data.DSCacheFactory",["ng","angular-data.DSBinaryHeap"]).provider("DSCacheFactory",a("./DSCacheFactory"))}(window,window.angular)},{"./DSBinaryHeap":1,"./DSCacheFactory":18}],21:[function(a,b){b.exports={stringifyNumber:function(a){return angular.isNumber(a)?a.toString():a},keySet:function(a){var b,c={};for(b in a)a.hasOwnProperty(b)&&(c[b]=b);return c},keys:function(a){var b,c=[];for(b in a)a.hasOwnProperty(b)&&c.push(b);return c}}},{}]},{},[20]);
+!function a(b,c,d){function e(g,h){if(!c[g]){if(!b[g]){var i="function"==typeof require&&require;if(!h&&i)return i(g,!0);if(f)return f(g,!0);var j=new Error("Cannot find module '"+g+"'");throw j.code="MODULE_NOT_FOUND",j}var k=c[g]={exports:{}};b[g][0].call(k.exports,function(a){var c=b[g][1][a];return e(c?c:a)},k,k.exports,a,b,c,d)}return c[g].exports}for(var f="function"==typeof require&&require,g=0;g<d.length;g++)e(d[g]);return e}({1:[function(a,b){function c(a,b,c){for(var d=a[c],e=b(d);c>0;){var f=Math.floor((c+1)/2)-1,g=a[f];if(e>=b(g))break;a[f]=d,a[c]=g,c=f}}function d(a,b,c){for(var d=a.length,e=a[c],f=b(e);;){var g=2*(c+1),h=g-1,i=null;if(d>h){var j=a[h],k=b(j);f>k&&(i=h)}if(d>g){var l=a[g],m=b(l);m<(null===i?f:b(a[h]))&&(i=g)}if(null===i)break;a[c]=a[i],a[i]=e,c=i}}function e(a){if(a&&!angular.isFunction(a))throw new Error("DSBinaryHeap(weightFunc): weightFunc: must be a function!");a=a||function(a){return a},this.weightFunc=a,this.heap=[]}function f(){this.$get=function(){return e}}e.prototype.push=function(a){this.heap.push(a),c(this.heap,this.weightFunc,this.heap.length-1)},e.prototype.peek=function(){return this.heap[0]},e.prototype.pop=function(){var a=this.heap[0],b=this.heap.pop();return this.heap.length>0&&(this.heap[0]=b,d(this.heap,this.weightFunc,0)),a},e.prototype.remove=function(a){for(var b=this.heap.length,e=0;b>e;e++)if(angular.equals(this.heap[e],a)){var f=this.heap[e],g=this.heap.pop();return e!==b-1&&(this.heap[e]=g,c(this.heap,this.weightFunc,e),d(this.heap,this.weightFunc,e)),f}return null},e.prototype.removeAll=function(){this.heap=[]},e.prototype.size=function(){return this.heap.length},b.exports={DSBinaryHeapProvider:f,DSBinaryHeap:e}},{}],2:[function(a,b){b.exports=function(){var a=this;clearInterval(a.$$cacheFlushIntervalId),clearInterval(a.$$recycleFreqId),a.removeAll(),a.$$storage&&(a.$$storage().removeItem(a.$$prefix+".keys"),a.$$storage().removeItem(a.$$prefix)),a.$$storage=null,a.$$data=null,a.$$lruHeap=null,a.$$expiresHeap=null,a.$$prefix=null}},{}],3:[function(a,b){var c=a("../utils");b.exports=function(a,b){var d=this;if(angular.isArray(a)){var e=a,f=[];return angular.forEach(e,function(a){var c=d.get(a,b);null!==c&&void 0!==c&&f.push(c)}),f}if(a=c.stringifyNumber(a),!d.$$disabled){if(b=b||{},!angular.isString(a))throw angular.$$minErr("ng")("areq","Expected key to be a string! Found: {0}.",typeof a);if(b&&!angular.isObject(b))throw angular.$$minErr("ng")("areq","Expected options to be an object! Found: {0}.",typeof b);if(b.onExpire&&!angular.isFunction(b.onExpire))throw angular.$$minErr("ng")("areq","Expected options.onExpire to be a function! Found: {0}.",typeof b.onExpire);var g;if(d.$$storage){if(d.$$promises[a])return d.$$promises[a];var h=d.$$storage().getItem(d.$$prefix+".data."+a);if(!h)return;g=angular.fromJson(h)}else{if(!(a in d.$$data))return;g=d.$$data[a]}var i=g.value,j=(new Date).getTime();return d.$$storage?(d.$$lruHeap.remove({key:a,accessed:g.accessed}),g.accessed=j,d.$$lruHeap.push({key:a,accessed:j})):(d.$$lruHeap.remove(g),g.accessed=j,d.$$lruHeap.push(g)),"passive"===d.$$deleteOnExpire&&"expires"in g&&g.expires<j?(d.remove(a),d.$$onExpire?d.$$onExpire(a,g.value,b.onExpire):b.onExpire&&b.onExpire(a,g.value),i=void 0):d.$$storage&&d.$$storage().setItem(d.$$prefix+".data."+a,JSON.stringify(g)),i}}},{"../utils":21}],4:[function(a,b){function c(a,b){var c=this;if(!angular.isString(a))throw angular.$$minErr("ng")("areq","Expected storageMode to be a string! Found: {0}.",typeof a);if("memory"!==a&&"localStorage"!==a&&"sessionStorage"!==a)throw angular.$$minErr("ng")("areq",'Expected storageMode to be "memory", "localStorage" or "sessionStorage"! Found: {0}.',a);if(c.$$storageMode=a,b){if(!angular.isObject(b))throw angular.$$minErr("ng")("areq","Expected storageImpl to be an object! Found: {0}.",typeof b);if(!("setItem"in b&&"function"==typeof b.setItem))throw angular.$$minErr("ng")("areq",'Expected storageImpl to implement "setItem(key, value)"! Found: {0}.',typeof b.setItem);if(!("getItem"in b&&"function"==typeof b.getItem))throw angular.$$minErr("ng")("areq",'Expected storageImpl to implement "getItem(key)"! Found: {0}.',typeof b.getItem);if(!("removeItem"in b)||"function"!=typeof b.removeItem)throw angular.$$minErr("ng")("areq",'Expected storageImpl to implement "removeItem(key)"! Found: {0}.',typeof b.removeItem);c.$$storage=function(){return b}}else if("localStorage"===c.$$storageMode)try{localStorage.setItem("angular-cache","angular-cache"),localStorage.removeItem("angular-cache"),c.$$storage=function(){return localStorage}}catch(d){delete c.$$storage,c.$$storageMode="memory"}else if("sessionStorage"===c.$$storageMode)try{sessionStorage.setItem("angular-cache","angular-cache"),sessionStorage.removeItem("angular-cache"),c.$$storage=function(){return sessionStorage}}catch(d){delete c.$$storage,c.$$storageMode="memory"}}function d(a,b){var c=this;if(a=a||{},b=!!b,!angular.isObject(a))throw angular.$$minErr("ng")("areq","Expected cacheOptions to be an object! Found: {0}.",typeof a);"disabled"in a?c.$$disabled=!!a.disabled:b&&delete c.$$disabled,"storeOnResolve"in a?c.$$storeOnResolve=!!a.storeOnResolve:b&&(c.$$storeOnResolve=!1),"storeOnReject"in a?c.$$storeOnReject=!!a.storeOnReject:b&&(c.$$storeOnReject=!1),"capacity"in a?c.setCapacity(a.capacity):b&&c.setCapacity(null),"deleteOnExpire"in a?c.setDeleteOnExpire(a.deleteOnExpire):b&&c.setDeleteOnExpire(null),"maxAge"in a?c.setMaxAge(a.maxAge):b&&c.setMaxAge(null),"recycleFreq"in a?c.setRecycleFreq(a.recycleFreq):b&&c.setRecycleFreq(null),"cacheFlushInterval"in a?c.setCacheFlushInterval(a.cacheFlushInterval):b&&c.setCacheFlushInterval(null),"onExpire"in a?c.setOnExpire(a.onExpire):b&&c.setOnExpire(null)}function e(a,b){var e=this;e.$$data={},e.$$promises={},e.$$id=a,e.$$storage=null,e.$$expiresHeap=new g(function(a){return a.expires}),e.$$lruHeap=new g(function(a){return a.accessed}),b=b||{},"storageMode"in b&&c.apply(e,[b.storageMode,b.storageImpl]),"storagePrefix"in b&&(e.$$storagePrefix=b.storagePrefix),e.$$prefix=e.$$storagePrefix+a,d.apply(e,[b,!0])}var f=a("../defaults"),g=a("../DSBinaryHeap").DSBinaryHeap;for(var h in f.defaults)e.prototype["$$"+h]=f.defaults[h];e.prototype.setOptions=d,e.prototype.setCapacity=a("./setCapacity"),e.prototype.setDeleteOnExpire=a("./setDeleteOnExpire"),e.prototype.setMaxAge=a("./setMaxAge"),e.prototype.setRecycleFreq=a("./setRecycleFreq"),e.prototype.setCacheFlushInterval=a("./setCacheFlushInterval"),e.prototype.setOnExpire=a("./setOnExpire"),e.prototype.put=a("./put"),e.prototype.get=a("./get"),e.prototype.remove=a("./remove"),e.prototype.removeAll=a("./removeAll"),e.prototype.removeExpired=a("./removeExpired"),e.prototype.destroy=a("./destroy"),e.prototype.info=a("./info"),e.prototype.keySet=a("./keySet"),e.prototype.keys=a("./keys"),e.prototype.disable=function(){this.$$disabled=!0},e.prototype.enable=function(){delete this.$$disabled},e.prototype.touch=function(a){var b=this;if(a){var c=b.get(a,{onExpire:function(a,c){b.put(a,c)}});c&&b.put(a,c)}else for(var d=b.keys(),e=0;e<d.length;e++)b.touch(d[e])},b.exports=e},{"../DSBinaryHeap":1,"../defaults":19,"./destroy":2,"./get":3,"./info":5,"./keySet":6,"./keys":7,"./put":8,"./remove":9,"./removeAll":10,"./removeExpired":11,"./setCacheFlushInterval":12,"./setCapacity":13,"./setDeleteOnExpire":14,"./setMaxAge":15,"./setOnExpire":16,"./setRecycleFreq":17}],5:[function(a,b){b.exports=function(a){var b=this;if(a){var c;if(b.$$storage){var d=b.$$storage().getItem(b.$$prefix+".data."+a);return d?(c=angular.fromJson(d),{created:c.created,accessed:c.accessed,expires:c.expires,isExpired:(new Date).getTime()-c.created>b.$$maxAge}):void 0}return a in b.$$data?(c=b.$$data[a],{created:c.created,accessed:c.accessed,expires:c.expires,isExpired:(new Date).getTime()-c.created>b.$$maxAge}):void 0}return{id:b.$$id,capacity:b.$$capacity,maxAge:b.$$maxAge,deleteOnExpire:b.$$deleteOnExpire,onExpire:b.$$onExpire,cacheFlushInterval:b.$$cacheFlushInterval,recycleFreq:b.$$recycleFreq,storageMode:b.$$storageMode,storageImpl:b.$$storage?b.$$storage():void 0,disabled:b.$$disabled,size:b.$$lruHeap&&b.$$lruHeap.size()||0}}},{}],6:[function(a,b){var c=a("../utils");b.exports=function(){var a=this;if(a.$$storage){var b=a.$$storage().getItem(a.$$prefix+".keys"),d={};if(b)for(var e=angular.fromJson(b),f=0;f<e.length;f++)d[e[f]]=e[f];return d}return c.keySet(a.$$data)}},{"../utils":21}],7:[function(a,b){var c=a("../utils");b.exports=function(){var a=this;if(a.$$storage){var b=a.$$storage().getItem(a.$$prefix+".keys");return b?angular.fromJson(b):[]}return c.keys(a.$$data)}},{"../utils":21}],8:[function(a,b){function c(a){return a&&"function"==typeof a.then}var d=a("../utils");b.exports=function(a,b,e){function f(b,c){return function(d){return b&&(delete g.$$promises[a],angular.isObject(d)&&"status"in d&&"data"in d?(d=[d.status,d.data,d.headers(),d.statusText],g.put(a,d)):g.put(a,d)),c?g.$q.reject(d):d}}e=e||{};var g=this,h="storeOnResolve"in e?!!e.storeOnResolve:g.$$storeOnResolve,i="storeOnReject"in e?!!e.storeOnReject:g.$$storeOnReject;if(!g.$$disabled&&null!==b&&void 0!==b){if(a=d.stringifyNumber(a),!angular.isString(a))throw angular.$$minErr("ng")("areq","Expected key to be a string! Found: {0}.",typeof a);var j=(new Date).getTime(),k={key:a,value:c(b)?b.then(f(h,!1),f(i,!0)):b,created:j,accessed:j};if(k.expires=k.created+g.$$maxAge,g.$$storage){if(c(k.value))return g.$$promises[a]=k.value,g.$$promises[a];var l=g.$$storage().getItem(g.$$prefix+".keys"),m=l?angular.fromJson(l):[],n=g.$$storage().getItem(g.$$prefix+".data."+a);n&&g.remove(a),g.$$expiresHeap.push({key:a,expires:k.expires}),g.$$lruHeap.push({key:a,accessed:k.accessed}),g.$$storage().setItem(g.$$prefix+".data."+a,JSON.stringify(k));for(var o=!1,p=0;p<m.length;p++)if(m[p]===a){o=!0;break}o||m.push(a),g.$$storage().setItem(g.$$prefix+".keys",JSON.stringify(m))}else g.$$data[a]&&g.remove(a),g.$$expiresHeap.push(k),g.$$lruHeap.push(k),g.$$data[a]=k,delete g.$$promises[a];return g.$$lruHeap.size()>g.$$capacity&&g.remove(g.$$lruHeap.peek().key),b}}},{"../utils":21}],9:[function(a,b){b.exports=function(a){var b=this;if(delete b.$$promises[a],!b.$$storage){var c=b.$$data[a]?b.$$data[a].value:void 0;return b.$$lruHeap.remove(b.$$data[a]),b.$$expiresHeap.remove(b.$$data[a]),b.$$data[a]=null,delete b.$$data[a],c}var d=b.$$storage().getItem(b.$$prefix+".data."+a);if(d){var e=angular.fromJson(d);b.$$lruHeap.remove({key:a,accessed:e.accessed}),b.$$expiresHeap.remove({key:a,expires:e.expires}),b.$$storage().removeItem(b.$$prefix+".data."+a);var f=b.$$storage().getItem(b.$$prefix+".keys"),g=f?angular.fromJson(f):[],h=g.indexOf(a);return h>=0&&g.splice(h,1),b.$$storage().setItem(b.$$prefix+".keys",JSON.stringify(g)),e.value}}},{}],10:[function(a,b){b.exports=function(){var a=this;if(a.$$storage){a.$$lruHeap.removeAll(),a.$$expiresHeap.removeAll();var b=a.$$storage().getItem(a.$$prefix+".keys");if(b)for(var c=angular.fromJson(b),d=0;d<c.length;d++)a.remove(c[d]);a.$$storage().setItem(a.$$prefix+".keys",JSON.stringify([]))}else{a.$$lruHeap.removeAll(),a.$$expiresHeap.removeAll();for(var e in a.$$data)a.$$data[e]=null;a.$$data={}}}},{}],11:[function(a,b){b.exports=function(){for(var a,b,c=this,d=(new Date).getTime(),e={};(b=c.$$expiresHeap.peek())&&b.expires<d;)e[b.key]=b.value?b.value:null,c.$$expiresHeap.pop();if(c.$$storage)for(a in e){var f=c.$$storage().getItem(c.$$prefix+".data."+a);f&&(e[a]=angular.fromJson(f).value,c.remove(a))}else for(a in e)c.remove(a);if(c.$$onExpire)for(a in e)c.$$onExpire(a,e[a]);return e}},{}],12:[function(a,b){b.exports=function(a){var b=this;if(null===a)delete b.$$cacheFlushInterval;else{if(!angular.isNumber(a))throw angular.$$minErr("ng")("areq","Expected cacheFlushInterval to be a number! Found: {0}.",typeof a);if(0>a)throw angular.$$minErr("ng")("areq","Expected cacheFlushInterval to be greater than zero! Found: {0}.",a);a!==b.$$cacheFlushInterval&&(b.$$cacheFlushInterval=a,clearInterval(b.$$cacheFlushIntervalId),function(a){a.$$cacheFlushIntervalId=setInterval(function(){a.removeAll()},a.$$cacheFlushInterval)}(b))}}},{}],13:[function(a,b){b.exports=function(a){var b=this;if(null===a)delete b.$$capacity;else{if(!angular.isNumber(a))throw angular.$$minErr("ng")("areq","Expected capacity to be a number! Found: {0}.",typeof a);if(0>a)throw angular.$$minErr("ng")("areq","Expected capacity to be greater than zero! Found: {0}.",a);b.$$capacity=a}for(var c={};b.$$lruHeap.size()>b.$$capacity;)c[b.$$lruHeap.peek().key]=b.remove(b.$$lruHeap.peek().key);return c}},{}],14:[function(a,b){b.exports=function(a){var b=this;if(null===a)delete b.$$deleteOnExpire;else{if(!angular.isString(a))throw angular.$$minErr("ng")("areq","Expected deleteOnExpire to be a string! Found: {0}.",typeof a);if("none"!==a&&"passive"!==a&&"aggressive"!==a)throw angular.$$minErr("ng")("areq",'Expected deleteOnExpire to be "none", "passive" or "aggressive"! Found: {0}.',a);b.$$deleteOnExpire=a}b.setRecycleFreq(b.$$recycleFreq)}},{}],15:[function(a,b){var c=a("../utils");b.exports=function(a){var b=this;if(null===a)delete b.$$maxAge;else{if(!angular.isNumber(a))throw angular.$$minErr("ng")("areq","Expected maxAge to be a number! Found: {0}.",typeof a);if(0>a)throw angular.$$minErr("ng")("areq","Expected maxAge to be greater than zero! Found: {0}.",a);b.$$maxAge=a}var d,e,f;if(b.$$expiresHeap.removeAll(),b.$$storage){var g=b.$$storage().getItem(b.$$prefix+".keys");for(e=g?angular.fromJson(g):[],d=0;d<e.length;d++){f=e[d];var h=b.$$storage().getItem(b.$$prefix+".data."+f);if(h){var i=angular.fromJson(h);i.expires=b.$$maxAge===Number.MAX_VALUE?Number.MAX_VALUE:i.created+b.$$maxAge,b.$$expiresHeap.push({key:f,expires:i.expires})}}}else for(e=c.keys(b.$$data),d=0;d<e.length;d++)f=e[d],b.$$data[f].expires=b.$$maxAge===Number.MAX_VALUE?Number.MAX_VALUE:b.$$data[f].created+b.$$maxAge,b.$$expiresHeap.push(b.$$data[f]);return"aggressive"===b.$$deleteOnExpire?b.removeExpired():{}}},{"../utils":21}],16:[function(a,b){b.exports=function(a){if(null===a)delete this.$$onExpire;else{if(!angular.isFunction(a))throw angular.$$minErr("ng")("areq","Expected onExpire to be a function! Found: {0}.",typeof a);this.$$onExpire=a}}},{}],17:[function(a,b){b.exports=function(a){var b=this;if(null===a)delete b.$$recycleFreq;else{if(!angular.isNumber(a))throw angular.$$minErr("ng")("areq","Expected recycleFreq to be a number! Found: {0}.",typeof a);if(0>a)throw angular.$$minErr("ng")("areq","Expected recycleFreq to be greater than zero! Found: {0}.",a);b.$$recycleFreq=a}clearInterval(b.$$recycleFreqId),"aggressive"===b.$$deleteOnExpire?!function(a){a.$$recycleFreqId=setInterval(function(){a.removeExpired()},a.$$recycleFreq)}(b):delete b.$$recycleFreqId}},{}],18:[function(a,b){function c(){var a=this,b=new d.Config;a.version=f,a.setCacheDefaults=function(a){if(a=a||{},!angular.isObject(a))throw angular.$$minErr("ng")("areq","Expected options to be an object! Found: {0}.",typeof a);for(var c in d.defaults)c in a&&(b[c]=a[c]);"disabled"in a&&(b.$$disabled=!!a.disabled)},a.$get=["$q",function(a){function c(a){var b,c=[];for(b in a)a.hasOwnProperty(b)&&c.push(b);return c}function g(c,d){if(c in i)throw angular.$$minErr("$cacheFactory")("iid","CacheId '{0}' is already taken!",c);if(!angular.isString(c))throw angular.$$minErr("ng")("areq","Expected cacheId to be a string! Found: {0}.",typeof c);return i[c]=new e(c,angular.extend({},b,d)),i[c].destroy=function(){this.constructor.prototype.destroy.call(this),delete i[this.$$id]},i[c].$q=a,i[c]}function h(a,b){return g(a,b)}var i={};return h.createCache=g,h.version=f,h.info=function(){for(var a=c(i),e={size:a.length,caches:{}},f=0;f<a.length;f++){var g=a[f];e.caches[g]=i[g].info()}var h=e.cacheDefaults=angular.extend({},b);for(var j in d.defaults)j in h||(h[j]=b["$$"+j]);return e},h.get=function(a){if(!angular.isString(a))throw angular.$$minErr("ng")("areq","Expected cacheId to be a string! Found: {0}.",typeof a);return i[a]},h.keySet=function(){var a,b={};for(a in i)i.hasOwnProperty(a)&&(b[a]=a);return b},h.keys=function(){return c(i)},h.destroyAll=function(){for(var a in i)i[a].destroy();i={}},h.clearAll=function(){for(var a in i)i[a].removeAll()},h.enableAll=function(){for(var a in i)i[a].$$disabled=!1},h.disableAll=function(){for(var a in i)i[a].$$disabled=!0},h}]}var d=a("../defaults"),e=a("../DSCache"),f="3.2.3";b.exports=c},{"../DSCache":4,"../defaults":19}],19:[function(a,b){function c(){}var d={capacity:Number.MAX_VALUE,maxAge:Number.MAX_VALUE,deleteOnExpire:"none",onExpire:null,cacheFlushInterval:null,recycleFreq:1e3,storageMode:"memory",storageImpl:null,disabled:!1,storagePrefix:"angular-cache.caches.",storeOnResolve:!1,storeOnReject:!1};for(var e in d)c.prototype["$$"+e]=d[e];b.exports={Config:c,defaults:d}},{}],20:[function(a){!function(b,c){"use strict";c.$$minErr=c.$$minErr||function(a){return function(){var b,d,e=arguments[0],f="["+(a?a+":":"")+e+"] ",g=arguments[1],h=arguments,i=function(a){return"function"==typeof a?a.toString().replace(/ \{[\s\S]*$/,""):"undefined"==typeof a?"undefined":"string"!=typeof a?JSON.stringify(a):a};for(b=f+g.replace(/\{\d+\}/g,function(a){var b,d=+a.slice(1,-1);return d+2<h.length?(b=h[d+2],"function"==typeof b?b.toString().replace(/ ?\{[\s\S]*$/,""):"undefined"==typeof b?"undefined":"string"!=typeof b?c.toJson(b):b):a}),b=b+"\nhttp://errors.angularjs.org/"+c.version.full+"/"+(a?a+"/":"")+e,d=2;d<arguments.length;d++)b=b+(2==d?"?":"&")+"p"+(d-2)+"="+encodeURIComponent(i(arguments[d]));return new Error(b)}},c.module("angular-data.DSBinaryHeap",[]).provider("DSBinaryHeap",a("./DSBinaryHeap").DSBinaryHeapProvider),c.module("angular-data.DSCacheFactory",["ng","angular-data.DSBinaryHeap"]).provider("DSCacheFactory",a("./DSCacheFactory"))}(window,window.angular)},{"./DSBinaryHeap":1,"./DSCacheFactory":18}],21:[function(a,b){b.exports={stringifyNumber:function(a){return angular.isNumber(a)?a.toString():a},keySet:function(a){var b,c={};for(b in a)a.hasOwnProperty(b)&&(c[b]=b);return c},keys:function(a){var b,c=[];for(b in a)a.hasOwnProperty(b)&&c.push(b);return c}}},{}]},{},[20]);
 //# sourceMappingURL=angular-cache.min.map
 /*!
  * accounting.js v0.3.2
@@ -73487,7 +73487,7 @@ var tooltip = $.widget( "ui.tooltip", {
 }.call(this));
 
 /**
- * @license AngularJS v1.2.26
+ * @license AngularJS v1.2.27
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -74681,7 +74681,7 @@ function createHttpBackendMock($rootScope, $delegate, $browser) {
    *   data string and returns true if the data is as expected.
    * @param {(Object|function(Object))=} headers HTTP headers or function that receives http header
    *   object and returns true if the headers match the current definition.
-   * @returns {requestHandler} Returns an object with `respond` method that controls how a matched
+   * @returns {requestHandler} Returns an object with a `respond` method that controls how a matched
    *   request is handled.
    *
    *  - respond –
@@ -74717,7 +74717,7 @@ function createHttpBackendMock($rootScope, $delegate, $browser) {
    *
    * @param {string|RegExp} url HTTP url.
    * @param {(Object|function(Object))=} headers HTTP headers.
-   * @returns {requestHandler} Returns an object with `respond` method that control how a matched
+   * @returns {requestHandler} Returns an object with a `respond` method that controls how a matched
    * request is handled.
    */
 
@@ -74729,7 +74729,7 @@ function createHttpBackendMock($rootScope, $delegate, $browser) {
    *
    * @param {string|RegExp} url HTTP url.
    * @param {(Object|function(Object))=} headers HTTP headers.
-   * @returns {requestHandler} Returns an object with `respond` method that control how a matched
+   * @returns {requestHandler} Returns an object with a `respond` method that controls how a matched
    * request is handled.
    */
 
@@ -74741,7 +74741,7 @@ function createHttpBackendMock($rootScope, $delegate, $browser) {
    *
    * @param {string|RegExp} url HTTP url.
    * @param {(Object|function(Object))=} headers HTTP headers.
-   * @returns {requestHandler} Returns an object with `respond` method that control how a matched
+   * @returns {requestHandler} Returns an object with a `respond` method that controls how a matched
    * request is handled.
    */
 
@@ -74755,7 +74755,7 @@ function createHttpBackendMock($rootScope, $delegate, $browser) {
    * @param {(string|RegExp|function(string))=} data HTTP request body or function that receives
    *   data string and returns true if the data is as expected.
    * @param {(Object|function(Object))=} headers HTTP headers.
-   * @returns {requestHandler} Returns an object with `respond` method that control how a matched
+   * @returns {requestHandler} Returns an object with a `respond` method that controls how a matched
    * request is handled.
    */
 
@@ -74769,7 +74769,21 @@ function createHttpBackendMock($rootScope, $delegate, $browser) {
    * @param {(string|RegExp|function(string))=} data HTTP request body or function that receives
    *   data string and returns true if the data is as expected.
    * @param {(Object|function(Object))=} headers HTTP headers.
-   * @returns {requestHandler} Returns an object with `respond` method that control how a matched
+   * @returns {requestHandler} Returns an object with a `respond` method that controls how a matched
+   * request is handled.
+   */
+
+  /**
+   * @ngdoc method
+   * @name $httpBackend#whenPATCH
+   * @description
+   * Creates a new backend definition for PATCH requests.  For more info see `when()`.
+   *
+   * @param {string|RegExp} url HTTP url.
+   * @param {(string|RegExp|function(string))=} data HTTP request body or function that receives
+   *   data string and returns true if the data is as expected.
+   * @param {(Object|function(Object))=} headers HTTP headers.
+   * @returns {requestHandler} Returns an object with a `respond` method that controls how a matched
    * request is handled.
    */
 
@@ -74780,7 +74794,7 @@ function createHttpBackendMock($rootScope, $delegate, $browser) {
    * Creates a new backend definition for JSONP requests. For more info see `when()`.
    *
    * @param {string|RegExp} url HTTP url.
-   * @returns {requestHandler} Returns an object with `respond` method that control how a matched
+   * @returns {requestHandler} Returns an object with a `respond` method that controls how a matched
    * request is handled.
    */
   createShortMethods('when');
@@ -74799,7 +74813,7 @@ function createHttpBackendMock($rootScope, $delegate, $browser) {
    *  is in JSON format.
    * @param {(Object|function(Object))=} headers HTTP headers or function that receives http header
    *   object and returns true if the headers match the current expectation.
-   * @returns {requestHandler} Returns an object with `respond` method that control how a matched
+   * @returns {requestHandler} Returns an object with a `respond` method that controls how a matched
    *  request is handled.
    *
    *  - respond –
@@ -74828,7 +74842,7 @@ function createHttpBackendMock($rootScope, $delegate, $browser) {
    *
    * @param {string|RegExp} url HTTP url.
    * @param {Object=} headers HTTP headers.
-   * @returns {requestHandler} Returns an object with `respond` method that control how a matched
+   * @returns {requestHandler} Returns an object with a `respond` method that controls how a matched
    * request is handled. See #expect for more info.
    */
 
@@ -74840,7 +74854,7 @@ function createHttpBackendMock($rootScope, $delegate, $browser) {
    *
    * @param {string|RegExp} url HTTP url.
    * @param {Object=} headers HTTP headers.
-   * @returns {requestHandler} Returns an object with `respond` method that control how a matched
+   * @returns {requestHandler} Returns an object with a `respond` method that controls how a matched
    *   request is handled.
    */
 
@@ -74852,7 +74866,7 @@ function createHttpBackendMock($rootScope, $delegate, $browser) {
    *
    * @param {string|RegExp} url HTTP url.
    * @param {Object=} headers HTTP headers.
-   * @returns {requestHandler} Returns an object with `respond` method that control how a matched
+   * @returns {requestHandler} Returns an object with a `respond` method that controls how a matched
    *   request is handled.
    */
 
@@ -74867,7 +74881,7 @@ function createHttpBackendMock($rootScope, $delegate, $browser) {
    *  receives data string and returns true if the data is as expected, or Object if request body
    *  is in JSON format.
    * @param {Object=} headers HTTP headers.
-   * @returns {requestHandler} Returns an object with `respond` method that control how a matched
+   * @returns {requestHandler} Returns an object with a `respond` method that controls how a matched
    *   request is handled.
    */
 
@@ -74882,7 +74896,7 @@ function createHttpBackendMock($rootScope, $delegate, $browser) {
    *  receives data string and returns true if the data is as expected, or Object if request body
    *  is in JSON format.
    * @param {Object=} headers HTTP headers.
-   * @returns {requestHandler} Returns an object with `respond` method that control how a matched
+   * @returns {requestHandler} Returns an object with a `respond` method that controls how a matched
    *   request is handled.
    */
 
@@ -74897,7 +74911,7 @@ function createHttpBackendMock($rootScope, $delegate, $browser) {
    *  receives data string and returns true if the data is as expected, or Object if request body
    *  is in JSON format.
    * @param {Object=} headers HTTP headers.
-   * @returns {requestHandler} Returns an object with `respond` method that control how a matched
+   * @returns {requestHandler} Returns an object with a `respond` method that controls how a matched
    *   request is handled.
    */
 
@@ -74908,7 +74922,7 @@ function createHttpBackendMock($rootScope, $delegate, $browser) {
    * Creates a new request expectation for JSONP requests. For more info see `expect()`.
    *
    * @param {string|RegExp} url HTTP url.
-   * @returns {requestHandler} Returns an object with `respond` method that control how a matched
+   * @returns {requestHandler} Returns an object with a `respond` method that controls how a matched
    *   request is handled.
    */
   createShortMethods('expect');
@@ -75001,7 +75015,7 @@ function createHttpBackendMock($rootScope, $delegate, $browser) {
 
 
   function createShortMethods(prefix) {
-    angular.forEach(['GET', 'DELETE', 'JSONP'], function(method) {
+    angular.forEach(['GET', 'DELETE', 'JSONP', 'HEAD'], function(method) {
      $httpBackend[prefix + method] = function(url, headers) {
        return $httpBackend[prefix](method, url, undefined, headers);
      };
@@ -75044,7 +75058,9 @@ function MockHttpExpectation(method, url, data, headers) {
     if (angular.isUndefined(data)) return true;
     if (data && angular.isFunction(data.test)) return data.test(d);
     if (data && angular.isFunction(data)) return data(d);
-    if (data && !angular.isString(data)) return angular.equals(data, angular.fromJson(d));
+    if (data && !angular.isString(data)) {
+      return angular.equals(angular.fromJson(angular.toJson(data)), angular.fromJson(d));
+    }
     return data == d;
   };
 
@@ -76272,6 +76288,18 @@ angular.module('ui.sortable', [])
   });
 
   angular.module('BBPersonTableMockE2E', ['BBPersonTable', 'BBAdminMockE2E']);
+
+}).call(this);
+
+(function() {
+  'use strict';
+  angular.module('BBScheduleTable', ['BB', 'BBAdmin.Services', 'BBAdmin.Filters', 'BBAdmin.Controllers', 'trNgGrid']);
+
+  angular.module('BBScheduleTable').config(function($logProvider) {
+    return $logProvider.debugEnabled(true);
+  });
+
+  angular.module('BBScheduleTableE2E', ['BBScheduleTable', 'BBAdminMockE2E']);
 
 }).call(this);
 
@@ -78010,6 +78038,21 @@ angular.module('ngLocalData', ['angular-hal']).
           controller: editPersonForm,
           resolve: {
             person: function() {
+              return person;
+            }
+          }
+        });
+      };
+      scope.schedule = function(id) {
+        var person;
+        person = _.find(scope.people_models, function(p) {
+          return p.id === id;
+        });
+        return $modal.open({
+          templateUrl: 'schedule_form.html',
+          controller: editScheduleForm,
+          resolve: {
+            schedule_item: function() {
               return person;
             }
           }
@@ -96774,1729 +96817,6 @@ bbAdminDirectives.controller('CalController', function($scope) {
 }).call(this);
 
 (function() {
-  'use strict';
-  angular.module('BB.Directives').directive('bbBasket', function(PathSvc) {
-    return {
-      restrict: 'A',
-      replace: true,
-      scope: true,
-      templateUrl: function(element, attrs) {
-        if (_.has(attrs, 'mini')) {
-          return PathSvc.directivePartial("basket_mini");
-        } else {
-          return PathSvc.directivePartial("basket");
-        }
-      },
-      controllerAs: 'BasketCtrl',
-      controller: function($scope) {
-        $scope.setUsingBasket(true);
-        this.empty = function() {
-          return $scope.$eval('emptyBasket()');
-        };
-        this.view = function() {
-          return $scope.$eval('viewBasket()');
-        };
-        $scope.$watch(function() {
-          var len;
-          $scope.basketItemCount = len = $scope.bb.basket ? $scope.bb.basket.length() : 0;
-          if (!len) {
-            $scope.basketStatus = "empty";
-          } else {
-            if (len === 1) {
-              $scope.basketStatus = "1 item in your basket";
-            } else {
-              $scope.basketStatus = len + " items in your basket";
-            }
-          }
-        });
-      },
-      link: function(scope, element, attrs) {
-        return element.bind('click', function(e) {
-          return e.preventDefault();
-        });
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  angular.module('BB.Directives').directive('bbBreadcrumb', function(PathSvc) {
-    return {
-      restrict: 'A',
-      replace: true,
-      scope: true,
-      controller: 'Breadcrumbs',
-      templateUrl: function(element, attrs) {
-        if (_.has(attrs, 'complex')) {
-          return PathSvc.directivePartial("breadcrumb_complex");
-        } else {
-          return PathSvc.directivePartial("breadcrumb");
-        }
-      },
-      link: function(scope) {}
-    };
-  });
-
-  angular.module('BB.Controllers').controller('Breadcrumbs', function($scope) {
-    var atDisablePoint, currentStep, lastStep, loadStep;
-    loadStep = $scope.loadStep;
-    $scope.steps = $scope.bb.steps;
-    $scope.allSteps = $scope.bb.allSteps;
-    $scope.loadStep = function(number) {
-      if (!lastStep() && !currentStep(number) && !atDisablePoint()) {
-        return loadStep(number);
-      }
-    };
-    lastStep = function() {
-      return $scope.bb.current_step === $scope.bb.allSteps.length;
-    };
-    currentStep = function(step) {
-      return step === $scope.bb.current_step;
-    };
-    atDisablePoint = function() {
-      if (!angular.isDefined($scope.bb.disableGoingBackAtStep)) {
-        return false;
-      }
-      return $scope.bb.current_step >= $scope.bb.disableGoingBackAtStep;
-    };
-    return $scope.isDisabledStep = function(step) {
-      if (lastStep() || currentStep(step.number) || !step.passed || atDisablePoint()) {
-        return true;
-      } else {
-        return false;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  var app;
-
-  app = angular.module('BB.Directives');
-
-  app.directive('bbContentNew', function(PathSvc) {
-    return {
-      restrict: 'A',
-      replace: true,
-      scope: true,
-      templateUrl: PathSvc.directivePartial("content_main"),
-      controller: function($scope) {
-        $scope.initPage = function() {
-          return $scope.$eval('setPageLoaded()');
-        };
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BB.Directives').directive('bbDatepickerPopup', function($parse, $document, $timeout) {
-    var e, ie8orLess;
-    ie8orLess = false;
-    try {
-      ie8orLess = window.parseInt(/MSIE\s*(\d)/.exec(window.navigator.userAgent)[1]);
-    } catch (_error) {
-      e = _error;
-      ie8orLess = false;
-    }
-    return {
-      restrict: 'A',
-      priority: -1,
-      require: 'ngModel',
-      link: function(scope, element, attrs, ngModel) {
-        var callDateHandler, data, dateFormat, f, getTimeRangeScope, getter, origDateParser, replacementDateParser, timeRangeScope, yearNow;
-        origDateParser = null;
-        data = element.controller('ngModel');
-        dateFormat = !!attrs.bbDatepickerPopup ? attrs.bbDatepickerPopup : 'DD/MM/YYYY';
-        yearNow = moment(new Date()).year();
-        getter = $parse(attrs.ngModel);
-        timeRangeScope = scope;
-        getTimeRangeScope = function(scope) {
-          if (scope) {
-            if (scope.controller && scope.controller.indexOf('TimeRangeList') > 0) {
-              return timeRangeScope = scope;
-            } else {
-              return getTimeRangeScope(scope.$parent);
-            }
-          }
-        };
-        getTimeRangeScope(scope);
-        if (ie8orLess) {
-          $bbug(element).on('keydown keyup keypress', function(ev) {
-            ev.preventDefault();
-            return ev.stopPropagation();
-          });
-        }
-        if (ie8orLess || scope.display.xs) {
-          $bbug(element).attr('readonly', 'true');
-        }
-        $bbug(element).on('keydown', function(e) {
-          if (e.keyCode === 13) {
-            replacementDateParser($bbug(e.target).val(), true);
-            $document.trigger('click');
-            return $bbug(element).blur();
-          }
-        });
-        $bbug(element).on('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          return scope.opened = true;
-        });
-        callDateHandler = function(date) {
-          var isDate, watch;
-          watch = scope.$watch(getter, function(newVal, oldVal) {
-            if (!newVal) {
-              return getter.assign(timeRangeScope, date);
-            }
-          });
-          $timeout(watch, 0);
-          isDate = _.isDate(date);
-          if (isDate) {
-            getter.assign(timeRangeScope, date);
-            ngModel.$setValidity('date', true);
-            scope.$eval(attrs.onDateChange);
-          }
-          return isDate;
-        };
-        replacementDateParser = function(viewValue, returnKey) {
-          var mDate;
-          if (callDateHandler(viewValue)) {
-            return viewValue;
-          }
-          if (ie8orLess) {
-            return viewValue;
-          }
-          mDate = moment(viewValue, dateFormat);
-          if (!mDate.isValid()) {
-            mDate = moment(new Date());
-          }
-          if (/\/YY$/.test(dateFormat)) {
-            dateFormat += 'YY';
-          }
-          if (mDate.year() === 0) {
-            mDate.year(yearNow);
-          }
-          viewValue = mDate.format('MM/DD/YYYY');
-          viewValue = viewValue.replace(/\/00/, '/20');
-          if (/\/02\d{2}$/.test(viewValue)) {
-            return;
-          }
-          if (returnKey) {
-            if (mDate.year().toString().length === 2) {
-              mDate.year(mDate.year() + 2000);
-            }
-            return callDateHandler(mDate._d);
-          } else {
-            return origDateParser.call(this, viewValue);
-          }
-        };
-        f = function() {
-          if (_.isFunction(data.$parsers[0])) {
-            origDateParser = data.$parsers[0];
-            data.$parsers[0] = replacementDateParser;
-          } else {
-            return setTimeout(f, 10);
-          }
-        };
-        return f();
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  angular.module('BB.Directives').directive('bbFormDataStore', function(FormDataStoreService) {
-    return {
-      require: '?bbWidget',
-      link: function(scope) {
-        return FormDataStoreService.register(scope);
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  var app;
-
-  app = angular.module('BB.Directives');
-
-  app.directive('ngConfirmClick', function() {
-    return {
-      link: function(scope, element, attr) {
-        var clickAction, msg;
-        msg = attr.ngConfirmClick || "Are you sure?";
-        clickAction = attr.ngConfirmedClick;
-        return element.bind('click', (function(_this) {
-          return function(event) {
-            if (window.confirm(msg)) {
-              return scope.$eval(clickAction);
-            }
-          };
-        })(this));
-      }
-    };
-  });
-
-  app.directive('ngValidInclude', function($compile) {
-    return {
-      link: function(scope, element, attr) {
-        return scope[attr.watchValue].then((function(_this) {
-          return function(logged) {
-            element.attr('ng-include', attr.ngValidInclude);
-            element.attr('ng-valid-include', null);
-            return $compile(element)(scope);
-          };
-        })(this));
-      }
-    };
-  });
-
-  app.directive('ngDelayed', function($compile) {
-    return {
-      link: function(scope, element, attr) {
-        return scope[attr.ngDelayedWatch].then((function(_this) {
-          return function(logged) {
-            element.attr(attr.ngDelayed, attr.ngDelayedValue);
-            element.attr('ng-delayed-value', null);
-            element.attr('ng-delayed-watch', null);
-            element.attr('ng-delayed', null);
-            $compile(element)(scope);
-            if (attr.ngDelayedReady) {
-              return scope[attr.ngDelayedReady].resolve(true);
-            }
-          };
-        })(this));
-      }
-    };
-  });
-
-  app.directive('ngInitial', function() {
-    return {
-      restrict: 'A',
-      controller: [
-        '$scope', '$element', '$attrs', '$parse', function($scope, $element, $attrs, $parse) {
-          var getter, setter, val;
-          val = $attrs.ngInitial || $attrs.value;
-          getter = $parse($attrs.ngModel);
-          setter = getter.assign;
-          if (val === "true") {
-            val = true;
-          } else if (val === "false") {
-            val = false;
-          }
-          return setter($scope, val);
-        }
-      ]
-    };
-  });
-
-  app.directive('bbPrintPage', function($window, $timeout) {
-    return {
-      restrict: 'A',
-      link: function(scope, element, attr) {
-        if (attr.bbPrintPage) {
-          return scope.$watch(attr.bbPrintPage, (function(_this) {
-            return function(newVal, oldVal) {
-              console.log(attr.bbPrintPage);
-              return $timeout(function() {
-                return $window.print();
-              }, 3000);
-            };
-          })(this));
-        }
-      }
-    };
-  });
-
-  app.directive('bbInclude', function($compile) {
-    return {
-      link: function(scope, element, attr) {
-        return scope.$watch('bb.path_setup', (function(_this) {
-          return function(newval, oldval) {
-            if (newval) {
-              console.log('bb include ', newval);
-              element.attr('ng-include', "'" + scope.getPartial(attr.bbInclude) + "'");
-              element.attr('bb-include', null);
-              return $compile(element)(scope);
-            }
-          };
-        })(this));
-      }
-    };
-  });
-
-  app.directive('bbRaiseAlertWhenInvalid', function($compile) {
-    return {
-      require: '^form',
-      link: function(scope, element, attr, ctrl) {
-        var options;
-        ctrl.raise_alerts = true;
-        options = scope.$eval(attr.bbRaiseAlertWhenInvalid);
-        if (options && options.alert) {
-          return ctrl.alert = options.alert;
-        }
-      }
-    };
-  });
-
-  app.directive('bbHeader', function($compile) {
-    return {
-      link: function(scope, element, attr) {
-        scope.bb.waitForRoutes();
-        return scope.$watch('bb.path_setup', (function(_this) {
-          return function(newval, oldval) {
-            if (newval) {
-              element.attr('ng-include', "'" + scope.getPartial(attr.bbHeader) + "'");
-              element.attr('bb-header', null);
-              return $compile(element)(scope);
-            }
-          };
-        })(this));
-      }
-    };
-  });
-
-  app.directive('bbDate', function() {
-    return {
-      restrict: 'AE',
-      scope: true,
-      link: function(scope, element, attrs) {
-        var date, track_service;
-        track_service = attrs.bbTrackService != null;
-        if (attrs.bbDate) {
-          date = moment(scope.$eval(attrs.bbDate));
-        } else if (scope.bb && scope.bb.current_item && scope.bb.current_item.date) {
-          date = scope.bb.current_item.date.date;
-        } else {
-          date = moment();
-        }
-        if (track_service && scope.bb.current_item && scope.bb.current_item.service) {
-          scope.min_date = scope.bb.current_item.service.min_advance_datetime;
-          scope.max_date = scope.bb.current_item.service.max_advance_datetime;
-        }
-        scope.$broadcast('dateChanged', moment(date));
-        scope.bb_date = {
-          date: date,
-          js_date: date.toDate(),
-          addDays: function(type, amount) {
-            this.date = moment(this.date).add(amount, type);
-            this.js_date = this.date.toDate();
-            return scope.$broadcast('dateChanged', moment(this.date));
-          },
-          subtractDays: function(type, amount) {
-            return this.addDays(type, -amount);
-          },
-          setDate: function(date) {
-            this.date = date;
-            this.js_date = date.toDate();
-            return scope.$broadcast('dateChanged', moment(this.date));
-          }
-        };
-        scope.$on("currentItemUpdate", function(event) {
-          if (scope.bb.current_item.service && track_service) {
-            scope.min_date = scope.bb.current_item.service.min_advance_datetime;
-            scope.max_date = scope.bb.current_item.service.max_advance_datetime;
-            if (scope.bb_date.date.isBefore(scope.min_date, 'day')) {
-              scope.bb_date.setDate(scope.min_date.clone());
-            }
-            if (scope.bb_date.date.isAfter(scope.max_date, 'day')) {
-              return scope.bb_date.setDate(scope.max_date.clone());
-            }
-          }
-        });
-        return scope.$watch('bb_date.js_date', function(newval, oldval) {
-          var ndate;
-          ndate = moment(newval);
-          if (!scope.bb_date.date.isSame(ndate)) {
-            scope.bb_date.date = ndate;
-            return scope.$broadcast('dateChanged', moment(ndate));
-          }
-        });
-      }
-    };
-  });
-
-  app.directive('bbDebounce', function($timeout) {
-    return {
-      restrict: 'A',
-      link: function(scope, element, attrs) {
-        var delay;
-        delay = 400;
-        if (attrs.bbDebounce) {
-          delay = attrs.bbDebounce;
-        }
-        return element.bind('click', (function(_this) {
-          return function() {
-            $timeout(function() {
-              return element.attr('disabled', true);
-            }, 0);
-            return $timeout(function() {
-              return element.attr('disabled', false);
-            }, delay);
-          };
-        })(this));
-      }
-    };
-  });
-
-  app.directive('bbLocalNumber', function() {
-    return {
-      restrict: 'A',
-      require: 'ngModel',
-      link: function(scope, element, attrs, ctrl) {
-        var prettyifyNumber;
-        prettyifyNumber = function(value) {
-          if (value && value[0] !== "0") {
-            value = "0" + value;
-          } else {
-            value;
-          }
-          return value;
-        };
-        return ctrl.$formatters.push(prettyifyNumber);
-      }
-    };
-  });
-
-  app.directive('bbFormResettable', function($parse) {
-    return {
-      restrict: 'A',
-      controller: function($scope, $element, $attrs) {
-        $scope.inputs = [];
-        $scope.resetForm = function(options) {
-          var input, _i, _len, _ref, _results;
-          if (options && options.clear_submitted) {
-            $scope[$attrs.name].submitted = false;
-          }
-          _ref = $scope.inputs;
-          _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            input = _ref[_i];
-            input.getter.assign($scope, null);
-            _results.push(input.controller.$setPristine());
-          }
-          return _results;
-        };
-        return {
-          registerInput: function(input, ctrl) {
-            var getter;
-            getter = $parse(input);
-            return $scope.inputs.push({
-              getter: getter,
-              controller: ctrl
-            });
-          }
-        };
-      }
-    };
-  });
-
-  app.directive('bbResettable', function() {
-    return {
-      restrict: 'A',
-      require: ['ngModel', '^bbFormResettable'],
-      link: function(scope, element, attrs, ctrls) {
-        var formResettableCtrl, ngModelCtrl;
-        ngModelCtrl = ctrls[0];
-        formResettableCtrl = ctrls[1];
-        return formResettableCtrl.registerInput(attrs.ngModel, ngModelCtrl);
-      }
-    };
-  });
-
-  app.directive('bbDateSplit', function($parse) {
-    return {
-      restrict: 'A',
-      require: ['ngModel'],
-      link: function(scope, element, attrs, ctrls) {
-        var ngModel, split_date;
-        ngModel = ctrls[0];
-        scope[ngModel.$name + '_date_split'] = {
-          day: null,
-          month: null,
-          year: null,
-          date: null,
-          joinDate: function(day, month, year) {
-            var date_string;
-            if (day && month && year) {
-              date_string = day + '/' + month + '/' + year;
-              this.date = moment(date_string, "DD/MM/YYYY");
-              date_string = this.date.format('YYYY-MM-DD');
-              ngModel.$setViewValue(date_string);
-              return ngModel.$render();
-            }
-          },
-          splitDate: function(date) {
-            if (date && date.isValid()) {
-              this.day = date.date();
-              this.month = date.month() + 1;
-              this.year = date.year();
-              return this.date = date;
-            }
-          }
-        };
-        split_date = scope[ngModel.$name + '_date_split'];
-        if (ngModel.$viewValue) {
-          split_date.splitDate(moment(ngModel.$viewValue));
-        }
-        scope.$watch(ngModel.$name + '_date_split.day', function(newval, oldval) {
-          var day, month, year;
-          if (newval !== oldval && (!split_date.date || (split_date && split_date.date.date() !== newval))) {
-            day = newval;
-            month = scope.$eval(ngModel.$name + '_date_split.month');
-            year = scope.$eval(ngModel.$name + '_date_split.year');
-            return split_date.joinDate(day, month, year);
-          }
-        });
-        scope.$watch(ngModel.$name + '_date_split.month', function(newval, oldval) {
-          var day, month, year;
-          if (newval !== oldval && (!split_date.date || (split_date && split_date.date.month() + 1 !== newval))) {
-            day = scope.$eval(ngModel.$name + '_date_split.day');
-            month = newval;
-            year = scope.$eval(ngModel.$name + '_date_split.year');
-            return split_date.joinDate(day, month, year);
-          }
-        });
-        scope.$watch(ngModel.$name + '_date_split.year', function(newval, oldval) {
-          var day, month, year;
-          if (newval !== oldval && (!split_date.date || (split_date && split_date.date.year() !== newval))) {
-            day = scope.$eval(ngModel.$name + '_date_split.day');
-            month = scope.$eval(ngModel.$name + '_date_split.month');
-            year = newval;
-            return split_date.joinDate(day, month, year);
-          }
-        });
-        return scope.$watch(attrs.ngModel, function(newval) {
-          var new_date;
-          if (newval) {
-            new_date = moment(newval);
-            if (!new_date.isSame(split_date.date)) {
-              return split_date.splitDate(new_date);
-            }
-          }
-        });
-      }
-    };
-  });
-
-  app.directive('bbCommPref', function($parse) {
-    return {
-      restrict: 'A',
-      require: ['ngModel', '^bbItemDetails'],
-      link: function(scope, element, attrs, ctrls) {
-        var comm_pref_default, itemDetailsCtrl, ngModelCtrl;
-        ngModelCtrl = ctrls[0];
-        itemDetailsCtrl = ctrls[1];
-        comm_pref_default = scope.$eval(attrs.bbCommPref || false);
-        itemDetailsCtrl.setCommunicationPreferences(comm_pref_default);
-        ngModelCtrl.$setViewValue(comm_pref_default);
-        return scope.$watch(attrs.ngModel, function(newval, oldval) {
-          if (newval !== oldval) {
-            return itemDetailsCtrl.setCommunicationPreferences(newval);
-          }
-        });
-      }
-    };
-  });
-
-  app.directive("bbOwlCarousel", function() {
-    return {
-      restrict: "A",
-      link: function(scope, element, attrs) {
-        var options;
-        if (!element.owlCarousel) {
-          return;
-        }
-        options = scope.$eval(attrs.bbOwlCarousel);
-        scope.initCarousel = function() {
-          scope.destroyCarousel();
-          element.owlCarousel(options);
-          $('.bb-owl-prev').click(function() {
-            return element.trigger('owl.prev');
-          });
-          return $('.bb-owl-next').click(function() {
-            return element.trigger('owl.next');
-          });
-        };
-        scope.destroyCarousel = function() {
-          if (element.data('owlCarousel')) {
-            return element.data('owlCarousel').destroy();
-          }
-        };
-        return scope.$watch(options.data, function(newval, oldval) {
-          if (newval && newval.length > 0) {
-            return scope.initCarousel();
-          }
-        });
-      }
-    };
-  });
-
-  app.directive('bbCountTicketTypes', function() {
-    return {
-      restrict: 'A',
-      link: function(scope, element, attrs) {
-        var counts, item, items, _i, _len, _results;
-        items = scope.$eval(attrs.bbCountTicketTypes);
-        counts = [];
-        _results = [];
-        for (_i = 0, _len = items.length; _i < _len; _i++) {
-          item = items[_i];
-          if (item.tickets) {
-            if (counts[item.tickets.name]) {
-              counts[item.tickets.name] += 1;
-            } else {
-              counts[item.tickets.name] = 1;
-            }
-            _results.push(item.number = counts[item.tickets.name]);
-          } else {
-            _results.push(void 0);
-          }
-        }
-        return _results;
-      }
-    };
-  });
-
-  app.directive('bbCapitaliseFirstLetter', function() {
-    return {
-      restrict: 'A',
-      require: ['ngModel'],
-      link: function(scope, element, attrs, ctrls) {
-        var ngModel;
-        ngModel = ctrls[0];
-        return scope.$watch(attrs.ngModel, function(newval, oldval) {
-          var string;
-          if (newval) {
-            string = scope.$eval(attrs.ngModel);
-            string = string.charAt(0).toUpperCase() + string.slice(1);
-            ngModel.$setViewValue(string);
-            ngModel.$render();
-          }
-        });
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  var app, isEmpty;
-
-  app = angular.module('BB.Directives');
-
-  app.directive('bbQuestionLine', function($compile) {
-    return {
-      transclude: false,
-      restrict: 'A',
-      link: function(scope, element, attrs) {
-        var e, elm, html;
-        if (scope.question.detail_type === "heading") {
-          elm = "";
-          if (scope.question.name.length > 0) {
-            elm += "<div class='bb-question-heading'>" + scope.question.name + "</div>";
-          }
-          if (scope.question.help_text && scope.question.help_text.length > 0) {
-            elm += "<div class='bb-question-help-text'>" + scope.question.help_text + "</div>";
-          }
-          element.html(elm);
-        }
-        if (scope.$parent.idmaps && scope.$parent.idmaps[scope.question.id] && scope.$parent.idmaps[scope.question.id].block) {
-          html = scope.$parent.idmaps[scope.question.id].html;
-          return e = $compile(html)(scope, (function(_this) {
-            return function(cloned, scope) {
-              return element.replaceWith(cloned);
-            };
-          })(this));
-        }
-      }
-    };
-  });
-
-  app.directive('bbQuestion', function($compile, $timeout) {
-    return {
-      priority: 0,
-      replace: true,
-      transclude: false,
-      restrict: 'A',
-      compile: function(el, attr, trans) {
-        return {
-          pre: function(scope, element, attrs) {
-            var adminRequired, _ref;
-            adminRequired = (_ref = attrs.bbAdminRequired) != null ? _ref : false;
-            return scope.$watch(attrs.bbQuestion, function(question) {
-              var e, html, itemx, lastName, name, _i, _j, _len, _len1, _ref1, _ref2;
-              if (question) {
-                html = '';
-                lastName = '';
-                scope.recalc = (function(_this) {
-                  return function() {
-                    if (angular.isDefined(scope.recalc_price)) {
-                      if (!question.outcome) {
-                        return scope.recalc_price();
-                      }
-                    }
-                  };
-                })(this);
-                if (scope.$parent.idmaps && scope.$parent.idmaps[question.id]) {
-                  html = scope.$parent.idmaps[question.id].html;
-                } else if (question.detail_type === "select" || question.detail_type === "select-price") {
-                  html = "<select ng-model='question.answer' name='q" + question.id + "' id='" + question.id + "' ng-change='recalc()' ng-required='question.currentlyShown && (" + adminRequired + " || (question.required && !bb.isAdmin))' class='form-question form-control'>";
-                  _ref1 = question.options;
-                  for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-                    itemx = _ref1[_i];
-                    html += "<option data_id='" + itemx.id + "' value='" + itemx.name + "'>" + itemx.display_name + "</option>";
-                  }
-                  html += "</select>";
-                } else if (question.detail_type === "text_area") {
-                  html = "<textarea ng-model='question.answer' name='q" + question.id + "' id='" + question.id + "' ng-required='question.currentlyShown && (" + adminRequired + " || (question.required && !bb.isAdmin))' rows=3 class='form-question form-control'>" + question['default'] + "</textarea>";
-                } else if (question.detail_type === "radio") {
-                  html = '<div class="radio-group">';
-                  _ref2 = question.options;
-                  for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-                    itemx = _ref2[_j];
-                    html += "<div class='radio'><label class='radio-label'><input ng-model='question.answer' name='q" + question.id + "' id='" + question.id + "' ng-change='recalc()' ng-required='question.currentlyShown && (" + adminRequired + " || (question.required && !bb.isAdmin))' type='radio' value='" + itemx.name + "' />" + itemx.name + "</label></div>";
-                  }
-                  html += "</div>";
-                } else if (question.detail_type === "check") {
-                  name = question.name;
-                  if (name === lastName) {
-                    name = "";
-                  }
-                  lastName = question.name;
-                  html = "<div class='checkbox' ng-class='{\"selected\": question.answer}'><label><input name='q" + question.id + "' id='" + question.id + "' ng-model='question.answer' ng-checked='question.default == \"1\"' ng-change='recalc()' ng-required='question.currentlyShown && (" + adminRequired + " || (question.required && !bb.isAdmin))' type='checkbox' value=1>" + name + "</label></div>";
-                } else if (question.detail_type === "check-price") {
-                  html = "<div class='checkbox'><label><input name='q" + question.id + "' id='" + question.id + "' ng-model='question.answer' ng-change='recalc()' ng-required='question.currentlyShown && (" + adminRequired + " || (question.required && !bb.isAdmin))' type='checkbox' value=1> ({{question.price | currency:'GBP'}})</label></div>";
-                } else if (question.detail_type === "date") {
-                  html = "<input type='text' class='form-question form-control' name='q" + question.id + "' id='" + question.id + "' bb-datepicker-popup='DD/MM/YYYY' datepicker-popup='dd/MM/yyyy' ng-model='question.answer' ng-required='question.currentlyShown && (" + adminRequired + " || (question.required && !bb.isAdmin))' datepicker-options='{\"starting-day\": 1}' show-weeks='false' show-button-bar='false' />";
-                } else {
-                  html = "<input type='text' ng-model='question.answer' name='q" + question.id + "' id='" + question.id + "' ng-required='question.currentlyShown && (" + adminRequired + " || (question.required && !bb.isAdmin))' class='form-question form-control'/>";
-                }
-                if (html) {
-                  return e = $compile(html)(scope, (function(_this) {
-                    return function(cloned, scope) {
-                      return element.replaceWith(cloned);
-                    };
-                  })(this));
-                }
-              }
-            });
-          },
-          post: function(scope, $e, $a, parentControl) {}
-        };
-      }
-    };
-  });
-
-  app.directive('bbQuestionSetup', function() {
-    return {
-      restrict: 'A',
-      terminal: true,
-      priority: 1000,
-      link: function(scope, element, attrs) {
-        var block, child, def, id, idmaps, _i, _len, _ref;
-        idmaps = {};
-        def = null;
-        _ref = element.children();
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          child = _ref[_i];
-          id = $(child).attr("bb-question-id");
-          block = false;
-          if ($(child).attr("bb-replace-block")) {
-            block = true;
-          }
-          idmaps[id] = {
-            id: id,
-            html: child.innerHTML,
-            block: block
-          };
-        }
-        scope.idmaps = idmaps;
-        return element.replaceWith("");
-      }
-    };
-  });
-
-  app.directive("bbFocus", [
-    function() {
-      var FOCUS_CLASS;
-      FOCUS_CLASS = "bb-focused";
-      return {
-        restrict: "A",
-        require: "ngModel",
-        link: function(scope, element, attrs, ctrl) {
-          ctrl.$focused = false;
-          return element.bind("focus", function(evt) {
-            element.addClass(FOCUS_CLASS);
-            return scope.$apply(function() {
-              return ctrl.$focused = true;
-            });
-          }).bind("blur", function(evt) {
-            element.removeClass(FOCUS_CLASS);
-            return scope.$apply(function() {
-              return ctrl.$focused = false;
-            });
-          });
-        }
-      };
-    }
-  ]);
-
-  isEmpty = function(value) {
-    return angular.isUndefined(value) || value === "" || value === null || value !== value;
-  };
-
-  app.directive("ngMin", function() {
-    return {
-      restrict: "A",
-      require: "ngModel",
-      link: function(scope, elem, attr, ctrl) {
-        var minValidator;
-        scope.$watch(attr.ngMin, function() {
-          ctrl.$setViewValue(ctrl.$viewValue);
-        });
-        minValidator = function(value) {
-          var min;
-          min = scope.$eval(attr.ngMin) || 0;
-          if (!isEmpty(value) && value < min) {
-            ctrl.$setValidity("ngMin", false);
-            return undefined;
-          } else {
-            ctrl.$setValidity("ngMin", true);
-            return value;
-          }
-        };
-        ctrl.$parsers.push(minValidator);
-        ctrl.$formatters.push(minValidator);
-      }
-    };
-  });
-
-  app.directive("ngMax", function() {
-    return {
-      restrict: "A",
-      require: "ngModel",
-      link: function(scope, elem, attr, ctrl) {
-        var maxValidator;
-        scope.$watch(attr.ngMax, function() {
-          ctrl.$setViewValue(ctrl.$viewValue);
-        });
-        maxValidator = function(value) {
-          var max;
-          max = scope.$eval(attr.ngMax);
-          if (!isEmpty(value) && value > max) {
-            ctrl.$setValidity("ngMax", false);
-            return undefined;
-          } else {
-            ctrl.$setValidity("ngMax", true);
-            return value;
-          }
-        };
-        ctrl.$parsers.push(maxValidator);
-        ctrl.$formatters.push(maxValidator);
-      }
-    };
-  });
-
-  app.directive("creditCardNumber", function() {
-    var getCardType, isValid, linker;
-    getCardType = function(ccnumber) {
-      if (!ccnumber) {
-        return '';
-      }
-      ccnumber = ccnumber.toString().replace(/\s+/g, '');
-      if (/^(34)|^(37)/.test(ccnumber)) {
-        return "american_express";
-      }
-      if (/^(62)|^(88)/.test(ccnumber)) {
-        return "china_unionpay";
-      }
-      if (/^30[0-5]/.test(ccnumber)) {
-        return "diners_club_carte_blanche";
-      }
-      if (/^(2014)|^(2149)/.test(ccnumber)) {
-        return "diners_club_enroute";
-      }
-      if (/^36/.test(ccnumber)) {
-        return "diners_club_international";
-      }
-      if (/^(6011)|^(622(1(2[6-9]|[3-9][0-9])|[2-8][0-9]{2}|9([01][0-9]|2[0-5])))|^(64[4-9])|^65/.test(ccnumber)) {
-        return "discover";
-      }
-      if (/^35(2[89]|[3-8][0-9])/.test(ccnumber)) {
-        return "jcb";
-      }
-      if (/^(6304)|^(6706)|^(6771)|^(6709)/.test(ccnumber)) {
-        return "laser";
-      }
-      if (/^(5018)|^(5020)|^(5038)|^(5893)|^(6304)|^(6759)|^(6761)|^(6762)|^(6763)|^(0604)/.test(ccnumber)) {
-        return "maestro";
-      }
-      if (/^5[1-5]/.test(ccnumber)) {
-        return "master";
-      }
-      if (/^4/.test(ccnumber)) {
-        return "visa";
-      }
-      if (/^(4026)|^(417500)|^(4405)|^(4508)|^(4844)|^(4913)|^(4917)/.test(ccnumber)) {
-        return "visa_electron";
-      }
-    };
-    isValid = function(ccnumber) {
-      var len, mul, prodArr, sum;
-      if (!ccnumber) {
-        return false;
-      }
-      len = ccnumber.length;
-      mul = 0;
-      prodArr = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [0, 2, 4, 6, 8, 1, 3, 5, 7, 9]];
-      sum = 0;
-      while (len--) {
-        sum += prodArr[mul][parseInt(ccnumber.charAt(len), 10)];
-        mul ^= 1;
-      }
-      return sum % 10 === 0 && sum > 0;
-    };
-    linker = function(scope, element, attributes, ngModel) {
-      return scope.$watch(function() {
-        return ngModel.$modelValue;
-      }, function(newValue) {
-        ngModel.$setValidity('card_number', isValid(newValue));
-        scope.cardType = getCardType(newValue);
-        if ((newValue != null) && newValue.length === 16) {
-          if (ngModel.$invalid) {
-            element.parent().addClass('has-error');
-            return element.parent().removeClass('has-success');
-          } else {
-            element.parent().removeClass('has-error');
-            return element.parent().addClass('has-success');
-          }
-        } else {
-          return element.parent().removeClass('has-success');
-        }
-      });
-    };
-    return {
-      restrict: "C",
-      require: "ngModel",
-      link: linker,
-      scope: {
-        'cardType': '='
-      }
-    };
-  });
-
-  app.directive("cardSecurityCode", function() {
-    var linker;
-    linker = function(scope, element, attributes) {
-      return scope.$watch('cardType', function(newValue) {
-        if (newValue === 'american_express') {
-          element.attr('maxlength', 4);
-          return element.attr('placeholder', "••••");
-        } else {
-          element.attr('maxlength', 3);
-          return element.attr('placeholder', "•••");
-        }
-      });
-    };
-    return {
-      restrict: "C",
-      link: linker,
-      scope: {
-        'cardType': '='
-      }
-    };
-  });
-
-  app.directive('bbInputGroupManager', function(ValidatorService) {
-    return {
-      restrict: 'A',
-      controller: function($scope, $element, $attrs) {
-        $scope.input_manger = {
-          input_groups: {},
-          inputs: [],
-          registerInput: function(input, name) {
-            if (this.inputs.indexOf(input.$name) >= 0) {
-              return;
-            }
-            this.inputs.push(input.$name);
-            if (!this.input_groups[name]) {
-              this.input_groups[name] = {
-                inputs: [],
-                valid: false
-              };
-            }
-            return this.input_groups[name].inputs.push(input);
-          },
-          validateInputGroup: function(name) {
-            var input, is_valid, _i, _j, _len, _len1, _ref, _ref1;
-            is_valid = false;
-            _ref = this.input_groups[name].inputs;
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              input = _ref[_i];
-              is_valid = input.$modelValue;
-              if (is_valid) {
-                break;
-              }
-            }
-            if (is_valid === !this.input_groups[name].valid) {
-              _ref1 = this.input_groups[name].inputs;
-              for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-                input = _ref1[_j];
-                input.$setValidity(input.$name, is_valid);
-              }
-              return this.input_groups[name].valid = is_valid;
-            }
-          }
-        };
-        return $element.on("submit", function() {
-          var input_group, _results;
-          _results = [];
-          for (input_group in $scope.input_manger.input_groups) {
-            _results.push($scope.input_manger.validateInputGroup(input_group));
-          }
-          return _results;
-        });
-      }
-    };
-  });
-
-  app.directive("bbInputGroup", function() {
-    return {
-      restrict: "A",
-      require: 'ngModel',
-      link: function(scope, elem, attrs, ngModel) {
-        if (scope.input_manger.inputs.indexOf(ngModel.$name) >= 0) {
-          return;
-        }
-        scope.input_manger.registerInput(ngModel, attrs.bbInputGroup);
-        return scope.$watch(attrs.ngModel, function(newval, oldval) {
-          if (newval === !oldval) {
-            return scope.input_manger.validateInputGroup(attrs.bbInputGroup);
-          }
-        });
-      }
-    };
-  });
-
-  app.directive('bbQuestionLink', function($compile) {
-    return {
-      transclude: false,
-      restrict: 'A',
-      scope: true,
-      link: function(scope, element, attrs) {
-        var id;
-        id = parseInt(attrs.bbQuestionLink);
-        console.log(id);
-        return scope.$watch("question_set", function(newval, oldval) {
-          var q, _i, _len, _ref, _results;
-          if (newval) {
-            console.log("setting", newval);
-            _ref = scope.question_set;
-            _results = [];
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              q = _ref[_i];
-              console.log("checking", q, q.id, id);
-              if (q.id === id) {
-                console.log("found", q);
-                scope.question = q;
-                element.attr('ng-model', "question.answer");
-                element.attr('bb-question-link', null);
-                _results.push($compile(element)(scope));
-              } else {
-                _results.push(void 0);
-              }
-            }
-            return _results;
-          }
-        });
-      }
-    };
-  });
-
-  app.directive('bbQuestionSet', function($compile) {
-    return {
-      transclude: false,
-      restrict: 'A',
-      scope: true,
-      link: function(scope, element, attrs) {
-        var set;
-        set = attrs.bbQuestionSet;
-        element.addClass('ng-hide');
-        return scope.$watch(set, function(newval, oldval) {
-          if (newval) {
-            scope.question_set = newval;
-            element.removeClass('ng-hide');
-            return console.log(newval, scope.question_set);
-          }
-        });
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  var app;
-
-  app = angular.module('BB.Directives');
-
-  app.directive('bbLoader', function($rootScope, $compile, PathSvc, TemplateSvc) {
-    return {
-      restrict: 'A',
-      replace: false,
-      scope: {},
-      controllerAs: 'LoaderCtrl',
-      controller: function($scope) {
-        var addScopeId, hideLoader, parentScopeId, removeScopeId, scopeIdArr, showLoader;
-        parentScopeId = $scope.$parent.$id;
-        scopeIdArr = [];
-        addScopeId = function(id) {
-          scopeIdArr.push(id);
-          scopeIdArr = _.uniq(scopeIdArr);
-        };
-        removeScopeId = function(id) {
-          scopeIdArr = _.without(scopeIdArr, id);
-          return scopeIdArr.length;
-        };
-        showLoader = function(e, cscope) {
-          var sid;
-          sid = cscope.$id;
-          while (cscope) {
-            if (cscope.$id === parentScopeId) {
-              addScopeId(sid);
-              $scope.scopeLoaded = false;
-              break;
-            }
-            cscope = cscope.$parent;
-          }
-        };
-        hideLoader = function(e, cscope) {
-          if (!removeScopeId(cscope.$id)) {
-            $scope.scopeLoaded = true;
-          }
-        };
-        $rootScope.$on('show:loader', showLoader);
-        $rootScope.$on('hide:loader', hideLoader);
-        $scope.scopeLoaded = false;
-      },
-      link: function(scope, element, attrs) {
-        TemplateSvc.get(PathSvc.directivePartial("loader")).then(function(html) {
-          var str;
-          if (_.isString(attrs.bbLoader)) {
-            str = attrs.bbLoader.slice(1);
-            if (/^#/.test(attrs.bbLoader)) {
-              html.attr('id', str);
-            } else if (/^\./.test(attrs.bbLoader)) {
-              html.addClass(str);
-            }
-          }
-          element.prepend(html);
-          $compile(html)(scope);
-        });
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  var app;
-
-  app = angular.module('BB.Directives');
-
-  app.directive('bbLoading', function($compile) {
-    return {
-      transclude: false,
-      restrict: 'A',
-      link: function(scope, element, attrs) {
-        scope.scopeLoaded = true;
-        element.attr('ng-hide', "scopeLoaded");
-        element.attr('bb-loading', null);
-        $compile(element)(scope);
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  var app;
-
-  app = angular.module('BB.Directives');
-
-  app.directive('bbContent', function($compile) {
-    return {
-      transclude: false,
-      restrict: 'A',
-      link: function(scope, element, attrs) {
-        element.attr('ng-include', "bb_main");
-        element.attr('ng-controller', "bbContentController");
-        element.attr('onLoad', "initPage()");
-        element.attr('bb-content', null);
-        element.attr('ng-hide', "hide_page");
-        return $compile(element)(scope);
-      }
-    };
-  });
-
-  app.directive('bbLoading', function($compile) {
-    return {
-      transclude: false,
-      restrict: 'A',
-      link: function(scope, element, attrs) {
-        scope.scopeLoaded = scope.areScopesLoaded(scope);
-        element.attr('ng-hide', "scopeLoaded");
-        element.attr('bb-loading', null);
-        $compile(element)(scope);
-      }
-    };
-  });
-
-  app.directive('bbScrollTo', function($rootScope, AppConfig, BreadcrumbService) {
-    return {
-      transclude: false,
-      restrict: 'A',
-      link: function(scope, element, attrs) {
-        var always_scroll, evnt;
-        evnt = attrs.bbScrollTo;
-        always_scroll = (attrs.bbAlwaysScroll != null) || false;
-        return $rootScope.$on(evnt, function(e) {
-          var current_step, scroll_to_element;
-          if (evnt === "page:loaded" && scope.display && scope.display.xs && $bbug('[data-scroll-id="' + AppConfig.uid + '"]').length) {
-            scroll_to_element = $bbug('[data-scroll-id="' + AppConfig.uid + '"]');
-          } else {
-            scroll_to_element = $bbug(element);
-          }
-          current_step = BreadcrumbService.getCurrentStep();
-          if (((evnt === "page:loaded" || !scroll_to_element.visible()) && current_step > 1) || always_scroll) {
-            return $bbug("html, body").animate({
-              scrollTop: scroll_to_element.offset().top
-            }, 500);
-          }
-        });
-      }
-    };
-  });
-
-  app.directive('bbSlotGrouper', function() {
-    return {
-      restrict: 'A',
-      require: ['^?bbTimeRanges?', '^?bbTimes'],
-      scope: true,
-      link: function(scope, element, attrs) {
-        var slot, slots, _i, _len, _results;
-        slots = scope.$eval(attrs.slots);
-        if (!slots) {
-          return;
-        }
-        scope.grouped_slots = [];
-        _results = [];
-        for (_i = 0, _len = slots.length; _i < _len; _i++) {
-          slot = slots[_i];
-          if (slot.time >= scope.$eval(attrs.startTime) && slot.time < scope.$eval(attrs.endTime)) {
-            scope.grouped_slots.push(slot);
-          }
-          _results.push(scope.has_slots = scope.grouped_slots.length > 0);
-        }
-        return _results;
-      }
-    };
-  });
-
-  app.directive('bbForm', function() {
-    return {
-      restrict: 'A',
-      require: '^form',
-      link: function(scope, elem, attrs, ctrls) {
-        return elem.on("submit", function() {
-          var invalid_form_group, invalid_input;
-          invalid_form_group = elem.find('.has-error:first');
-          if (invalid_form_group && invalid_form_group.length > 0) {
-            $bbug("html, body").animate({
-              scrollTop: invalid_form_group.offset().top
-            }, 1000);
-            invalid_input = invalid_form_group.find('.ng-invalid');
-            invalid_input.focus();
-            return false;
-          }
-          return true;
-        });
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BB.Directives').directive('ngOptions', function($sniffer, $rootScope) {
-    return {
-      restrict: 'A',
-      link: function(scope, el, attrs) {
-        var size;
-        size = parseInt(attrs['size'], 10);
-        if (!isNaN(size) && size > 1 && $sniffer.msie) {
-          return $rootScope.$on('loading:finished', function() {
-            el.focus();
-            return $('body').focus();
-          });
-        }
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BB.Directives').directive('paymentButton', function($compile, $sce, $http, $templateCache, $q) {
-    var getButtonFormTemplate, getTemplate, linker, setClassAndValue;
-    getTemplate = function(type, scope) {
-      switch (type) {
-        case 'button_form':
-          return getButtonFormTemplate(scope);
-        case 'page':
-          return "<a ng-click=\"decideNextPage()\">{{label}}</a>";
-        case 'location':
-          return "<a href='{{payment_link}}'>{{label}}</a>";
-        default:
-          return "";
-      }
-    };
-    getButtonFormTemplate = function(scope) {
-      var src;
-      src = $sce.parseAsResourceUrl("'" + scope.payment_link + "'")();
-      return $http.get(src, {
-        cache: $templateCache
-      }).then(function(response) {
-        return response.data;
-      });
-    };
-    setClassAndValue = function(scope, element, attributes) {
-      var c, i, inputs, main_tag, _i, _len, _ref, _results;
-      switch (scope.link_type) {
-        case 'button_form':
-          inputs = element.find("input");
-          main_tag = ((function() {
-            var _i, _len, _results;
-            _results = [];
-            for (_i = 0, _len = inputs.length; _i < _len; _i++) {
-              i = inputs[_i];
-              if ($(i).attr('type') === 'submit') {
-                _results.push(i);
-              }
-            }
-            return _results;
-          })())[0];
-          if (attributes.value) {
-            $(main_tag).attr('value', attributes.value);
-          }
-          break;
-        case 'page':
-        case 'location':
-          main_tag = element.find("a")[0];
-      }
-      if (attributes["class"]) {
-        _ref = attributes["class"].split(" ");
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          c = _ref[_i];
-          $(main_tag).addClass(c);
-          _results.push($(element).removeClass(c));
-        }
-        return _results;
-      }
-    };
-    linker = function(scope, element, attributes) {
-      var url;
-      scope.bb.payment_status = "pending";
-      scope.bb.total = scope.total;
-      scope.link_type = scope.total.$link('new_payment').type;
-      scope.label = attributes.value || "Make Payment";
-      scope.payment_link = scope.total.$href('new_payment');
-      url = scope.total.$href('new_payment');
-      return $q.when(getTemplate(scope.link_type, scope)).then(function(template) {
-        element.html(template).show();
-        $compile(element.contents())(scope);
-        return setClassAndValue(scope, element, attributes);
-      });
-    };
-    return {
-      restrict: 'EA',
-      replace: true,
-      scope: {
-        total: '=',
-        bb: '=',
-        decideNextPage: '='
-      },
-      link: linker
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module("BB.Directives").directive('scoped', function($document, $timeout) {
-    var scopeIt;
-    this.compat = (function() {
-      var DOMRules, DOMStyle, changeSelectorTextAllowed, check, e, scopeSupported, testSheet, testStyle;
-      check = document.createElement('style');
-      if (typeof check.sheet !== 'undefined') {
-        DOMStyle = 'sheet';
-      } else if (typeof check.getSheet !== 'undefined') {
-        DOMStyle = 'getSheet';
-      } else {
-        DOMStyle = 'styleSheet';
-      }
-      scopeSupported = void 0 !== check.scoped;
-      document.body.appendChild(check);
-      testSheet = check[DOMStyle];
-      if (testSheet.addRule) {
-        testSheet.addRule('c', 'blink');
-      } else {
-        testSheet.insertRule('c{}', 0);
-      }
-      DOMRules = testSheet.rules ? 'rules' : 'cssRules';
-      testStyle = testSheet[DOMRules][0];
-      try {
-        testStyle.selectorText = 'd';
-      } catch (_error) {
-        e = _error;
-      }
-      changeSelectorTextAllowed = 'd' === testStyle.selectorText.toLowerCase();
-      check.parentNode.removeChild(check);
-      return {
-        scopeSupported: scopeSupported,
-        rules: DOMRules,
-        sheet: DOMStyle,
-        changeSelectorTextAllowed: changeSelectorTextAllowed
-      };
-    })();
-    scopeIt = (function(_this) {
-      return function(element) {
-        var allRules, glue, id, idCounter, index, par, rule, selector, sheet, styleNode, styleRule, _results;
-        styleNode = element[0];
-        idCounter = 0;
-        sheet = styleNode[_this.compat.sheet];
-        if (!sheet) {
-          return;
-        }
-        allRules = sheet[_this.compat.rules];
-        par = styleNode.parentNode;
-        id = par.id || (par.id = 'scopedByScopedPolyfill_' + ++idCounter);
-        glue = '';
-        index = allRules.length || 0;
-        while (par) {
-          if (par.id) {
-            glue = '#' + par.id + ' ' + glue;
-          }
-          par = par.parentNode;
-        }
-        _results = [];
-        while (index--) {
-          rule = allRules[index];
-          if (rule.selectorText) {
-            if (!rule.selectorText.match(new RegExp(glue))) {
-              selector = glue + ' ' + rule.selectorText.split(',').join(', ' + glue);
-              selector = selector.replace(/[\ ]+:root/gi, '');
-              if (_this.compat.changeSelectorTextAllowed) {
-                _results.push(rule.selectorText = selector);
-              } else {
-                if (!rule.type || 1 === rule.type) {
-                  styleRule = rule.style.cssText;
-                  if (styleRule) {
-                    if (sheet.removeRule) {
-                      sheet.removeRule(index);
-                    } else {
-                      sheet.deleteRule(index);
-                    }
-                    if (sheet.addRule) {
-                      _results.push(sheet.addRule(selector, styleRule));
-                    } else {
-                      _results.push(sheet.insertRule(selector + '{' + styleRule + '}', index));
-                    }
-                  } else {
-                    _results.push(void 0);
-                  }
-                } else {
-                  _results.push(void 0);
-                }
-              }
-            } else {
-              _results.push(void 0);
-            }
-          } else {
-            _results.push(void 0);
-          }
-        }
-        return _results;
-      };
-    })(this);
-    return {
-      restrict: 'A',
-      link: function(scope, element, attrs) {
-        scope.scopeSupported = this.compat.scopeSupported;
-        if (!this.compat.scopeSupported) {
-          return $timeout(function() {
-            return scopeIt(element);
-          });
-        }
-      },
-      controller: function($scope, $element, $timeout) {
-        if (!$scope.scopeSupported) {
-          this.updateCss = function() {
-            return $timeout(function() {
-              return scopeIt($element);
-            });
-          };
-        }
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  var app;
-
-  app = angular.module('BB.Directives');
-
-  app.directive('bbDisplayMode', [
-    '$compile', '$window', function($compile, $window) {
-      return {
-        transclude: false,
-        restrict: 'A',
-        template: '<span class="visible-xs"></span><span class="visible-sm"></span><span class="visible-md"></span><span class="visible-lg"></span>',
-        link: function(scope, elem, attrs) {
-          var getCurrentSize, isVisible, markers, t, update;
-          markers = elem.find('span');
-          elem.addClass("bb-display-mode");
-          scope.display = {};
-          isVisible = function(element) {
-            return element && element.style.display !== 'none' && element.offsetWidth && element.offsetHeight;
-          };
-          getCurrentSize = function() {
-            var element, _i, _len;
-            for (_i = 0, _len = markers.length; _i < _len; _i++) {
-              element = markers[_i];
-              if (isVisible(element)) {
-                return element.className.slice(8, 11);
-              }
-              scope.display = {};
-              scope.display[element.className.slice(8, 11)] = true;
-              return false;
-            }
-          };
-          update = (function(_this) {
-            return function() {
-              var nsize;
-              nsize = getCurrentSize();
-              if (nsize !== _this.currentSize) {
-                _this.currentSize = nsize;
-                scope.display.xs = false;
-                scope.display.sm = false;
-                scope.display.md = false;
-                scope.display.lg = false;
-                scope.display.not_xs = true;
-                scope.display.not_sm = true;
-                scope.display.not_md = true;
-                scope.display.not_lg = true;
-                scope.display[nsize] = true;
-                scope.display["not_" + nsize] = false;
-                return true;
-              }
-              return false;
-            };
-          })(this);
-          t = null;
-          angular.element($window).bind('resize', (function(_this) {
-            return function() {
-              window.clearTimeout(t);
-              return t = setTimeout(function() {
-                if (update()) {
-                  return scope.$apply();
-                }
-              }, 50);
-            };
-          })(this));
-          return angular.element($window).bind('load', (function(_this) {
-            return function() {
-              if (update()) {
-                return scope.$apply();
-              }
-            };
-          })(this));
-        }
-      };
-    }
-  ]);
-
-}).call(this);
-
-(function() {
-  angular.module('BB.Directives').directive('popover', function() {
-    var openElement, openScope;
-    openElement = null;
-    openScope = null;
-    $('div[ng-controller="BBCtrl"]').off('.bbtooltip').on('click.bbtooltip', function(e) {
-      var target;
-      target = $(e.target).closest('[popover]')[0];
-      if (!target && openElement && openScope) {
-        $(openElement).next('.popover').remove();
-        openScope.tt_isOpen = false;
-      }
-      return true;
-    });
-    return {
-      restrict: 'EA',
-      priority: -1000,
-      link: function(scope, element) {
-        element.on('click.bbtooltip', function(e) {
-          if (openElement === $(e.target).closest('[popover]')[0]) {
-            e.preventDefault();
-            return;
-          }
-          if (openElement && openScope) {
-            $(openElement).next('.popover').remove();
-            openScope.tt_isOpen = false;
-          }
-          openElement = element[0];
-          return openScope = scope;
-        });
-        return scope.$on('$destroy', function() {
-          return $(element).off('.bbtooltip');
-        });
-      }
-    };
-  });
-
-}).call(this);
-
-(function (angular) {
-  'use strict';
-
-  /* Directives */
-  var app = angular.module('BB.Directives');
-
-  app.directive('appVersion', function(version) {
-    return function(scope, elm, attrs) {
-      elm.text(version);
-    };
-  });
-}(window.angular));
-
-(function() {
   var app;
 
   app = angular.module('BB.Filters');
@@ -101827,6 +100147,1729 @@ bbAdminDirectives.controller('CalController', function($scope) {
   });
 
 }).call(this);
+
+(function() {
+  'use strict';
+  angular.module('BB.Directives').directive('bbBasket', function(PathSvc) {
+    return {
+      restrict: 'A',
+      replace: true,
+      scope: true,
+      templateUrl: function(element, attrs) {
+        if (_.has(attrs, 'mini')) {
+          return PathSvc.directivePartial("basket_mini");
+        } else {
+          return PathSvc.directivePartial("basket");
+        }
+      },
+      controllerAs: 'BasketCtrl',
+      controller: function($scope) {
+        $scope.setUsingBasket(true);
+        this.empty = function() {
+          return $scope.$eval('emptyBasket()');
+        };
+        this.view = function() {
+          return $scope.$eval('viewBasket()');
+        };
+        $scope.$watch(function() {
+          var len;
+          $scope.basketItemCount = len = $scope.bb.basket ? $scope.bb.basket.length() : 0;
+          if (!len) {
+            $scope.basketStatus = "empty";
+          } else {
+            if (len === 1) {
+              $scope.basketStatus = "1 item in your basket";
+            } else {
+              $scope.basketStatus = len + " items in your basket";
+            }
+          }
+        });
+      },
+      link: function(scope, element, attrs) {
+        return element.bind('click', function(e) {
+          return e.preventDefault();
+        });
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  angular.module('BB.Directives').directive('bbBreadcrumb', function(PathSvc) {
+    return {
+      restrict: 'A',
+      replace: true,
+      scope: true,
+      controller: 'Breadcrumbs',
+      templateUrl: function(element, attrs) {
+        if (_.has(attrs, 'complex')) {
+          return PathSvc.directivePartial("breadcrumb_complex");
+        } else {
+          return PathSvc.directivePartial("breadcrumb");
+        }
+      },
+      link: function(scope) {}
+    };
+  });
+
+  angular.module('BB.Controllers').controller('Breadcrumbs', function($scope) {
+    var atDisablePoint, currentStep, lastStep, loadStep;
+    loadStep = $scope.loadStep;
+    $scope.steps = $scope.bb.steps;
+    $scope.allSteps = $scope.bb.allSteps;
+    $scope.loadStep = function(number) {
+      if (!lastStep() && !currentStep(number) && !atDisablePoint()) {
+        return loadStep(number);
+      }
+    };
+    lastStep = function() {
+      return $scope.bb.current_step === $scope.bb.allSteps.length;
+    };
+    currentStep = function(step) {
+      return step === $scope.bb.current_step;
+    };
+    atDisablePoint = function() {
+      if (!angular.isDefined($scope.bb.disableGoingBackAtStep)) {
+        return false;
+      }
+      return $scope.bb.current_step >= $scope.bb.disableGoingBackAtStep;
+    };
+    return $scope.isDisabledStep = function(step) {
+      if (lastStep() || currentStep(step.number) || !step.passed || atDisablePoint()) {
+        return true;
+      } else {
+        return false;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var app;
+
+  app = angular.module('BB.Directives');
+
+  app.directive('bbContentNew', function(PathSvc) {
+    return {
+      restrict: 'A',
+      replace: true,
+      scope: true,
+      templateUrl: PathSvc.directivePartial("content_main"),
+      controller: function($scope) {
+        $scope.initPage = function() {
+          return $scope.$eval('setPageLoaded()');
+        };
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BB.Directives').directive('bbDatepickerPopup', function($parse, $document, $timeout) {
+    var e, ie8orLess;
+    ie8orLess = false;
+    try {
+      ie8orLess = window.parseInt(/MSIE\s*(\d)/.exec(window.navigator.userAgent)[1]);
+    } catch (_error) {
+      e = _error;
+      ie8orLess = false;
+    }
+    return {
+      restrict: 'A',
+      priority: -1,
+      require: 'ngModel',
+      link: function(scope, element, attrs, ngModel) {
+        var callDateHandler, data, dateFormat, f, getTimeRangeScope, getter, origDateParser, replacementDateParser, timeRangeScope, yearNow;
+        origDateParser = null;
+        data = element.controller('ngModel');
+        dateFormat = !!attrs.bbDatepickerPopup ? attrs.bbDatepickerPopup : 'DD/MM/YYYY';
+        yearNow = moment(new Date()).year();
+        getter = $parse(attrs.ngModel);
+        timeRangeScope = scope;
+        getTimeRangeScope = function(scope) {
+          if (scope) {
+            if (scope.controller && scope.controller.indexOf('TimeRangeList') > 0) {
+              return timeRangeScope = scope;
+            } else {
+              return getTimeRangeScope(scope.$parent);
+            }
+          }
+        };
+        getTimeRangeScope(scope);
+        if (ie8orLess) {
+          $bbug(element).on('keydown keyup keypress', function(ev) {
+            ev.preventDefault();
+            return ev.stopPropagation();
+          });
+        }
+        if (ie8orLess || scope.display.xs) {
+          $bbug(element).attr('readonly', 'true');
+        }
+        $bbug(element).on('keydown', function(e) {
+          if (e.keyCode === 13) {
+            replacementDateParser($bbug(e.target).val(), true);
+            $document.trigger('click');
+            return $bbug(element).blur();
+          }
+        });
+        $bbug(element).on('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          return scope.opened = true;
+        });
+        callDateHandler = function(date) {
+          var isDate, watch;
+          watch = scope.$watch(getter, function(newVal, oldVal) {
+            if (!newVal) {
+              return getter.assign(timeRangeScope, date);
+            }
+          });
+          $timeout(watch, 0);
+          isDate = _.isDate(date);
+          if (isDate) {
+            getter.assign(timeRangeScope, date);
+            ngModel.$setValidity('date', true);
+            scope.$eval(attrs.onDateChange);
+          }
+          return isDate;
+        };
+        replacementDateParser = function(viewValue, returnKey) {
+          var mDate;
+          if (callDateHandler(viewValue)) {
+            return viewValue;
+          }
+          if (ie8orLess) {
+            return viewValue;
+          }
+          mDate = moment(viewValue, dateFormat);
+          if (!mDate.isValid()) {
+            mDate = moment(new Date());
+          }
+          if (/\/YY$/.test(dateFormat)) {
+            dateFormat += 'YY';
+          }
+          if (mDate.year() === 0) {
+            mDate.year(yearNow);
+          }
+          viewValue = mDate.format('MM/DD/YYYY');
+          viewValue = viewValue.replace(/\/00/, '/20');
+          if (/\/02\d{2}$/.test(viewValue)) {
+            return;
+          }
+          if (returnKey) {
+            if (mDate.year().toString().length === 2) {
+              mDate.year(mDate.year() + 2000);
+            }
+            return callDateHandler(mDate._d);
+          } else {
+            return origDateParser.call(this, viewValue);
+          }
+        };
+        f = function() {
+          if (_.isFunction(data.$parsers[0])) {
+            origDateParser = data.$parsers[0];
+            data.$parsers[0] = replacementDateParser;
+          } else {
+            return setTimeout(f, 10);
+          }
+        };
+        return f();
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  angular.module('BB.Directives').directive('bbFormDataStore', function(FormDataStoreService) {
+    return {
+      require: '?bbWidget',
+      link: function(scope) {
+        return FormDataStoreService.register(scope);
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  var app;
+
+  app = angular.module('BB.Directives');
+
+  app.directive('ngConfirmClick', function() {
+    return {
+      link: function(scope, element, attr) {
+        var clickAction, msg;
+        msg = attr.ngConfirmClick || "Are you sure?";
+        clickAction = attr.ngConfirmedClick;
+        return element.bind('click', (function(_this) {
+          return function(event) {
+            if (window.confirm(msg)) {
+              return scope.$eval(clickAction);
+            }
+          };
+        })(this));
+      }
+    };
+  });
+
+  app.directive('ngValidInclude', function($compile) {
+    return {
+      link: function(scope, element, attr) {
+        return scope[attr.watchValue].then((function(_this) {
+          return function(logged) {
+            element.attr('ng-include', attr.ngValidInclude);
+            element.attr('ng-valid-include', null);
+            return $compile(element)(scope);
+          };
+        })(this));
+      }
+    };
+  });
+
+  app.directive('ngDelayed', function($compile) {
+    return {
+      link: function(scope, element, attr) {
+        return scope[attr.ngDelayedWatch].then((function(_this) {
+          return function(logged) {
+            element.attr(attr.ngDelayed, attr.ngDelayedValue);
+            element.attr('ng-delayed-value', null);
+            element.attr('ng-delayed-watch', null);
+            element.attr('ng-delayed', null);
+            $compile(element)(scope);
+            if (attr.ngDelayedReady) {
+              return scope[attr.ngDelayedReady].resolve(true);
+            }
+          };
+        })(this));
+      }
+    };
+  });
+
+  app.directive('ngInitial', function() {
+    return {
+      restrict: 'A',
+      controller: [
+        '$scope', '$element', '$attrs', '$parse', function($scope, $element, $attrs, $parse) {
+          var getter, setter, val;
+          val = $attrs.ngInitial || $attrs.value;
+          getter = $parse($attrs.ngModel);
+          setter = getter.assign;
+          if (val === "true") {
+            val = true;
+          } else if (val === "false") {
+            val = false;
+          }
+          return setter($scope, val);
+        }
+      ]
+    };
+  });
+
+  app.directive('bbPrintPage', function($window, $timeout) {
+    return {
+      restrict: 'A',
+      link: function(scope, element, attr) {
+        if (attr.bbPrintPage) {
+          return scope.$watch(attr.bbPrintPage, (function(_this) {
+            return function(newVal, oldVal) {
+              console.log(attr.bbPrintPage);
+              return $timeout(function() {
+                return $window.print();
+              }, 3000);
+            };
+          })(this));
+        }
+      }
+    };
+  });
+
+  app.directive('bbInclude', function($compile) {
+    return {
+      link: function(scope, element, attr) {
+        return scope.$watch('bb.path_setup', (function(_this) {
+          return function(newval, oldval) {
+            if (newval) {
+              console.log('bb include ', newval);
+              element.attr('ng-include', "'" + scope.getPartial(attr.bbInclude) + "'");
+              element.attr('bb-include', null);
+              return $compile(element)(scope);
+            }
+          };
+        })(this));
+      }
+    };
+  });
+
+  app.directive('bbRaiseAlertWhenInvalid', function($compile) {
+    return {
+      require: '^form',
+      link: function(scope, element, attr, ctrl) {
+        var options;
+        ctrl.raise_alerts = true;
+        options = scope.$eval(attr.bbRaiseAlertWhenInvalid);
+        if (options && options.alert) {
+          return ctrl.alert = options.alert;
+        }
+      }
+    };
+  });
+
+  app.directive('bbHeader', function($compile) {
+    return {
+      link: function(scope, element, attr) {
+        scope.bb.waitForRoutes();
+        return scope.$watch('bb.path_setup', (function(_this) {
+          return function(newval, oldval) {
+            if (newval) {
+              element.attr('ng-include', "'" + scope.getPartial(attr.bbHeader) + "'");
+              element.attr('bb-header', null);
+              return $compile(element)(scope);
+            }
+          };
+        })(this));
+      }
+    };
+  });
+
+  app.directive('bbDate', function() {
+    return {
+      restrict: 'AE',
+      scope: true,
+      link: function(scope, element, attrs) {
+        var date, track_service;
+        track_service = attrs.bbTrackService != null;
+        if (attrs.bbDate) {
+          date = moment(scope.$eval(attrs.bbDate));
+        } else if (scope.bb && scope.bb.current_item && scope.bb.current_item.date) {
+          date = scope.bb.current_item.date.date;
+        } else {
+          date = moment();
+        }
+        if (track_service && scope.bb.current_item && scope.bb.current_item.service) {
+          scope.min_date = scope.bb.current_item.service.min_advance_datetime;
+          scope.max_date = scope.bb.current_item.service.max_advance_datetime;
+        }
+        scope.$broadcast('dateChanged', moment(date));
+        scope.bb_date = {
+          date: date,
+          js_date: date.toDate(),
+          addDays: function(type, amount) {
+            this.date = moment(this.date).add(amount, type);
+            this.js_date = this.date.toDate();
+            return scope.$broadcast('dateChanged', moment(this.date));
+          },
+          subtractDays: function(type, amount) {
+            return this.addDays(type, -amount);
+          },
+          setDate: function(date) {
+            this.date = date;
+            this.js_date = date.toDate();
+            return scope.$broadcast('dateChanged', moment(this.date));
+          }
+        };
+        scope.$on("currentItemUpdate", function(event) {
+          if (scope.bb.current_item.service && track_service) {
+            scope.min_date = scope.bb.current_item.service.min_advance_datetime;
+            scope.max_date = scope.bb.current_item.service.max_advance_datetime;
+            if (scope.bb_date.date.isBefore(scope.min_date, 'day')) {
+              scope.bb_date.setDate(scope.min_date.clone());
+            }
+            if (scope.bb_date.date.isAfter(scope.max_date, 'day')) {
+              return scope.bb_date.setDate(scope.max_date.clone());
+            }
+          }
+        });
+        return scope.$watch('bb_date.js_date', function(newval, oldval) {
+          var ndate;
+          ndate = moment(newval);
+          if (!scope.bb_date.date.isSame(ndate)) {
+            scope.bb_date.date = ndate;
+            return scope.$broadcast('dateChanged', moment(ndate));
+          }
+        });
+      }
+    };
+  });
+
+  app.directive('bbDebounce', function($timeout) {
+    return {
+      restrict: 'A',
+      link: function(scope, element, attrs) {
+        var delay;
+        delay = 400;
+        if (attrs.bbDebounce) {
+          delay = attrs.bbDebounce;
+        }
+        return element.bind('click', (function(_this) {
+          return function() {
+            $timeout(function() {
+              return element.attr('disabled', true);
+            }, 0);
+            return $timeout(function() {
+              return element.attr('disabled', false);
+            }, delay);
+          };
+        })(this));
+      }
+    };
+  });
+
+  app.directive('bbLocalNumber', function() {
+    return {
+      restrict: 'A',
+      require: 'ngModel',
+      link: function(scope, element, attrs, ctrl) {
+        var prettyifyNumber;
+        prettyifyNumber = function(value) {
+          if (value && value[0] !== "0") {
+            value = "0" + value;
+          } else {
+            value;
+          }
+          return value;
+        };
+        return ctrl.$formatters.push(prettyifyNumber);
+      }
+    };
+  });
+
+  app.directive('bbFormResettable', function($parse) {
+    return {
+      restrict: 'A',
+      controller: function($scope, $element, $attrs) {
+        $scope.inputs = [];
+        $scope.resetForm = function(options) {
+          var input, _i, _len, _ref, _results;
+          if (options && options.clear_submitted) {
+            $scope[$attrs.name].submitted = false;
+          }
+          _ref = $scope.inputs;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            input = _ref[_i];
+            input.getter.assign($scope, null);
+            _results.push(input.controller.$setPristine());
+          }
+          return _results;
+        };
+        return {
+          registerInput: function(input, ctrl) {
+            var getter;
+            getter = $parse(input);
+            return $scope.inputs.push({
+              getter: getter,
+              controller: ctrl
+            });
+          }
+        };
+      }
+    };
+  });
+
+  app.directive('bbResettable', function() {
+    return {
+      restrict: 'A',
+      require: ['ngModel', '^bbFormResettable'],
+      link: function(scope, element, attrs, ctrls) {
+        var formResettableCtrl, ngModelCtrl;
+        ngModelCtrl = ctrls[0];
+        formResettableCtrl = ctrls[1];
+        return formResettableCtrl.registerInput(attrs.ngModel, ngModelCtrl);
+      }
+    };
+  });
+
+  app.directive('bbDateSplit', function($parse) {
+    return {
+      restrict: 'A',
+      require: ['ngModel'],
+      link: function(scope, element, attrs, ctrls) {
+        var ngModel, split_date;
+        ngModel = ctrls[0];
+        scope[ngModel.$name + '_date_split'] = {
+          day: null,
+          month: null,
+          year: null,
+          date: null,
+          joinDate: function(day, month, year) {
+            var date_string;
+            if (day && month && year) {
+              date_string = day + '/' + month + '/' + year;
+              this.date = moment(date_string, "DD/MM/YYYY");
+              date_string = this.date.format('YYYY-MM-DD');
+              ngModel.$setViewValue(date_string);
+              return ngModel.$render();
+            }
+          },
+          splitDate: function(date) {
+            if (date && date.isValid()) {
+              this.day = date.date();
+              this.month = date.month() + 1;
+              this.year = date.year();
+              return this.date = date;
+            }
+          }
+        };
+        split_date = scope[ngModel.$name + '_date_split'];
+        if (ngModel.$viewValue) {
+          split_date.splitDate(moment(ngModel.$viewValue));
+        }
+        scope.$watch(ngModel.$name + '_date_split.day', function(newval, oldval) {
+          var day, month, year;
+          if (newval !== oldval && (!split_date.date || (split_date && split_date.date.date() !== newval))) {
+            day = newval;
+            month = scope.$eval(ngModel.$name + '_date_split.month');
+            year = scope.$eval(ngModel.$name + '_date_split.year');
+            return split_date.joinDate(day, month, year);
+          }
+        });
+        scope.$watch(ngModel.$name + '_date_split.month', function(newval, oldval) {
+          var day, month, year;
+          if (newval !== oldval && (!split_date.date || (split_date && split_date.date.month() + 1 !== newval))) {
+            day = scope.$eval(ngModel.$name + '_date_split.day');
+            month = newval;
+            year = scope.$eval(ngModel.$name + '_date_split.year');
+            return split_date.joinDate(day, month, year);
+          }
+        });
+        scope.$watch(ngModel.$name + '_date_split.year', function(newval, oldval) {
+          var day, month, year;
+          if (newval !== oldval && (!split_date.date || (split_date && split_date.date.year() !== newval))) {
+            day = scope.$eval(ngModel.$name + '_date_split.day');
+            month = scope.$eval(ngModel.$name + '_date_split.month');
+            year = newval;
+            return split_date.joinDate(day, month, year);
+          }
+        });
+        return scope.$watch(attrs.ngModel, function(newval) {
+          var new_date;
+          if (newval) {
+            new_date = moment(newval);
+            if (!new_date.isSame(split_date.date)) {
+              return split_date.splitDate(new_date);
+            }
+          }
+        });
+      }
+    };
+  });
+
+  app.directive('bbCommPref', function($parse) {
+    return {
+      restrict: 'A',
+      require: ['ngModel', '^bbItemDetails'],
+      link: function(scope, element, attrs, ctrls) {
+        var comm_pref_default, itemDetailsCtrl, ngModelCtrl;
+        ngModelCtrl = ctrls[0];
+        itemDetailsCtrl = ctrls[1];
+        comm_pref_default = scope.$eval(attrs.bbCommPref || false);
+        itemDetailsCtrl.setCommunicationPreferences(comm_pref_default);
+        ngModelCtrl.$setViewValue(comm_pref_default);
+        return scope.$watch(attrs.ngModel, function(newval, oldval) {
+          if (newval !== oldval) {
+            return itemDetailsCtrl.setCommunicationPreferences(newval);
+          }
+        });
+      }
+    };
+  });
+
+  app.directive("bbOwlCarousel", function() {
+    return {
+      restrict: "A",
+      link: function(scope, element, attrs) {
+        var options;
+        if (!element.owlCarousel) {
+          return;
+        }
+        options = scope.$eval(attrs.bbOwlCarousel);
+        scope.initCarousel = function() {
+          scope.destroyCarousel();
+          element.owlCarousel(options);
+          $('.bb-owl-prev').click(function() {
+            return element.trigger('owl.prev');
+          });
+          return $('.bb-owl-next').click(function() {
+            return element.trigger('owl.next');
+          });
+        };
+        scope.destroyCarousel = function() {
+          if (element.data('owlCarousel')) {
+            return element.data('owlCarousel').destroy();
+          }
+        };
+        return scope.$watch(options.data, function(newval, oldval) {
+          if (newval && newval.length > 0) {
+            return scope.initCarousel();
+          }
+        });
+      }
+    };
+  });
+
+  app.directive('bbCountTicketTypes', function() {
+    return {
+      restrict: 'A',
+      link: function(scope, element, attrs) {
+        var counts, item, items, _i, _len, _results;
+        items = scope.$eval(attrs.bbCountTicketTypes);
+        counts = [];
+        _results = [];
+        for (_i = 0, _len = items.length; _i < _len; _i++) {
+          item = items[_i];
+          if (item.tickets) {
+            if (counts[item.tickets.name]) {
+              counts[item.tickets.name] += 1;
+            } else {
+              counts[item.tickets.name] = 1;
+            }
+            _results.push(item.number = counts[item.tickets.name]);
+          } else {
+            _results.push(void 0);
+          }
+        }
+        return _results;
+      }
+    };
+  });
+
+  app.directive('bbCapitaliseFirstLetter', function() {
+    return {
+      restrict: 'A',
+      require: ['ngModel'],
+      link: function(scope, element, attrs, ctrls) {
+        var ngModel;
+        ngModel = ctrls[0];
+        return scope.$watch(attrs.ngModel, function(newval, oldval) {
+          var string;
+          if (newval) {
+            string = scope.$eval(attrs.ngModel);
+            string = string.charAt(0).toUpperCase() + string.slice(1);
+            ngModel.$setViewValue(string);
+            ngModel.$render();
+          }
+        });
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var app, isEmpty;
+
+  app = angular.module('BB.Directives');
+
+  app.directive('bbQuestionLine', function($compile) {
+    return {
+      transclude: false,
+      restrict: 'A',
+      link: function(scope, element, attrs) {
+        var e, elm, html;
+        if (scope.question.detail_type === "heading") {
+          elm = "";
+          if (scope.question.name.length > 0) {
+            elm += "<div class='bb-question-heading'>" + scope.question.name + "</div>";
+          }
+          if (scope.question.help_text && scope.question.help_text.length > 0) {
+            elm += "<div class='bb-question-help-text'>" + scope.question.help_text + "</div>";
+          }
+          element.html(elm);
+        }
+        if (scope.$parent.idmaps && scope.$parent.idmaps[scope.question.id] && scope.$parent.idmaps[scope.question.id].block) {
+          html = scope.$parent.idmaps[scope.question.id].html;
+          return e = $compile(html)(scope, (function(_this) {
+            return function(cloned, scope) {
+              return element.replaceWith(cloned);
+            };
+          })(this));
+        }
+      }
+    };
+  });
+
+  app.directive('bbQuestion', function($compile, $timeout) {
+    return {
+      priority: 0,
+      replace: true,
+      transclude: false,
+      restrict: 'A',
+      compile: function(el, attr, trans) {
+        return {
+          pre: function(scope, element, attrs) {
+            var adminRequired, _ref;
+            adminRequired = (_ref = attrs.bbAdminRequired) != null ? _ref : false;
+            return scope.$watch(attrs.bbQuestion, function(question) {
+              var e, html, itemx, lastName, name, _i, _j, _len, _len1, _ref1, _ref2;
+              if (question) {
+                html = '';
+                lastName = '';
+                scope.recalc = (function(_this) {
+                  return function() {
+                    if (angular.isDefined(scope.recalc_price)) {
+                      if (!question.outcome) {
+                        return scope.recalc_price();
+                      }
+                    }
+                  };
+                })(this);
+                if (scope.$parent.idmaps && scope.$parent.idmaps[question.id]) {
+                  html = scope.$parent.idmaps[question.id].html;
+                } else if (question.detail_type === "select" || question.detail_type === "select-price") {
+                  html = "<select ng-model='question.answer' name='q" + question.id + "' id='" + question.id + "' ng-change='recalc()' ng-required='question.currentlyShown && (" + adminRequired + " || (question.required && !bb.isAdmin))' class='form-question form-control'>";
+                  _ref1 = question.options;
+                  for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+                    itemx = _ref1[_i];
+                    html += "<option data_id='" + itemx.id + "' value='" + itemx.name + "'>" + itemx.display_name + "</option>";
+                  }
+                  html += "</select>";
+                } else if (question.detail_type === "text_area") {
+                  html = "<textarea ng-model='question.answer' name='q" + question.id + "' id='" + question.id + "' ng-required='question.currentlyShown && (" + adminRequired + " || (question.required && !bb.isAdmin))' rows=3 class='form-question form-control'>" + question['default'] + "</textarea>";
+                } else if (question.detail_type === "radio") {
+                  html = '<div class="radio-group">';
+                  _ref2 = question.options;
+                  for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+                    itemx = _ref2[_j];
+                    html += "<div class='radio'><label class='radio-label'><input ng-model='question.answer' name='q" + question.id + "' id='" + question.id + "' ng-change='recalc()' ng-required='question.currentlyShown && (" + adminRequired + " || (question.required && !bb.isAdmin))' type='radio' value='" + itemx.name + "' />" + itemx.name + "</label></div>";
+                  }
+                  html += "</div>";
+                } else if (question.detail_type === "check") {
+                  name = question.name;
+                  if (name === lastName) {
+                    name = "";
+                  }
+                  lastName = question.name;
+                  html = "<div class='checkbox' ng-class='{\"selected\": question.answer}'><label><input name='q" + question.id + "' id='" + question.id + "' ng-model='question.answer' ng-checked='question.default == \"1\"' ng-change='recalc()' ng-required='question.currentlyShown && (" + adminRequired + " || (question.required && !bb.isAdmin))' type='checkbox' value=1>" + name + "</label></div>";
+                } else if (question.detail_type === "check-price") {
+                  html = "<div class='checkbox'><label><input name='q" + question.id + "' id='" + question.id + "' ng-model='question.answer' ng-change='recalc()' ng-required='question.currentlyShown && (" + adminRequired + " || (question.required && !bb.isAdmin))' type='checkbox' value=1> ({{question.price | currency:'GBP'}})</label></div>";
+                } else if (question.detail_type === "date") {
+                  html = "<input type='text' class='form-question form-control' name='q" + question.id + "' id='" + question.id + "' bb-datepicker-popup='DD/MM/YYYY' datepicker-popup='dd/MM/yyyy' ng-model='question.answer' ng-required='question.currentlyShown && (" + adminRequired + " || (question.required && !bb.isAdmin))' datepicker-options='{\"starting-day\": 1}' show-weeks='false' show-button-bar='false' />";
+                } else {
+                  html = "<input type='text' ng-model='question.answer' name='q" + question.id + "' id='" + question.id + "' ng-required='question.currentlyShown && (" + adminRequired + " || (question.required && !bb.isAdmin))' class='form-question form-control'/>";
+                }
+                if (html) {
+                  return e = $compile(html)(scope, (function(_this) {
+                    return function(cloned, scope) {
+                      return element.replaceWith(cloned);
+                    };
+                  })(this));
+                }
+              }
+            });
+          },
+          post: function(scope, $e, $a, parentControl) {}
+        };
+      }
+    };
+  });
+
+  app.directive('bbQuestionSetup', function() {
+    return {
+      restrict: 'A',
+      terminal: true,
+      priority: 1000,
+      link: function(scope, element, attrs) {
+        var block, child, def, id, idmaps, _i, _len, _ref;
+        idmaps = {};
+        def = null;
+        _ref = element.children();
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          child = _ref[_i];
+          id = $(child).attr("bb-question-id");
+          block = false;
+          if ($(child).attr("bb-replace-block")) {
+            block = true;
+          }
+          idmaps[id] = {
+            id: id,
+            html: child.innerHTML,
+            block: block
+          };
+        }
+        scope.idmaps = idmaps;
+        return element.replaceWith("");
+      }
+    };
+  });
+
+  app.directive("bbFocus", [
+    function() {
+      var FOCUS_CLASS;
+      FOCUS_CLASS = "bb-focused";
+      return {
+        restrict: "A",
+        require: "ngModel",
+        link: function(scope, element, attrs, ctrl) {
+          ctrl.$focused = false;
+          return element.bind("focus", function(evt) {
+            element.addClass(FOCUS_CLASS);
+            return scope.$apply(function() {
+              return ctrl.$focused = true;
+            });
+          }).bind("blur", function(evt) {
+            element.removeClass(FOCUS_CLASS);
+            return scope.$apply(function() {
+              return ctrl.$focused = false;
+            });
+          });
+        }
+      };
+    }
+  ]);
+
+  isEmpty = function(value) {
+    return angular.isUndefined(value) || value === "" || value === null || value !== value;
+  };
+
+  app.directive("ngMin", function() {
+    return {
+      restrict: "A",
+      require: "ngModel",
+      link: function(scope, elem, attr, ctrl) {
+        var minValidator;
+        scope.$watch(attr.ngMin, function() {
+          ctrl.$setViewValue(ctrl.$viewValue);
+        });
+        minValidator = function(value) {
+          var min;
+          min = scope.$eval(attr.ngMin) || 0;
+          if (!isEmpty(value) && value < min) {
+            ctrl.$setValidity("ngMin", false);
+            return undefined;
+          } else {
+            ctrl.$setValidity("ngMin", true);
+            return value;
+          }
+        };
+        ctrl.$parsers.push(minValidator);
+        ctrl.$formatters.push(minValidator);
+      }
+    };
+  });
+
+  app.directive("ngMax", function() {
+    return {
+      restrict: "A",
+      require: "ngModel",
+      link: function(scope, elem, attr, ctrl) {
+        var maxValidator;
+        scope.$watch(attr.ngMax, function() {
+          ctrl.$setViewValue(ctrl.$viewValue);
+        });
+        maxValidator = function(value) {
+          var max;
+          max = scope.$eval(attr.ngMax);
+          if (!isEmpty(value) && value > max) {
+            ctrl.$setValidity("ngMax", false);
+            return undefined;
+          } else {
+            ctrl.$setValidity("ngMax", true);
+            return value;
+          }
+        };
+        ctrl.$parsers.push(maxValidator);
+        ctrl.$formatters.push(maxValidator);
+      }
+    };
+  });
+
+  app.directive("creditCardNumber", function() {
+    var getCardType, isValid, linker;
+    getCardType = function(ccnumber) {
+      if (!ccnumber) {
+        return '';
+      }
+      ccnumber = ccnumber.toString().replace(/\s+/g, '');
+      if (/^(34)|^(37)/.test(ccnumber)) {
+        return "american_express";
+      }
+      if (/^(62)|^(88)/.test(ccnumber)) {
+        return "china_unionpay";
+      }
+      if (/^30[0-5]/.test(ccnumber)) {
+        return "diners_club_carte_blanche";
+      }
+      if (/^(2014)|^(2149)/.test(ccnumber)) {
+        return "diners_club_enroute";
+      }
+      if (/^36/.test(ccnumber)) {
+        return "diners_club_international";
+      }
+      if (/^(6011)|^(622(1(2[6-9]|[3-9][0-9])|[2-8][0-9]{2}|9([01][0-9]|2[0-5])))|^(64[4-9])|^65/.test(ccnumber)) {
+        return "discover";
+      }
+      if (/^35(2[89]|[3-8][0-9])/.test(ccnumber)) {
+        return "jcb";
+      }
+      if (/^(6304)|^(6706)|^(6771)|^(6709)/.test(ccnumber)) {
+        return "laser";
+      }
+      if (/^(5018)|^(5020)|^(5038)|^(5893)|^(6304)|^(6759)|^(6761)|^(6762)|^(6763)|^(0604)/.test(ccnumber)) {
+        return "maestro";
+      }
+      if (/^5[1-5]/.test(ccnumber)) {
+        return "master";
+      }
+      if (/^4/.test(ccnumber)) {
+        return "visa";
+      }
+      if (/^(4026)|^(417500)|^(4405)|^(4508)|^(4844)|^(4913)|^(4917)/.test(ccnumber)) {
+        return "visa_electron";
+      }
+    };
+    isValid = function(ccnumber) {
+      var len, mul, prodArr, sum;
+      if (!ccnumber) {
+        return false;
+      }
+      len = ccnumber.length;
+      mul = 0;
+      prodArr = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [0, 2, 4, 6, 8, 1, 3, 5, 7, 9]];
+      sum = 0;
+      while (len--) {
+        sum += prodArr[mul][parseInt(ccnumber.charAt(len), 10)];
+        mul ^= 1;
+      }
+      return sum % 10 === 0 && sum > 0;
+    };
+    linker = function(scope, element, attributes, ngModel) {
+      return scope.$watch(function() {
+        return ngModel.$modelValue;
+      }, function(newValue) {
+        ngModel.$setValidity('card_number', isValid(newValue));
+        scope.cardType = getCardType(newValue);
+        if ((newValue != null) && newValue.length === 16) {
+          if (ngModel.$invalid) {
+            element.parent().addClass('has-error');
+            return element.parent().removeClass('has-success');
+          } else {
+            element.parent().removeClass('has-error');
+            return element.parent().addClass('has-success');
+          }
+        } else {
+          return element.parent().removeClass('has-success');
+        }
+      });
+    };
+    return {
+      restrict: "C",
+      require: "ngModel",
+      link: linker,
+      scope: {
+        'cardType': '='
+      }
+    };
+  });
+
+  app.directive("cardSecurityCode", function() {
+    var linker;
+    linker = function(scope, element, attributes) {
+      return scope.$watch('cardType', function(newValue) {
+        if (newValue === 'american_express') {
+          element.attr('maxlength', 4);
+          return element.attr('placeholder', "••••");
+        } else {
+          element.attr('maxlength', 3);
+          return element.attr('placeholder', "•••");
+        }
+      });
+    };
+    return {
+      restrict: "C",
+      link: linker,
+      scope: {
+        'cardType': '='
+      }
+    };
+  });
+
+  app.directive('bbInputGroupManager', function(ValidatorService) {
+    return {
+      restrict: 'A',
+      controller: function($scope, $element, $attrs) {
+        $scope.input_manger = {
+          input_groups: {},
+          inputs: [],
+          registerInput: function(input, name) {
+            if (this.inputs.indexOf(input.$name) >= 0) {
+              return;
+            }
+            this.inputs.push(input.$name);
+            if (!this.input_groups[name]) {
+              this.input_groups[name] = {
+                inputs: [],
+                valid: false
+              };
+            }
+            return this.input_groups[name].inputs.push(input);
+          },
+          validateInputGroup: function(name) {
+            var input, is_valid, _i, _j, _len, _len1, _ref, _ref1;
+            is_valid = false;
+            _ref = this.input_groups[name].inputs;
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              input = _ref[_i];
+              is_valid = input.$modelValue;
+              if (is_valid) {
+                break;
+              }
+            }
+            if (is_valid === !this.input_groups[name].valid) {
+              _ref1 = this.input_groups[name].inputs;
+              for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+                input = _ref1[_j];
+                input.$setValidity(input.$name, is_valid);
+              }
+              return this.input_groups[name].valid = is_valid;
+            }
+          }
+        };
+        return $element.on("submit", function() {
+          var input_group, _results;
+          _results = [];
+          for (input_group in $scope.input_manger.input_groups) {
+            _results.push($scope.input_manger.validateInputGroup(input_group));
+          }
+          return _results;
+        });
+      }
+    };
+  });
+
+  app.directive("bbInputGroup", function() {
+    return {
+      restrict: "A",
+      require: 'ngModel',
+      link: function(scope, elem, attrs, ngModel) {
+        if (scope.input_manger.inputs.indexOf(ngModel.$name) >= 0) {
+          return;
+        }
+        scope.input_manger.registerInput(ngModel, attrs.bbInputGroup);
+        return scope.$watch(attrs.ngModel, function(newval, oldval) {
+          if (newval === !oldval) {
+            return scope.input_manger.validateInputGroup(attrs.bbInputGroup);
+          }
+        });
+      }
+    };
+  });
+
+  app.directive('bbQuestionLink', function($compile) {
+    return {
+      transclude: false,
+      restrict: 'A',
+      scope: true,
+      link: function(scope, element, attrs) {
+        var id;
+        id = parseInt(attrs.bbQuestionLink);
+        console.log(id);
+        return scope.$watch("question_set", function(newval, oldval) {
+          var q, _i, _len, _ref, _results;
+          if (newval) {
+            console.log("setting", newval);
+            _ref = scope.question_set;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              q = _ref[_i];
+              console.log("checking", q, q.id, id);
+              if (q.id === id) {
+                console.log("found", q);
+                scope.question = q;
+                element.attr('ng-model', "question.answer");
+                element.attr('bb-question-link', null);
+                _results.push($compile(element)(scope));
+              } else {
+                _results.push(void 0);
+              }
+            }
+            return _results;
+          }
+        });
+      }
+    };
+  });
+
+  app.directive('bbQuestionSet', function($compile) {
+    return {
+      transclude: false,
+      restrict: 'A',
+      scope: true,
+      link: function(scope, element, attrs) {
+        var set;
+        set = attrs.bbQuestionSet;
+        element.addClass('ng-hide');
+        return scope.$watch(set, function(newval, oldval) {
+          if (newval) {
+            scope.question_set = newval;
+            element.removeClass('ng-hide');
+            return console.log(newval, scope.question_set);
+          }
+        });
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var app;
+
+  app = angular.module('BB.Directives');
+
+  app.directive('bbLoader', function($rootScope, $compile, PathSvc, TemplateSvc) {
+    return {
+      restrict: 'A',
+      replace: false,
+      scope: {},
+      controllerAs: 'LoaderCtrl',
+      controller: function($scope) {
+        var addScopeId, hideLoader, parentScopeId, removeScopeId, scopeIdArr, showLoader;
+        parentScopeId = $scope.$parent.$id;
+        scopeIdArr = [];
+        addScopeId = function(id) {
+          scopeIdArr.push(id);
+          scopeIdArr = _.uniq(scopeIdArr);
+        };
+        removeScopeId = function(id) {
+          scopeIdArr = _.without(scopeIdArr, id);
+          return scopeIdArr.length;
+        };
+        showLoader = function(e, cscope) {
+          var sid;
+          sid = cscope.$id;
+          while (cscope) {
+            if (cscope.$id === parentScopeId) {
+              addScopeId(sid);
+              $scope.scopeLoaded = false;
+              break;
+            }
+            cscope = cscope.$parent;
+          }
+        };
+        hideLoader = function(e, cscope) {
+          if (!removeScopeId(cscope.$id)) {
+            $scope.scopeLoaded = true;
+          }
+        };
+        $rootScope.$on('show:loader', showLoader);
+        $rootScope.$on('hide:loader', hideLoader);
+        $scope.scopeLoaded = false;
+      },
+      link: function(scope, element, attrs) {
+        TemplateSvc.get(PathSvc.directivePartial("loader")).then(function(html) {
+          var str;
+          if (_.isString(attrs.bbLoader)) {
+            str = attrs.bbLoader.slice(1);
+            if (/^#/.test(attrs.bbLoader)) {
+              html.attr('id', str);
+            } else if (/^\./.test(attrs.bbLoader)) {
+              html.addClass(str);
+            }
+          }
+          element.prepend(html);
+          $compile(html)(scope);
+        });
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var app;
+
+  app = angular.module('BB.Directives');
+
+  app.directive('bbLoading', function($compile) {
+    return {
+      transclude: false,
+      restrict: 'A',
+      link: function(scope, element, attrs) {
+        scope.scopeLoaded = true;
+        element.attr('ng-hide', "scopeLoaded");
+        element.attr('bb-loading', null);
+        $compile(element)(scope);
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var app;
+
+  app = angular.module('BB.Directives');
+
+  app.directive('bbContent', function($compile) {
+    return {
+      transclude: false,
+      restrict: 'A',
+      link: function(scope, element, attrs) {
+        element.attr('ng-include', "bb_main");
+        element.attr('ng-controller', "bbContentController");
+        element.attr('onLoad', "initPage()");
+        element.attr('bb-content', null);
+        element.attr('ng-hide', "hide_page");
+        return $compile(element)(scope);
+      }
+    };
+  });
+
+  app.directive('bbLoading', function($compile) {
+    return {
+      transclude: false,
+      restrict: 'A',
+      link: function(scope, element, attrs) {
+        scope.scopeLoaded = scope.areScopesLoaded(scope);
+        element.attr('ng-hide', "scopeLoaded");
+        element.attr('bb-loading', null);
+        $compile(element)(scope);
+      }
+    };
+  });
+
+  app.directive('bbScrollTo', function($rootScope, AppConfig, BreadcrumbService) {
+    return {
+      transclude: false,
+      restrict: 'A',
+      link: function(scope, element, attrs) {
+        var always_scroll, evnt;
+        evnt = attrs.bbScrollTo;
+        always_scroll = (attrs.bbAlwaysScroll != null) || false;
+        return $rootScope.$on(evnt, function(e) {
+          var current_step, scroll_to_element;
+          if (evnt === "page:loaded" && scope.display && scope.display.xs && $bbug('[data-scroll-id="' + AppConfig.uid + '"]').length) {
+            scroll_to_element = $bbug('[data-scroll-id="' + AppConfig.uid + '"]');
+          } else {
+            scroll_to_element = $bbug(element);
+          }
+          current_step = BreadcrumbService.getCurrentStep();
+          if (((evnt === "page:loaded" || !scroll_to_element.visible()) && current_step > 1) || always_scroll) {
+            return $bbug("html, body").animate({
+              scrollTop: scroll_to_element.offset().top
+            }, 500);
+          }
+        });
+      }
+    };
+  });
+
+  app.directive('bbSlotGrouper', function() {
+    return {
+      restrict: 'A',
+      require: ['^?bbTimeRanges?', '^?bbTimes'],
+      scope: true,
+      link: function(scope, element, attrs) {
+        var slot, slots, _i, _len, _results;
+        slots = scope.$eval(attrs.slots);
+        if (!slots) {
+          return;
+        }
+        scope.grouped_slots = [];
+        _results = [];
+        for (_i = 0, _len = slots.length; _i < _len; _i++) {
+          slot = slots[_i];
+          if (slot.time >= scope.$eval(attrs.startTime) && slot.time < scope.$eval(attrs.endTime)) {
+            scope.grouped_slots.push(slot);
+          }
+          _results.push(scope.has_slots = scope.grouped_slots.length > 0);
+        }
+        return _results;
+      }
+    };
+  });
+
+  app.directive('bbForm', function() {
+    return {
+      restrict: 'A',
+      require: '^form',
+      link: function(scope, elem, attrs, ctrls) {
+        return elem.on("submit", function() {
+          var invalid_form_group, invalid_input;
+          invalid_form_group = elem.find('.has-error:first');
+          if (invalid_form_group && invalid_form_group.length > 0) {
+            $bbug("html, body").animate({
+              scrollTop: invalid_form_group.offset().top
+            }, 1000);
+            invalid_input = invalid_form_group.find('.ng-invalid');
+            invalid_input.focus();
+            return false;
+          }
+          return true;
+        });
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BB.Directives').directive('ngOptions', function($sniffer, $rootScope) {
+    return {
+      restrict: 'A',
+      link: function(scope, el, attrs) {
+        var size;
+        size = parseInt(attrs['size'], 10);
+        if (!isNaN(size) && size > 1 && $sniffer.msie) {
+          return $rootScope.$on('loading:finished', function() {
+            el.focus();
+            return $('body').focus();
+          });
+        }
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BB.Directives').directive('paymentButton', function($compile, $sce, $http, $templateCache, $q) {
+    var getButtonFormTemplate, getTemplate, linker, setClassAndValue;
+    getTemplate = function(type, scope) {
+      switch (type) {
+        case 'button_form':
+          return getButtonFormTemplate(scope);
+        case 'page':
+          return "<a ng-click=\"decideNextPage()\">{{label}}</a>";
+        case 'location':
+          return "<a href='{{payment_link}}'>{{label}}</a>";
+        default:
+          return "";
+      }
+    };
+    getButtonFormTemplate = function(scope) {
+      var src;
+      src = $sce.parseAsResourceUrl("'" + scope.payment_link + "'")();
+      return $http.get(src, {
+        cache: $templateCache
+      }).then(function(response) {
+        return response.data;
+      });
+    };
+    setClassAndValue = function(scope, element, attributes) {
+      var c, i, inputs, main_tag, _i, _len, _ref, _results;
+      switch (scope.link_type) {
+        case 'button_form':
+          inputs = element.find("input");
+          main_tag = ((function() {
+            var _i, _len, _results;
+            _results = [];
+            for (_i = 0, _len = inputs.length; _i < _len; _i++) {
+              i = inputs[_i];
+              if ($(i).attr('type') === 'submit') {
+                _results.push(i);
+              }
+            }
+            return _results;
+          })())[0];
+          if (attributes.value) {
+            $(main_tag).attr('value', attributes.value);
+          }
+          break;
+        case 'page':
+        case 'location':
+          main_tag = element.find("a")[0];
+      }
+      if (attributes["class"]) {
+        _ref = attributes["class"].split(" ");
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          c = _ref[_i];
+          $(main_tag).addClass(c);
+          _results.push($(element).removeClass(c));
+        }
+        return _results;
+      }
+    };
+    linker = function(scope, element, attributes) {
+      var url;
+      scope.bb.payment_status = "pending";
+      scope.bb.total = scope.total;
+      scope.link_type = scope.total.$link('new_payment').type;
+      scope.label = attributes.value || "Make Payment";
+      scope.payment_link = scope.total.$href('new_payment');
+      url = scope.total.$href('new_payment');
+      return $q.when(getTemplate(scope.link_type, scope)).then(function(template) {
+        element.html(template).show();
+        $compile(element.contents())(scope);
+        return setClassAndValue(scope, element, attributes);
+      });
+    };
+    return {
+      restrict: 'EA',
+      replace: true,
+      scope: {
+        total: '=',
+        bb: '=',
+        decideNextPage: '='
+      },
+      link: linker
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module("BB.Directives").directive('scoped', function($document, $timeout) {
+    var scopeIt;
+    this.compat = (function() {
+      var DOMRules, DOMStyle, changeSelectorTextAllowed, check, e, scopeSupported, testSheet, testStyle;
+      check = document.createElement('style');
+      if (typeof check.sheet !== 'undefined') {
+        DOMStyle = 'sheet';
+      } else if (typeof check.getSheet !== 'undefined') {
+        DOMStyle = 'getSheet';
+      } else {
+        DOMStyle = 'styleSheet';
+      }
+      scopeSupported = void 0 !== check.scoped;
+      document.body.appendChild(check);
+      testSheet = check[DOMStyle];
+      if (testSheet.addRule) {
+        testSheet.addRule('c', 'blink');
+      } else {
+        testSheet.insertRule('c{}', 0);
+      }
+      DOMRules = testSheet.rules ? 'rules' : 'cssRules';
+      testStyle = testSheet[DOMRules][0];
+      try {
+        testStyle.selectorText = 'd';
+      } catch (_error) {
+        e = _error;
+      }
+      changeSelectorTextAllowed = 'd' === testStyle.selectorText.toLowerCase();
+      check.parentNode.removeChild(check);
+      return {
+        scopeSupported: scopeSupported,
+        rules: DOMRules,
+        sheet: DOMStyle,
+        changeSelectorTextAllowed: changeSelectorTextAllowed
+      };
+    })();
+    scopeIt = (function(_this) {
+      return function(element) {
+        var allRules, glue, id, idCounter, index, par, rule, selector, sheet, styleNode, styleRule, _results;
+        styleNode = element[0];
+        idCounter = 0;
+        sheet = styleNode[_this.compat.sheet];
+        if (!sheet) {
+          return;
+        }
+        allRules = sheet[_this.compat.rules];
+        par = styleNode.parentNode;
+        id = par.id || (par.id = 'scopedByScopedPolyfill_' + ++idCounter);
+        glue = '';
+        index = allRules.length || 0;
+        while (par) {
+          if (par.id) {
+            glue = '#' + par.id + ' ' + glue;
+          }
+          par = par.parentNode;
+        }
+        _results = [];
+        while (index--) {
+          rule = allRules[index];
+          if (rule.selectorText) {
+            if (!rule.selectorText.match(new RegExp(glue))) {
+              selector = glue + ' ' + rule.selectorText.split(',').join(', ' + glue);
+              selector = selector.replace(/[\ ]+:root/gi, '');
+              if (_this.compat.changeSelectorTextAllowed) {
+                _results.push(rule.selectorText = selector);
+              } else {
+                if (!rule.type || 1 === rule.type) {
+                  styleRule = rule.style.cssText;
+                  if (styleRule) {
+                    if (sheet.removeRule) {
+                      sheet.removeRule(index);
+                    } else {
+                      sheet.deleteRule(index);
+                    }
+                    if (sheet.addRule) {
+                      _results.push(sheet.addRule(selector, styleRule));
+                    } else {
+                      _results.push(sheet.insertRule(selector + '{' + styleRule + '}', index));
+                    }
+                  } else {
+                    _results.push(void 0);
+                  }
+                } else {
+                  _results.push(void 0);
+                }
+              }
+            } else {
+              _results.push(void 0);
+            }
+          } else {
+            _results.push(void 0);
+          }
+        }
+        return _results;
+      };
+    })(this);
+    return {
+      restrict: 'A',
+      link: function(scope, element, attrs) {
+        scope.scopeSupported = this.compat.scopeSupported;
+        if (!this.compat.scopeSupported) {
+          return $timeout(function() {
+            return scopeIt(element);
+          });
+        }
+      },
+      controller: function($scope, $element, $timeout) {
+        if (!$scope.scopeSupported) {
+          this.updateCss = function() {
+            return $timeout(function() {
+              return scopeIt($element);
+            });
+          };
+        }
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  var app;
+
+  app = angular.module('BB.Directives');
+
+  app.directive('bbDisplayMode', [
+    '$compile', '$window', function($compile, $window) {
+      return {
+        transclude: false,
+        restrict: 'A',
+        template: '<span class="visible-xs"></span><span class="visible-sm"></span><span class="visible-md"></span><span class="visible-lg"></span>',
+        link: function(scope, elem, attrs) {
+          var getCurrentSize, isVisible, markers, t, update;
+          markers = elem.find('span');
+          elem.addClass("bb-display-mode");
+          scope.display = {};
+          isVisible = function(element) {
+            return element && element.style.display !== 'none' && element.offsetWidth && element.offsetHeight;
+          };
+          getCurrentSize = function() {
+            var element, _i, _len;
+            for (_i = 0, _len = markers.length; _i < _len; _i++) {
+              element = markers[_i];
+              if (isVisible(element)) {
+                return element.className.slice(8, 11);
+              }
+              scope.display = {};
+              scope.display[element.className.slice(8, 11)] = true;
+              return false;
+            }
+          };
+          update = (function(_this) {
+            return function() {
+              var nsize;
+              nsize = getCurrentSize();
+              if (nsize !== _this.currentSize) {
+                _this.currentSize = nsize;
+                scope.display.xs = false;
+                scope.display.sm = false;
+                scope.display.md = false;
+                scope.display.lg = false;
+                scope.display.not_xs = true;
+                scope.display.not_sm = true;
+                scope.display.not_md = true;
+                scope.display.not_lg = true;
+                scope.display[nsize] = true;
+                scope.display["not_" + nsize] = false;
+                return true;
+              }
+              return false;
+            };
+          })(this);
+          t = null;
+          angular.element($window).bind('resize', (function(_this) {
+            return function() {
+              window.clearTimeout(t);
+              return t = setTimeout(function() {
+                if (update()) {
+                  return scope.$apply();
+                }
+              }, 50);
+            };
+          })(this));
+          return angular.element($window).bind('load', (function(_this) {
+            return function() {
+              if (update()) {
+                return scope.$apply();
+              }
+            };
+          })(this));
+        }
+      };
+    }
+  ]);
+
+}).call(this);
+
+(function() {
+  angular.module('BB.Directives').directive('popover', function() {
+    var openElement, openScope;
+    openElement = null;
+    openScope = null;
+    $('div[ng-controller="BBCtrl"]').off('.bbtooltip').on('click.bbtooltip', function(e) {
+      var target;
+      target = $(e.target).closest('[popover]')[0];
+      if (!target && openElement && openScope) {
+        $(openElement).next('.popover').remove();
+        openScope.tt_isOpen = false;
+      }
+      return true;
+    });
+    return {
+      restrict: 'EA',
+      priority: -1000,
+      link: function(scope, element) {
+        element.on('click.bbtooltip', function(e) {
+          if (openElement === $(e.target).closest('[popover]')[0]) {
+            e.preventDefault();
+            return;
+          }
+          if (openElement && openScope) {
+            $(openElement).next('.popover').remove();
+            openScope.tt_isOpen = false;
+          }
+          openElement = element[0];
+          return openScope = scope;
+        });
+        return scope.$on('$destroy', function() {
+          return $(element).off('.bbtooltip');
+        });
+      }
+    };
+  });
+
+}).call(this);
+
+(function (angular) {
+  'use strict';
+
+  /* Directives */
+  var app = angular.module('BB.Directives');
+
+  app.directive('appVersion', function(version) {
+    return function(scope, elm, attrs) {
+      elm.text(version);
+    };
+  });
+}(window.angular));
 
 (function() {
   angular.module('BB.Services').factory("AddressListService", function($q, $window, halClient) {
@@ -105338,6 +105381,418 @@ bbAdminDirectives.controller('CalController', function($scope) {
 }).call(this);
 
 (function() {
+  var ModalDelete;
+
+  angular.module('BB.Directives').directive('bbPurchase', function() {
+    return {
+      restrict: 'AE',
+      replace: true,
+      scope: true,
+      controller: 'Purchase',
+      link: function(scope, element, attrs) {
+        scope.init(scope.$eval(attrs.bbPurchase));
+      }
+    };
+  });
+
+  angular.module('BB.Controllers').controller('Purchase', function($scope, $rootScope, CompanyService, PurchaseService, ClientService, $modal, $location, $timeout, BBWidget, BBModel, $q, QueryStringService, SSOService, AlertService, LoginService, $window, $upload, ServiceService) {
+    var checkIfMoveBooking, failMsg, getCompanyID, getPurchaseID, id, loginRequired, setPurchaseCompany;
+    $scope.controller = "Purchase";
+    setPurchaseCompany = function(company) {
+      $scope.bb.company_id = company.id;
+      $scope.bb.company = new BBModel.Company(company);
+      $scope.company = $scope.bb.company;
+      $scope.bb.item_defaults.company = $scope.bb.company;
+      if (company.settings) {
+        if (company.settings.merge_resources) {
+          $scope.bb.item_defaults.merge_resources = true;
+        }
+        if (company.settings.merge_people) {
+          return $scope.bb.item_defaults.merge_people = true;
+        }
+      }
+    };
+    failMsg = function() {
+      if ($scope.fail_msg) {
+        return AlertService.danger({
+          msg: $scope.fail_msg
+        });
+      } else {
+        return AlertService.danger({
+          msg: "Sorry, something went wrong"
+        });
+      }
+    };
+    $scope.init = function(options) {
+      if (options.move_route) {
+        $scope.move_route = options.move_route;
+      }
+      if (options.move_all) {
+        $scope.move_all = options.move_all;
+      }
+      if (options.login_redirect) {
+        $scope.requireLogin({
+          redirect: options.login_redirect
+        });
+      }
+      $scope.notLoaded($scope);
+      if (options.fail_msg) {
+        $scope.fail_msg = options.fail_msg;
+      }
+      if (options.member_sso) {
+        return SSOService.memberLogin(options).then(function(login) {
+          return $scope.load();
+        }, function(err) {
+          $scope.setLoaded($scope);
+          return failMsg();
+        });
+      } else {
+        return $scope.load();
+      }
+    };
+    $scope.load = function(id) {
+      $scope.notLoaded($scope);
+      id || (id = QueryStringService('ref'));
+      if (QueryStringService('booking_id')) {
+        id = QueryStringService('booking_id');
+      }
+      if (!$scope.loaded) {
+        $rootScope.widget_started.then((function(_this) {
+          return function() {
+            return $scope.waiting_for_conn_started.then(function() {
+              var auth_token, company_id, params;
+              company_id = getCompanyID();
+              if (company_id) {
+                CompanyService.query(company_id, {}).then(function(company) {
+                  return setPurchaseCompany(company);
+                });
+              }
+              params = {
+                purchase_id: id,
+                url_root: $scope.bb.api_url
+              };
+              auth_token = sessionStorage.getItem('auth_token');
+              if (auth_token) {
+                params.auth_token = auth_token;
+              }
+              return PurchaseService.query(params).then(function(purchase) {
+                if ($scope.bb.company == null) {
+                  purchase.$get('company').then((function(_this) {
+                    return function(company) {
+                      return setPurchaseCompany(company);
+                    };
+                  })(this));
+                }
+                $scope.purchase = purchase;
+                $scope.total = $scope.purchase;
+                $scope.price = !($scope.purchase.price === 0);
+                $scope.purchase.getBookingsPromise().then(function(bookings) {
+                  var booking, _i, _len, _ref, _results;
+                  $scope.bookings = bookings;
+                  $scope.setLoaded($scope);
+                  checkIfMoveBooking(bookings);
+                  _ref = $scope.bookings;
+                  _results = [];
+                  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                    booking = _ref[_i];
+                    _results.push(booking.getAnswersPromise().then(function(answers) {
+                      return booking.answers = answers;
+                    }));
+                  }
+                  return _results;
+                }, function(err) {
+                  $scope.setLoaded($scope);
+                  return failMsg();
+                });
+                if (purchase.$has('client')) {
+                  purchase.$get('client').then((function(_this) {
+                    return function(client) {
+                      return $scope.setClient(new BBModel.Client(client));
+                    };
+                  })(this));
+                }
+                return $scope.purchase.getConfirmMessages().then(function(messages) {
+                  return $scope.messages = messages;
+                });
+              }, function(err) {
+                $scope.setLoaded($scope);
+                if (err && err.status === 401 && $scope.login_action) {
+                  if (LoginService.isLoggedIn()) {
+                    return failMsg();
+                  } else {
+                    return loginRequired();
+                  }
+                } else {
+                  return failMsg();
+                }
+              });
+            }, function(err) {
+              return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
+            });
+          };
+        })(this), function(err) {
+          return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
+        });
+      }
+      return $scope.loaded = true;
+    };
+    checkIfMoveBooking = function(bookings) {
+      var b, id, matches, move_booking;
+      matches = /^.*(?:\?|&)move_booking=(.*?)(?:&|$)/.exec($location.absUrl());
+      if (matches) {
+        id = parseInt(matches[1]);
+      }
+      if (id) {
+        move_booking = (function() {
+          var _i, _len, _results;
+          _results = [];
+          for (_i = 0, _len = bookings.length; _i < _len; _i++) {
+            b = bookings[_i];
+            if (b.id === id) {
+              _results.push(b);
+            }
+          }
+          return _results;
+        })();
+        if (move_booking.length > 0 && $scope.isMovable(bookings[0])) {
+          return $scope.move(move_booking[0]);
+        }
+      }
+    };
+    $scope.requireLogin = (function(_this) {
+      return function(action) {
+        var div;
+        if (_.isString(action.redirect)) {
+          if (action.redirect.indexOf('?') === -1) {
+            div = '?';
+          } else {
+            div = '&';
+          }
+          action.redirect += div + 'ref=' + encodeURIComponent(QueryStringService('ref'));
+        }
+        return $scope.login_action = action;
+      };
+    })(this);
+    loginRequired = (function(_this) {
+      return function() {
+        if ($scope.login_action.redirect) {
+          return window.location = $scope.login_action.redirect;
+        }
+      };
+    })(this);
+    getCompanyID = function() {
+      var company_id, matches;
+      matches = /^.*(?:\?|&)company_id=(.*?)(?:&|$)/.exec($location.absUrl());
+      if (matches) {
+        company_id = matches[1];
+      }
+      return company_id;
+    };
+    getPurchaseID = function() {
+      var id, matches;
+      matches = /^.*(?:\?|&)id=(.*?)(?:&|$)/.exec($location.absUrl());
+      if (!matches) {
+        matches = /^.*print_purchase\/(.*?)(?:\?|$)/.exec($location.absUrl());
+      }
+      if (!matches) {
+        matches = /^.*print_purchase_jl\/(.*?)(?:\?|$)/.exec($location.absUrl());
+      }
+      if (matches) {
+        id = matches[1];
+      }
+      return id;
+    };
+    $scope.move = function(booking, route, options) {
+      if (options == null) {
+        options = {};
+      }
+      route || (route = $scope.move_route);
+      if ($scope.move_all) {
+        return $scope.moveAll(route, options);
+      }
+      $scope.notLoaded($scope);
+      $scope.clearPage();
+      $scope.initWidget({
+        company_id: booking.company_id,
+        no_route: true
+      });
+      return $timeout((function(_this) {
+        return function() {
+          return $rootScope.connection_started.then(function() {
+            var new_item, proms;
+            proms = [];
+            $scope.bb.moving_booking = booking;
+            $scope.quickEmptybasket();
+            new_item = new BBModel.BasketItem(booking, $scope.bb);
+            new_item.setSrcBooking(booking, $scope.bb);
+            new_item.ready = false;
+            Array.prototype.push.apply(proms, new_item.promises);
+            $scope.bb.basket.addItem(new_item);
+            $scope.setBasketItem(new_item);
+            return $q.all(proms).then(function() {
+              $scope.setLoaded($scope);
+              $rootScope.$emit("booking:move");
+              return $scope.decideNextPage(route);
+            }, function(err) {
+              $scope.setLoaded($scope);
+              return failMsg();
+            });
+          }, function(err) {
+            return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
+          });
+        };
+      })(this));
+    };
+    $scope.moveAll = function(route, options) {
+      if (options == null) {
+        options = {};
+      }
+      route || (route = $scope.move_route);
+      $scope.notLoaded($scope);
+      $scope.clearPage();
+      $scope.initWidget({
+        company_id: $scope.bookings[0].company_id,
+        no_route: true
+      });
+      return $timeout((function(_this) {
+        return function() {
+          return $rootScope.connection_started.then(function() {
+            var booking, new_item, proms, _i, _len, _ref;
+            proms = [];
+            if ($scope.bookings.length === 1) {
+              $scope.bb.moving_booking = $scope.bookings[0];
+            } else {
+              $scope.bb.moving_booking = $scope.purchase;
+            }
+            $scope.quickEmptybasket();
+            _ref = $scope.bookings;
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              booking = _ref[_i];
+              new_item = new BBModel.BasketItem(booking, $scope.bb);
+              new_item.setSrcBooking(booking);
+              new_item.ready = false;
+              new_item.move_done = false;
+              Array.prototype.push.apply(proms, new_item.promises);
+              $scope.bb.basket.addItem(new_item);
+            }
+            $scope.bb.sortStackedItems();
+            $scope.setBasketItem($scope.bb.basket.items[0]);
+            return $q.all(proms).then(function() {
+              $scope.setLoaded($scope);
+              return $scope.decideNextPage(route);
+            }, function(err) {
+              $scope.setLoaded($scope);
+              return failMsg();
+            });
+          }, function(err) {
+            return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
+          });
+        };
+      })(this));
+    };
+    $scope.confirm_delete = function() {
+      var modalInstance;
+      modalInstance = $modal.open;
+      return modalInstance.booking.$del('self').then((function(_this) {
+        return function(service) {
+          modalInstance.close;
+          return $rootScope.$emit("booking:cancelled");
+        };
+      })(this));
+    };
+    $scope["delete"] = function(booking) {
+      var modalInstance;
+      $scope.clearPage();
+      modalInstance = $modal.open({
+        templateUrl: $scope.getPartial("cancel_modal"),
+        controller: ModalDelete,
+        resolve: {
+          booking: function() {
+            return booking;
+          }
+        }
+      });
+      return modalInstance.result.then(function(booking) {
+        return booking.$del('self').then((function(_this) {
+          return function(service) {
+            return $scope.bookings = _.without($scope.bookings, booking);
+          };
+        })(this));
+      });
+    };
+    $scope.cancel = function() {
+      var modalInstance;
+      modalInstance = $modal.open;
+      return modalInstance.dismiss("cancel");
+    };
+    $scope.isMovable = function(booking) {
+      if (booking.min_cancellation_time) {
+        return moment().isBefore(booking.min_cancellation_time);
+      }
+      return booking.datetime.isAfter(moment());
+    };
+    $scope.onFileSelect = function(booking, $file, existing) {
+      var att_id, file, method;
+      $scope.upload_progress = 0;
+      console.log($file, booking, existing);
+      console.log;
+      file = $file;
+      att_id = null;
+      if (existing) {
+        att_id = existing.id;
+      }
+      method = "POST";
+      if (att_id) {
+        method = "PUT";
+      }
+      return $scope.upload = $upload.upload({
+        url: booking.$href('attachments'),
+        method: method,
+        data: {
+          att_id: att_id
+        },
+        file: file
+      }).progress(function(evt) {
+        if ($scope.upload_progress < 100) {
+          return $scope.upload_progress = parseInt(99.0 * evt.loaded / evt.total);
+        }
+      }).success(function(data, status, headers, config) {
+        $scope.upload_progress = 100;
+        if (data && data.attachments && booking) {
+          return booking.attachments = data.attachments;
+        }
+      });
+    };
+    if ($scope.bb.total) {
+      $scope.load($scope.bb.total.long_id);
+    } else {
+      id = getPurchaseID();
+      if (id) {
+        $scope.load(id);
+      }
+    }
+    return $scope.createBasketItem = function(booking) {
+      var item;
+      item = new BBModel.BasketItem(booking, $scope.bb);
+      item.setSrcBooking(booking);
+      return item;
+    };
+  });
+
+  ModalDelete = function($scope, $rootScope, $modalInstance, booking) {
+    $scope.controller = "ModalDelete";
+    $scope.booking = booking;
+    $scope.confirm_delete = function() {
+      return $modalInstance.close(booking);
+    };
+    return $scope.cancel = function() {
+      return $modalInstance.dismiss("cancel");
+    };
+  };
+
+}).call(this);
+
+(function() {
   'use strict';
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
@@ -105810,418 +106265,6 @@ bbAdminDirectives.controller('CalController', function($scope) {
 }).call(this);
 
 (function() {
-  var ModalDelete;
-
-  angular.module('BB.Directives').directive('bbPurchase', function() {
-    return {
-      restrict: 'AE',
-      replace: true,
-      scope: true,
-      controller: 'Purchase',
-      link: function(scope, element, attrs) {
-        scope.init(scope.$eval(attrs.bbPurchase));
-      }
-    };
-  });
-
-  angular.module('BB.Controllers').controller('Purchase', function($scope, $rootScope, CompanyService, PurchaseService, ClientService, $modal, $location, $timeout, BBWidget, BBModel, $q, QueryStringService, SSOService, AlertService, LoginService, $window, $upload, ServiceService) {
-    var checkIfMoveBooking, failMsg, getCompanyID, getPurchaseID, id, loginRequired, setPurchaseCompany;
-    $scope.controller = "Purchase";
-    setPurchaseCompany = function(company) {
-      $scope.bb.company_id = company.id;
-      $scope.bb.company = new BBModel.Company(company);
-      $scope.company = $scope.bb.company;
-      $scope.bb.item_defaults.company = $scope.bb.company;
-      if (company.settings) {
-        if (company.settings.merge_resources) {
-          $scope.bb.item_defaults.merge_resources = true;
-        }
-        if (company.settings.merge_people) {
-          return $scope.bb.item_defaults.merge_people = true;
-        }
-      }
-    };
-    failMsg = function() {
-      if ($scope.fail_msg) {
-        return AlertService.danger({
-          msg: $scope.fail_msg
-        });
-      } else {
-        return AlertService.danger({
-          msg: "Sorry, something went wrong"
-        });
-      }
-    };
-    $scope.init = function(options) {
-      if (options.move_route) {
-        $scope.move_route = options.move_route;
-      }
-      if (options.move_all) {
-        $scope.move_all = options.move_all;
-      }
-      if (options.login_redirect) {
-        $scope.requireLogin({
-          redirect: options.login_redirect
-        });
-      }
-      $scope.notLoaded($scope);
-      if (options.fail_msg) {
-        $scope.fail_msg = options.fail_msg;
-      }
-      if (options.member_sso) {
-        return SSOService.memberLogin(options).then(function(login) {
-          return $scope.load();
-        }, function(err) {
-          $scope.setLoaded($scope);
-          return failMsg();
-        });
-      } else {
-        return $scope.load();
-      }
-    };
-    $scope.load = function(id) {
-      $scope.notLoaded($scope);
-      id || (id = QueryStringService('ref'));
-      if (QueryStringService('booking_id')) {
-        id = QueryStringService('booking_id');
-      }
-      if (!$scope.loaded) {
-        $rootScope.widget_started.then((function(_this) {
-          return function() {
-            return $scope.waiting_for_conn_started.then(function() {
-              var auth_token, company_id, params;
-              company_id = getCompanyID();
-              if (company_id) {
-                CompanyService.query(company_id, {}).then(function(company) {
-                  return setPurchaseCompany(company);
-                });
-              }
-              params = {
-                purchase_id: id,
-                url_root: $scope.bb.api_url
-              };
-              auth_token = sessionStorage.getItem('auth_token');
-              if (auth_token) {
-                params.auth_token = auth_token;
-              }
-              return PurchaseService.query(params).then(function(purchase) {
-                if ($scope.bb.company == null) {
-                  purchase.$get('company').then((function(_this) {
-                    return function(company) {
-                      return setPurchaseCompany(company);
-                    };
-                  })(this));
-                }
-                $scope.purchase = purchase;
-                $scope.total = $scope.purchase;
-                $scope.price = !($scope.purchase.price === 0);
-                $scope.purchase.getBookingsPromise().then(function(bookings) {
-                  var booking, _i, _len, _ref, _results;
-                  $scope.bookings = bookings;
-                  $scope.setLoaded($scope);
-                  checkIfMoveBooking(bookings);
-                  _ref = $scope.bookings;
-                  _results = [];
-                  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                    booking = _ref[_i];
-                    _results.push(booking.getAnswersPromise().then(function(answers) {
-                      return booking.answers = answers;
-                    }));
-                  }
-                  return _results;
-                }, function(err) {
-                  $scope.setLoaded($scope);
-                  return failMsg();
-                });
-                if (purchase.$has('client')) {
-                  purchase.$get('client').then((function(_this) {
-                    return function(client) {
-                      return $scope.setClient(new BBModel.Client(client));
-                    };
-                  })(this));
-                }
-                return $scope.purchase.getConfirmMessages().then(function(messages) {
-                  return $scope.messages = messages;
-                });
-              }, function(err) {
-                $scope.setLoaded($scope);
-                if (err && err.status === 401 && $scope.login_action) {
-                  if (LoginService.isLoggedIn()) {
-                    return failMsg();
-                  } else {
-                    return loginRequired();
-                  }
-                } else {
-                  return failMsg();
-                }
-              });
-            }, function(err) {
-              return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
-            });
-          };
-        })(this), function(err) {
-          return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
-        });
-      }
-      return $scope.loaded = true;
-    };
-    checkIfMoveBooking = function(bookings) {
-      var b, id, matches, move_booking;
-      matches = /^.*(?:\?|&)move_booking=(.*?)(?:&|$)/.exec($location.absUrl());
-      if (matches) {
-        id = parseInt(matches[1]);
-      }
-      if (id) {
-        move_booking = (function() {
-          var _i, _len, _results;
-          _results = [];
-          for (_i = 0, _len = bookings.length; _i < _len; _i++) {
-            b = bookings[_i];
-            if (b.id === id) {
-              _results.push(b);
-            }
-          }
-          return _results;
-        })();
-        if (move_booking.length > 0 && $scope.isMovable(bookings[0])) {
-          return $scope.move(move_booking[0]);
-        }
-      }
-    };
-    $scope.requireLogin = (function(_this) {
-      return function(action) {
-        var div;
-        if (_.isString(action.redirect)) {
-          if (action.redirect.indexOf('?') === -1) {
-            div = '?';
-          } else {
-            div = '&';
-          }
-          action.redirect += div + 'ref=' + encodeURIComponent(QueryStringService('ref'));
-        }
-        return $scope.login_action = action;
-      };
-    })(this);
-    loginRequired = (function(_this) {
-      return function() {
-        if ($scope.login_action.redirect) {
-          return window.location = $scope.login_action.redirect;
-        }
-      };
-    })(this);
-    getCompanyID = function() {
-      var company_id, matches;
-      matches = /^.*(?:\?|&)company_id=(.*?)(?:&|$)/.exec($location.absUrl());
-      if (matches) {
-        company_id = matches[1];
-      }
-      return company_id;
-    };
-    getPurchaseID = function() {
-      var id, matches;
-      matches = /^.*(?:\?|&)id=(.*?)(?:&|$)/.exec($location.absUrl());
-      if (!matches) {
-        matches = /^.*print_purchase\/(.*?)(?:\?|$)/.exec($location.absUrl());
-      }
-      if (!matches) {
-        matches = /^.*print_purchase_jl\/(.*?)(?:\?|$)/.exec($location.absUrl());
-      }
-      if (matches) {
-        id = matches[1];
-      }
-      return id;
-    };
-    $scope.move = function(booking, route, options) {
-      if (options == null) {
-        options = {};
-      }
-      route || (route = $scope.move_route);
-      if ($scope.move_all) {
-        return $scope.moveAll(route, options);
-      }
-      $scope.notLoaded($scope);
-      $scope.clearPage();
-      $scope.initWidget({
-        company_id: booking.company_id,
-        no_route: true
-      });
-      return $timeout((function(_this) {
-        return function() {
-          return $rootScope.connection_started.then(function() {
-            var new_item, proms;
-            proms = [];
-            $scope.bb.moving_booking = booking;
-            $scope.quickEmptybasket();
-            new_item = new BBModel.BasketItem(booking, $scope.bb);
-            new_item.setSrcBooking(booking, $scope.bb);
-            new_item.ready = false;
-            Array.prototype.push.apply(proms, new_item.promises);
-            $scope.bb.basket.addItem(new_item);
-            $scope.setBasketItem(new_item);
-            return $q.all(proms).then(function() {
-              $scope.setLoaded($scope);
-              $rootScope.$emit("booking:move");
-              return $scope.decideNextPage(route);
-            }, function(err) {
-              $scope.setLoaded($scope);
-              return failMsg();
-            });
-          }, function(err) {
-            return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
-          });
-        };
-      })(this));
-    };
-    $scope.moveAll = function(route, options) {
-      if (options == null) {
-        options = {};
-      }
-      route || (route = $scope.move_route);
-      $scope.notLoaded($scope);
-      $scope.clearPage();
-      $scope.initWidget({
-        company_id: $scope.bookings[0].company_id,
-        no_route: true
-      });
-      return $timeout((function(_this) {
-        return function() {
-          return $rootScope.connection_started.then(function() {
-            var booking, new_item, proms, _i, _len, _ref;
-            proms = [];
-            if ($scope.bookings.length === 1) {
-              $scope.bb.moving_booking = $scope.bookings[0];
-            } else {
-              $scope.bb.moving_booking = $scope.purchase;
-            }
-            $scope.quickEmptybasket();
-            _ref = $scope.bookings;
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              booking = _ref[_i];
-              new_item = new BBModel.BasketItem(booking, $scope.bb);
-              new_item.setSrcBooking(booking);
-              new_item.ready = false;
-              new_item.move_done = false;
-              Array.prototype.push.apply(proms, new_item.promises);
-              $scope.bb.basket.addItem(new_item);
-            }
-            $scope.bb.sortStackedItems();
-            $scope.setBasketItem($scope.bb.basket.items[0]);
-            return $q.all(proms).then(function() {
-              $scope.setLoaded($scope);
-              return $scope.decideNextPage(route);
-            }, function(err) {
-              $scope.setLoaded($scope);
-              return failMsg();
-            });
-          }, function(err) {
-            return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
-          });
-        };
-      })(this));
-    };
-    $scope.confirm_delete = function() {
-      var modalInstance;
-      modalInstance = $modal.open;
-      return modalInstance.booking.$del('self').then((function(_this) {
-        return function(service) {
-          modalInstance.close;
-          return $rootScope.$emit("booking:cancelled");
-        };
-      })(this));
-    };
-    $scope["delete"] = function(booking) {
-      var modalInstance;
-      $scope.clearPage();
-      modalInstance = $modal.open({
-        templateUrl: $scope.getPartial("cancel_modal"),
-        controller: ModalDelete,
-        resolve: {
-          booking: function() {
-            return booking;
-          }
-        }
-      });
-      return modalInstance.result.then(function(booking) {
-        return booking.$del('self').then((function(_this) {
-          return function(service) {
-            return $scope.bookings = _.without($scope.bookings, booking);
-          };
-        })(this));
-      });
-    };
-    $scope.cancel = function() {
-      var modalInstance;
-      modalInstance = $modal.open;
-      return modalInstance.dismiss("cancel");
-    };
-    $scope.isMovable = function(booking) {
-      if (booking.min_cancellation_time) {
-        return moment().isBefore(booking.min_cancellation_time);
-      }
-      return booking.datetime.isAfter(moment());
-    };
-    $scope.onFileSelect = function(booking, $file, existing) {
-      var att_id, file, method;
-      $scope.upload_progress = 0;
-      console.log($file, booking, existing);
-      console.log;
-      file = $file;
-      att_id = null;
-      if (existing) {
-        att_id = existing.id;
-      }
-      method = "POST";
-      if (att_id) {
-        method = "PUT";
-      }
-      return $scope.upload = $upload.upload({
-        url: booking.$href('attachments'),
-        method: method,
-        data: {
-          att_id: att_id
-        },
-        file: file
-      }).progress(function(evt) {
-        if ($scope.upload_progress < 100) {
-          return $scope.upload_progress = parseInt(99.0 * evt.loaded / evt.total);
-        }
-      }).success(function(data, status, headers, config) {
-        $scope.upload_progress = 100;
-        if (data && data.attachments && booking) {
-          return booking.attachments = data.attachments;
-        }
-      });
-    };
-    if ($scope.bb.total) {
-      $scope.load($scope.bb.total.long_id);
-    } else {
-      id = getPurchaseID();
-      if (id) {
-        $scope.load(id);
-      }
-    }
-    return $scope.createBasketItem = function(booking) {
-      var item;
-      item = new BBModel.BasketItem(booking, $scope.bb);
-      item.setSrcBooking(booking);
-      return item;
-    };
-  });
-
-  ModalDelete = function($scope, $rootScope, $modalInstance, booking) {
-    $scope.controller = "ModalDelete";
-    $scope.booking = booking;
-    $scope.confirm_delete = function() {
-      return $modalInstance.close(booking);
-    };
-    return $scope.cancel = function() {
-      return $modalInstance.dismiss("cancel");
-    };
-  };
-
-}).call(this);
-
-(function() {
   'use strict';
   angular.module('BB.Services').factory("PurchaseBookingService", function($q, halClient, BBModel) {
     return {
@@ -106321,27 +106364,27 @@ bbAdminDirectives.controller('CalController', function($scope) {
 
 }).call(this);
 
-angular.module("BB").run(["$templateCache", function($templateCache) {$templateCache.put("admin_form.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"administrator_form\" ng-submit=\"submit(administrator_form)\">\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\"\n    sf-model=\"admin\">\n  </div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\n  </div>\n</form>\n");
-$templateCache.put("admin_table_main.html","<button class=\"btn btn-default\" ng-click=\"newAdministrator()\">New Administrator</button>\n<table tr-ng-grid=\"\" items=\"administrators\">\n   <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"edit(gridDisplayItem.id)\">\n            Edit\n        </button>\n      </td>\n    </tr>\n  </tbody>\n</table>\n");
-$templateCache.put("edit_booking_modal_form.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"booking_form\" ng-submit=\"submit(booking)\">\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"booking\">\n    <ul>\n      <li>{{model.full_describe}}</li>\n      <li>{{model.person_name}}</li>\n      <li>{{model.describe}}</li>\n    </ul>\n  </div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Dismiss</button>\n  </div>\n</form>\n");
-$templateCache.put("login.html","<form name=\"login_form\" ng-submit=\"submit()\" class=\"form-horizontal\"\n  role=\"form\">\n  <div class=\"alert alert-danger\" role=\"alert\" ng-if=\"alert && alert.length > 0\">{{alert}}</div>\n  <div ng-class=\"{\'form-group\': true, \'has-error\': emailIsInvalid()}\">\n    <label for=\"email\" class=\"col-sm-2 control-label\">Email</label>\n    <div class=\"col-sm-10\">\n      <input type=\"email\" ng-model=\"email\" name=\"email\" class=\"form-control\"\n        id=\"email\" placeholder=\"Email\" required autofocus>\n    </div>\n  </div>\n  <div ng-class=\"{\'form-group\': true, \'has-error\': passwordIsInvalid()}\">\n    <label for=\"password\" class=\"col-sm-2 control-label\">Password</label>\n    <div class=\"col-sm-10\">\n      <input type=\"password\" ng-model=\"password\" name=\"password\"\n        class=\"form-control\" id=\"password\" placeholder=\"Password\" required>\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <div class=\"col-sm-offset-2 col-sm-10\">\n      <button type=\"submit\" class=\"btn btn-primary\">Log In</button>\n    </div>\n  </div>\n</form>\n");
-$templateCache.put("login_modal_form.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"login_form\" ng-submit=\"submit(login_form)\">\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\"\n    sf-model=\"login_form\">\n  </div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Dismiss</button>\n  </div>\n</form>\n");
-$templateCache.put("member_bookings_table.html","<div ng-show=\"loading\"><img src=\'/BB_wait.gif\' class=\"loader\"></div>\n<table tr-ng-grid=\"\" items=\"bookings\" enable-filtering=\"false\"\n  ng-hide=\"loading\" fields=\"fields\">\n  <thead>\n    <tr>\n      <th field-name=\"describe\" display-name=\"Date/Time\"></th>\n      <th field-name=\"full_describe\" display-name=\"Description\"></th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"delete(gridItem.id)\">\n            Cancel\n        </button>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"edit(gridItem.id)\">\n            Details\n        </button>\n      </td>\n    </tr>\n  </tbody>\n</table>\n\n");
-$templateCache.put("pick_company.html","<form name=\"pick_company_form\" ng-submit=\"selectedCompany()\" role=\"form\">\n  <p>Pick Company</p>\n  <div ng-repeat=\"admin in administrators\" class=\"radio\">\n    <label>\n      <input id=\"company{{admin.company_id}}\" type=\"radio\"\n        ng-model=\"$parent.selected_admin\" ng-value=\"admin\" required\n        name=\"company\">\n      {{admin.company_name}}\n    </label>\n  </div>\n  <input type=\"submit\" class=\"btn btn-default\">\n</form>\n");
-$templateCache.put("pick_company_modal_form.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"pick_company_form\" ng-submit=\"submit(pick_company_form)\">\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\"\n    sf-model=\"pick_company_form\">\n  </div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Dismiss</button>\n  </div>\n</form>\n");
-$templateCache.put("main.html","<button class=\"btn btn-default\" ng-click=\"newPerson()\">New Person</button>\n<table tr-ng-grid=\"\" items=\"people\">\n   <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"delete(gridDisplayItem.id)\">\n            Delete\n        </button>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"edit(gridDisplayItem.id)\">\n            Edit\n        </button>\n      </td>\n    </tr>\n  </tbody>\n</table>\n");
-$templateCache.put("person_form.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"person_form\" ng-submit=\"submit(person_form)\">\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"person\">\n  </div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\n  </div>\n</form>\n");
-$templateCache.put("person_table_main.html","<button class=\"btn btn-default\" ng-click=\"newPerson()\">New Person</button>\n<table tr-ng-grid=\"\" items=\"people\">\n   <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"delete(gridDisplayItem.id)\">\n            Delete\n        </button>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"edit(gridDisplayItem.id)\">\n            Edit\n        </button>\n      </td>\n    </tr>\n  </tbody>\n</table>\n");
-$templateCache.put("basket.html","<div>\n  <h1>Not a mini basket</h1>\n</div>");
-$templateCache.put("basket_mini.html","<div class=\"bb-mini-basket\">\n  <span class=\'glyphicon glyphicon-shopping-cart\'></span>\n  <span>{{basketStatus}}</span>\n  <span ng-if=\"basketItemCount\">\n    <a href=\'#\' ng-click=\"BasketCtrl.empty()\" class=\"btn btn-default btn-xs\">\n      <span class=\"glyphicon glyphicon-remove-circle\"></span>\n    </a>\n    <a href=\'#\' ng-click=\"BasketCtrl.view()\" class=\"btn btn-default btn-xs\">\n      <span class=\"glyphicon glyphicon-edit\"></span>\n    </a>\n  </span>\n</div>");
-$templateCache.put("breadcrumb.html","<div class=\"breadcrumbs-holder\" ng-init=\"setBasicRoute([])\">\n  <ol class=\"breadcrumb\">\n    <li ng-repeat=\"step in steps\" type=\"button\" ng-class=\"{active: $last}\" href=\"\" ng-click=\"loadStep(step.number)\" >\n      <a href=\"\" ng-click=\"loadStep(step.number)\" ng-if=\"!$last\">\n        <span class=\"step-num\">{{step.number}}.</span>\n        <span class=\"step-title\">{{step.title}}</span>\n      </a>\n      <span class=\"step-num\" ng-if=\"$last\">{{step.number}}.</span>\n      <span class=\"step-title\" ng-if=\"$last\">{{step.title}}</span>\n    </li>\n  </ol>\n</div>\n");
-$templateCache.put("breadcrumb_complex.html","<div class=\"container breadcrumbs\" ng-init=\"setRoute([\n  {page:\'service_list\', title: \'Set a Service\'},\n  {page:\'person_list\', title: \'Pick a Person\'},\n  {page:\'day\', title: \'Select a Date\'}\n  ])\">\n\n  <div class=\"row\">\n    <tabset>\n      <tab ng-repeat=\"step in allSteps\" heading=\"{{step.title}}\" active=\"step.active\" disabled=\"!step.passed\" select=\"loadStep(step.number)\">\n      </tab>\n    </tabset>\n\n    <div class=\"breadcrumbs\">\n      <span ng-repeat=\"step in steps\">\n        <a ng-if=\"!$last\" href=\"\" ng-click=\"loadStep(step.number)\" class=\"btn default med flat\">  {{step.number}}.\n        </a>\n        <div ng-if=\"$last\" class=\"step\">{{step.number}}. {{step.title}}</div>\n      <span>\n    </div>\n  </div>\n</div>");
-$templateCache.put("check_items.html","<div ng-controller=\"ItemDetails\" ng-init=\"checkStepTitle(\'Confirm Details\')\">\n  <div class=\"bb-booking\">\n    <div class=\"bb-frame\">\n      <div class=\"bb-head\">\n        <h2>Your details</h2>\n      </div>\n      <form name=\"client_form\" class=\"bb-form\" role=\"form\">\n        <div class=\"bb-node\">\n          <h3>Client</h3>\n          <ul>\n            <li>\n              <label>Name:</label><span>{{client.getName()}}</span>\n            </li>\n            <li>\n              <label>Email:</label><span>{{client.email}}</span>\n            </li>\n            <li>\n              <label>Address:</label><span>{{client.addressSingleLine()}}</span>\n            </li>\n          </ul>\n        </div>\n        <div class=\"bb-node\" ng-if=\"!product\">\n          <h3>Booking</h3>\n            <ul>\n              <li>\n                <label>Details:</label><span>{{item.describe()}}</span>\n              </li>\n              <li>\n                <label>Date:</label>\n                <span>{{item.booking_date(\"dddd, MMMM Do YYYY\")}}</span>\n              </li>\n              <li>\n                <label>Time:</label><span>{{item.booking_time()}}</span>\n              </li>\n              <li ng-show=\"item.hasPrice()\">\n                <label>Price:</label><span>{{item.printed_price}}</span>\n              </li>\n            </ul>\n        </div>\n        <div class=\"bb-node\" ng-if=\"product\">\n          <h3>Product</h3>\n          <ul>\n            <li>\n              <label>Name:</label><span>{{product.name}}</span>\n            </li>\n          </ul>\n        </div>\n        <div ng-controller=\'CustomBookingText\' class=\"message-node\">\n          <div ng-repeat=\"msg in messages\">{{msg}}</div>\n        </div>\n        <div ng-show=\"item_details.hasQuestions\" class=\"question-node\">\n          <h3>Questions</h3>\n          <ul>\n            <li ng-repeat=\"question in item_details.questions\"\n              bb-question-line ng-show=\"question.currentlyShown\">\n              <label>{{question.name}}:</label> \n              <span>\n                <input bb-question=\"question\" class=\"form-control\"/><br/>\n                <small>{{question.help_text}}</small>\n              </span>\n            </li>\n          </ul>\n        </div>\n      </form>\n    </div>\n    <div class=\"bb-actions\">\n      <div class=\"bb-prev\">\n      </div>\n      <div class=\"bb-current\">\n      </div>\n      <div class=\"bb-next\">\n        <a href=\"\" class=\"bb-btn-next\" ng-disabled=\"!client_form.$valid\"\n          ng-click=\"confirm(client_form)\">Confirm</a>\n      </div>\n    </div>\n  </div>\n</div>\n");
-$templateCache.put("checkout.html","<div ng-controller=\"Checkout\">\n  <div class=\"bb-checkout\">\n\n    <div ng-show=\"checkoutFailed\" class=\"bb-frame\">\n      <div class=\"bb-head\">\n        <h3>\n          I\'m sorry, for some reason this booking failed. Please Try again.\n        </h3>\n      </div>\n      <div>\n        <p>I\'m sorry, for some reason this booking failed. Please Try again.</p>\n      </div>\n    </div>\n\n    <div ng-show=\"total\" class=\"bb-frame\">  \n      <div class=\"bb-head\">\n        <h2>Your details<h2>\n      </div>\n      <div class=\"bb-node\">\n      <h3>Client Details</h3>\n        <ul>\n          <li>\n            <label>Name:</label><span>{{client.getName()}}</span>\n          </li>\n          <li>\n            <label>Email:</label><span>{{client.email}}</span>\n          </li>\n          <li>\n            <label>Address:</label><span>{{client.addressSingleLine()}}</span>\n          </li>\n        </ul>\n      </div>\n\n      <div class=\"bb-node\">\n        <h3>Booking Confirmation Details</h3>\n        <ul class=\"show_list\" ng-repeat=\"i in total.items\">\n          <li>\n            <label>Service:</label><span>{{i.full_describe}}</span>\n          </li>\n          <li>\n            <label>Date/Time:</label><span>{{i.describe}}</span>\n          </li>\n        </ul>\n      </div>\n\n\n      <div class=\"bb-node calendar-node\">\n        <h3>Export to calendar</h3>\n        <ul class=\"show_list\" ng-repeat=\"i in total.items\">\n          <li>\n            <label>Links :</label>\n            <span>\n              <a class=\"image\" title=\"Add this booking to an Outlook Calendar\" href=\"{{total.icalLink()}}\"><img alt=\"\" src=\"http://uk.bookingbug.com/assets/outlook.png\"></a>\n              <a class=\"image\" title=\"Export this booking to an iCal Calendar\" href=\"{{total.webcalLink()}}\"><img alt=\"\" src=\"http://uk.bookingbug.com/assets/ical.png\"></a>\n              <a class=\"image\" title=\"Export this booking to Google Calendar\" href=\"{{total.gcalLink()}}\" target=\"_blank\"><img src=\"http://uk.bookingbug.com/assets/gcal.png\" border=\"0\"></a>\n            </span>\n          </li>\n        </ul>\n      </div>\n\n      <div ng-controller=\'CustomConfirmationText\' class=\"message-node\">\n        <div ng-repeat=\"msg in messages\">{{msg}}</div>\n      </div>\n\n\n    </div>\n\n    <div class=\"bb-actions\">\n      <div class=\"bb-prev\">\n      </div>\n      <div class=\"bb-current\">\n      </div>\n      <div class=\"bb-next\">\n        <payment_button value=\"Make Payment\" class=\"bb-btn-next\"\n          ng-if=\"total.$has(\'new_payment\')\" total=\"total\" bb=\"bb\"\n          decide-next-page=\"decideNextPage\">\n        </payment_button>\n        <a href=\"\" class=\"bb-btn-next\" ng-click=\"print()\">Print</a>\n      </div>\n    </div>\n\n  </div>\n</div>\n");
-$templateCache.put("content_main.html","<div ng-include=\"bb_main\"\n      ng-hide=\"hide_page\"\n      onload=\"initPage()\"\n      bbContent=\"null\">\n</div>\n");
-$templateCache.put("dash.html","<h1>Dashboard</h1>\n  <div class=\"dashcontainer\" ng-controller=\"DashboardContainer\" style=\"\">\n\n  <div class=\"row\">\n\n    <div class=\"col-md-4\">\n      <h4>Pick a Location/Service</h4>\n\n      <div ng-controller=\"CompanyList\" ng-init=\"init()\">\n\n        <div class=\"\" ng-repeat=\"comp in companies\"  >\n          <h3>{{comp.name}}</h3>\n\n          <div ng-controller=\"PersonList\" ng-init=\"init(comp)\">\n\n            <a class=\"\" ng-repeat=\"person in all_people\"  style=\"margin-left:20px;font-size:14px;display:block;cursor:pointer;\">\n              {{person.name}}\n            </a>\n          </div>\n        </div>\n      </div>\n\n      <div ng-show=\"selectedSlot\">\n        <div ng-controller=\"SelectedSlotDetails\" class=\"side_details\">\n          <div ng-include=\"showItemView\">\n          </div>\n        </div>\n      </div>  \n\n    </div> \n\n    <div class=\"col-md-8\">\n\n      <div ng-controller=\"CalendarCtrl\" ng-init=\"init()\">\n\n        <div ui-calendar=\"uiConfig.calendar\" ng-model=\"eventSources\" calendar=\"myCalendar\">\n      </div>\n\n    </div>\n  </div>\n\n\n    <div id=\"dialog-modal\" title=\"\" display:none;>\n      \n    </div>\n  </div>\n");
-$templateCache.put("day.html","<div bb-month-availability ng-init=\"checkStepTitle(\'Pick a date\')\" id=\"day_page\">\n  <div class=\"bb-navigation container\">\n      <div class=\"bb-nav\">\n          <a href=\"\" class=\"bb-btn-prev btn btn-default pull-left\" ng-click=\"subtract(\'months\',1)\" ng-disabled=\"isPast()\">Prev Month</a>\n          <span class=\"bb-date\">{{format_date(\'MMMM YYYY\')}}</span>\n          <a href=\"\" class=\"bb-btn-next btn btn-default pull-right\" ng-click=\"add(\'months\',1)\">Next Month</a>\n      </div>\n  </div>\n\n  <div class=\"bb-date-pick container\">\n    <div class=\"bb-month-frame panel panel-default\" id=\"frame\">\n      <div class=\"bb-month-name panel-heading text-primary\">\n        <h2>{{format_date(\'MMMM\')}}<h2>\n      </div>\n      <table class=\"bb-month\">\n        <tr ng-repeat=\"week in weeks\">\n          <td ng-repeat=\"day in week\">    \n            <a href=\"\" ng-disabled=\"day.off(month)\" class=\"time-slot\n              {{day.class(month)}} btn btn-default\" ng-click=\"selectDay(day)\">\n              {{day.day()}}\n            </a>\n          </td>\n        <tr>  \n      </table>\n    </div>\n  </div>\n  \n</div>\n");
-$templateCache.put("loader.html","<div class=\'bb-loader\' ng-hide=\'scopeLoaded\'>\n  <div id=\'loading_icon\'>\n    <div id=\'wait_graphic\'>&nbsp;</div>\n  </div>\n</div>");
-$templateCache.put("main.html","<div bb-breadcrumb></div>\n<div ng-show=\"loading\"><img src=\'/BB_wait.gif\' class=\"loader\"></div>\n<div ng-hide=\"loading\"><div bb-content-new></div></div>\n");
-$templateCache.put("service_list.html","<div bb-services ng-init=\"checkStepTitle(\'Select a service\')\"\n  id=\"service_list_page\" class=\"bb_wrap\">\n\n  <div class=\"bb-services bb-list\">\n    <div class=\"bb-list-item container\">\n      <div class=\"bb-item\" ng-click=\"selectItem(item)\" ng-repeat=\"item in items\">\n        <div class=\"bb-desc form-control\">\n          <div class=\"bb-txt col-sm-10\">\n            <h5>{{item.name}}</h5>\n            <small>{{item.description}}</small>\n          </div> \n          <div class=\"bb-price col-sm-2 btn-default\">\n            <span ng-show=\"item.price > 0\">{{item.price | currency:\"GBP\"}}</span>\n            <span ng-show=\"item.price == 0\">Free</span>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n  \n</div>\n");
-$templateCache.put("time.html","<div bb-times ng-init=\"checkStepTitle(\'Select a time\')\" id=\"time_page\">\n\n  <div class=\"bb-navigation container\">\n    <div class=\"bb-nav text-center\">\n      <button type=\"button\" class=\"bb-btn-prev btn btn-primary pull-left\" ng-click=\"subtract(\'days\',1)\">Previous Day</button>\n      <span class=\"bb-date\">{{format_date(\'Do MMM YYYY\')}}</span>\n      <button type=\"button\" class=\"bb-btn-next btn btn-primary pull-right\" ng-click=\"add(\'days\',1)\">Next Day</button>\n    </div>\n  </div>\n\n  <div>\n    <div ng-hide=\"slots\">\n      <span class=\"no_value\">No available times</span>\n    </div>\n    <div class=\"bb-times container\">\n      <div class=\"bb-time panel panel-default\">\n        <div class=\"clearfix\">\n          <div class=\"time-slot col-sm-2\" ng-repeat=\"slot in slots\">\n            <button type=\"button\" class=\"btn btn-default btn-block\" ng-click=\"selectSlot(slot)\">{{slot.print_time()}}</button>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n\n</div>\n");}]);
+angular.module("BB").run(["$templateCache", function($templateCache) {$templateCache.put("admin_form.html","<div class=\"modal-header\">\r\n  <h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"administrator_form\" ng-submit=\"submit(administrator_form)\">\r\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\"\r\n    sf-model=\"admin\">\r\n  </div>\r\n  <div class=\"modal-footer\">\r\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\r\n  </div>\r\n</form>\r\n");
+$templateCache.put("admin_table_main.html","<button class=\"btn btn-default\" ng-click=\"newAdministrator()\">New Administrator</button>\r\n<table tr-ng-grid=\"\" items=\"administrators\">\r\n   <tbody>\r\n    <tr>\r\n      <td>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"edit(gridDisplayItem.id)\">\r\n            Edit\r\n        </button>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n");
+$templateCache.put("main.html","<button class=\"btn btn-default\" ng-click=\"newPerson()\">New Person</button>\r\n<table tr-ng-grid=\"\" items=\"people\">\r\n   <tbody>\r\n    <tr>\r\n      <td>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"delete(gridDisplayItem.id)\">\r\n            Delete\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"edit(gridDisplayItem.id)\">\r\n            Edit\r\n        </button>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n");
+$templateCache.put("person_form.html","<div class=\"modal-header\">\r\n  <h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"person_form\" ng-submit=\"submit(person_form)\">\r\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"person\">\r\n  </div>\r\n  <div class=\"modal-footer\">\r\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\r\n  </div>\r\n</form>\r\n");
+$templateCache.put("person_table_main.html","<button class=\"btn btn-default\" ng-click=\"newPerson()\">New Person</button>\r\n<table tr-ng-grid=\"\" items=\"people\">\r\n   <tbody>\r\n    <tr>\r\n      <td>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"delete(gridDisplayItem.id)\">\r\n            Delete\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"edit(gridDisplayItem.id)\">\r\n            Edit\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"schedule(gridDisplayItem.id)\">\r\n            Schedule\r\n        </button>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n");
+$templateCache.put("edit_booking_modal_form.html","<div class=\"modal-header\">\r\n  <h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"booking_form\" ng-submit=\"submit(booking)\">\r\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"booking\">\r\n    <ul>\r\n      <li>{{model.full_describe}}</li>\r\n      <li>{{model.person_name}}</li>\r\n      <li>{{model.describe}}</li>\r\n    </ul>\r\n  </div>\r\n  <div class=\"modal-footer\">\r\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Dismiss</button>\r\n  </div>\r\n</form>\r\n");
+$templateCache.put("login.html","<form name=\"login_form\" ng-submit=\"submit()\" class=\"form-horizontal\"\r\n  role=\"form\">\r\n  <div class=\"alert alert-danger\" role=\"alert\" ng-if=\"alert && alert.length > 0\">{{alert}}</div>\r\n  <div ng-class=\"{\'form-group\': true, \'has-error\': emailIsInvalid()}\">\r\n    <label for=\"email\" class=\"col-sm-2 control-label\">Email</label>\r\n    <div class=\"col-sm-10\">\r\n      <input type=\"email\" ng-model=\"email\" name=\"email\" class=\"form-control\"\r\n        id=\"email\" placeholder=\"Email\" required autofocus>\r\n    </div>\r\n  </div>\r\n  <div ng-class=\"{\'form-group\': true, \'has-error\': passwordIsInvalid()}\">\r\n    <label for=\"password\" class=\"col-sm-2 control-label\">Password</label>\r\n    <div class=\"col-sm-10\">\r\n      <input type=\"password\" ng-model=\"password\" name=\"password\"\r\n        class=\"form-control\" id=\"password\" placeholder=\"Password\" required>\r\n    </div>\r\n  </div>\r\n  <div class=\"form-group\">\r\n    <div class=\"col-sm-offset-2 col-sm-10\">\r\n      <button type=\"submit\" class=\"btn btn-primary\">Log In</button>\r\n    </div>\r\n  </div>\r\n</form>\r\n");
+$templateCache.put("login_modal_form.html","<div class=\"modal-header\">\r\n  <h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"login_form\" ng-submit=\"submit(login_form)\">\r\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\"\r\n    sf-model=\"login_form\">\r\n  </div>\r\n  <div class=\"modal-footer\">\r\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Dismiss</button>\r\n  </div>\r\n</form>\r\n");
+$templateCache.put("member_bookings_table.html","<div ng-show=\"loading\"><img src=\'/BB_wait.gif\' class=\"loader\"></div>\r\n<table tr-ng-grid=\"\" items=\"bookings\" enable-filtering=\"false\"\r\n  ng-hide=\"loading\" fields=\"fields\">\r\n  <thead>\r\n    <tr>\r\n      <th field-name=\"describe\" display-name=\"Date/Time\"></th>\r\n      <th field-name=\"full_describe\" display-name=\"Description\"></th>\r\n    </tr>\r\n  </thead>\r\n  <tbody>\r\n    <tr>\r\n      <td>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"delete(gridItem.id)\">\r\n            Cancel\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"edit(gridItem.id)\">\r\n            Details\r\n        </button>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n\r\n");
+$templateCache.put("pick_company.html","<form name=\"pick_company_form\" ng-submit=\"selectedCompany()\" role=\"form\">\r\n  <p>Pick Company</p>\r\n  <div ng-repeat=\"admin in administrators\" class=\"radio\">\r\n    <label>\r\n      <input id=\"company{{admin.company_id}}\" type=\"radio\"\r\n        ng-model=\"$parent.selected_admin\" ng-value=\"admin\" required\r\n        name=\"company\">\r\n      {{admin.company_name}}\r\n    </label>\r\n  </div>\r\n  <input type=\"submit\" class=\"btn btn-default\">\r\n</form>\r\n");
+$templateCache.put("pick_company_modal_form.html","<div class=\"modal-header\">\r\n  <h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"pick_company_form\" ng-submit=\"submit(pick_company_form)\">\r\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\"\r\n    sf-model=\"pick_company_form\">\r\n  </div>\r\n  <div class=\"modal-footer\">\r\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Dismiss</button>\r\n  </div>\r\n</form>\r\n");
+$templateCache.put("basket.html","<div>\r\n  <h1>Not a mini basket</h1>\r\n</div>");
+$templateCache.put("basket_mini.html","<div class=\"bb-mini-basket\">\r\n  <span class=\'glyphicon glyphicon-shopping-cart\'></span>\r\n  <span>{{basketStatus}}</span>\r\n  <span ng-if=\"basketItemCount\">\r\n    <a href=\'#\' ng-click=\"BasketCtrl.empty()\" class=\"btn btn-default btn-xs\">\r\n      <span class=\"glyphicon glyphicon-remove-circle\"></span>\r\n    </a>\r\n    <a href=\'#\' ng-click=\"BasketCtrl.view()\" class=\"btn btn-default btn-xs\">\r\n      <span class=\"glyphicon glyphicon-edit\"></span>\r\n    </a>\r\n  </span>\r\n</div>");
+$templateCache.put("breadcrumb.html","<div class=\"breadcrumbs-holder\" ng-init=\"setBasicRoute([])\">\r\n  <ol class=\"breadcrumb\">\r\n    <li ng-repeat=\"step in steps\" type=\"button\" ng-class=\"{active: $last}\" href=\"\" ng-click=\"loadStep(step.number)\" >\r\n      <a href=\"\" ng-click=\"loadStep(step.number)\" ng-if=\"!$last\">\r\n        <span class=\"step-num\">{{step.number}}.</span>\r\n        <span class=\"step-title\">{{step.title}}</span>\r\n      </a>\r\n      <span class=\"step-num\" ng-if=\"$last\">{{step.number}}.</span>\r\n      <span class=\"step-title\" ng-if=\"$last\">{{step.title}}</span>\r\n    </li>\r\n  </ol>\r\n</div>\r\n");
+$templateCache.put("breadcrumb_complex.html","<div class=\"container breadcrumbs\" ng-init=\"setRoute([\r\n  {page:\'service_list\', title: \'Set a Service\'},\r\n  {page:\'person_list\', title: \'Pick a Person\'},\r\n  {page:\'day\', title: \'Select a Date\'}\r\n  ])\">\r\n\r\n  <div class=\"row\">\r\n    <tabset>\r\n      <tab ng-repeat=\"step in allSteps\" heading=\"{{step.title}}\" active=\"step.active\" disabled=\"!step.passed\" select=\"loadStep(step.number)\">\r\n      </tab>\r\n    </tabset>\r\n\r\n    <div class=\"breadcrumbs\">\r\n      <span ng-repeat=\"step in steps\">\r\n        <a ng-if=\"!$last\" href=\"\" ng-click=\"loadStep(step.number)\" class=\"btn default med flat\">  {{step.number}}.\r\n        </a>\r\n        <div ng-if=\"$last\" class=\"step\">{{step.number}}. {{step.title}}</div>\r\n      <span>\r\n    </div>\r\n  </div>\r\n</div>");
+$templateCache.put("check_items.html","<div ng-controller=\"ItemDetails\" ng-init=\"checkStepTitle(\'Confirm Details\')\">\r\n  <div class=\"bb-booking\">\r\n    <div class=\"bb-frame\">\r\n      <div class=\"bb-head\">\r\n        <h2>Your details</h2>\r\n      </div>\r\n      <form name=\"client_form\" class=\"bb-form\" role=\"form\">\r\n        <div class=\"bb-node\">\r\n          <h3>Client</h3>\r\n          <ul>\r\n            <li>\r\n              <label>Name:</label><span>{{client.getName()}}</span>\r\n            </li>\r\n            <li>\r\n              <label>Email:</label><span>{{client.email}}</span>\r\n            </li>\r\n            <li>\r\n              <label>Address:</label><span>{{client.addressSingleLine()}}</span>\r\n            </li>\r\n          </ul>\r\n        </div>\r\n        <div class=\"bb-node\" ng-if=\"!product\">\r\n          <h3>Booking</h3>\r\n            <ul>\r\n              <li>\r\n                <label>Details:</label><span>{{item.describe()}}</span>\r\n              </li>\r\n              <li>\r\n                <label>Date:</label>\r\n                <span>{{item.booking_date(\"dddd, MMMM Do YYYY\")}}</span>\r\n              </li>\r\n              <li>\r\n                <label>Time:</label><span>{{item.booking_time()}}</span>\r\n              </li>\r\n              <li ng-show=\"item.hasPrice()\">\r\n                <label>Price:</label><span>{{item.printed_price}}</span>\r\n              </li>\r\n            </ul>\r\n        </div>\r\n        <div class=\"bb-node\" ng-if=\"product\">\r\n          <h3>Product</h3>\r\n          <ul>\r\n            <li>\r\n              <label>Name:</label><span>{{product.name}}</span>\r\n            </li>\r\n          </ul>\r\n        </div>\r\n        <div ng-controller=\'CustomBookingText\' class=\"message-node\">\r\n          <div ng-repeat=\"msg in messages\">{{msg}}</div>\r\n        </div>\r\n        <div ng-show=\"item_details.hasQuestions\" class=\"question-node\">\r\n          <h3>Questions</h3>\r\n          <ul>\r\n            <li ng-repeat=\"question in item_details.questions\"\r\n              bb-question-line ng-show=\"question.currentlyShown\">\r\n              <label>{{question.name}}:</label> \r\n              <span>\r\n                <input bb-question=\"question\" class=\"form-control\"/><br/>\r\n                <small>{{question.help_text}}</small>\r\n              </span>\r\n            </li>\r\n          </ul>\r\n        </div>\r\n      </form>\r\n    </div>\r\n    <div class=\"bb-actions\">\r\n      <div class=\"bb-prev\">\r\n      </div>\r\n      <div class=\"bb-current\">\r\n      </div>\r\n      <div class=\"bb-next\">\r\n        <a href=\"\" class=\"bb-btn-next\" ng-disabled=\"!client_form.$valid\"\r\n          ng-click=\"confirm(client_form)\">Confirm</a>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>\r\n");
+$templateCache.put("checkout.html","<div ng-controller=\"Checkout\">\r\n  <div class=\"bb-checkout\">\r\n\r\n    <div ng-show=\"checkoutFailed\" class=\"bb-frame\">\r\n      <div class=\"bb-head\">\r\n        <h3>\r\n          I\'m sorry, for some reason this booking failed. Please Try again.\r\n        </h3>\r\n      </div>\r\n      <div>\r\n        <p>I\'m sorry, for some reason this booking failed. Please Try again.</p>\r\n      </div>\r\n    </div>\r\n\r\n    <div ng-show=\"total\" class=\"bb-frame\">  \r\n      <div class=\"bb-head\">\r\n        <h2>Your details<h2>\r\n      </div>\r\n      <div class=\"bb-node\">\r\n      <h3>Client Details</h3>\r\n        <ul>\r\n          <li>\r\n            <label>Name:</label><span>{{client.getName()}}</span>\r\n          </li>\r\n          <li>\r\n            <label>Email:</label><span>{{client.email}}</span>\r\n          </li>\r\n          <li>\r\n            <label>Address:</label><span>{{client.addressSingleLine()}}</span>\r\n          </li>\r\n        </ul>\r\n      </div>\r\n\r\n      <div class=\"bb-node\">\r\n        <h3>Booking Confirmation Details</h3>\r\n        <ul class=\"show_list\" ng-repeat=\"i in total.items\">\r\n          <li>\r\n            <label>Service:</label><span>{{i.full_describe}}</span>\r\n          </li>\r\n          <li>\r\n            <label>Date/Time:</label><span>{{i.describe}}</span>\r\n          </li>\r\n        </ul>\r\n      </div>\r\n\r\n\r\n      <div class=\"bb-node calendar-node\">\r\n        <h3>Export to calendar</h3>\r\n        <ul class=\"show_list\" ng-repeat=\"i in total.items\">\r\n          <li>\r\n            <label>Links :</label>\r\n            <span>\r\n              <a class=\"image\" title=\"Add this booking to an Outlook Calendar\" href=\"{{total.icalLink()}}\"><img alt=\"\" src=\"http://uk.bookingbug.com/assets/outlook.png\"></a>\r\n              <a class=\"image\" title=\"Export this booking to an iCal Calendar\" href=\"{{total.webcalLink()}}\"><img alt=\"\" src=\"http://uk.bookingbug.com/assets/ical.png\"></a>\r\n              <a class=\"image\" title=\"Export this booking to Google Calendar\" href=\"{{total.gcalLink()}}\" target=\"_blank\"><img src=\"http://uk.bookingbug.com/assets/gcal.png\" border=\"0\"></a>\r\n            </span>\r\n          </li>\r\n        </ul>\r\n      </div>\r\n\r\n      <div ng-controller=\'CustomConfirmationText\' class=\"message-node\">\r\n        <div ng-repeat=\"msg in messages\">{{msg}}</div>\r\n      </div>\r\n\r\n\r\n    </div>\r\n\r\n    <div class=\"bb-actions\">\r\n      <div class=\"bb-prev\">\r\n      </div>\r\n      <div class=\"bb-current\">\r\n      </div>\r\n      <div class=\"bb-next\">\r\n        <payment_button value=\"Make Payment\" class=\"bb-btn-next\"\r\n          ng-if=\"total.$has(\'new_payment\')\" total=\"total\" bb=\"bb\"\r\n          decide-next-page=\"decideNextPage\">\r\n        </payment_button>\r\n        <a href=\"\" class=\"bb-btn-next\" ng-click=\"print()\">Print</a>\r\n      </div>\r\n    </div>\r\n\r\n  </div>\r\n</div>\r\n");
+$templateCache.put("content_main.html","<div ng-include=\"bb_main\"\r\n      ng-hide=\"hide_page\"\r\n      onload=\"initPage()\"\r\n      bbContent=\"null\">\r\n</div>\r\n");
+$templateCache.put("dash.html","<h1>Dashboard</h1>\r\n  <div class=\"dashcontainer\" ng-controller=\"DashboardContainer\" style=\"\">\r\n\r\n  <div class=\"row\">\r\n\r\n    <div class=\"col-md-4\">\r\n      <h4>Pick a Location/Service</h4>\r\n\r\n      <div ng-controller=\"CompanyList\" ng-init=\"init()\">\r\n\r\n        <div class=\"\" ng-repeat=\"comp in companies\"  >\r\n          <h3>{{comp.name}}</h3>\r\n\r\n          <div ng-controller=\"PersonList\" ng-init=\"init(comp)\">\r\n\r\n            <a class=\"\" ng-repeat=\"person in all_people\"  style=\"margin-left:20px;font-size:14px;display:block;cursor:pointer;\">\r\n              {{person.name}}\r\n            </a>\r\n          </div>\r\n        </div>\r\n      </div>\r\n\r\n      <div ng-show=\"selectedSlot\">\r\n        <div ng-controller=\"SelectedSlotDetails\" class=\"side_details\">\r\n          <div ng-include=\"showItemView\">\r\n          </div>\r\n        </div>\r\n      </div>  \r\n\r\n    </div> \r\n\r\n    <div class=\"col-md-8\">\r\n\r\n      <div ng-controller=\"CalendarCtrl\" ng-init=\"init()\">\r\n\r\n        <div ui-calendar=\"uiConfig.calendar\" ng-model=\"eventSources\" calendar=\"myCalendar\">\r\n      </div>\r\n\r\n    </div>\r\n  </div>\r\n\r\n\r\n    <div id=\"dialog-modal\" title=\"\" display:none;>\r\n      \r\n    </div>\r\n  </div>\r\n");
+$templateCache.put("day.html","<div bb-month-availability ng-init=\"checkStepTitle(\'Pick a date\')\" id=\"day_page\">\r\n  <div class=\"bb-navigation container\">\r\n      <div class=\"bb-nav\">\r\n          <a href=\"\" class=\"bb-btn-prev btn btn-default pull-left\" ng-click=\"subtract(\'months\',1)\" ng-disabled=\"isPast()\">Prev Month</a>\r\n          <span class=\"bb-date\">{{format_date(\'MMMM YYYY\')}}</span>\r\n          <a href=\"\" class=\"bb-btn-next btn btn-default pull-right\" ng-click=\"add(\'months\',1)\">Next Month</a>\r\n      </div>\r\n  </div>\r\n\r\n  <div class=\"bb-date-pick container\">\r\n    <div class=\"bb-month-frame panel panel-default\" id=\"frame\">\r\n      <div class=\"bb-month-name panel-heading text-primary\">\r\n        <h2>{{format_date(\'MMMM\')}}<h2>\r\n      </div>\r\n      <table class=\"bb-month\">\r\n        <tr ng-repeat=\"week in weeks\">\r\n          <td ng-repeat=\"day in week\">    \r\n            <a href=\"\" ng-disabled=\"day.off(month)\" class=\"time-slot\r\n              {{day.class(month)}} btn btn-default\" ng-click=\"selectDay(day)\">\r\n              {{day.day()}}\r\n            </a>\r\n          </td>\r\n        <tr>  \r\n      </table>\r\n    </div>\r\n  </div>\r\n  \r\n</div>\r\n");
+$templateCache.put("loader.html","<div class=\'bb-loader\' ng-hide=\'scopeLoaded\'>\r\n  <div id=\'loading_icon\'>\r\n    <div id=\'wait_graphic\'>&nbsp;</div>\r\n  </div>\r\n</div>");
+$templateCache.put("main.html","<div bb-breadcrumb></div>\r\n<div ng-show=\"loading\"><img src=\'/BB_wait.gif\' class=\"loader\"></div>\r\n<div ng-hide=\"loading\"><div bb-content-new></div></div>\r\n");
+$templateCache.put("service_list.html","<div bb-services ng-init=\"checkStepTitle(\'Select a service\')\"\r\n  id=\"service_list_page\" class=\"bb_wrap\">\r\n\r\n  <div class=\"bb-services bb-list\">\r\n    <div class=\"bb-list-item container\">\r\n      <div class=\"bb-item\" ng-click=\"selectItem(item)\" ng-repeat=\"item in items\">\r\n        <div class=\"bb-desc form-control\">\r\n          <div class=\"bb-txt col-sm-10\">\r\n            <h5>{{item.name}}</h5>\r\n            <small>{{item.description}}</small>\r\n          </div> \r\n          <div class=\"bb-price col-sm-2 btn-default\">\r\n            <span ng-show=\"item.price > 0\">{{item.price | currency:\"GBP\"}}</span>\r\n            <span ng-show=\"item.price == 0\">Free</span>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n  \r\n</div>\r\n");
+$templateCache.put("time.html","<div bb-times ng-init=\"checkStepTitle(\'Select a time\')\" id=\"time_page\">\r\n\r\n  <div class=\"bb-navigation container\">\r\n    <div class=\"bb-nav text-center\">\r\n      <button type=\"button\" class=\"bb-btn-prev btn btn-primary pull-left\" ng-click=\"subtract(\'days\',1)\">Previous Day</button>\r\n      <span class=\"bb-date\">{{format_date(\'Do MMM YYYY\')}}</span>\r\n      <button type=\"button\" class=\"bb-btn-next btn btn-primary pull-right\" ng-click=\"add(\'days\',1)\">Next Day</button>\r\n    </div>\r\n  </div>\r\n\r\n  <div>\r\n    <div ng-hide=\"slots\">\r\n      <span class=\"no_value\">No available times</span>\r\n    </div>\r\n    <div class=\"bb-times container\">\r\n      <div class=\"bb-time panel panel-default\">\r\n        <div class=\"clearfix\">\r\n          <div class=\"time-slot col-sm-2\" ng-repeat=\"slot in slots\">\r\n            <button type=\"button\" class=\"btn btn-default btn-block\" ng-click=\"selectSlot(slot)\">{{slot.print_time()}}</button>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n</div>\r\n");}]);

@@ -1,4 +1,4 @@
-angular.module('BBPersonTable').directive 'personTable', (AdminLoginService,
+angular.module('BBScheduleTable').directive 'scheduleTable', (AdminLoginService,
     AdminPersonService, $modal, $log, $rootScope) ->
 
   newPersonForm = ($scope, $modalInstance, company) ->
