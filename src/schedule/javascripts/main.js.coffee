@@ -11,4 +11,4 @@ angular.module('BBScheduleTable', [
 angular.module('BBScheduleTable').config ($logProvider) ->
   $logProvider.debugEnabled(true)
 
-angular.module('BBScheduleTableE2E', ['BBScheduleTable', 'BBAdminMockE2E'])
+angular.module('BBScheduleTableMockE2E', ['BBScheduleTable', 'BBAdminMockE2E'])

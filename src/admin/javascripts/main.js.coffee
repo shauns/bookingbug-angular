@@ -4,9 +4,9 @@ angular.module('BBAdmin', [
   'BB',
   'BBAdmin.Services',
   'BBAdmin.Filters',
-  'BBAdmin.Controllers',
+  'BBAdmin.Controllers'
   # 'ui.state',
-  'ui.calendar',
+#  'ui.calendar',
 ])
 
 angular.module('BBAdmin').config ($logProvider) ->

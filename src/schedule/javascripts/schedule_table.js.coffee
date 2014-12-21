@@ -1,87 +1,48 @@
-angular.module('BBScheduleTable').directive 'scheduleTable', (AdminLoginService,
-    AdminPersonService, $modal, $log, $rootScope) ->
+angular.module('BBScheduleTable').directive 'scheduleTable', (AdminCompanyService,
+    AdminScheduleService, $modal, $log, ModalForm) ->
 
-  newPersonForm = ($scope, $modalInstance, company) ->
-    $scope.title = 'New Person'
-    $scope.company = company
-    $scope.company.$get('new_person').then (person_schema) ->
-      $scope.form = _.reject person_schema.form, (x) -> x.type == 'submit'
-      $scope.schema = person_schema.schema
-      $scope.person = {}
+  controller = ($scope) ->
 
-    $scope.cancel = (event) ->
-      event.preventDefault()
-      event.stopPropagation()
-      $modalInstance.dismiss('cancel')
+    $scope.getSchedules = () ->
+      params =
+        company: $scope.company
+      AdminScheduleService.query(params).then (schedule) ->
+        $scope.schedules_models = schedules
+        $scope.schedules = _.map schedules, (schedule) ->
+          _.pick schedule, 'id', 'name', 'mobile'
 
-    $scope.submit = (person_form) ->
-      $scope.$broadcast('schemaFormValidate')
-      $scope.company.$post('people', {}, $scope.person).then (person) ->
-        $modalInstance.close(person)
-        $scope.$parent.people.push(person)
+    $scope.newSchedule = () ->
+      ModalForm.new
+        company: $scope.company
+        title: 'New Schedule'
+        new_rel: 'new_schedule'
+        post_rel: 'schedules'
+        success: (schedule) ->
+          $scope.schedules.push(schedule)
+
+    $scope.delete = (id) ->
+      schedule = _.find $scope.schedules_models, (p) -> p.id == id
+      schedule.$del('self').then () ->
+        $scope.schedules = _.reject $scope.schedules, (p) -> p.id == id
       , (err) ->
-        $modalInstance.close(person)
-        $log.error 'Failed to create person'
+        $log.error "Failed to delete schedule"
 
-  editPersonForm = ($scope, $modalInstance, person) ->
-    $scope.title = 'Edit Person'
-    $scope.ok = () ->
-      $modalInstance.close($scope.person)
-
-    $scope.cancel = () ->
-      $modalInstance.dismiss('cancel')
+    $scope.edit = (id) ->
+      schedule = _.find $scope.schedules_models, (p) -> p.id == id
+      ModalForm.edit
+        model: schedule
+        title: 'Edit Schedule'
 
   link = (scope, element, attrs) ->
-
-    scope.newPerson = () ->
-      $modal.open
-        templateUrl: 'person_form.html'
-        controller: newPersonForm
-        resolve:
-          company: () -> scope.company
-
-    scope.delete = (id) ->
-      person = _.find scope.people_models, (p) -> p.id == id
-      person.$del('self').then () ->
-        scope.people = _.reject scope.people, (p) -> p.id == id
-      , (err) ->
-        $log.error "Failed to delete person"
-
-    scope.edit = (id) ->
-      person = _.find scope.people_models, (p) -> p.id == id
-      $modal.open
-        templateUrl: 'person_form.html'
-        controller: editPersonForm
-        resolve:
-          person: () -> person
-
-    scope.schedule = (id) ->
-      person = _.find scope.people_models, (p) -> p.id == id
-      $modal.open
-        templateUrl: 'schedule_form.html'
-        controller: editScheduleForm
-        resolve:
-          schedule_item: () -> person
-
-    $rootScope.bb ||= {}
-    $rootScope.bb.api_url ||= attrs.apiUrl
-    $rootScope.bb.api_url ||= "http://www.bookingbug.com"
-    login_form =
-      email: attrs.adminEmail
-      password: attrs.adminPassword
-    options =
-      company_id: attrs.companyId
-    AdminLoginService.login(login_form, options).then (user) ->
-      user.$get('company').then (company) ->
+    if scope.company
+      scope.getSchedules()
+    else
+      AdminCompanyService.query(attrs).then (company) ->
         scope.company = company
-        params =
-          company: company
-        AdminPersonService.query(params).then (people) ->
-          scope.people_models = people
-          scope.people = _.map people, (person) ->
-            _.pick person, 'id', 'name', 'mobile'
+        scope.getSchedules()
 
   {
+    controller: controller
     link: link
-    templateUrl: 'person_table_main.html'
+    templateUrl: 'schedule_table_main.html'
   }

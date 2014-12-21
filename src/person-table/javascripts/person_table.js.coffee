@@ -1,87 +1,48 @@
-angular.module('BBPersonTable').directive 'personTable', (AdminLoginService,
-    AdminPersonService, $modal, $log, $rootScope) ->
+angular.module('BBPersonTable').directive 'personTable', (AdminCompanyService,
+    AdminPersonService, $modal, $log, ModalForm) ->
 
-  newPersonForm = ($scope, $modalInstance, company) ->
-    $scope.title = 'New Person'
-    $scope.company = company
-    $scope.company.$get('new_person').then (person_schema) ->
-      $scope.form = _.reject person_schema.form, (x) -> x.type == 'submit'
-      $scope.schema = person_schema.schema
-      $scope.person = {}
+  controller = ($scope) ->
 
-    $scope.cancel = (event) ->
-      event.preventDefault()
-      event.stopPropagation()
-      $modalInstance.dismiss('cancel')
+    $scope.getPeople = () ->
+      params =
+        company: $scope.company
+      AdminPersonService.query(params).then (people) ->
+        $scope.people_models = people
+        $scope.people = _.map people, (person) ->
+          _.pick person, 'id', 'name', 'mobile'
 
-    $scope.submit = (person_form) ->
-      $scope.$broadcast('schemaFormValidate')
-      $scope.company.$post('people', {}, $scope.person).then (person) ->
-        $modalInstance.close(person)
-        $scope.$parent.people.push(person)
-      , (err) ->
-        $modalInstance.close(person)
-        $log.error 'Failed to create person'
+    $scope.newPerson = () ->
+      ModalForm.new
+        company: $scope.company
+        title: 'New Person'
+        new_rel: 'new_person'
+        post_rel: 'people'
+        success: (person) ->
+          $scope.people.push(person)
 
-  editPersonForm = ($scope, $modalInstance, person) ->
-    $scope.title = 'Edit Person'
-    $scope.ok = () ->
-      $modalInstance.close($scope.person)
-
-    $scope.cancel = () ->
-      $modalInstance.dismiss('cancel')
-
-  link = (scope, element, attrs) ->
-
-    scope.newPerson = () ->
-      $modal.open
-        templateUrl: 'person_form.html'
-        controller: newPersonForm
-        resolve:
-          company: () -> scope.company
-
-    scope.delete = (id) ->
-      person = _.find scope.people_models, (p) -> p.id == id
+    $scope.delete = (id) ->
+      person = _.find $scope.people_models, (p) -> p.id == id
       person.$del('self').then () ->
-        scope.people = _.reject scope.people, (p) -> p.id == id
+        $scope.people = _.reject $scope.people, (p) -> p.id == id
       , (err) ->
         $log.error "Failed to delete person"
 
-    scope.edit = (id) ->
-      person = _.find scope.people_models, (p) -> p.id == id
-      $modal.open
-        templateUrl: 'person_form.html'
-        controller: editPersonForm
-        resolve:
-          person: () -> person
+    $scope.edit = (id) ->
+      person = _.find $scope.people_models, (p) -> p.id == id
+      ModalForm.edit
+        model: person
+        title: 'Edit Person'
 
-    scope.schedule = (id) ->
-      person = _.find scope.people_models, (p) -> p.id == id
-      $modal.open
-        templateUrl: 'schedule_form.html'
-        controller: editScheduleForm
-        resolve:
-          schedule_item: () -> person
-
-    $rootScope.bb ||= {}
-    $rootScope.bb.api_url ||= attrs.apiUrl
-    $rootScope.bb.api_url ||= "http://www.bookingbug.com"
-    login_form =
-      email: attrs.adminEmail
-      password: attrs.adminPassword
-    options =
-      company_id: attrs.companyId
-    AdminLoginService.login(login_form, options).then (user) ->
-      user.$get('company').then (company) ->
+  link = (scope, element, attrs) ->
+    if scope.company
+      scope.getPeople()
+    else
+      AdminCompanyService.query(attrs).then (company) ->
         scope.company = company
-        params =
-          company: company
-        AdminPersonService.query(params).then (people) ->
-          scope.people_models = people
-          scope.people = _.map people, (person) ->
-            _.pick person, 'id', 'name', 'mobile'
+        scope.getPeople()
 
   {
+    controller: controller
     link: link
     templateUrl: 'person_table_main.html'
   }
