@@ -1,7 +1,9 @@
-angular.module('BBPersonTable').directive 'personTable', (AdminCompanyService,
+angular.module('BBAdminServices').directive 'personTable', (AdminCompanyService,
     AdminPersonService, $modal, $log, ModalForm) ->
 
   controller = ($scope) ->
+
+    console.log "loading person tabl"
 
     $scope.getPeople = () ->
       params =

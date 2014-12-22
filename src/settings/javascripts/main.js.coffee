@@ -1,6 +1,6 @@
 'use strict'
 
-angular.module('BBAdminTable', [
+angular.module('BBAdminSettings', [
   'BB',
   'BBAdmin.Services',
   'BBAdmin.Filters',
@@ -11,7 +11,7 @@ angular.module('BBAdminTable', [
   'trNgGrid'
 ])
 
-angular.module('BBAdminTable').config ($logProvider) ->
+angular.module('BBAdminSettings').config ($logProvider) ->
   $logProvider.debugEnabled(true)
 
-angular.module('BBAdminTableMockE2E', ['BBAdminTable', 'BBAdminMockE2E'])
+angular.module('BBAdminSettingsMockE2E', ['BBAdminSettings', 'BBAdminMockE2E'])

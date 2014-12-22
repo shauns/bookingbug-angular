@@ -1,4 +1,4 @@
-angular.module('BBAdmin.Services').factory 'AdminScheduleService',  ($q, $window,
+angular.module('BBAdminServices').factory 'AdminScheduleService',  ($q, $window,
     $rootScope, halClient, SlotCollections, BBModel, LoginService) ->
 
   query: (prms) ->

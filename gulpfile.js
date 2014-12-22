@@ -25,7 +25,19 @@ gulp.task('list', function() {
 });
 
 gulp.task('javascripts', function() {
-  javascripts = gulp.src(mainBowerFiles({filter: new RegExp('.js$')}).concat(['./src/javascripts/core/main.js.coffee', './src/*/javascripts/main.js.coffee', './src/core/javascripts/services/widget.js.coffee', './src/core/javascripts/collections/base.js.coffee', './src/widget/templates.js', './src/*/javascripts/**/*', './src/*/templates.js', '!./**/*~',]))
+  javascripts = gulp.src(mainBowerFiles({filter: new RegExp('.js$')}).concat([
+        './src/javascripts/core/main.js.coffee', 
+        './src/*/javascripts/main.js.coffee', 
+        './src/*/main.js.coffee', 
+        './src/core/javascripts/services/widget.js.coffee', 
+        './src/core/javascripts/collections/base.js.coffee', 
+        './src/widget/templates.js', 
+        './src/*/javascripts/**/*', 
+        './src/*/directives/**/*', 
+        './src/*/models/**/*', 
+        './src/*/services/**/*', 
+        './src/*/templates.js', 
+        '!./**/*~',]))
     // .pipe(filelog())
     .pipe(gulpif(/.*coffee$/, coffee().on('error', function (e) {
       gutil.log(e)
