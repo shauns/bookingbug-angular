@@ -26,6 +26,7 @@ gulp.task('list', function() {
 
 gulp.task('javascripts', function() {
   javascripts = gulp.src(mainBowerFiles({filter: new RegExp('.js$')}).concat([
+        './bower_components/jquery-visible/jquery.visible.js',
         './src/javascripts/core/main.js.coffee', 
         './src/*/javascripts/main.js.coffee', 
         './src/*/main.js.coffee', 

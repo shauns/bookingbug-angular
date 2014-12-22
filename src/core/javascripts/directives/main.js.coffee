@@ -26,7 +26,7 @@ app.directive 'bbLoading', ($compile) ->
     return
 
 
-app.directive 'bbScrollTo', ($rootScope, AppConfig, BreadcrumbService) ->
+app.directive 'bbScrollTo', ($rootScope, AppConfig, BreadcrumbService, $bbug) ->
   transclude: false,
   restrict: 'A',
   link: (scope, element, attrs) ->

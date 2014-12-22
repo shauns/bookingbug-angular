@@ -8,7 +8,7 @@ angular.module('BBMember.Services').factory "MemberLoginService", ($q, halClient
     halClient.$post(url, options, form).then (login) ->
       if login.$has('member')
         login.$get('member').then (member) ->
-          member = new BBModel.Client(member)
+          member = new BBModel.Member.Member(member)
           defer.resolve(member)
       else if login.$has('members')
         defer.resolve(login)
