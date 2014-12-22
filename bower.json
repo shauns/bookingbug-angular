@@ -44,6 +44,8 @@
     "fullcalendar": "~2.2.3"
   },
   "resolutions": {
-    "angular": "~1.2.25"
+    "angular": "~1.2.25",
+    "jquery": "~1.10.2",
+    "fullcalendar": "~2.2.3"
   }
 }

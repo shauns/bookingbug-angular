@@ -85640,7 +85640,7 @@ angular.module('ui.calendar', [])
 })(jQuery);
 (function() {
   'use strict';
-  angular.module('BBAdmin', ['BB', 'BBAdmin.Services', 'BBAdmin.Filters', 'BBAdmin.Controllers', 'ui.calendar']);
+  angular.module('BBAdmin', ['BB', 'BBAdmin.Services', 'BBAdmin.Filters', 'BBAdmin.Controllers']);
 
   angular.module('BBAdmin').config(function($logProvider) {
     return $logProvider.debugEnabled(true);
@@ -85653,18 +85653,6 @@ angular.module('ui.calendar', [])
   angular.module('BBAdmin.Services', ['ngResource', 'ngSanitize', 'ngLocalData']);
 
   angular.module('BBAdmin.Controllers', ['ngLocalData', 'ngSanitize']);
-
-}).call(this);
-
-(function() {
-  'use strict';
-  angular.module('BBAdminTable', ['BB', 'BBAdmin.Services', 'BBAdmin.Filters', 'BBAdmin.Controllers', 'trNgGrid']);
-
-  angular.module('BBAdminTable').config(function($logProvider) {
-    return $logProvider.debugEnabled(true);
-  });
-
-  angular.module('BBAdminTableMockE2E', ['BBAdminTable', 'BBAdminMockE2E']);
 
 }).call(this);
 
@@ -85840,13 +85828,25 @@ angular.module('ui.calendar', [])
 
 (function() {
   'use strict';
-  angular.module('BBPersonTable', ['BB', 'BBAdmin.Services', 'BBAdmin.Filters', 'BBAdmin.Controllers', 'trNgGrid']);
+  angular.module('BBAdminServices', ['BB', 'BBAdmin.Services', 'BBAdmin.Filters', 'BBAdmin.Controllers', 'trNgGrid']);
 
-  angular.module('BBPersonTable').config(function($logProvider) {
+  angular.module('BBAdminServices').config(function($logProvider) {
     return $logProvider.debugEnabled(true);
   });
 
-  angular.module('BBPersonTableMockE2E', ['BBPersonTable', 'BBAdminMockE2E']);
+  angular.module('BBAdminServicesMockE2E', ['BBAdminServices', 'BBAdminMockE2E']);
+
+}).call(this);
+
+(function() {
+  'use strict';
+  angular.module('BBAdminSettings', ['BB', 'BBAdmin.Services', 'BBAdmin.Filters', 'BBAdmin.Controllers', 'trNgGrid']);
+
+  angular.module('BBAdminSettings').config(function($logProvider) {
+    return $logProvider.debugEnabled(true);
+  });
+
+  angular.module('BBAdminSettingsMockE2E', ['BBAdminSettings', 'BBAdminMockE2E']);
 
 }).call(this);
 
@@ -87398,6534 +87398,6 @@ angular.module('ngLocalData', ['angular-hal']).
     
     return LocalDataFactory
 }]);
-
-(function() {
-  angular.module('BBAdminTable').directive('adminTable', function(AdminCompanyService, AdminAdministratorService, $modal, $log) {
-    var controller, editAdministratorForm, link, newAdministratorForm;
-    newAdministratorForm = function($scope, $modalInstance, company) {
-      $scope.title = 'New Administrator';
-      $scope.company = company;
-      $scope.company.$get('new_administrator').then(function(admin_schema) {
-        $scope.form = _.reject(admin_schema.form, function(x) {
-          return x.type === 'submit';
-        });
-        $scope.schema = admin_schema.schema;
-        return $scope.admin = {};
-      });
-      $scope.cancel = function(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        return $modalInstance.dismiss('cancel');
-      };
-      return $scope.submit = function(person_form) {
-        $scope.$broadcast('schemaFormValidate');
-        return $scope.company.$post('administrators', {}, $scope.admin).then(function(admin) {
-          $modalInstance.close(admin);
-          return $scope.$parent.people.push(admin);
-        }, function(err) {
-          $modalInstance.close(admin);
-          return $log.error('Failed to create admin');
-        });
-      };
-    };
-    editAdministratorForm = function($scope, $modalInstance, admin) {
-      console.log(admin);
-      $scope.title = 'Edit Administrator';
-      $scope.admin = admin;
-      $scope.admin.$get('edit').then(function(admin_schema) {
-        $scope.form = _.reject(admin_schema.form, function(x) {
-          return x.type === 'submit';
-        });
-        return $scope.schema = admin_schema.schema;
-      });
-      $scope.ok = function() {
-        return $modalInstance.close($scope.admin);
-      };
-      return $scope.cancel = function() {
-        return $modalInstance.dismiss('cancel');
-      };
-    };
-    controller = function($scope) {
-      $scope.getAdministrators = function() {
-        var params;
-        params = {
-          company: $scope.company
-        };
-        return AdminAdministratorService.query(params).then(function(administrators) {
-          $scope.admin_models = administrators;
-          return $scope.administrators = _.map(administrators, function(administrator) {
-            return _.pick(administrator, 'id', 'name', 'email', 'role');
-          });
-        });
-      };
-      $scope.newAdministrator = function() {
-        return $modal.open({
-          templateUrl: 'admin_form.html',
-          controller: newAdministratorForm,
-          resolve: {
-            company: function() {
-              return $scope.company;
-            }
-          }
-        });
-      };
-      return $scope.edit = function(id) {
-        var admin;
-        admin = _.find($scope.admin_models, function(p) {
-          return p.id === id;
-        });
-        return $modal.open({
-          templateUrl: 'admin_form.html',
-          controller: editAdministratorForm,
-          resolve: {
-            admin: function() {
-              return admin;
-            }
-          }
-        });
-      };
-    };
-    link = function(scope, element, attrs) {
-      if (scope.company) {
-        return scope.getAdministrators();
-      } else {
-        return AdminCompanyService.query(attrs).then(function(company) {
-          scope.company = company;
-          return scope.getAdministrators();
-        });
-      }
-    };
-    return {
-      controller: controller,
-      link: link,
-      templateUrl: 'admin_table_main.html'
-    };
-  });
-
-}).call(this);
-
-angular.module("BBAdminTable").run(["$templateCache", function($templateCache) {$templateCache.put("admin_form.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"administrator_form\" ng-submit=\"submit(administrator_form)\">\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\"\n    sf-model=\"admin\">\n  </div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\n  </div>\n</form>\n");
-$templateCache.put("admin_table_main.html","<button class=\"btn btn-default\" ng-click=\"newAdministrator()\">New Administrator</button>\n<table tr-ng-grid=\"\" items=\"administrators\">\n   <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"edit(gridDisplayItem.id)\">\n            Edit\n        </button>\n      </td>\n    </tr>\n  </tbody>\n</table>\n");}]);
-(function() {
-  angular.module('BBPersonTable').directive('personTable', function(AdminCompanyService, AdminPersonService, $modal, $log) {
-    var controller, editPersonForm, link, newPersonForm;
-    newPersonForm = function($scope, $modalInstance, company) {
-      $scope.title = 'New Person';
-      $scope.company = company;
-      $scope.company.$get('new_person').then(function(person_schema) {
-        $scope.form = _.reject(person_schema.form, function(x) {
-          return x.type === 'submit';
-        });
-        $scope.schema = person_schema.schema;
-        return $scope.person = {};
-      });
-      $scope.cancel = function(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        return $modalInstance.dismiss('cancel');
-      };
-      return $scope.submit = function(person_form) {
-        $scope.$broadcast('schemaFormValidate');
-        return $scope.company.$post('people', {}, $scope.person).then(function(person) {
-          $modalInstance.close(person);
-          return $scope.$parent.people.push(person);
-        }, function(err) {
-          $modalInstance.close(person);
-          return $log.error('Failed to create person');
-        });
-      };
-    };
-    editPersonForm = function($scope, $modalInstance, person) {
-      $scope.title = 'Edit Person';
-      $scope.ok = function() {
-        return $modalInstance.close($scope.person);
-      };
-      return $scope.cancel = function() {
-        return $modalInstance.dismiss('cancel');
-      };
-    };
-    controller = function($scope) {
-      $scope.getPeople = function() {
-        var params;
-        params = {
-          company: $scope.company
-        };
-        return AdminPersonService.query(params).then(function(people) {
-          $scope.people_models = people;
-          return $scope.people = _.map(people, function(person) {
-            return _.pick(person, 'id', 'name', 'mobile');
-          });
-        });
-      };
-      $scope.newPerson = function() {
-        return $modal.open({
-          templateUrl: 'person_form.html',
-          controller: newPersonForm,
-          resolve: {
-            company: function() {
-              return $scope.company;
-            }
-          }
-        });
-      };
-      $scope["delete"] = function(id) {
-        var person;
-        person = _.find($scope.people_models, function(p) {
-          return p.id === id;
-        });
-        return person.$del('self').then(function() {
-          return $scope.people = _.reject($scope.people, function(p) {
-            return p.id === id;
-          });
-        }, function(err) {
-          return $log.error("Failed to delete person");
-        });
-      };
-      return $scope.edit = function(id) {
-        var person;
-        person = _.find($scope.people_models, function(p) {
-          return p.id === id;
-        });
-        return $modal.open({
-          templateUrl: 'person_form.html',
-          controller: editPersonForm,
-          resolve: {
-            person: function() {
-              return person;
-            }
-          }
-        });
-      };
-    };
-    link = function(scope, element, attrs) {
-      if (scope.company) {
-        return scope.getPeople();
-      } else {
-        return AdminCompanyService.query(attrs).then(function(company) {
-          scope.company = company;
-          return scope.getPeople();
-        });
-      }
-    };
-    return {
-      controller: controller,
-      link: link,
-      templateUrl: 'person_table_main.html'
-    };
-  });
-
-}).call(this);
-
-(function() {
-  var __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  window.Collection.Booking = (function(_super) {
-    __extends(Booking, _super);
-
-    function Booking() {
-      return Booking.__super__.constructor.apply(this, arguments);
-    }
-
-    Booking.prototype.checkItem = function(item) {
-      return Booking.__super__.checkItem.apply(this, arguments);
-    };
-
-    return Booking;
-
-  })(window.Collection.Base);
-
-  angular.module('BB.Services').provider("BookingCollections", function() {
-    return {
-      $get: function() {
-        return new window.BaseCollections();
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  var __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  window.Collection.Slot = (function(_super) {
-    __extends(Slot, _super);
-
-    function Slot() {
-      return Slot.__super__.constructor.apply(this, arguments);
-    }
-
-    Slot.prototype.checkItem = function(item) {
-      return Slot.__super__.checkItem.apply(this, arguments);
-    };
-
-    Slot.prototype.matchesParams = function(item) {
-      if (this.params.start_date) {
-        this.start_date || (this.start_date = moment(this.params.start_date));
-        if (this.start_date.isAfter(item.date)) {
-          return false;
-        }
-      }
-      if (this.params.end_date) {
-        this.end_date || (this.end_date = moment(this.params.end_date));
-        if (this.end_date.isBefore(item.date)) {
-          return false;
-        }
-      }
-      return true;
-    };
-
-    return Slot;
-
-  })(window.Collection.Base);
-
-  angular.module('BB.Services').provider("SlotCollections", function() {
-    return {
-      $get: function() {
-        return new window.BaseCollections();
-      }
-    };
-  });
-
-}).call(this);
-
-
-angular.module('ngLocalData', ['angular-hal']).
- factory('$localCache', ['halClient', '$q', function( halClient, $q) {
-    data = {};
-
-    jsonData = function(data) {
-        return data && JSON.parse(data);
-    }
-
-    storage = function()
-    {
-      return sessionStorage
-    } 
-    localSave = function(key, item){
-      storage().setItem(key, item.$toStore())   
-    } 
-    localLoad = function(key){
-      res =  jsonData(storage().getItem(key))
-      if (res)
-      {  
-        r = halClient.createResource(res)
-        def = $q.defer()
-        def.resolve(r)
-        return def.promise
-      }
-      return null
-    } 
-    localDelete = function(key) {
-      storage().removeItem(key)
-    }
-
-    return {
-
-      set: function(key, val)
-      {
-        data[key] = val
-        val.then(function(item){
-          localSave(key, item)
-        })
-        return val
-      },
-      get: function(key)
-      {
-        localLoad(key)
-        if (!data[key])
-          data[key] = localLoad(key)
-        return data[key]
-      },
-      del: function(key)
-      {
-        localDelete(key)
-        delete data[key]
-      },
-      has: function(key)
-      {
-        if (!data[key])
-        { 
-          res = localLoad(key)
-          if (res)
-            data[key] = res
-        }
-        return (key in data)
-      }      
-    }
-
-}]).
- factory('$localData', ['$http', '$rootScope', function($http, $rootScope) {
-    function LocalDataFactory(name) {
-      function LocalData(value){
-        this.setStore(value);
-      }
-
-      LocalData.prototype.jsonData = function(data) {
-          return data && JSON.parse(data);
-      }
-
-      LocalData.prototype.storage = function()
-      {
-        return sessionStorage
-      }  
-
-      LocalData.prototype.localSave = function(item)
-      {
-        this.storage().setItem(this.store_name + item.id, JSON.stringify(item))
-      }
-
-
-      LocalData.prototype.localSaveIndex = function(ids)
-      {
-        this.storage().setItem(this.store_name, ids.join(","))
-        this.ids = ids;
-      }
-
-      LocalData.prototype.localLoadIndex = function()
-      {
-        store = this.storage().getItem(this.store_name)
-        records = (store && store.split(",")) || [];
-        return records
-      }
-
-      LocalData.prototype.localLoad = function( id)
-      {
-        return this.jsonData(this.storage().getItem(this.store_name + id))
-      }
-
-      LocalData.prototype.count = function()
-      {
-        return this.ids.length
-      }
-
-      LocalData.prototype.setStore = function(name)
-      {
-        this.store_name = name;
-        this.data_store = []
-        this.ids = this.localLoadIndex();
-        for (a = 0; a < this.ids.length; a++){
-          this.data_store.push(this.localLoad(this.ids[a]));
-        }
-    //    var channel = pusher.subscribe(name);
-    //    var ds = this;
-
-     //   channel.bind('add', function(data) {
-     //     ds.data_store.push(data);
-     //     $rootScope.$broadcast("Refresh_" + ds.store_name, "Updated");          
-     //   });
-
-      }
-
-      LocalData.prototype.update = function(data)
-      {
-        ids = []
-        for (x in data){
-          if (data[x].id){
-           ids.push(data[x].id)
-           this.localSave(data[x])
-         }
-        }
-        this.localSaveIndex(ids)
-      }
-
-      return new LocalData(name)
-
-    };
-
-
-    
-    return LocalDataFactory
-}]);
-
-/***********************************************
-* ng-grid JavaScript Library
-* Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
-* License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 04/23/2013 14:36
-***********************************************/
-(function(window, $) {
-'use strict';
-
-var EXCESS_ROWS = 6;
-var SCROLL_THRESHOLD = 4;
-var ASC = "asc";
-
-var DESC = "desc";
-
-var NG_FIELD = '_ng_field_';
-var NG_DEPTH = '_ng_depth_';
-var NG_HIDDEN = '_ng_hidden_';
-var NG_COLUMN = '_ng_column_';
-var CUSTOM_FILTERS = /CUSTOM_FILTERS/g;
-var COL_FIELD = /COL_FIELD/g;
-var DISPLAY_CELL_TEMPLATE = /DISPLAY_CELL_TEMPLATE/g;
-var EDITABLE_CELL_TEMPLATE = /EDITABLE_CELL_TEMPLATE/g;
-var TEMPLATE_REGEXP = /<.+>/;
-window.ngGrid = {};
-window.ngGrid.i18n = {};
-var ngGridServices = angular.module('ngGrid.services', []);
-var ngGridDirectives = angular.module('ngGrid.directives', []);
-var ngGridFilters = angular.module('ngGrid.filters', []);
-
-angular.module('ngGrid', ['ngGrid.services', 'ngGrid.directives', 'ngGrid.filters']);
-
-var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
-    if ($scope.selectionProvider.selectedItems === undefined) {
-        return true;
-    }
-    var charCode = evt.which || evt.keyCode,
-        newColumnIndex,
-        lastInRow = false,
-        firstInRow = false,
-        rowIndex = $scope.selectionProvider.lastClickedRow.rowIndex,
-        visibleCols = $scope.columns.filter(function(c) { return c.visible; }),
-        pinnedCols = $scope.columns.filter(function(c) { return c.pinned; });
-
-    if ($scope.col) {
-        newColumnIndex = visibleCols.indexOf($scope.col);
-    }
-    if(charCode != 37 && charCode != 38 && charCode != 39 && charCode != 40 && charCode != 9 && charCode != 13){
-    return true;
-  }
-  if($scope.enableCellSelection){
-    if(charCode == 9){ 
-      evt.preventDefault();
-    }
-    var focusedOnFirstColumn = $scope.showSelectionCheckbox ? $scope.col.index == 1 : $scope.col.index == 0;
-        var focusedOnFirstVisibleColumns = $scope.$index == 1 || $scope.$index == 0;
-        var focusedOnLastVisibleColumns = $scope.$index == ($scope.renderedColumns.length - 1) || $scope.$index == ($scope.renderedColumns.length - 2);
-        var focusedOnLastColumn = visibleCols.indexOf($scope.col) == (visibleCols.length - 1);
-        var focusedOnLastPinnedColumn = pinnedCols.indexOf($scope.col) == (pinnedCols.length - 1);
-        if (charCode == 37 || charCode == 9 && evt.shiftKey) {
-            var scrollTo = 0;
-            if (!focusedOnFirstColumn) {
-                newColumnIndex -= 1;
-            }
-      if (focusedOnFirstVisibleColumns) {
-        if(focusedOnFirstColumn && charCode ==  9 && evt.shiftKey){
-            scrollTo = grid.$canvas.width();
-          newColumnIndex = visibleCols.length - 1;
-          firstInRow = true;
-        } else {
-            scrollTo = grid.$viewport.scrollLeft() - $scope.col.width;
-        }
-      } else if (pinnedCols.length > 0) {
-          scrollTo = grid.$viewport.scrollLeft() - visibleCols[newColumnIndex].width;
-      }
-            grid.$viewport.scrollLeft(scrollTo);
-    } else if(charCode == 39 || charCode ==  9 && !evt.shiftKey){
-            if (focusedOnLastVisibleColumns) {
-        if(focusedOnLastColumn && charCode ==  9 && !evt.shiftKey){
-          grid.$viewport.scrollLeft(0);
-          newColumnIndex = $scope.showSelectionCheckbox ? 1 : 0;  
-          lastInRow = true;
-        } else {
-
-            grid.$viewport.scrollLeft(grid.$viewport.scrollLeft() + $scope.col.width);
-        }
-            } else if (focusedOnLastPinnedColumn) {
-                grid.$viewport.scrollLeft(0);
-            }
-      if(!focusedOnLastColumn){
-        newColumnIndex += 1;
-      }
-    }
-  }
-  var items;
-  if ($scope.configGroups.length > 0) {
-     items = grid.rowFactory.parsedData.filter(function (row) {
-       return !row.isAggRow;
-     });
-  } else {
-     items = grid.filteredRows;
-  }
-  var offset = 0;
-  if(rowIndex != 0 && (charCode == 38 || charCode == 13 && evt.shiftKey || charCode == 9 && evt.shiftKey && firstInRow)){ 
-    offset = -1;
-  } else if(rowIndex != items.length - 1 && (charCode == 40 || charCode == 13 && !evt.shiftKey || charCode == 9 && lastInRow)){
-    offset = 1;
-  }
-  if (offset) {
-      var r = items[rowIndex + offset];
-      if (r.beforeSelectionChange(r, evt)) {
-          r.continueSelection(evt);
-          $scope.$emit('ngGridEventDigestGridParent');
-
-          if ($scope.selectionProvider.lastClickedRow.renderedRowIndex >= $scope.renderedRows.length - EXCESS_ROWS - 2) {
-              grid.$viewport.scrollTop(grid.$viewport.scrollTop() + $scope.rowHeight);
-          } else if ($scope.selectionProvider.lastClickedRow.renderedRowIndex <= EXCESS_ROWS + 2) {
-              grid.$viewport.scrollTop(grid.$viewport.scrollTop() - $scope.rowHeight);
-          }
-      }
-  }
-    if($scope.enableCellSelection){
-        setTimeout(function(){
-            $scope.domAccessProvider.focusCellElement($scope, $scope.renderedColumns.indexOf(visibleCols[newColumnIndex]));
-        },3);
-    }
-    return false;
-};
-
-if (!String.prototype.trim) {
-    String.prototype.trim = function() {
-        return this.replace(/^\s+|\s+$/g, '');
-    };
-}
-if (!Array.prototype.indexOf) {
-    Array.prototype.indexOf = function(elt ) {
-        var len = this.length >>> 0;
-        var from = Number(arguments[1]) || 0;
-        from = (from < 0) ? Math.ceil(from) : Math.floor(from);
-        if (from < 0) {
-            from += len;
-        }
-        for (; from < len; from++) {
-            if (from in this && this[from] === elt) {
-                return from;
-            }
-        }
-        return -1;
-    };
-}
-if (!Array.prototype.filter) {
-    Array.prototype.filter = function(fun ) {
-        "use strict";
-        var t = Object(this);
-        var len = t.length >>> 0;
-        if (typeof fun !== "function") {
-            throw new TypeError();
-        }
-        var res = [];
-        var thisp = arguments[1];
-        for (var i = 0; i < len; i++) {
-            if (i in t) {
-                var val = t[i]; 
-                if (fun.call(thisp, val, i, t)) {
-                    res.push(val);
-                }
-            }
-        }
-        return res;
-    };
-}
-ngGridFilters.filter('checkmark', function() {
-    return function(input) {
-        return input ? '\u2714' : '\u2718';
-    };
-});
-ngGridFilters.filter('ngColumns', function() {
-    return function(input) {
-        return input.filter(function(col) {
-            return !col.isAggCol;
-        });
-    };
-});
-ngGridServices.factory('$domUtilityService',['$utilityService', function($utils) {
-    var domUtilityService = {};
-    var regexCache = {};
-    var getWidths = function() {
-        var $testContainer = $('<div></div>');
-        $testContainer.appendTo('body');
-        $testContainer.height(100).width(100).css("position", "absolute").css("overflow", "scroll");
-        $testContainer.append('<div style="height: 400px; width: 400px;"></div>');
-        domUtilityService.ScrollH = ($testContainer.height() - $testContainer[0].clientHeight);
-        domUtilityService.ScrollW = ($testContainer.width() - $testContainer[0].clientWidth);
-        $testContainer.empty();
-        $testContainer.attr('style', '');
-        $testContainer.append('<span style="font-family: Verdana, Helvetica, Sans-Serif; font-size: 14px;"><strong>M</strong></span>');
-        domUtilityService.LetterW = $testContainer.children().first().width();
-        $testContainer.remove();
-    };
-    domUtilityService.eventStorage = {};
-    domUtilityService.AssignGridContainers = function($scope, rootEl, grid) {
-        grid.$root = $(rootEl);
-        grid.$topPanel = grid.$root.find(".ngTopPanel");
-        grid.$groupPanel = grid.$root.find(".ngGroupPanel");
-        grid.$headerContainer = grid.$topPanel.find(".ngHeaderContainer");
-        $scope.$headerContainer = grid.$headerContainer;
-
-        grid.$headerScroller = grid.$topPanel.find(".ngHeaderScroller");
-        grid.$headers = grid.$headerScroller.children();
-        grid.$viewport = grid.$root.find(".ngViewport");
-        grid.$canvas = grid.$viewport.find(".ngCanvas");
-        grid.$footerPanel = grid.$root.find(".ngFooterPanel");
-        $scope.$watch(function () {
-            return grid.$viewport.scrollLeft();
-        }, function (newLeft) {
-            return grid.$headerContainer.scrollLeft(newLeft);
-        });
-        domUtilityService.UpdateGridLayout($scope, grid);
-    };
-    domUtilityService.getRealWidth = function (obj) {
-        var width = 0;
-        var props = { visibility: "hidden", display: "block" };
-        var hiddenParents = obj.parents().andSelf().not(':visible');
-        $.swap(hiddenParents[0], props, function () {
-            width = obj.outerWidth();
-        });
-        return width;
-    };
-    domUtilityService.UpdateGridLayout = function($scope, grid) {
-        var scrollTop = grid.$viewport.scrollTop();
-        grid.elementDims.rootMaxW = grid.$root.width();
-        if (grid.$root.is(':hidden')) {
-            grid.elementDims.rootMaxW = domUtilityService.getRealWidth(grid.$root);
-        }
-        grid.elementDims.rootMaxH = grid.$root.height();
-        grid.refreshDomSizes();
-        $scope.adjustScrollTop(scrollTop, true); 
-    };
-    domUtilityService.numberOfGrids = 0;
-    domUtilityService.BuildStyles = function($scope, grid, digest) {
-        var rowHeight = grid.config.rowHeight,
-            $style = grid.$styleSheet,
-            gridId = grid.gridId,
-            css,
-            cols = $scope.columns,
-            sumWidth = 0;
-
-        if (!$style) {
-            $style = $('#' + gridId);
-            if (!$style[0]) {
-                $style = $("<style id='" + gridId + "' type='text/css' rel='stylesheet' />").appendTo(grid.$root);
-            }
-        }
-        $style.empty();
-        var trw = $scope.totalRowWidth();
-        css = "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
-            "." + gridId + " .ngRow { width: " + trw + "px; }" +
-            "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
-            "." + gridId + " .ngHeaderScroller { width: " + (trw + domUtilityService.ScrollH) + "px}";
-        for (var i = 0; i < cols.length; i++) {
-            var col = cols[i];
-            if (col.visible !== false) {
-                var colLeft = col.pinned ? grid.$viewport.scrollLeft() + sumWidth : sumWidth;
-                css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + colLeft + "px; height: " + rowHeight + "px }" +
-                    "." + gridId + " .colt" + i + " { width: " + col.width + "px; }";
-                sumWidth += col.width;
-            }
-        };
-        if ($utils.isIe) { 
-            $style[0].styleSheet.cssText = css;
-        } else {
-            $style[0].appendChild(document.createTextNode(css));
-        }
-        grid.$styleSheet = $style;
-        if (digest) {
-            $scope.adjustScrollLeft(grid.$viewport.scrollLeft());
-            domUtilityService.digest($scope);
-        }
-    };
-    domUtilityService.setColLeft = function(col, colLeft, grid) {
-        if (grid.$styleSheet) {
-            var regex = regexCache[col.index];
-            if (!regex) {
-                regex = regexCache[col.index] = new RegExp("\.col" + col.index + " \{ width: [0-9]+px; left: [0-9]+px");
-            }
-      var str = grid.$styleSheet.html();
-      var newStr = str.replace(regex, "\.col" + col.index + " \{ width: " + col.width + "px; left: " + colLeft + "px");
-      if ($utils.isIe) { 
-          setTimeout(function() {
-              grid.$styleSheet.html(newStr);
-          });
-      } else {
-          grid.$styleSheet.html(newStr);
-      }
-    }
-    };
-    domUtilityService.setColLeft.immediate = 1;
-  domUtilityService.RebuildGrid = function($scope, grid){
-    domUtilityService.UpdateGridLayout($scope, grid);
-    if (grid.config.maintainColumnRatios) {
-      grid.configureColumnWidths();
-    }
-    $scope.adjustScrollLeft(grid.$viewport.scrollLeft());
-    domUtilityService.BuildStyles($scope, grid, true);
-  };
-
-    domUtilityService.digest = function($scope) {
-        if (!$scope.$root.$$phase) {
-            $scope.$digest();
-        }
-    };
-    domUtilityService.ScrollH = 17; 
-    domUtilityService.ScrollW = 17; 
-    domUtilityService.LetterW = 10;
-    getWidths();
-    return domUtilityService;
-}]);
-ngGridServices.factory('$sortService', ['$parse', function($parse) {
-    var sortService = {};
-    sortService.colSortFnCache = {};
-    sortService.guessSortFn = function(item) {
-        var itemType = typeof(item);
-        switch (itemType) {
-            case "number":
-                return sortService.sortNumber;
-            case "boolean":
-                return sortService.sortBool;
-            case "string":
-                return item.match(/^-?[£$¤]?[\d,.]+%?$/) ? sortService.sortNumberStr : sortService.sortAlpha;
-            default:
-                if (Object.prototype.toString.call(item) === '[object Date]') {
-                    return sortService.sortDate;
-                } else {
-                    return sortService.basicSort;
-                }
-        }
-    };
-    sortService.basicSort = function(a, b) {
-        if (a == b) {
-            return 0;
-        }
-        if (a < b) {
-            return -1;
-        }
-        return 1;
-    };
-    sortService.sortNumber = function(a, b) {
-        return a - b;
-    };
-    sortService.sortNumberStr = function(a, b) {
-        var numA, numB, badA = false, badB = false;
-        numA = parseFloat(a.replace(/[^0-9.-]/g, ''));
-        if (isNaN(numA)) {
-            badA = true;
-        }
-        numB = parseFloat(b.replace(/[^0-9.-]/g, ''));
-        if (isNaN(numB)) {
-            badB = true;
-        }
-        if (badA && badB) {
-            return 0;
-        }
-        if (badA) {
-            return 1;
-        }
-        if (badB) {
-            return -1;
-        }
-        return numA - numB;
-    };
-    sortService.sortAlpha = function(a, b) {
-        var strA = a.toLowerCase(),
-            strB = b.toLowerCase();
-        return strA == strB ? 0 : (strA < strB ? -1 : 1);
-    };
-    sortService.sortDate = function(a, b) {
-        var timeA = a.getTime(),
-            timeB = b.getTime();
-        return timeA == timeB ? 0 : (timeA < timeB ? -1 : 1);
-    };
-    sortService.sortBool = function(a, b) {
-        if (a && b) {
-            return 0;
-        }
-        if (!a && !b) {
-            return 0;
-        } else {
-            return a ? 1 : -1;
-        }
-    };
-    sortService.sortData = function(sortInfo, data ) {
-        if (!data || !sortInfo) {
-            return;
-        }
-        var l = sortInfo.fields.length,
-            order = sortInfo.fields,
-            col,
-            direction,
-            d = data.slice(0);
-        data.sort(function (itemA, itemB) {
-            var tem = 0,
-                indx = 0,
-                sortFn;
-            while (tem == 0 && indx < l) {
-                col = sortInfo.columns[indx];
-                direction = sortInfo.directions[indx],
-                sortFn = sortService.getSortFn(col, d);
-                var propA = $parse(order[indx])(itemA);
-                var propB = $parse(order[indx])(itemB);
-                if ((!propA && propA != 0) || (!propB && propB != 0)) {
-                    if (!propB && !propA) {
-                        tem = 0;
-                    } else if (!propA) {
-                        tem = 1;
-                    } else if (!propB) {
-                        tem = -1;
-                    }
-                } else {
-                    tem = sortFn(propA, propB);
-                }
-                indx++;
-            }
-            if (direction === ASC) {
-                return tem;
-            } else {
-                return 0 - tem;
-            }
-        });
-    };
-    sortService.Sort = function(sortInfo, data) {
-        if (sortService.isSorting) {
-            return;
-        }
-        sortService.isSorting = true;
-        sortService.sortData(sortInfo, data);
-        sortService.isSorting = false;
-    };
-    sortService.getSortFn = function(col, data) {
-        var sortFn = undefined, item;
-        if (sortService.colSortFnCache[col.field]) {
-            sortFn = sortService.colSortFnCache[col.field];
-        } else if (col.sortingAlgorithm != undefined) {
-            sortFn = col.sortingAlgorithm;
-            sortService.colSortFnCache[col.field] = col.sortingAlgorithm;
-        } else { 
-            item = data[0];
-            if (!item) {
-                return sortFn;
-            }
-            sortFn = sortService.guessSortFn($parse(col.field)(item));
-            if (sortFn) {
-                sortService.colSortFnCache[col.field] = sortFn;
-            } else {
-                sortFn = sortService.sortAlpha;
-            }
-        }
-        return sortFn;
-    };
-    return sortService;
-}]);
-
-ngGridServices.factory('$utilityService', ['$parse', function ($parse) {
-    var funcNameRegex = /function (.{1,})\(/;
-    var utils = {
-        visualLength: function(node) {
-            var elem = document.getElementById('testDataLength');
-            if (!elem) {
-                elem = document.createElement('SPAN');
-                elem.id = "testDataLength";
-                elem.style.visibility = "hidden";
-                document.body.appendChild(elem);
-            }
-            $(elem).css('font', $(node).css('font'));
-            elem.innerHTML = $(node).text();
-            return elem.offsetWidth;
-        },
-        forIn: function(obj, action) {
-            for (var prop in obj) {
-                if (obj.hasOwnProperty(prop)) {
-                    action(obj[prop], prop);
-                }
-            }
-        },
-        evalProperty: function (entity, path) {
-            return $parse(path)(entity);
-        },
-        endsWith: function(str, suffix) {
-            if (!str || !suffix || typeof str != "string") {
-                return false;
-            }
-            return str.indexOf(suffix, str.length - suffix.length) !== -1;
-        },
-        isNullOrUndefined: function(obj) {
-            if (obj === undefined || obj === null) {
-                return true;
-            }
-            return false;
-        },
-        getElementsByClassName: function(cl) {
-            var retnode = [];
-            var myclass = new RegExp('\\b' + cl + '\\b');
-            var elem = document.getElementsByTagName('*');
-            for (var i = 0; i < elem.length; i++) {
-                var classes = elem[i].className;
-                if (myclass.test(classes)) {
-                    retnode.push(elem[i]);
-                }
-            }
-            return retnode;
-        },
-        newId: (function() {
-            var seedId = new Date().getTime();
-            return function() {
-                return seedId += 1;
-            };
-        })(),
-        seti18n: function($scope, language) {
-            var $langPack = window.ngGrid.i18n[language];
-            for (var label in $langPack) {
-                $scope.i18n[label] = $langPack[label];
-            }
-        },
-        getInstanceType: function (o) {
-            var results = (funcNameRegex).exec(o.constructor.toString());
-            return (results && results.length > 1) ? results[1] : "";
-        },
-        ieVersion: (function() {
-            var version = 3, div = document.createElement('div'), iElems = div.getElementsByTagName('i');
-            while (div.innerHTML = '<!--[if gt IE ' + (++version) + ']><i></i><![endif]-->',
-            iElems[0]) ;
-            return version > 4 ? version : undefined;
-        })()
-    };
-
-    $.extend(utils, {
-        isIe: (function() {
-            return utils.ieVersion !== undefined;
-        })()
-    });
-    return utils;
-}]);
-var ngAggregate = function (aggEntity, rowFactory, rowHeight, groupInitState) {
-    var self = this;
-    self.rowIndex = 0;
-    self.offsetTop = self.rowIndex * rowHeight;
-    self.entity = aggEntity;
-    self.label = aggEntity.gLabel;
-    self.field = aggEntity.gField;
-    self.depth = aggEntity.gDepth;
-    self.parent = aggEntity.parent;
-    self.children = aggEntity.children;
-    self.aggChildren = aggEntity.aggChildren;
-    self.aggIndex = aggEntity.aggIndex;
-    self.collapsed = groupInitState;
-    self.isAggRow = true;
-    self.offsetLeft = aggEntity.gDepth * 25;
-    self.aggLabelFilter = aggEntity.aggLabelFilter;
-    self.toggleExpand = function() {
-        self.collapsed = self.collapsed ? false : true;
-        if (self.orig) {
-            self.orig.collapsed = self.collapsed;
-        }
-        self.notifyChildren();
-    };
-    self.setExpand = function(state) {
-        self.collapsed = state;
-        self.notifyChildren();
-    };
-    self.notifyChildren = function () {
-        var longest = Math.max(rowFactory.aggCache.length, self.children.length);
-        for (var i = 0; i < longest; i++) {
-            if (self.aggChildren[i]) {
-                self.aggChildren[i].entity[NG_HIDDEN] = self.collapsed;
-                if (self.collapsed) {
-                    self.aggChildren[i].setExpand(self.collapsed);
-                }
-            }
-            if (self.children[i]) {
-                self.children[i][NG_HIDDEN] = self.collapsed;
-            }
-            if (i > self.aggIndex && rowFactory.aggCache[i]) {
-                var agg = rowFactory.aggCache[i];
-                var offset = (30 * self.children.length);
-                agg.offsetTop = self.collapsed ? agg.offsetTop - offset : agg.offsetTop + offset;
-            }
-        };
-        rowFactory.renderedChange();
-    };
-    self.aggClass = function() {
-        return self.collapsed ? "ngAggArrowCollapsed" : "ngAggArrowExpanded";
-    };
-    self.totalChildren = function() {
-        if (self.aggChildren.length > 0) {
-            var i = 0;
-            var recurse = function(cur) {
-                if (cur.aggChildren.length > 0) {
-                    angular.forEach(cur.aggChildren, function(a) {
-                        recurse(a);
-                    });
-                } else {
-                    i += cur.children.length;
-                }
-            };
-            recurse(self);
-            return i;
-        } else {
-            return self.children.length;
-        }
-    };
-    self.copy = function () {
-        var ret = new ngAggregate(self.entity, rowFactory, rowHeight, groupInitState);
-        ret.orig = self;
-        return ret;
-    };
-};
-var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache, $utils) {
-    var self = this,
-        colDef = config.colDef,
-        delay = 500,
-        clicks = 0,
-        timer = null;
-    self.colDef = config.colDef;
-    self.width = colDef.width;
-    self.groupIndex = 0;
-    self.isGroupedBy = false;
-    self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
-    self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
-  self.enableCellEdit = config.enableCellEdit || colDef.enableCellEdit;
-    self.headerRowHeight = config.headerRowHeight;
-    self.displayName = colDef.displayName || colDef.field;
-    self.index = config.index;
-    self.isAggCol = config.isAggCol;
-    self.cellClass = colDef.cellClass;
-    self.sortPriority = undefined;
-    self.cellFilter = colDef.cellFilter ? colDef.cellFilter : "";
-    self.field = colDef.field;
-    self.aggLabelFilter = colDef.cellFilter || colDef.aggLabelFilter;
-    self.visible = $utils.isNullOrUndefined(colDef.visible) || colDef.visible;
-    self.sortable = false;
-    self.resizable = false;
-    self.pinnable = false;
-    self.pinned = (config.enablePinning && colDef.pinned);
-    self.originalIndex = self.index;
-    self.groupable = $utils.isNullOrUndefined(colDef.groupable) || colDef.groupable;
-    if (config.enableSort) {
-        self.sortable = $utils.isNullOrUndefined(colDef.sortable) || colDef.sortable;
-    }
-    if (config.enableResize) {
-        self.resizable = $utils.isNullOrUndefined(colDef.resizable) || colDef.resizable;
-    }
-    if (config.enablePinning) {
-        self.pinnable = $utils.isNullOrUndefined(colDef.pinnable) || colDef.pinnable;
-    }
-    self.sortDirection = undefined;
-    self.sortingAlgorithm = colDef.sortFn;
-    self.headerClass = colDef.headerClass;
-    self.cursor = self.sortable ? 'pointer' : 'default';
-    self.headerCellTemplate = colDef.headerCellTemplate || $templateCache.get('headerCellTemplate.html');
-    self.cellTemplate = colDef.cellTemplate || $templateCache.get('cellTemplate.html').replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
-  if(self.enableCellEdit) {
-      self.cellEditTemplate = $templateCache.get('cellEditTemplate.html');
-      self.editableCellTemplate = colDef.editableCellTemplate || $templateCache.get('editableCellTemplate.html');
-  }
-    if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
-        self.cellTemplate = $.ajax({
-            type: "GET",
-            url: colDef.cellTemplate,
-            async: false
-        }).responseText;
-    }
-  if (self.enableCellEdit && colDef.editableCellTemplate && !TEMPLATE_REGEXP.test(colDef.editableCellTemplate)) {
-        self.editableCellTemplate = $.ajax({
-            type: "GET",
-            url: colDef.editableCellTemplate,
-            async: false
-        }).responseText;
-    }
-    if (colDef.headerCellTemplate && !TEMPLATE_REGEXP.test(colDef.headerCellTemplate)) {
-        self.headerCellTemplate = $.ajax({
-            type: "GET",
-            url: colDef.headerCellTemplate,
-            async: false
-        }).responseText;
-    }
-    self.colIndex = function () {
-        var classes = self.pinned ? "pinned " : "";
-        classes += "col" + self.index + " colt" + self.index;
-        if (self.cellClass) {
-            classes += " " + self.cellClass;
-        }
-        return classes;
-    };
-    self.groupedByClass = function() {
-        return self.isGroupedBy ? "ngGroupedByIcon" : "ngGroupIcon";
-    };
-    self.toggleVisible = function() {
-        self.visible = !self.visible;
-    };
-    self.showSortButtonUp = function() {
-        return self.sortable ? self.sortDirection === DESC : self.sortable;
-    };
-    self.showSortButtonDown = function() {
-        return self.sortable ? self.sortDirection === ASC : self.sortable;
-    };
-    self.noSortVisible = function() {
-        return !self.sortDirection;
-    };
-    self.sort = function(evt) {
-        if (!self.sortable) {
-            return true; 
-        }
-        var dir = self.sortDirection === ASC ? DESC : ASC;
-        self.sortDirection = dir;
-        config.sortCallback(self, evt);
-        return false;
-    };
-    self.gripClick = function() {
-        clicks++; 
-        if (clicks === 1) {
-            timer = setTimeout(function() {
-                clicks = 0; 
-            }, delay);
-        } else {
-            clearTimeout(timer); 
-            config.resizeOnDataCallback(self); 
-            clicks = 0; 
-        }
-    };
-    self.gripOnMouseDown = function(event) {
-        if (event.ctrlKey && !self.pinned) {
-            self.toggleVisible();
-            domUtilityService.BuildStyles($scope, grid);
-            return true;
-        }
-        event.target.parentElement.style.cursor = 'col-resize';
-        self.startMousePosition = event.clientX;
-        self.origWidth = self.width;
-        $(document).mousemove(self.onMouseMove);
-        $(document).mouseup(self.gripOnMouseUp);
-        return false;
-    };
-    self.onMouseMove = function(event) {
-        var diff = event.clientX - self.startMousePosition;
-        var newWidth = diff + self.origWidth;
-        self.width = (newWidth < self.minWidth ? self.minWidth : (newWidth > self.maxWidth ? self.maxWidth : newWidth));
-        domUtilityService.BuildStyles($scope, grid);
-        return false;
-    };
-    self.gripOnMouseUp = function (event) {
-        $(document).off('mousemove', self.onMouseMove);
-        $(document).off('mouseup', self.gripOnMouseUp);
-        event.target.parentElement.style.cursor = 'default';
-        $scope.adjustScrollLeft(0);
-        domUtilityService.digest($scope);
-        return false;
-    };
-    self.copy = function() {
-        var ret = new ngColumn(config, $scope, grid, domUtilityService, $templateCache);
-        ret.isClone = true;
-        ret.orig = self;
-        return ret;
-    };
-    self.setVars = function (fromCol) {
-        self.orig = fromCol;
-        self.width = fromCol.width;
-        self.groupIndex = fromCol.groupIndex;
-        self.isGroupedBy = fromCol.isGroupedBy;
-        self.displayName = fromCol.displayName;
-        self.index = fromCol.index;
-        self.isAggCol = fromCol.isAggCol;
-        self.cellClass = fromCol.cellClass;
-        self.cellFilter = fromCol.cellFilter;
-        self.field = fromCol.field;
-        self.aggLabelFilter = fromCol.aggLabelFilter;
-        self.visible = fromCol.visible;
-        self.sortable = fromCol.sortable;
-        self.resizable = fromCol.resizable;
-        self.pinnable = fromCol.pinnable;
-        self.pinned = fromCol.pinned;
-        self.originalIndex = fromCol.originalIndex;
-        self.sortDirection = fromCol.sortDirection;
-        self.sortingAlgorithm = fromCol.sortingAlgorithm;
-        self.headerClass = fromCol.headerClass;
-        self.headerCellTemplate = fromCol.headerCellTemplate;
-        self.cellTemplate = fromCol.cellTemplate;
-        self.cellEditTemplate = fromCol.cellEditTemplate;
-    };
-};
-
-var ngDimension = function (options) {
-    this.outerHeight = null;
-    this.outerWidth = null;
-    $.extend(this, options);
-};
-var ngDomAccessProvider = function (grid) {
-  var self = this, previousColumn;
-  self.selectInputElement = function(elm){
-    var node = elm.nodeName.toLowerCase();
-    if(node == 'input' || node == 'textarea'){
-      elm.select();
-    }
-  };
-  self.focusCellElement = function($scope, index){  
-    if($scope.selectionProvider.lastClickedRow){
-      var columnIndex = index != undefined ? index : previousColumn;
-      var elm = $scope.selectionProvider.lastClickedRow.clone ? $scope.selectionProvider.lastClickedRow.clone.elm : $scope.selectionProvider.lastClickedRow.elm;
-      if (columnIndex != undefined && elm) {
-        var columns = angular.element(elm[0].children).filter(function () { return this.nodeType != 8;}); 
-        var i = Math.max(Math.min($scope.renderedColumns.length - 1, columnIndex), 0);
-        if(grid.config.showSelectionCheckbox && angular.element(columns[i]).scope() && angular.element(columns[i]).scope().col.index == 0){
-          i = 1; 
-        }
-        if (columns[i]) {
-          columns[i].children[0].focus();
-        }
-        previousColumn = columnIndex;
-      }
-    }
-  };
-  var changeUserSelect = function(elm, value) {
-    elm.css({
-      '-webkit-touch-callout': value,
-      '-webkit-user-select': value,
-      '-khtml-user-select': value,
-      '-moz-user-select': value == 'none'
-        ? '-moz-none'
-        : value,
-      '-ms-user-select': value,
-      'user-select': value
-    });
-  };
-  self.selectionHandlers = function($scope, elm){
-    var doingKeyDown = false;
-    elm.bind('keydown', function(evt) {
-      if (evt.keyCode == 16) { 
-        changeUserSelect(elm, 'none', evt);
-        return true;
-      } else if (!doingKeyDown) {
-        doingKeyDown = true;
-        var ret = ngMoveSelectionHandler($scope, elm, evt, grid);
-        doingKeyDown = false;
-        return ret;
-      }
-      return true;
-    });
-    elm.bind('keyup', function(evt) {
-      if (evt.keyCode == 16) { 
-        changeUserSelect(elm, 'text', evt);
-      }
-      return true;
-    });
-  };
-};
-var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
-    var self = this;
-    self.colToMove = undefined;
-    self.groupToMove = undefined;
-    self.assignEvents = function() {
-        if (grid.config.jqueryUIDraggable && !grid.config.enablePinning) {
-            grid.$groupPanel.droppable({
-                addClasses: false,
-                drop: function(event) {
-                    self.onGroupDrop(event);
-                }
-            });
-        } else {
-            grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
-            grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
-            if (grid.config.enableColumnReordering && !grid.config.enablePinning) {
-                grid.$headerScroller.on('drop', self.onHeaderDrop);
-            }
-            if (grid.config.enableRowReordering) {
-                grid.$viewport.on('mousedown', self.onRowMouseDown).on('dragover', self.dragOver).on('drop', self.onRowDrop);
-            }
-        }
-        $scope.$watch('renderedColumns', function() {
-            $timeout(self.setDraggables);
-        });
-    };
-    self.dragStart = function(evt){
-      evt.dataTransfer.setData('text', ''); 
-    };
-    self.dragOver = function(evt) {
-        evt.preventDefault();
-    };
-    self.setDraggables = function() {
-        if (!grid.config.jqueryUIDraggable) {
-            var columns = grid.$root.find('.ngHeaderSortColumn'); 
-            angular.forEach(columns, function(col){
-                col.setAttribute('draggable', 'true');
-                if (col.addEventListener) { 
-                    col.addEventListener('dragstart', self.dragStart);
-                }
-            });
-            if (navigator.userAgent.indexOf("MSIE") != -1){
-                grid.$root.find('.ngHeaderSortColumn').bind('selectstart', function () { 
-                    this.dragDrop(); 
-                    return false; 
-                }); 
-            }
-        } else {
-            grid.$root.find('.ngHeaderSortColumn').draggable({
-                helper: 'clone',
-                appendTo: 'body',
-                stack: 'div',
-                addClasses: false,
-                start: function(event) {
-                    self.onHeaderMouseDown(event);
-                }
-            }).droppable({
-                drop: function(event) {
-                    self.onHeaderDrop(event);
-                }
-            });
-        }
-    };
-    self.onGroupMouseDown = function(event) {
-        var groupItem = $(event.target);
-        if (groupItem[0].className != 'ngRemoveGroup') {
-            var groupItemScope = angular.element(groupItem).scope();
-            if (groupItemScope) {
-                if (!grid.config.jqueryUIDraggable) {
-                    groupItem.attr('draggable', 'true');
-                    if(this.addEventListener){
-                        this.addEventListener('dragstart', self.dragStart); 
-                    }
-                    if (navigator.userAgent.indexOf("MSIE") != -1){
-                        groupItem.bind('selectstart', function () { 
-                            this.dragDrop(); 
-                            return false; 
-                        }); 
-                    }
-                }
-                self.groupToMove = { header: groupItem, groupName: groupItemScope.group, index: groupItemScope.$index };
-            }
-        } else {
-            self.groupToMove = undefined;
-        }
-    };
-    self.onGroupDrop = function(event) {
-        event.stopPropagation();
-        var groupContainer;
-        var groupScope;
-        if (self.groupToMove) {
-            groupContainer = $(event.target).closest('.ngGroupElement'); 
-            if (groupContainer.context.className == 'ngGroupPanel') {
-                $scope.configGroups.splice(self.groupToMove.index, 1);
-                $scope.configGroups.push(self.groupToMove.groupName);
-            } else {
-                groupScope = angular.element(groupContainer).scope();
-                if (groupScope) {
-                    if (self.groupToMove.index != groupScope.$index) {
-                        $scope.configGroups.splice(self.groupToMove.index, 1);
-                        $scope.configGroups.splice(groupScope.$index, 0, self.groupToMove.groupName);
-                    }
-                }
-            }
-            self.groupToMove = undefined;
-            grid.fixGroupIndexes();
-        } else if (self.colToMove) {
-            if ($scope.configGroups.indexOf(self.colToMove.col) == -1) {
-                groupContainer = $(event.target).closest('.ngGroupElement'); 
-                if (groupContainer.context.className == 'ngGroupPanel' || groupContainer.context.className == 'ngGroupPanelDescription ng-binding') {
-                    $scope.groupBy(self.colToMove.col);
-                } else {
-                    groupScope = angular.element(groupContainer).scope();
-                    if (groupScope) {
-                        $scope.removeGroup(groupScope.$index);
-                    }
-                }
-            }
-            self.colToMove = undefined;
-        }
-        if (!$scope.$$phase) {
-            $scope.$apply();
-        }
-    };
-    self.onHeaderMouseDown = function(event) {
-        var headerContainer = $(event.target).closest('.ngHeaderSortColumn');
-        var headerScope = angular.element(headerContainer).scope();
-        if (headerScope) {
-            self.colToMove = { header: headerContainer, col: headerScope.col };
-        }
-    };
-    self.onHeaderDrop = function(event) {
-        if (!self.colToMove || self.colToMove.col.pinned) {
-            return;
-        }
-        var headerContainer = $(event.target).closest('.ngHeaderSortColumn');
-        var headerScope = angular.element(headerContainer).scope();
-        if (headerScope) {
-            if (self.colToMove.col == headerScope.col) {
-                return;
-            }
-            $scope.columns.splice(self.colToMove.col.index, 1);
-            $scope.columns.splice(headerScope.col.index, 0, self.colToMove.col);
-            grid.fixColumnIndexes();
-            domUtilityService.BuildStyles($scope, grid, true);
-            self.colToMove = undefined;
-        }
-    };
-    self.onRowMouseDown = function(event) {
-        var targetRow = $(event.target).closest('.ngRow');
-        var rowScope = angular.element(targetRow).scope();
-        if (rowScope) {
-            targetRow.attr('draggable', 'true');
-            domUtilityService.eventStorage.rowToMove = { targetRow: targetRow, scope: rowScope };
-        }
-    };
-    self.onRowDrop = function(event) {
-        var targetRow = $(event.target).closest('.ngRow');
-        var rowScope = angular.element(targetRow).scope();
-        if (rowScope) {
-            var prevRow = domUtilityService.eventStorage.rowToMove;
-            if (prevRow.scope.row == rowScope.row) {
-                return;
-            }
-            grid.changeRowOrder(prevRow.scope.row, rowScope.row);
-            grid.searchProvider.evalFilter();
-            domUtilityService.eventStorage.rowToMove = undefined;
-            domUtilityService.digest(rowScope.$root);
-        }
-    };
-
-    self.assignGridEventHandlers = function() {
-        if (grid.config.tabIndex === -1) {
-            grid.$viewport.attr('tabIndex', domUtilityService.numberOfGrids);
-            domUtilityService.numberOfGrids++;
-        } else {
-            grid.$viewport.attr('tabIndex', grid.config.tabIndex);
-        }
-        $(window).resize(function() {
-            domUtilityService.RebuildGrid($scope,grid);
-        });
-        $(grid.$root.parent()).on('resize', function() {
-            domUtilityService.RebuildGrid($scope, grid);
-        });
-    };
-    self.assignGridEventHandlers();
-    self.assignEvents();
-};
-
-var ngFooter = function ($scope, grid) {
-    $scope.maxRows = function () {
-        var ret = Math.max(grid.config.totalServerItems, grid.data.length);
-        return ret;
-    };
-    $scope.multiSelect = (grid.config.enableRowSelection && grid.config.multiSelect);
-    $scope.selectedItemCount = grid.selectedItemCount;
-    $scope.maxPages = function () {
-        return Math.ceil($scope.maxRows() / $scope.pagingOptions.pageSize);
-    };
-
-    $scope.pageForward = function() {
-        var page = $scope.pagingOptions.currentPage;
-        if (grid.config.totalServerItems > 0) {
-            $scope.pagingOptions.currentPage = Math.min(page + 1, $scope.maxPages());
-        } else {
-            $scope.pagingOptions.currentPage++;
-        }
-    };
-
-    $scope.pageBackward = function() {
-        var page = $scope.pagingOptions.currentPage;
-        $scope.pagingOptions.currentPage = Math.max(page - 1, 1);
-    };
-
-    $scope.pageToFirst = function() {
-        $scope.pagingOptions.currentPage = 1;
-    };
-
-    $scope.pageToLast = function() {
-        var maxPages = $scope.maxPages();
-        $scope.pagingOptions.currentPage = maxPages;
-    };
-
-    $scope.cantPageForward = function() {
-        var curPage = $scope.pagingOptions.currentPage;
-        var maxPages = $scope.maxPages();
-        if (grid.config.totalServerItems > 0) {
-            return !(curPage < maxPages);
-        } else {
-            return grid.data.length < 1;
-        }
-
-    };
-    $scope.cantPageToLast = function() {
-        if (grid.config.totalServerItems > 0) {
-            return $scope.cantPageForward();
-        } else {
-            return true;
-        }
-    };
-    $scope.cantPageBackward = function() {
-        var curPage = $scope.pagingOptions.currentPage;
-        return !(curPage > 1);
-    };
-};
-
-var ngGrid = function ($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse, $http, $q) {
-    var defaults = {
-        aggregateTemplate: undefined,
-        afterSelectionChange: function() {
-        },
-        beforeSelectionChange: function() {
-            return true;
-        },
-        checkboxCellTemplate: undefined,
-        checkboxHeaderTemplate: undefined,
-        columnDefs: undefined,
-        data: [],
-        dataUpdated: function() {
-        },
-        enableCellEdit: false,
-        enableCellSelection: false,
-        enableColumnResize: false,
-        enableColumnReordering: false,
-        enableColumnHeavyVirt: false,
-        enablePaging: false,
-        enablePinning: false,
-        enableRowReordering: false,
-        enableRowSelection: true,
-        enableSorting: true,
-        enableHighlighting: false,
-        excludeProperties: [],
-        filterOptions: {
-            filterText: "",
-            useExternalFilter: false
-        },
-        footerRowHeight: 55,
-        footerTemplate: undefined,
-        groups: [],
-    groupsCollapsedByDefault: true,
-        headerRowHeight: 30,
-        headerRowTemplate: undefined,
-        jqueryUIDraggable: false,
-        jqueryUITheme: false,
-        keepLastSelected: true,
-        maintainColumnRatios: undefined,
-        menuTemplate: undefined,
-        multiSelect: true,
-        pagingOptions: {
-            pageSizes: [250, 500, 1000],
-            pageSize: 250,
-            currentPage: 1
-        },
-        pinSelectionCheckbox: false,
-        plugins: [],
-        primaryKey: undefined,
-        rowHeight: 30,
-        rowTemplate: undefined,
-        selectedItems: [],
-        selectWithCheckboxOnly: false,
-        showColumnMenu: false,
-        showFilter: false,
-        showFooter: false,
-        showGroupPanel: false,
-        showSelectionCheckbox: false,
-        sortInfo: {fields: [], columns: [], directions: [] },
-        tabIndex: -1,
-        totalServerItems: 0,
-        useExternalSorting: false,
-        i18n: 'en',
-        virtualizationThreshold: 50
-    },
-        self = this;
-    self.maxCanvasHt = 0;
-    self.config = $.extend(defaults, window.ngGrid.config, options);
-    self.config.showSelectionCheckbox = (self.config.showSelectionCheckbox && self.config.enableColumnHeavyVirt === false);
-    self.config.enablePinning = (self.config.enablePinning && self.config.enableColumnHeavyVirt === false);
-    self.config.selectWithCheckboxOnly = (self.config.selectWithCheckboxOnly && self.config.showSelectionCheckbox !== false);
-    self.config.pinSelectionCheckbox = self.config.enablePinning;
-
-    if (typeof options.columnDefs == "string") {
-        self.config.columnDefs = $scope.$eval(options.columnDefs);
-    }
-    self.rowCache = [];
-    self.rowMap = [];
-    self.gridId = "ng" + $utils.newId();
-    self.$root = null; 
-    self.$groupPanel = null;
-    self.$topPanel = null;
-    self.$headerContainer = null;
-    self.$headerScroller = null;
-    self.$headers = null;
-    self.$viewport = null;
-    self.$canvas = null;
-    self.rootDim = self.config.gridDim;
-    self.data = [];
-    self.lateBindColumns = false;
-    self.filteredRows = [];
-
-    self.initTemplates = function() {
-        var templates = ['rowTemplate', 'aggregateTemplate', 'headerRowTemplate', 'checkboxCellTemplate', 'checkboxHeaderTemplate', 'menuTemplate', 'footerTemplate'];
-
-        var promises = [];
-        templates.forEach(function(template) {
-            promises.push( self.getTemplate(template) );
-        });
-
-        return $q.all(promises);
-    };
-    self.getTemplate = function (key) {
-        var t = self.config[key];
-        var uKey = self.gridId + key + ".html";
-        var p = $q.defer();
-        if (t && !TEMPLATE_REGEXP.test(t)) {
-            $http.get(t, {
-                cache: $templateCache
-            })
-            .success(function(data){
-                $templateCache.put(uKey, data);
-                p.resolve();
-            })
-            .error(function(err){
-                p.reject("Could not load template: " + t);
-            });
-        } else if (t) {
-            $templateCache.put(uKey, t);
-            p.resolve();
-        } else {
-            var dKey = key + ".html";
-            $templateCache.put(uKey, $templateCache.get(dKey));
-            p.resolve();
-        }
-
-        return p.promise;
-    };
-
-    if (typeof self.config.data == "object") {
-        self.data = self.config.data; 
-    }
-    self.calcMaxCanvasHeight = function() {
-        return (self.config.groups.length > 0) ? (self.rowFactory.parsedData.filter(function(e) {
-            return !e[NG_HIDDEN];
-        }).length * self.config.rowHeight) : (self.filteredRows.length * self.config.rowHeight);
-    };
-    self.elementDims = {
-        scrollW: 0,
-        scrollH: 0,
-        rowIndexCellW: 25,
-        rowSelectedCellW: 25,
-        rootMaxW: 0,
-        rootMaxH: 0
-    };
-    self.setRenderedRows = function (newRows) {
-        $scope.renderedRows.length = newRows.length;
-        for (var i = 0; i < newRows.length; i++) {
-            if (!$scope.renderedRows[i] || (newRows[i].isAggRow || $scope.renderedRows[i].isAggRow)) {
-                $scope.renderedRows[i] = newRows[i].copy();
-                $scope.renderedRows[i].collapsed = newRows[i].collapsed;
-                if (!newRows[i].isAggRow) {
-                    $scope.renderedRows[i].setVars(newRows[i]);
-                }
-            } else {
-                $scope.renderedRows[i].setVars(newRows[i]);
-            }
-            $scope.renderedRows[i].rowIndex = newRows[i].rowIndex;
-            $scope.renderedRows[i].offsetTop = newRows[i].offsetTop;
-            $scope.renderedRows[i].selected = newRows[i].selected;
-      newRows[i].renderedRowIndex = i;
-        }
-        self.refreshDomSizes();
-        $scope.$emit('ngGridEventRows', newRows);
-    };
-    self.minRowsToRender = function() {
-        var viewportH = $scope.viewportDimHeight() || 1;
-        return Math.floor(viewportH / self.config.rowHeight);
-    };
-    self.refreshDomSizes = function() {
-        var dim = new ngDimension();
-        dim.outerWidth = self.elementDims.rootMaxW;
-        dim.outerHeight = self.elementDims.rootMaxH;
-        self.rootDim = dim;
-        self.maxCanvasHt = self.calcMaxCanvasHeight();
-    };
-    self.buildColumnDefsFromData = function () {
-        self.config.columnDefs = [];
-        var item = self.data[0];
-        if (!item) {
-            self.lateBoundColumns = true;
-            return;
-        }
-        $utils.forIn(item, function (prop, propName) {
-            if (self.config.excludeProperties.indexOf(propName) == -1) {
-                self.config.columnDefs.push({
-                    field: propName
-                });
-            }
-        });
-    };
-    self.buildColumns = function() {
-        var columnDefs = self.config.columnDefs,
-            cols = [];
-        if (!columnDefs) {
-            self.buildColumnDefsFromData();
-            columnDefs = self.config.columnDefs;
-        }
-        if (self.config.showSelectionCheckbox) {
-            cols.push(new ngColumn({
-                colDef: {
-                    field: '\u2714',
-                    width: self.elementDims.rowSelectedCellW,
-                    sortable: false,
-                    resizable: false,
-                    groupable: false,
-                    headerCellTemplate: $templateCache.get($scope.gridId + 'checkboxHeaderTemplate.html'),
-                    cellTemplate: $templateCache.get($scope.gridId + 'checkboxCellTemplate.html'),
-                    pinned: self.config.pinSelectionCheckbox,
-                },
-                index: 0,
-                headerRowHeight: self.config.headerRowHeight,
-                sortCallback: self.sortData,
-                resizeOnDataCallback: self.resizeOnData,
-                enableResize: self.config.enableColumnResize,
-                enableSort: self.config.enableSorting,
-                enablePinning: self.config.enablePinning
-            }, $scope, self, domUtilityService, $templateCache, $utils));
-        }
-        if (columnDefs.length > 0) {
-            var indexOffset = self.config.showSelectionCheckbox ? self.config.groups.length + 1 : self.config.groups.length;
-            $scope.configGroups.length = 0;
-            angular.forEach(columnDefs, function(colDef, i) {
-                i += indexOffset;
-                var column = new ngColumn({
-                    colDef: colDef,
-                    index: i,
-                    headerRowHeight: self.config.headerRowHeight,
-                    sortCallback: self.sortData,
-                    resizeOnDataCallback: self.resizeOnData,
-                    enableResize: self.config.enableColumnResize,
-                    enableSort: self.config.enableSorting,
-                    enablePinning: self.config.enablePinning,
-                    enableCellEdit: self.config.enableCellEdit 
-                }, $scope, self, domUtilityService, $templateCache, $utils);
-                var indx = self.config.groups.indexOf(colDef.field);
-                if (indx != -1) {
-                    column.isGroupedBy = true;
-                    $scope.configGroups.splice(indx, 0, column);
-                    column.groupIndex = $scope.configGroups.length;
-                }
-                cols.push(column);
-            });
-            $scope.columns = cols;
-        }
-    };
-    self.configureColumnWidths = function() {
-        var cols = self.config.columnDefs;
-        var indexOffset = self.config.showSelectionCheckbox ? $scope.configGroups.length + 1 : $scope.configGroups.length;
-        var numOfCols = cols.length + indexOffset,
-            asterisksArray = [],
-            percentArray = [],
-            asteriskNum = 0,
-            totalWidth = 0;
-        totalWidth += self.config.showSelectionCheckbox ? 25 : 0;
-        angular.forEach(cols, function(col, i) {
-                i += indexOffset;
-                var isPercent = false, t = undefined;
-                if ($utils.isNullOrUndefined(col.width)) {
-                    col.width = "*";
-                } else { 
-                    isPercent = isNaN(col.width) ? $utils.endsWith(col.width, "%") : false;
-                    t = isPercent ? col.width : parseInt(col.width, 10);
-                }
-            if (isNaN(t)) {
-                t = col.width;
-                if (t == 'auto') { 
-                    $scope.columns[i].width = col.minWidth;
-                    totalWidth += $scope.columns[i].width;
-                    var temp = $scope.columns[i];
-                    $timeout(function () {
-                        self.resizeOnData(temp, true);
-                    });
-                    return;
-                } else if (t.indexOf("*") != -1) { 
-                    if (col.visible !== false) {
-                        asteriskNum += t.length;
-                    }
-                    col.index = i;
-                    asterisksArray.push(col);
-                    return;
-                } else if (isPercent) { 
-                    col.index = i;
-                    percentArray.push(col);
-                    return;
-                } else { 
-                    throw "unable to parse column width, use percentage (\"10%\",\"20%\", etc...) or \"*\" to use remaining width of grid";
-                }
-            } else if (col.visible !== false) {
-                totalWidth += $scope.columns[i].width = parseInt(col.width, 10);
-            }
-        });
-        if (asterisksArray.length > 0) {
-            self.config.maintainColumnRatios === false ? angular.noop() : self.config.maintainColumnRatios = true;
-            var remainigWidth = self.rootDim.outerWidth - totalWidth;
-            var asteriskVal = Math.floor(remainigWidth / asteriskNum);
-            angular.forEach(asterisksArray, function(col) {
-                var t = col.width.length;
-                $scope.columns[col.index].width = asteriskVal * t;
-                var offset = 1;
-        if (self.maxCanvasHt > $scope.viewportDimHeight()) {
-          offset += domUtilityService.ScrollW;
-        }
-                $scope.columns[col.index].width -= offset;
-                if (col.visible !== false) {
-                    totalWidth += $scope.columns[col.index].width;
-                }
-            });
-        }
-        if (percentArray.length > 0) {
-            angular.forEach(percentArray, function(col) {
-                var t = col.width;
-                $scope.columns[col.index].width = Math.floor(self.rootDim.outerWidth * (parseInt(t.slice(0, -1), 10) / 100));
-            });
-        }
-    };
-    self.init = function() {
-        return self.initTemplates().then(function(){
-            $scope.selectionProvider = new ngSelectionProvider(self, $scope, $parse);
-            $scope.domAccessProvider = new ngDomAccessProvider(self);
-        self.rowFactory = new ngRowFactory(self, $scope, domUtilityService, $templateCache, $utils);
-            self.searchProvider = new ngSearchProvider($scope, self, $filter);
-            self.styleProvider = new ngStyleProvider($scope, self);
-            $scope.$watch('configGroups', function(a) {
-              var tempArr = [];
-              angular.forEach(a, function(item) {
-                tempArr.push(item.field || item);
-              });
-              self.config.groups = tempArr;
-              self.rowFactory.filteredRowsChanged();
-              $scope.$emit('ngGridEventGroups', a);
-            }, true);
-            $scope.$watch('columns', function (a) {
-                domUtilityService.BuildStyles($scope, self, true);
-                $scope.$emit('ngGridEventColumns', a);
-            }, true);
-            $scope.$watch(function() {
-                return options.i18n;
-            }, function(newLang) {
-                $utils.seti18n($scope, newLang);
-            });
-            self.maxCanvasHt = self.calcMaxCanvasHeight();
-            if (self.config.sortInfo.fields && self.config.sortInfo.fields.length > 0) {
-                self.getColsFromFields();
-                self.sortActual();
-            }
-        });
-    };
-    self.resizeOnData = function(col) {
-        var longest = col.minWidth;
-        var arr = $utils.getElementsByClassName('col' + col.index);
-        angular.forEach(arr, function(elem, index) {
-            var i;
-            if (index === 0) {
-                var kgHeaderText = $(elem).find('.ngHeaderText');
-                i = $utils.visualLength(kgHeaderText) + 10; 
-            } else {
-                var ngCellText = $(elem).find('.ngCellText');
-                i = $utils.visualLength(ngCellText) + 10; 
-            }
-            if (i > longest) {
-                longest = i;
-            }
-        });
-        col.width = col.longest = Math.min(col.maxWidth, longest + 7); 
-        domUtilityService.BuildStyles($scope, self, true);
-    };
-    self.lastSortedColumns = [];
-    self.changeRowOrder = function(prevRow, targetRow) {
-        var i = self.rowCache.indexOf(prevRow);
-        var j = self.rowCache.indexOf(targetRow);
-        self.rowCache.splice(i, 1);
-        self.rowCache.splice(j, 0, prevRow);
-        $scope.$emit('ngGridEventChangeOrder', self.rowCache);
-    };
-    self.sortData = function(col, evt) {
-        if (evt && evt.shiftKey && self.config.sortInfo) {
-            var indx = self.config.sortInfo.columns.indexOf(col);
-            if (indx === -1) {
-                if (self.config.sortInfo.columns.length == 1) {
-                    self.config.sortInfo.columns[0].sortPriority = 1;
-                }
-                self.config.sortInfo.columns.push(col);
-                col.sortPriority = self.config.sortInfo.columns.length;
-                self.config.sortInfo.fields.push(col.field);
-                self.config.sortInfo.directions.push(col.sortDirection);
-                self.lastSortedColumns.push(col);
-            } else {
-                self.config.sortInfo.directions[indx] = col.sortDirection;
-            }
-        } else {
-            var isArr = $.isArray(col);
-            self.config.sortInfo.columns.length = 0;
-            self.config.sortInfo.fields.length = 0;
-            self.config.sortInfo.directions.length = 0;
-            var push = function (c) {
-                self.config.sortInfo.columns.push(c);
-                self.config.sortInfo.fields.push(c.field);
-                self.config.sortInfo.directions.push(c.sortDirection);
-                self.lastSortedColumns.push(c);
-            };
-            if (isArr) {
-                self.clearSortingData();
-                angular.forEach(col, function (c, i) {
-                    c.sortPriority = i + 1;
-                    push(c);
-                });
-            } else {
-                self.clearSortingData(col);
-                col.sortPriority = undefined;
-                push(col);
-            }
-        }
-        self.sortActual();
-        self.searchProvider.evalFilter();
-        $scope.$emit('ngGridEventSorted', self.config.sortInfo);
-    };
-    self.getColsFromFields = function() {
-        if (self.config.sortInfo.columns) {
-            self.config.sortInfo.columns.length = 0;
-        } else {
-            self.config.sortInfo.columns = [];
-        }
-        angular.forEach($scope.columns, function(c) {
-            var i = self.config.sortInfo.fields.indexOf(c.field);
-            if (i != -1) {
-                c.sortDirection = self.config.sortInfo.directions[i] || 'asc';
-                self.config.sortInfo.columns.push(c);
-            }
-            return false;
-        });
-    };
-    self.sortActual = function() {
-        if (!self.config.useExternalSorting) {
-            var tempData = self.data.slice(0);
-            angular.forEach(tempData, function(item, i) {
-                var e = self.rowMap[i];
-                if (e != undefined) {
-                    var v = self.rowCache[i];
-                    if(v != undefined) {
-                        item.preSortSelected = v.selected;
-                        item.preSortIndex = i;
-                    }
-                }
-            });
-            sortService.Sort(self.config.sortInfo, tempData);
-            angular.forEach(tempData, function(item, i) {
-                self.rowCache[i].entity = item;
-                self.rowCache[i].selected = item.preSortSelected;
-                self.rowMap[item.preSortIndex] = i;
-                delete item.preSortSelected;
-                delete item.preSortIndex;
-            });
-        }
-    };
-
-    self.clearSortingData = function (col) {
-        if (!col) {
-            angular.forEach(self.lastSortedColumns, function (c) {
-                c.sortDirection = "";
-                c.sortPriority = null;
-            });
-            self.lastSortedColumns = [];
-        } else {
-            angular.forEach(self.lastSortedColumns, function (c) {
-                if (col.index != c.index) {
-                    c.sortDirection = "";
-                    c.sortPriority = null;
-                }
-            });
-            self.lastSortedColumns[0] = col;
-            self.lastSortedColumns.length = 1;
-        };
-    };
-    self.fixColumnIndexes = function() {
-        for (var i = 0; i < $scope.columns.length; i++) {
-            if ($scope.columns[i].visible !== false) {
-                $scope.columns[i].index = i;
-            }
-        }
-    };
-    self.fixGroupIndexes = function() {
-        angular.forEach($scope.configGroups, function(item, i) {
-            item.groupIndex = i + 1;
-        });
-    };
-    $scope.elementsNeedMeasuring = true;
-    $scope.columns = [];
-    $scope.renderedRows = [];
-    $scope.renderedColumns = [];
-    $scope.headerRow = null;
-    $scope.rowHeight = self.config.rowHeight;
-    $scope.jqueryUITheme = self.config.jqueryUITheme;
-    $scope.showSelectionCheckbox = self.config.showSelectionCheckbox;
-    $scope.enableCellSelection = self.config.enableCellSelection;
-    $scope.footer = null;
-    $scope.selectedItems = self.config.selectedItems;
-    $scope.multiSelect = self.config.multiSelect;
-    $scope.showFooter = self.config.showFooter;
-    $scope.footerRowHeight = $scope.showFooter ? self.config.footerRowHeight : 0;
-    $scope.showColumnMenu = self.config.showColumnMenu;
-    $scope.showMenu = false;
-    $scope.configGroups = [];
-    $scope.gridId = self.gridId;
-    $scope.enablePaging = self.config.enablePaging;
-    $scope.pagingOptions = self.config.pagingOptions;
-    $scope.i18n = {};
-    $utils.seti18n($scope, self.config.i18n);
-    $scope.adjustScrollLeft = function (scrollLeft) {
-        var colwidths = 0,
-            totalLeft = 0,
-            x = $scope.columns.length,
-            newCols = [],
-            dcv = !self.config.enableColumnHeavyVirt;
-        var r = 0;
-        var addCol = function (c) {
-            if (dcv) {
-                newCols.push(c);
-            } else {
-                if (!$scope.renderedColumns[r]) {
-                    $scope.renderedColumns[r] = c.copy();
-                } else {
-                    $scope.renderedColumns[r].setVars(c);
-                }
-            }
-            r++;
-        };
-        for (var i = 0; i < x; i++) {
-            var col = $scope.columns[i];
-            if (col.visible !== false) {
-                var w = col.width + colwidths;
-                if (col.pinned) {
-                    addCol(col);
-                    var newLeft = i > 0 ? (scrollLeft + totalLeft) : scrollLeft;
-                    domUtilityService.setColLeft(col, newLeft, self);
-                    totalLeft += col.width;
-                } else {
-                    if (w >= scrollLeft) {
-                        if (colwidths <= scrollLeft + self.rootDim.outerWidth) {
-                            addCol(col);
-                        }
-                    }
-                }
-                colwidths += col.width;
-            }
-        }
-        if (dcv) {
-            $scope.renderedColumns = newCols;
-        }
-    };
-    self.prevScrollTop = 0;
-    self.prevScrollIndex = 0;
-    $scope.adjustScrollTop = function(scrollTop, force) {
-        if (self.prevScrollTop === scrollTop && !force) {
-            return;
-        }
-        if (scrollTop > 0 && self.$viewport[0].scrollHeight - scrollTop <= self.$viewport.outerHeight()) {
-            $scope.$emit('ngGridEventScroll');
-        }
-        var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
-      var newRange;
-      if (self.filteredRows.length > self.config.virtualizationThreshold) {
-          if (self.prevScrollTop < scrollTop && rowIndex < self.prevScrollIndex + SCROLL_THRESHOLD) {
-              return;
-          }
-          if (self.prevScrollTop > scrollTop && rowIndex > self.prevScrollIndex - SCROLL_THRESHOLD) {
-              return;
-          }
-          newRange = new ngRange(Math.max(0, rowIndex - EXCESS_ROWS), rowIndex + self.minRowsToRender() + EXCESS_ROWS);
-      } else {
-          var maxLen = $scope.configGroups.length > 0 ? self.rowFactory.parsedData.length : self.data.length;
-          newRange = new ngRange(0, Math.max(maxLen, self.minRowsToRender() + EXCESS_ROWS));
-      }
-      self.prevScrollTop = scrollTop;
-      self.rowFactory.UpdateViewableRange(newRange);
-      self.prevScrollIndex = rowIndex;
-    };
-    $scope.toggleShowMenu = function() {
-        $scope.showMenu = !$scope.showMenu;
-    };
-    $scope.toggleSelectAll = function(a) {
-        $scope.selectionProvider.toggleSelectAll(a);
-    };
-    $scope.totalFilteredItemsLength = function() {
-        return self.filteredRows.length;
-    };
-    $scope.showGroupPanel = function() {
-        return self.config.showGroupPanel;
-    };
-    $scope.topPanelHeight = function() {
-        return self.config.showGroupPanel === true ? self.config.headerRowHeight + 32 : self.config.headerRowHeight;
-    };
-
-    $scope.viewportDimHeight = function() {
-        return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - $scope.footerRowHeight - 2);
-    };
-    $scope.groupBy = function (col) {
-        if (self.data.length < 1 || !col.groupable  || !col.field) {
-            return;
-        }
-        if (!col.sortDirection) col.sort({ shiftKey: $scope.configGroups.length > 0 ? true : false });
-
-        var indx = $scope.configGroups.indexOf(col);
-        if (indx == -1) {
-            col.isGroupedBy = true;
-            $scope.configGroups.push(col);
-            col.groupIndex = $scope.configGroups.length;
-        } else {
-            $scope.removeGroup(indx);
-        }
-        self.$viewport.scrollTop(0);
-        domUtilityService.digest($scope);
-    };
-    $scope.removeGroup = function(index) {
-        var col = $scope.columns.filter(function(item) {
-            return item.groupIndex == (index + 1);
-        })[0];
-        col.isGroupedBy = false;
-        col.groupIndex = 0;
-        if ($scope.columns[index].isAggCol) {
-            $scope.columns.splice(index, 1);
-            $scope.configGroups.splice(index, 1);
-            self.fixGroupIndexes();
-        }
-        if ($scope.configGroups.length === 0) {
-            self.fixColumnIndexes();
-            domUtilityService.digest($scope);
-        }
-        $scope.adjustScrollLeft(0);
-    };
-    $scope.togglePin = function (col) {
-        var indexFrom = col.index;
-        var indexTo = 0;
-        for (var i = 0; i < $scope.columns.length; i++) {
-            if (!$scope.columns[i].pinned) {
-                break;
-            }
-            indexTo++;
-        }
-        if (col.pinned) {
-            indexTo = Math.max(col.originalIndex, indexTo - 1);
-        }
-        col.pinned = !col.pinned;
-        $scope.columns.splice(indexFrom, 1);
-        $scope.columns.splice(indexTo, 0, col);
-        self.fixColumnIndexes();
-        domUtilityService.BuildStyles($scope, self, true);
-        self.$viewport.scrollLeft(self.$viewport.scrollLeft() - col.width);
-    };
-    $scope.totalRowWidth = function() {
-        var totalWidth = 0,
-            cols = $scope.columns;
-        for (var i = 0; i < cols.length; i++) {
-            if (cols[i].visible !== false) {
-                totalWidth += cols[i].width;
-            }
-        }
-        return totalWidth;
-    };
-    $scope.headerScrollerDim = function() {
-        var viewportH = $scope.viewportDimHeight(),
-            maxHeight = self.maxCanvasHt,
-            vScrollBarIsOpen = (maxHeight > viewportH),
-            newDim = new ngDimension();
-
-        newDim.autoFitHeight = true;
-        newDim.outerWidth = $scope.totalRowWidth();
-        if (vScrollBarIsOpen) {
-            newDim.outerWidth += self.elementDims.scrollW;
-        } else if ((maxHeight - viewportH) <= self.elementDims.scrollH) { 
-            newDim.outerWidth += self.elementDims.scrollW;
-        }
-        return newDim;
-    };
-};
-
-var ngRange = function (top, bottom) {
-    this.topRow = top;
-    this.bottomRow = bottom;
-};
-var ngRow = function (entity, config, selectionProvider, rowIndex, $utils) {
-    var self = this, 
-        enableRowSelection = config.enableRowSelection;
-
-    self.jqueryUITheme = config.jqueryUITheme;
-    self.rowClasses = config.rowClasses;
-    self.entity = entity;
-    self.selectionProvider = selectionProvider;
-  self.selected = selectionProvider.getSelection(entity);
-    self.cursor = enableRowSelection ? 'pointer' : 'default';
-  self.setSelection = function(isSelected) {
-    self.selectionProvider.setSelection(self, isSelected);
-    self.selectionProvider.lastClickedRow = self;
-  };
-    self.continueSelection = function(event) {
-        self.selectionProvider.ChangeSelection(self, event);
-    };
-    self.ensureEntity = function(expected) {
-        if (self.entity != expected) {
-            self.entity = expected;
-            self.selected = self.selectionProvider.getSelection(self.entity);
-        }
-    };
-    self.toggleSelected = function(event) {
-        if (!enableRowSelection && !config.enableCellSelection) {
-            return true;
-        }
-        var element = event.target || event;
-        if (element.type == "checkbox" && element.parentElement.className != "ngSelectionCell ng-scope") {
-            return true;
-        }
-        if (config.selectWithCheckboxOnly && element.type != "checkbox") {
-            self.selectionProvider.lastClickedRow = self;
-            return true;
-        } else {
-            if (self.beforeSelectionChange(self, event)) {
-                self.continueSelection(event);
-            }
-        }
-        return false;
-    };
-    self.rowIndex = rowIndex;
-    self.offsetTop = self.rowIndex * config.rowHeight;
-    self.rowDisplayIndex = 0;
-    self.alternatingRowClass = function () {
-        var isEven = (self.rowIndex % 2) === 0;
-        var classes = {
-            'ngRow' : true,
-            'selected': self.selected,
-            'even': isEven,
-            'odd': !isEven,
-            'ui-state-default': self.jqueryUITheme && isEven,
-            'ui-state-active': self.jqueryUITheme && !isEven
-        };
-        return classes;
-    };
-    self.beforeSelectionChange = config.beforeSelectionChangeCallback;
-    self.afterSelectionChange = config.afterSelectionChangeCallback;
-
-    self.getProperty = function(path) {
-        return $utils.evalProperty(self.entity, path);
-    };
-    self.copy = function () {
-        self.clone = new ngRow(entity, config, selectionProvider, rowIndex, $utils);
-        self.clone.isClone = true;
-        self.clone.elm = self.elm;
-        self.clone.orig = self;
-        return self.clone;
-    };
-    self.setVars = function (fromRow) {
-        fromRow.clone = self;
-        self.entity = fromRow.entity;
-        self.selected = fromRow.selected;
-    };
-};
-var ngRowFactory = function (grid, $scope, domUtilityService, $templateCache, $utils) {
-    var self = this;
-    self.aggCache = {};
-    self.parentCache = []; 
-    self.dataChanged = true;
-    self.parsedData = [];
-    self.rowConfig = {};
-    self.selectionProvider = $scope.selectionProvider;
-    self.rowHeight = 30;
-    self.numberOfAggregates = 0;
-    self.groupedData = undefined;
-    self.rowHeight = grid.config.rowHeight;
-    self.rowConfig = {
-        enableRowSelection: grid.config.enableRowSelection,
-        rowClasses: grid.config.rowClasses,
-        selectedItems: $scope.selectedItems,
-        selectWithCheckboxOnly: grid.config.selectWithCheckboxOnly,
-        beforeSelectionChangeCallback: grid.config.beforeSelectionChange,
-        afterSelectionChangeCallback: grid.config.afterSelectionChange,
-        jqueryUITheme: grid.config.jqueryUITheme,
-        enableCellSelection: grid.config.enableCellSelection,
-        rowHeight: grid.config.rowHeight
-    };
-
-    self.renderedRange = new ngRange(0, grid.minRowsToRender() + EXCESS_ROWS);
-    self.buildEntityRow = function(entity, rowIndex) {
-        return new ngRow(entity, self.rowConfig, self.selectionProvider, rowIndex, $utils);
-    };
-
-    self.buildAggregateRow = function(aggEntity, rowIndex) {
-        var agg = self.aggCache[aggEntity.aggIndex]; 
-        if (!agg) {
-            agg = new ngAggregate(aggEntity, self, self.rowConfig.rowHeight, grid.config.groupsCollapsedByDefault);
-            self.aggCache[aggEntity.aggIndex] = agg;
-        }
-        agg.rowIndex = rowIndex;
-        agg.offsetTop = rowIndex * self.rowConfig.rowHeight;
-        return agg;
-    };
-    self.UpdateViewableRange = function(newRange) {
-        self.renderedRange = newRange;
-        self.renderedChange();
-    };
-    self.filteredRowsChanged = function() {
-        if (grid.lateBoundColumns && grid.filteredRows.length > 0) {
-            grid.config.columnDefs = undefined;
-            grid.buildColumns();
-            grid.lateBoundColumns = false;
-            $scope.$evalAsync(function() {
-                $scope.adjustScrollLeft(0);
-            });
-        }
-        self.dataChanged = true;
-        if (grid.config.groups.length > 0) {
-            self.getGrouping(grid.config.groups);
-        }
-        self.UpdateViewableRange(self.renderedRange);
-    };
-
-    self.renderedChange = function() {
-        if (!self.groupedData || grid.config.groups.length < 1) {
-            self.renderedChangeNoGroups();
-            grid.refreshDomSizes();
-            return;
-        }
-        self.wasGrouped = true;
-        self.parentCache = [];
-        var x = 0;
-        var temp = self.parsedData.filter(function (e) {
-            if (e.isAggRow) {
-                if (e.parent && e.parent.collapsed) {
-                    return false;
-                }
-                return true;
-            }
-            if (!e[NG_HIDDEN]) {
-                e.rowIndex = x++;
-            }
-            return !e[NG_HIDDEN];
-        });
-        self.totalRows = temp.length;
-        var rowArr = [];
-        for (var i = self.renderedRange.topRow; i < self.renderedRange.bottomRow; i++) {
-            if (temp[i]) {
-                temp[i].offsetTop = i * grid.config.rowHeight;
-                rowArr.push(temp[i]);
-            }
-        }
-        grid.setRenderedRows(rowArr);
-    };
-
-    self.renderedChangeNoGroups = function () {
-        var rowArr = [];
-        for (var i = self.renderedRange.topRow; i < self.renderedRange.bottomRow; i++) {
-            if (grid.filteredRows[i]) {
-                grid.filteredRows[i].rowIndex = i;
-                grid.filteredRows[i].offsetTop = i * grid.config.rowHeight;
-                rowArr.push(grid.filteredRows[i]);
-            }
-        }
-        grid.setRenderedRows(rowArr);
-    };
-
-    self.fixRowCache = function () {
-        var newLen = grid.data.length;
-        var diff = newLen - grid.rowCache.length;
-        if (diff < 0) {
-            grid.rowCache.length = grid.rowMap.length = newLen;
-        } else {
-            for (var i = grid.rowCache.length; i < newLen; i++) {
-                grid.rowCache[i] = grid.rowFactory.buildEntityRow(grid.data[i], i);
-            }
-        }
-    };
-    self.parseGroupData = function(g) {
-        if (g.values) {
-            for (var x = 0; x < g.values.length; x++){
-                self.parentCache[self.parentCache.length - 1].children.push(g.values[x]);
-                self.parsedData.push(g.values[x]);
-            }
-        } else {
-            for (var prop in g) {
-                if (prop == NG_FIELD || prop == NG_DEPTH || prop == NG_COLUMN) {
-                    continue;
-                } else if (g.hasOwnProperty(prop)) {
-                    var agg = self.buildAggregateRow({
-                        gField: g[NG_FIELD],
-                        gLabel: prop,
-                        gDepth: g[NG_DEPTH],
-                        isAggRow: true,
-                        '_ng_hidden_': false,
-                        children: [],
-                        aggChildren: [],
-                        aggIndex: self.numberOfAggregates,
-                        aggLabelFilter: g[NG_COLUMN].aggLabelFilter
-                    }, 0);
-                    self.numberOfAggregates++;
-                    agg.parent = self.parentCache[agg.depth - 1];
-                    if (agg.parent) {
-                        agg.parent.collapsed = false;
-                        agg.parent.aggChildren.push(agg);
-                    }
-                    self.parsedData.push(agg);
-                    self.parentCache[agg.depth] = agg;
-                    self.parseGroupData(g[prop]);
-                }
-            }
-        }
-    };
-    self.getGrouping = function(groups) {
-        self.aggCache = [];
-        self.numberOfAggregates = 0;
-        self.groupedData = {};
-        var rows = grid.filteredRows,
-            maxDepth = groups.length,
-            cols = $scope.columns;
-
-        for (var x = 0; x < rows.length; x++){
-            var model = rows[x].entity;
-            if (!model) return;
-            rows[x][NG_HIDDEN] = grid.config.groupsCollapsedByDefault;
-            var ptr = self.groupedData;
-            for (var y = 0; y < groups.length; y++) {
-                var group = groups[y];
-                var col = cols.filter(function(c) {
-                    return c.field == group;
-                })[0];
-                var val = $utils.evalProperty(model, group);
-                val = val ? val.toString() : 'null';
-                if (!ptr[val]) {
-                    ptr[val] = {};
-                }
-                if (!ptr[NG_FIELD]) {
-                    ptr[NG_FIELD] = group;
-                }
-                if (!ptr[NG_DEPTH]) {
-                    ptr[NG_DEPTH] = y;
-                }
-                if (!ptr[NG_COLUMN]) {
-                    ptr[NG_COLUMN] = col;
-                }
-                ptr = ptr[val];
-            }
-            if (!ptr.values) {
-                ptr.values = [];
-            }
-            ptr.values.push(rows[x]);
-        };
-        for (var z = 0; z < groups.length; z++) {
-            if (!cols[z].isAggCol && z <= maxDepth) {
-                cols.splice(0, 0, new ngColumn({
-                    colDef: {
-                        field: '',
-                        width: 25,
-                        sortable: false,
-                        resizable: false,
-                        headerCellTemplate: '<div class="ngAggHeader"></div>',
-                        pinned: grid.config.pinSelectionCheckbox
-                    },
-                    enablePinning: grid.config.enablePinning,
-                    isAggCol: true,
-                    headerRowHeight: grid.config.headerRowHeight,
-                }, $scope, grid, domUtilityService, $templateCache, $utils));
-            }
-        }
-        domUtilityService.BuildStyles($scope, grid, true);
-    grid.fixColumnIndexes();
-        $scope.adjustScrollLeft(0);
-        self.parsedData.length = 0;
-        self.parseGroupData(self.groupedData);
-        self.fixRowCache();
-    };
-
-    if (grid.config.groups.length > 0 && grid.filteredRows.length > 0) {
-        self.getGrouping(grid.config.groups);
-    }
-};
-var ngSearchProvider = function ($scope, grid, $filter) {
-    var self = this,
-        searchConditions = [];
-    self.extFilter = grid.config.filterOptions.useExternalFilter;
-    $scope.showFilter = grid.config.showFilter;
-    $scope.filterText = '';
-
-    self.fieldMap = {};
-
-    self.evalFilter = function () {
-        var filterFunc = function(item) {
-            for (var x = 0, len = searchConditions.length; x < len; x++) {
-                var condition = searchConditions[x];
-                var result;
-                if (!condition.column) {
-                    for (var prop in item) {
-                        if (item.hasOwnProperty(prop)) {
-                            var c = self.fieldMap[prop];
-                            if (!c)
-                                continue;
-                            var f = null,
-                                s = null;
-                            if (c && c.cellFilter) {
-                                s = c.cellFilter.split(':');
-                                f = $filter(s[0]);
-                            }
-                            var pVal = item[prop];
-                            if (pVal != null) {
-                                if (typeof f == 'function') {
-                                    var filterRes = f(typeof pVal === 'object' ? evalObject(pVal, c.field) : pVal, s[1]).toString();
-                                    result = condition.regex.test(filterRes);
-                                } else {
-                                    result = condition.regex.test(typeof pVal === 'object' ? evalObject(pVal, c.field).toString() : pVal.toString());
-                                }
-                                if (pVal && result) {
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-                    return false;
-                }
-                var col = self.fieldMap[condition.columnDisplay];
-                if (!col) {
-                    return false;
-                }
-                var sp = col.cellFilter.split(':');
-                var filter = col.cellFilter ? $filter(sp[0]) : null;
-                var value = item[condition.column] || item[col.field.split('.')[0]];
-                if (value == null)
-                    return false;
-                if (typeof filter == 'function') {
-                    var filterResults = filter(typeof value === 'object' ? evalObject(value, col.field) : value, sp[1]).toString();
-                    result = condition.regex.test(filterResults);
-                } else {
-                    result = condition.regex.test(typeof value === 'object' ? evalObject(value, col.field).toString() : value.toString());
-                }
-                if (!value || !result) {
-                    return false;
-                }
-            }
-            return true;
-        };
-        if (searchConditions.length === 0) {
-            grid.filteredRows = grid.rowCache;
-        } else {
-            grid.filteredRows = grid.rowCache.filter(function(row) {
-                return filterFunc(row.entity);
-            });
-        }
-        for (var i = 0; i < grid.filteredRows.length; i++)
-        {
-            grid.filteredRows[i].rowIndex = i;
-        }
-        grid.rowFactory.filteredRowsChanged();
-    };
-    var evalObject = function (obj, columnName) {
-        if (typeof obj != 'object' || typeof columnName != 'string')
-            return obj;
-        var args = columnName.split('.');
-        var cObj = obj;
-        if (args.length > 1) {
-            for (var i = 1, len = args.length; i < len; i++) {
-                cObj = cObj[args[i]];
-                if (!cObj)
-                    return obj;
-            }
-            return cObj;
-        }
-        return obj;
-    };
-    var getRegExp = function (str, modifiers) {
-        try {
-            return new RegExp(str, modifiers);
-        } catch (err) {
-            return new RegExp(str.replace(/(\^|\$|\(|\)|\<|\>|\[|\]|\{|\}|\\|\||\.|\*|\+|\?)/g, '\\$1'));
-        }
-    };
-    var buildSearchConditions = function (a) {
-        searchConditions = [];
-        var qStr;
-        if (!(qStr = $.trim(a))) {
-            return;
-        }
-        var columnFilters = qStr.split(";");
-        for (var i = 0; i < columnFilters.length; i++) {
-            var args = columnFilters[i].split(':');
-            if (args.length > 1) {
-                var columnName = $.trim(args[0]);
-                var columnValue = $.trim(args[1]);
-                if (columnName && columnValue) {
-                    searchConditions.push({
-                        column: columnName,
-                        columnDisplay: columnName.replace(/\s+/g, '').toLowerCase(),
-                        regex: getRegExp(columnValue, 'i')
-                    });
-                }
-            } else {
-                var val = $.trim(args[0]);
-                if (val) {
-                    searchConditions.push({
-                        column: '',
-                        regex: getRegExp(val, 'i')
-                    });
-                }
-            }
-        };
-    };
-  $scope.$watch(function() {
-      return grid.config.filterOptions.filterText;
-  }, function(a){
-    $scope.filterText = a;
-  });
-  $scope.$watch('filterText', function(a){
-    if(!self.extFilter){
-      $scope.$emit('ngGridEventFilter', a);
-            buildSearchConditions(a);
-            self.evalFilter();
-        }
-  });
-    if (!self.extFilter) {
-        $scope.$watch('columns', function (cs) {
-            for (var i = 0; i < cs.length; i++) {
-                var col = cs[i];
-        if(col.field)
-          self.fieldMap[col.field.split('.')[0]] = col;
-        if(col.displayName)
-          self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
-            };
-        });
-    }
-};
-var ngSelectionProvider = function (grid, $scope, $parse) {
-    var self = this;
-    self.multi = grid.config.multiSelect;
-    self.selectedItems = grid.config.selectedItems;
-    self.selectedIndex = grid.config.selectedIndex;
-    self.lastClickedRow = undefined;
-    self.ignoreSelectedItemChanges = false; 
-    self.pKeyParser = $parse(grid.config.primaryKey);
-    self.ChangeSelection = function (rowItem, evt) {
-    var charCode = evt.which || evt.keyCode;
-    var isUpDownKeyPress = (charCode === 40 || charCode === 38);
-        if (evt && (!evt.keyCode || isUpDownKeyPress) && !evt.ctrlKey && !evt.shiftKey) {
-            self.toggleSelectAll(false, true);
-        }
-        if (evt && evt.shiftKey && !evt.keyCode && self.multi && grid.config.enableRowSelection) {
-            if (self.lastClickedRow) {
-                var rowsArr;
-                if ($scope.configGroups.length > 0) {
-                    rowsArr = grid.rowFactory.parsedData.filter(function(row) {
-                        return !row.isAggRow;
-                    });
-                } else {
-                    rowsArr = grid.filteredRows;
-                }
-                var thisIndx = rowItem.rowIndex;
-                var prevIndx = self.lastClickedRow.rowIndex;
-                self.lastClickedRow = rowItem;
-                if (thisIndx == prevIndx) {
-                    return false;
-                }
-                if (thisIndx < prevIndx) {
-                    thisIndx = thisIndx ^ prevIndx;
-                    prevIndx = thisIndx ^ prevIndx;
-                    thisIndx = thisIndx ^ prevIndx;
-          thisIndx--;
-                } else {
-          prevIndx++;
-        }
-                var rows = [];
-                for (; prevIndx <= thisIndx; prevIndx++) {
-                    rows.push(rowsArr[prevIndx]);
-                }
-                if (rows[rows.length - 1].beforeSelectionChange(rows, evt)) {
-                    for (var i = 0; i < rows.length; i++) {
-                        var ri = rows[i];
-                        var selectionState = ri.selected;
-                        ri.selected = !selectionState;
-                        if (ri.clone) {
-                            ri.clone.selected = ri.selected;
-                        }
-                        var index = self.selectedItems.indexOf(ri.entity);
-                        if (index === -1) {
-                            self.selectedItems.push(ri.entity);
-                        } else {
-                            self.selectedItems.splice(index, 1);
-                        }
-                    }
-                    rows[rows.length - 1].afterSelectionChange(rows, evt);
-                }
-                return true;
-            }
-        } else if (!self.multi) {
-            if (self.lastClickedRow == rowItem) {
-                self.setSelection(self.lastClickedRow, grid.config.keepLastSelected ? true : !rowItem.selected);
-            } else {
-                if (self.lastClickedRow) {
-                    self.setSelection(self.lastClickedRow, false);
-                }
-                self.setSelection(rowItem, !rowItem.selected);
-            }
-        } else if (!evt.keyCode || isUpDownKeyPress) {
-            self.setSelection(rowItem, !rowItem.selected);
-        }
-    self.lastClickedRow = rowItem;
-        return true;
-    };
-
-    self.getSelection = function (entity) {
-        var isSelected = false;
-        if (grid.config.primaryKey) {
-            var val = self.pKeyParser(entity);
-            angular.forEach(self.selectedItems, function (c) {
-                if (val == self.pKeyParser(c)) {
-                    isSelected = true;
-                }
-            });
-        } else {
-            isSelected = self.selectedItems.indexOf(entity) !== -1;
-        }
-        return isSelected;
-    };
-    self.setSelection = function (rowItem, isSelected) {
-    if(grid.config.enableRowSelection){
-      if (!isSelected) {
-        var indx = self.selectedItems.indexOf(rowItem.entity);
-        if(indx != -1){
-          self.selectedItems.splice(indx, 1);
-        }
-      } else {
-        if (self.selectedItems.indexOf(rowItem.entity) === -1) {
-          if(!self.multi && self.selectedItems.length > 0){
-            self.toggleSelectAll(false, true);
-          }
-          self.selectedItems.push(rowItem.entity);
-        }
-      }
-      rowItem.selected = isSelected;
-      if (rowItem.orig) {
-          rowItem.orig.selected = isSelected;
-      }
-      if (rowItem.clone) {
-          rowItem.clone.selected = isSelected;
-      }
-      rowItem.afterSelectionChange(rowItem);
-    }
-    };
-    self.toggleSelectAll = function (checkAll, bypass) {
-        if (bypass || grid.config.beforeSelectionChange(grid.filteredRows, checkAll)) {
-            var selectedlength = self.selectedItems.length;
-            if (selectedlength > 0) {
-                self.selectedItems.length = 0;
-            }
-            for (var i = 0; i < grid.filteredRows.length; i++) {
-                grid.filteredRows[i].selected = checkAll;
-                if (grid.filteredRows[i].clone) {
-                    grid.filteredRows[i].clone.selected = checkAll;
-                }
-                if (checkAll) {
-                    self.selectedItems.push(grid.filteredRows[i].entity);
-                }
-            }
-            if (!bypass) {
-                grid.config.afterSelectionChange(grid.filteredRows, checkAll);
-            }
-        }
-    };
-};
-var ngStyleProvider = function($scope, grid) {
-    $scope.headerCellStyle = function(col) {
-        return { "height": col.headerRowHeight + "px" };
-    };
-    $scope.rowStyle = function (row) {
-        var ret = { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px" };
-        if (row.isAggRow) {
-            ret.left = row.offsetLeft;
-        }
-        return ret;
-    };
-    $scope.canvasStyle = function() {
-        return { "height": grid.maxCanvasHt.toString() + "px" };
-    };
-    $scope.headerScrollerStyle = function() {
-        return { "height": grid.config.headerRowHeight + "px" };
-    };
-    $scope.topPanelStyle = function() {
-        return { "width": grid.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
-    };
-    $scope.headerStyle = function() {
-        return { "width": (grid.rootDim.outerWidth) + "px", "height": grid.config.headerRowHeight + "px" };
-    };
-    $scope.groupPanelStyle = function () {
-        return { "width": (grid.rootDim.outerWidth) + "px", "height": "32px" };
-    };
-    $scope.viewportStyle = function() {
-        return { "width": grid.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
-    };
-    $scope.footerStyle = function() {
-        return { "width": grid.rootDim.outerWidth + "px", "height": $scope.footerRowHeight + "px" };
-    };
-};
-ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
-  function (domUtilityService) {
-    var focusOnInputElement = function($scope, elm){
-      $scope.isFocused = true;
-      domUtilityService.digest($scope); 
-      var elementWithoutComments = angular.element(elm[0].children).filter(function () { return this.nodeType != 8; });
-      var inputElement = angular.element(elementWithoutComments[0].children[0]); 
-      if(inputElement.length > 0){
-        angular.element(inputElement).focus();
-        $scope.domAccessProvider.selectInputElement(inputElement[0]);
-        angular.element(inputElement).bind('blur', function(){  
-          $scope.isFocused = false; 
-          domUtilityService.digest($scope);
-          return true;
-        }); 
-      }
-    };
-    return function($scope, elm) {
-            var isFocused = false;
-            $scope.editCell = function(){
-                setTimeout(function() {
-                    focusOnInputElement($scope,elm);
-                }, 0);
-            };
-      elm.bind('mousedown', function(){
-        elm.focus();
-        return true;
-      });
-      elm.bind('focus', function(){
-        isFocused = true;
-        return true;
-      });   
-      elm.bind('blur', function(){
-        isFocused = false;
-        return true;
-      });
-      elm.bind('keydown', function(evt){
-        if(isFocused && evt.keyCode != 37 && evt.keyCode != 38 && evt.keyCode != 39 && evt.keyCode != 40 && evt.keyCode != 9 && !evt.shiftKey && evt.keyCode != 13){
-          focusOnInputElement($scope,elm);
-        }
-        if(evt.keyCode == 27){
-          elm.focus();
-        }
-        return true;
-      });
-    };
-  }]);
-ngGridDirectives.directive('ngCellText',
-  function () {
-      return function(scope, elm) {
-          elm.bind('mouseover', function(evt) {
-              evt.preventDefault();
-              elm.css({
-                  'cursor': 'text'
-              });
-          });
-          elm.bind('mouseleave', function(evt) {
-              evt.preventDefault();
-              elm.css({
-                  'cursor': 'default'
-              });
-          });
-      };
-  });
-ngGridDirectives.directive('ngCell', ['$compile', '$domUtilityService', function ($compile, domUtilityService) {
-    var ngCell = {
-        scope: false,
-        compile: function() {
-            return {
-                pre: function($scope, iElement) {
-                    var html;
-                    var cellTemplate = $scope.col.cellTemplate.replace(COL_FIELD, '$eval(\'row.entity.\' + col.field)');
-          if($scope.col.enableCellEdit){
-            html =  $scope.col.cellEditTemplate;
-            html = html.replace(DISPLAY_CELL_TEMPLATE, cellTemplate);
-            html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, '$eval(\'row.entity.\' + col.field)'));
-          } else {
-              html = cellTemplate;
-          }
-          var cellElement = $compile(html)($scope);
-          if($scope.enableCellSelection && cellElement[0].className.indexOf('ngSelectionCell') == -1){
-            cellElement[0].setAttribute('tabindex', 0);
-            cellElement.addClass('ngCellElement');
-          }
-                    iElement.append(cellElement);
-                },
-        post: function($scope, iElement){ 
-          if($scope.enableCellSelection){
-            $scope.domAccessProvider.selectionHandlers($scope, iElement);
-          }
-          $scope.$on('ngGridEventDigestCell', function(){
-            domUtilityService.digest($scope);
-          });
-        }
-            };
-        }
-    };
-    return ngCell;
-}]);
-ngGridDirectives.directive('ngGridFooter', ['$compile', '$templateCache', function ($compile, $templateCache) {
-    var ngGridFooter = {
-        scope: false,
-        compile: function () {
-            return {
-                pre: function ($scope, iElement) {
-                    if (iElement.children().length === 0) {
-                        iElement.append($compile($templateCache.get($scope.gridId + 'footerTemplate.html'))($scope));
-                    }
-                }
-            };
-        }
-    };
-    return ngGridFooter;
-}]);
-ngGridDirectives.directive('ngGridMenu', ['$compile', '$templateCache', function ($compile, $templateCache) {
-    var ngGridMenu = {
-        scope: false,
-        compile: function () {
-            return {
-                pre: function ($scope, iElement) {
-                    if (iElement.children().length === 0) {
-                        iElement.append($compile($templateCache.get($scope.gridId + 'menuTemplate.html'))($scope));
-                    }
-                }
-            };
-        }
-    };
-    return ngGridMenu;
-}]);
-ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '$sortService', '$domUtilityService', '$utilityService', '$timeout', '$parse', '$http', '$q', function ($compile, $filter, $templateCache, sortService, domUtilityService, $utils, $timeout, $parse, $http, $q) {
-    var ngGridDirective = {
-        scope: true,
-        compile: function() {
-            return {
-                pre: function($scope, iElement, iAttrs) {
-                    var $element = $(iElement);
-                    var options = $scope.$eval(iAttrs.ngGrid);
-                    options.gridDim = new ngDimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
-
-                    var grid = new ngGrid($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse, $http, $q);
-                    return grid.init().then(function() {
-                        if (typeof options.columnDefs == "string") {
-                            $scope.$parent.$watch(options.columnDefs, function (a) {
-                                if (!a) {
-                                    grid.refreshDomSizes();
-                                    grid.buildColumns();
-                                    return;
-                                }
-                                grid.lateBoundColumns = false;
-                                $scope.columns = [];
-                                grid.config.columnDefs = a;
-                                grid.buildColumns();
-                                grid.configureColumnWidths();
-                                grid.eventProvider.assignEvents();
-                                domUtilityService.RebuildGrid($scope, grid);
-                            }, true);
-                        } else {
-                grid.buildColumns();
-              }
-                        if (typeof options.data == "string") {
-                            var dataWatcher = function (a) {
-                                grid.data = $.extend([], a);
-                                grid.rowFactory.fixRowCache();
-                                angular.forEach(grid.data, function (item, j) {
-                                    var indx = grid.rowMap[j] || j;
-                                    if (grid.rowCache[indx]) {
-                                        grid.rowCache[indx].ensureEntity(item);
-                                    }
-                                    grid.rowMap[indx] = j;
-                                });
-                                grid.searchProvider.evalFilter();
-                                grid.configureColumnWidths();
-                                grid.refreshDomSizes();
-                                if (grid.config.sortInfo.fields.length > 0) {
-                                    grid.getColsFromFields();
-                                    grid.sortActual();
-                                    grid.searchProvider.evalFilter();
-                                    $scope.$emit('ngGridEventSorted', grid.config.sortInfo);
-                                }
-                                $scope.$emit("ngGridEventData", grid.gridId);
-                            };
-                            $scope.$parent.$watch(options.data, dataWatcher);
-                            $scope.$parent.$watch(options.data + '.length', function() {
-                                dataWatcher($scope.$eval(options.data));
-                            });
-                        }
-                        grid.footerController = new ngFooter($scope, grid);
-                        iElement.addClass("ngGrid").addClass(grid.gridId.toString());
-                        if (!options.enableHighlighting) {
-                            iElement.addClass("unselectable");
-                        }
-                        if (options.jqueryUITheme) {
-                            iElement.addClass('ui-widget');
-                        }
-                        iElement.append($compile($templateCache.get('gridTemplate.html'))($scope));
-                        domUtilityService.AssignGridContainers($scope, iElement, grid);
-                        grid.eventProvider = new ngEventProvider(grid, $scope, domUtilityService, $timeout);
-                        options.selectRow = function (rowIndex, state) {
-                            if (grid.rowCache[rowIndex]) {
-                                if (grid.rowCache[rowIndex].clone) {
-                                    grid.rowCache[rowIndex].clone.setSelection(state ? true : false);
-                                } 
-                                grid.rowCache[rowIndex].setSelection(state ? true : false);
-                            }
-                        };
-                        options.selectItem = function (itemIndex, state) {
-                            options.selectRow(grid.rowMap[itemIndex], state);
-                        };
-                        options.selectAll = function (state) {
-                            $scope.toggleSelectAll(state);
-                        };
-                        options.groupBy = function (field) {
-                            if (field) {
-                                $scope.groupBy($scope.columns.filter(function(c) {
-                                    return c.field == field;
-                                })[0]);
-                            } else {
-                                var arr = $.extend(true, [], $scope.configGroups);
-                                angular.forEach(arr, $scope.groupBy);
-                            }
-                        };
-                        options.sortBy = function (field) {
-                            var col = $scope.columns.filter(function (c) {
-                                return c.field == field;
-                            })[0];
-                            if (col) col.sort();
-                        };
-              options.gridId = grid.gridId;
-              options.ngGrid = grid;
-              options.$gridScope = $scope;
-                        options.$gridServices = { SortService: sortService, DomUtilityService: domUtilityService };
-              $scope.$on('ngGridEventDigestGrid', function(){
-                domUtilityService.digest($scope.$parent);
-              });
-              $scope.$on('ngGridEventDigestGridParent', function(){
-                domUtilityService.digest($scope.$parent);
-              });
-                        $scope.$evalAsync(function() {
-                            $scope.adjustScrollLeft(0);
-                        });
-                        angular.forEach(options.plugins, function (p) {
-                            if (typeof p === 'function') {
-                                p = p.call(this);
-                            }
-                            p.init($scope.$new(), grid, options.$gridServices);
-                            options.plugins[$utils.getInstanceType(p)] = p;
-                        });
-                        if (options.init == "function") {
-                            options.init(grid, $scope);
-                        }
-                        return null;
-                    });
-                }
-            };
-        }
-    };
-    return ngGridDirective;
-}]);
-ngGridDirectives.directive('ngHeaderCell', ['$compile', function($compile) {
-    var ngHeaderCell = {
-        scope: false,
-        compile: function() {
-            return {
-                pre: function($scope, iElement) {
-                    iElement.append($compile($scope.col.headerCellTemplate)($scope));
-                }
-            };
-        }
-    };
-    return ngHeaderCell;
-}]);
-
-ngGridDirectives.directive('ngIf', [function () {
-  return {
-    transclude: 'element',
-    priority: 1000,
-    terminal: true,
-    restrict: 'A',
-    compile: function (e, a, transclude) {
-      return function (scope, element, attr) {
-
-        var childElement;
-        var childScope;
-        scope.$watch(attr['ngIf'], function (newValue) {
-          if (childElement) {
-            childElement.remove();
-            childElement = undefined;
-          }
-          if (childScope) {
-            childScope.$destroy();
-            childScope = undefined;
-          }
-
-          if (newValue) {
-            childScope = scope.$new();
-            transclude(childScope, function (clone) {
-              childElement = clone;
-              element.after(clone);
-            });
-          }
-        });
-      };
-    }
-  };
-}]);
-ngGridDirectives.directive('ngInput',['$parse', function($parse) {
-    return function ($scope, elm, attrs) {
-        var getter = $parse($scope.$eval(attrs.ngInput));
-    var setter = getter.assign;
-    var oldCellValue = getter($scope.row.entity);
-    elm.val(oldCellValue);
-        elm.bind('keyup', function() {
-            var newVal = elm.val();
-            if (!$scope.$root.$$phase) {
-                $scope.$apply(function(){setter($scope.row.entity,newVal); });
-            }
-        });
-    elm.bind('keydown', function(evt){
-      switch(evt.keyCode){
-        case 37:
-        case 38:
-        case 39:
-        case 40:
-          evt.stopPropagation();
-          break;
-        case 27:
-          if (!$scope.$root.$$phase) {
-            $scope.$apply(function(){
-              setter($scope.row.entity,oldCellValue);
-              elm.val(oldCellValue);
-              elm.blur();
-            });
-          }
-        default:
-          break;
-      }
-      return true;
-    });
-    };
-}]);
-ngGridDirectives.directive('ngRow', ['$compile', '$domUtilityService', '$templateCache', function ($compile, domUtilityService, $templateCache) {
-    var ngRow = {
-        scope: false,
-        compile: function() {
-            return {
-                pre: function($scope, iElement) {
-                    $scope.row.elm = iElement;
-                    if ($scope.row.clone) {
-                        $scope.row.clone.elm = iElement;
-                    }
-                    if ($scope.row.isAggRow) {
-                        var html = $templateCache.get($scope.gridId + 'aggregateTemplate.html');
-                        if ($scope.row.aggLabelFilter) {
-                            html = html.replace(CUSTOM_FILTERS, '| ' + $scope.row.aggLabelFilter);
-                        } else {
-                            html = html.replace(CUSTOM_FILTERS, "");
-                        }
-                        iElement.append($compile(html)($scope));
-                    } else {
-                        iElement.append($compile($templateCache.get($scope.gridId + 'rowTemplate.html'))($scope));
-                    }
-          $scope.$on('ngGridEventDigestRow', function(){
-            domUtilityService.digest($scope);
-          });
-                }
-            };
-        }
-    };
-    return ngRow;
-}]);
-ngGridDirectives.directive('ngViewport', [function() {
-    return function($scope, elm) {
-        var isMouseWheelActive;
-        var prevScollLeft;
-        var prevScollTop = 0;
-        elm.bind('scroll', function(evt) {
-            var scrollLeft = evt.target.scrollLeft,
-                scrollTop = evt.target.scrollTop;
-            if ($scope.$headerContainer) {
-                $scope.$headerContainer.scrollLeft(scrollLeft);
-            }
-            $scope.adjustScrollLeft(scrollLeft);
-            $scope.adjustScrollTop(scrollTop);
-            if (!$scope.$root.$$phase) {
-                $scope.$digest();
-            }
-            prevScollLeft = scrollLeft;
-            prevScollTop = prevScollTop;
-            isMouseWheelActive = false;
-            return true;
-        });
-        elm.bind("mousewheel DOMMouseScroll", function() {
-            isMouseWheelActive = true;
-      elm.focus();
-            return true;
-        });
-        if (!$scope.enableCellSelection) {
-            $scope.domAccessProvider.selectionHandlers($scope, elm);
-        }
-    };
-}]);
-window.ngGrid.i18n['en'] = {
-    ngAggregateLabel: 'items',
-    ngGroupPanelDescription: 'Drag a column header here and drop it to group by that column.',
-    ngSearchPlaceHolder: 'Search...',
-    ngMenuText: 'Choose Columns:',
-    ngShowingItemsLabel: 'Showing Items:',
-    ngTotalItemsLabel: 'Total Items:',
-    ngSelectedItemsLabel: 'Selected Items:',
-    ngPageSizeLabel: 'Page Size:',
-    ngPagerFirstTitle: 'First Page',
-    ngPagerNextTitle: 'Next Page',
-    ngPagerPrevTitle: 'Previous Page',
-    ngPagerLastTitle: 'Last Page'
-};
-window.ngGrid.i18n['fr'] = {
-    ngAggregateLabel: 'articles',
-    ngGroupPanelDescription: 'Faites glisser un en-tête de colonne ici et déposez-le vers un groupe par cette colonne.',
-    ngSearchPlaceHolder: 'Recherche...',
-    ngMenuText: 'Choisir des colonnes:',
-    ngShowingItemsLabel: 'Articles Affichage des:',
-    ngTotalItemsLabel: 'Nombre total d\'articles:',
-    ngSelectedItemsLabel: 'Éléments Articles:',
-    ngPageSizeLabel: 'Taille de page:',
-    ngPagerFirstTitle: 'Première page',
-    ngPagerNextTitle: 'Page Suivante',
-    ngPagerPrevTitle: 'Page précédente',
-    ngPagerLastTitle: 'Dernière page'
-};
-window.ngGrid.i18n['ge'] = {
-    ngAggregateLabel: 'artikel',
-    ngGroupPanelDescription: 'Ziehen Sie eine Spaltenüberschrift hier und legen Sie es der Gruppe nach dieser Spalte.',
-    ngSearchPlaceHolder: 'Suche...',
-    ngMenuText: 'Spalten auswählen:',
-    ngShowingItemsLabel: 'Zeige Artikel:',
-    ngTotalItemsLabel: 'Meiste Artikel:',
-    ngSelectedItemsLabel: 'Ausgewählte Artikel:',
-    ngPageSizeLabel: 'Größe Seite:',
-    ngPagerFirstTitle: 'Erste Page',
-    ngPagerNextTitle: 'Nächste Page',
-    ngPagerPrevTitle: 'Vorherige Page',
-    ngPagerLastTitle: 'Letzte Page'
-};
-window.ngGrid.i18n['sp'] = {
-    ngAggregateLabel: 'Artículos',
-    ngGroupPanelDescription: 'Arrastre un encabezado de columna aquí y soltarlo para agrupar por esa columna.',
-    ngSearchPlaceHolder: 'Buscar...',
-    ngMenuText: 'Elegir columnas:',
-    ngShowingItemsLabel: 'Artículos Mostrando:',
-    ngTotalItemsLabel: 'Artículos Totales:',
-    ngSelectedItemsLabel: 'Artículos Seleccionados:',
-    ngPageSizeLabel: 'Tamaño de Página:',
-    ngPagerFirstTitle: 'Primera Página',
-    ngPagerNextTitle: 'Página Siguiente',
-    ngPagerPrevTitle: 'Página Anterior',
-    ngPagerLastTitle: 'Última Página'
-};
-window.ngGrid.i18n['zh-cn'] = {
-    ngAggregateLabel: '条目',
-    ngGroupPanelDescription: '拖曳表头到此处以进行分组',
-    ngSearchPlaceHolder: '搜索...',
-    ngMenuText: '数据分组与选择列：',
-    ngShowingItemsLabel: '当前显示条目：',
-    ngTotalItemsLabel: '条目总数：',
-    ngSelectedItemsLabel: '选中条目：',
-    ngPageSizeLabel: '每页显示数：',
-    ngPagerFirstTitle: '回到首页',
-    ngPagerNextTitle: '下一页',
-    ngPagerPrevTitle: '上一页',
-    ngPagerLastTitle: '前往尾页' 
-};
-
-window.ngGrid.i18n['zh-tw'] = {
-    ngAggregateLabel: '筆',
-    ngGroupPanelDescription: '拖拉表頭到此處以進行分組',
-    ngSearchPlaceHolder: '搜尋...',
-    ngMenuText: '選擇欄位：',
-    ngShowingItemsLabel: '目前顯示筆數：',
-    ngTotalItemsLabel: '總筆數：',
-    ngSelectedItemsLabel: '選取筆數：',
-    ngPageSizeLabel: '每頁顯示：',
-    ngPagerFirstTitle: '第一頁',
-    ngPagerNextTitle: '下一頁',
-    ngPagerPrevTitle: '上一頁',
-    ngPagerLastTitle: '最後頁'
-};
-
-angular.module("ngGrid").run(["$templateCache", function($templateCache) {
-
-  $templateCache.put("aggregateTemplate.html",
-    "<div ng-click=\"row.toggleExpand()\" ng-style=\"rowStyle(row)\" class=\"ngAggregate\">" +
-    "    <span class=\"ngAggregateText\">{{row.label CUSTOM_FILTERS}} ({{row.totalChildren()}} {{AggItemsLabel}})</span>" +
-    "    <div class=\"{{row.aggClass()}}\"></div>" +
-    "</div>" +
-    ""
-  );
-
-  $templateCache.put("cellEditTemplate.html",
-    "<div ng-cell-has-focus ng-dblclick=\"editCell()\">" +
-    " <div ng-if=\"!isFocused\">" +
-    " DISPLAY_CELL_TEMPLATE" +
-    " </div>" +
-    " <div ng-if=\"isFocused\">" +
-    " EDITABLE_CELL_TEMPLATE" +
-    " </div>" +
-    "</div>"
-  );
-
-  $templateCache.put("cellTemplate.html",
-    "<div class=\"ngCellText\" ng-class=\"col.colIndex()\"><span ng-cell-text>{{COL_FIELD CUSTOM_FILTERS}}</span></div>"
-  );
-
-  $templateCache.put("checkboxCellTemplate.html",
-    "<div class=\"ngSelectionCell\"><input tabindex=\"-1\" class=\"ngSelectionCheckbox\" type=\"checkbox\" ng-checked=\"row.selected\" /></div>"
-  );
-
-  $templateCache.put("checkboxHeaderTemplate.html",
-    "<input class=\"ngSelectionHeader\" type=\"checkbox\" ng-show=\"multiSelect\" ng-model=\"allSelected\" ng-change=\"toggleSelectAll(allSelected)\"/>"
-  );
-
-  $templateCache.put("editableCellTemplate.html",
-    "<input ng-class=\"'colt' + col.index\" ng-input=\"COL_FIELD\" />"
-  );
-
-  $templateCache.put("footerTemplate.html",
-    "<div ng-show=\"showFooter\" class=\"ngFooterPanel\" ng-class=\"{'ui-widget-content': jqueryUITheme, 'ui-corner-bottom': jqueryUITheme}\" ng-style=\"footerStyle()\">" +
-    "    <div class=\"ngTotalSelectContainer\" >" +
-    "        <div class=\"ngFooterTotalItems\" ng-class=\"{'ngNoMultiSelect': !multiSelect}\" >" +
-    "            <span class=\"ngLabel\">{{i18n.ngTotalItemsLabel}} {{maxRows()}}</span><span ng-show=\"filterText.length > 0\" class=\"ngLabel\">({{i18n.ngShowingItemsLabel}} {{totalFilteredItemsLength()}})</span>" +
-    "        </div>" +
-    "        <div class=\"ngFooterSelectedItems\" ng-show=\"multiSelect\">" +
-    "            <span class=\"ngLabel\">{{i18n.ngSelectedItemsLabel}} {{selectedItems.length}}</span>" +
-    "        </div>" +
-    "    </div>" +
-    "    <div class=\"ngPagerContainer\" style=\"float: right; margin-top: 10px;\" ng-show=\"enablePaging\" ng-class=\"{'ngNoMultiSelect': !multiSelect}\">" +
-    "        <div style=\"float:left; margin-right: 10px;\" class=\"ngRowCountPicker\">" +
-    "            <span style=\"float: left; margin-top: 3px;\" class=\"ngLabel\">{{i18n.ngPageSizeLabel}}</span>" +
-    "            <select style=\"float: left;height: 27px; width: 100px\" ng-model=\"pagingOptions.pageSize\" >" +
-    "                <option ng-repeat=\"size in pagingOptions.pageSizes\">{{size}}</option>" +
-    "            </select>" +
-    "        </div>" +
-    "        <div style=\"float:left; margin-right: 10px; line-height:25px;\" class=\"ngPagerControl\" style=\"float: left; min-width: 135px;\">" +
-    "            <button class=\"ngPagerButton\" ng-click=\"pageToFirst()\" ng-disabled=\"cantPageBackward()\" title=\"{{i18n.ngPagerFirstTitle}}\"><div class=\"ngPagerFirstTriangle\"><div class=\"ngPagerFirstBar\"></div></div></button>" +
-    "            <button class=\"ngPagerButton\" ng-click=\"pageBackward()\" ng-disabled=\"cantPageBackward()\" title=\"{{i18n.ngPagerPrevTitle}}\"><div class=\"ngPagerFirstTriangle ngPagerPrevTriangle\"></div></button>" +
-    "            <input class=\"ngPagerCurrent\" type=\"number\" style=\"width:50px; height: 24px; margin-top: 1px; padding: 0 4px;\" ng-model=\"pagingOptions.currentPage\"/>" +
-    "            <button class=\"ngPagerButton\" ng-click=\"pageForward()\" ng-disabled=\"cantPageForward()\" title=\"{{i18n.ngPagerNextTitle}}\"><div class=\"ngPagerLastTriangle ngPagerNextTriangle\"></div></button>" +
-    "            <button class=\"ngPagerButton\" ng-click=\"pageToLast()\" ng-disabled=\"cantPageToLast()\" title=\"{{i18n.ngPagerLastTitle}}\"><div class=\"ngPagerLastTriangle\"><div class=\"ngPagerLastBar\"></div></div></button>" +
-    "        </div>" +
-    "    </div>" +
-    "</div>"
-  );
-
-  $templateCache.put("gridTemplate.html",
-    "<div class=\"ngTopPanel\" ng-class=\"{'ui-widget-header':jqueryUITheme, 'ui-corner-top': jqueryUITheme}\" ng-style=\"topPanelStyle()\">" +
-    "    <div class=\"ngGroupPanel\" ng-show=\"showGroupPanel()\" ng-style=\"groupPanelStyle()\">" +
-    "        <div class=\"ngGroupPanelDescription\" ng-show=\"configGroups.length == 0\">{{i18n.ngGroupPanelDescription}}</div>" +
-    "        <ul ng-show=\"configGroups.length > 0\" class=\"ngGroupList\">" +
-    "            <li class=\"ngGroupItem\" ng-repeat=\"group in configGroups\">" +
-    "                <span class=\"ngGroupElement\">" +
-    "                    <span class=\"ngGroupName\">{{group.displayName}}" +
-    "                        <span ng-click=\"removeGroup($index)\" class=\"ngRemoveGroup\">x</span>" +
-    "                    </span>" +
-    "                    <span ng-hide=\"$last\" class=\"ngGroupArrow\"></span>" +
-    "                </span>" +
-    "            </li>" +
-    "        </ul>" +
-    "    </div>" +
-    "    <div class=\"ngHeaderContainer\" ng-style=\"headerStyle()\">" +
-    "        <div class=\"ngHeaderScroller\" ng-style=\"headerScrollerStyle()\" ng-include=\"gridId + 'headerRowTemplate.html'\"></div>" +
-    "    </div>" +
-    "    <div ng-grid-menu></div>" +
-    "</div>" +
-    "<div class=\"ngViewport\" unselectable=\"on\" ng-viewport ng-class=\"{'ui-widget-content': jqueryUITheme}\" ng-style=\"viewportStyle()\">" +
-    "    <div class=\"ngCanvas\" ng-style=\"canvasStyle()\">" +
-    "        <div ng-style=\"rowStyle(row)\" ng-repeat=\"row in renderedRows\" ng-click=\"row.toggleSelected($event)\" ng-class=\"row.alternatingRowClass()\" ng-row></div>" +
-    "    </div>" +
-    "</div>" +
-    "<div ng-grid-footer></div>" +
-    ""
-  );
-
-  $templateCache.put("headerCellTemplate.html",
-    "<div class=\"ngHeaderSortColumn {{col.headerClass}}\" ng-style=\"{'cursor': col.cursor}\" ng-class=\"{ 'ngSorted': !noSortVisible }\">" +
-    "    <div ng-click=\"col.sort($event)\" ng-class=\"'colt' + col.index\" class=\"ngHeaderText\">{{col.displayName}}</div>" +
-    "    <div class=\"ngSortButtonDown\" ng-show=\"col.showSortButtonDown()\"></div>" +
-    "    <div class=\"ngSortButtonUp\" ng-show=\"col.showSortButtonUp()\"></div>" +
-    "    <div class=\"ngSortPriority\">{{col.sortPriority}}</div>" +
-    "    <div ng-class=\"{ ngPinnedIcon: col.pinned, ngUnPinnedIcon: !col.pinned }\" ng-click=\"togglePin(col)\" ng-show=\"col.pinnable\"></div>" +
-    "</div>" +
-    "<div ng-show=\"col.resizable\" class=\"ngHeaderGrip\" ng-click=\"col.gripClick($event)\" ng-mousedown=\"col.gripOnMouseDown($event)\"></div>"
-  );
-
-  $templateCache.put("headerRowTemplate.html",
-    "<div ng-style=\"{ height: col.headerRowHeight }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngHeaderCell\" ng-header-cell></div>"
-  );
-
-  $templateCache.put("menuTemplate.html",
-    "<div ng-show=\"showColumnMenu || showFilter\"  class=\"ngHeaderButton\" ng-click=\"toggleShowMenu()\">" +
-    "    <div class=\"ngHeaderButtonArrow\"></div>" +
-    "</div>" +
-    "<div ng-show=\"showMenu\" class=\"ngColMenu\">" +
-    "    <div ng-show=\"showFilter\">" +
-    "        <input placeholder=\"{{i18n.ngSearchPlaceHolder}}\" type=\"text\" ng-model=\"filterText\"/>" +
-    "    </div>" +
-    "    <div ng-show=\"showColumnMenu\">" +
-    "        <span class=\"ngMenuText\">{{i18n.ngMenuText}}</span>" +
-    "        <ul class=\"ngColList\">" +
-    "            <li class=\"ngColListItem\" ng-repeat=\"col in columns | ngColumns\">" +
-    "                <label><input ng-disabled=\"col.pinned\" type=\"checkbox\" class=\"ngColListCheckbox\" ng-model=\"col.visible\"/>{{col.displayName}}</label>" +
-    "       <a title=\"Group By\" ng-class=\"col.groupedByClass()\" ng-show=\"col.groupable && col.visible\" ng-click=\"groupBy(col)\"></a>" +
-    "       <span class=\"ngGroupingNumber\" ng-show=\"col.groupIndex > 0\">{{col.groupIndex}}</span>          " +
-    "            </li>" +
-    "        </ul>" +
-    "    </div>" +
-    "</div>"
-  );
-
-  $templateCache.put("rowTemplate.html",
-    "<div ng-style=\"{ 'cursor': row.cursor }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngCell {{col.cellClass}}\" ng-cell></div>"
-  );
-
-}]);
-
-}(window, jQuery));
-/*
- * promise-tracker - v1.3.3 - 2013-04-29
- * http://github.com/ajoslin/angular-promise-tracker
- * Created by Andy Joslin; Licensed under Public Domain
- */
-angular.module('ajoslin.promise-tracker', []);
-
-
-angular.module('ajoslin.promise-tracker')
-
-/*
- * Intercept all http requests that have a `tracker` option in their config,
- * and add that http promise to the specified `tracker`
- */
-
-//angular versions before 1.1.4 use responseInterceptor format
-.factory('trackerResponseInterceptor', ['$q', 'promiseTracker', '$injector', 
-function($q, promiseTracker, $injector) {
-  //We use $injector get around circular dependency problem for $http
-  var $http;
-  return function spinnerResponseInterceptor(promise) {
-    if (!$http) $http = $injector.get('$http'); //lazy-load http
-    //We know the latest request is always going to be last in the list
-    var config = $http.pendingRequests[$http.pendingRequests.length-1];
-    if (config.tracker) {
-      promiseTracker(config.tracker).addPromise(promise, config);
-    }
-    return promise;
-  };
-}])
-
-.factory('trackerHttpInterceptor', ['$q', 'promiseTracker', '$injector', 
-function($q, promiseTracker, $injector) {
-  return {
-    request: function(config) {
-      if (config.tracker) {
-        var deferred = promiseTracker(config.tracker).createPromise(config);
-        config.$promiseTrackerDeferred = deferred;
-      }
-      return $q.when(config);
-    },
-    response: function(response) {
-      if (response.config.$promiseTrackerDeferred) {
-        response.config.$promiseTrackerDeferred.resolve(response);
-      }
-      return $q.when(response);
-    },
-    responseError: function(response) {
-      if (response.config.$promiseTrackerDeferred) {
-        response.config.$promiseTrackerDeferred.reject(response);
-      }
-      return $q.reject(response);
-    }
-  };
-}])
-
-.config(['$httpProvider', function($httpProvider) {
-  if ($httpProvider.interceptors) {
-    //Support angularJS 1.1.4: interceptors
-    $httpProvider.interceptors.push('trackerHttpInterceptor');
-  } else {
-    //Support angularJS pre 1.1.4: responseInterceptors
-    $httpProvider.responseInterceptors.push('trackerResponseInterceptor');
-  }
-}])
-
-;
-
-
-angular.module('ajoslin.promise-tracker')
-
-.provider('promiseTracker', function() {
-
-  /**
-   * uid(), from angularjs source
-   *
-   * A consistent way of creating unique IDs in angular. The ID is a sequence of alpha numeric
-   * characters such as '012ABC'. The reason why we are not using simply a number counter is that
-   * the number string gets longer over time, and it can also overflow, where as the nextId
-   * will grow much slower, it is a string, and it will never overflow.
-   *
-   * @returns string unique alpha-numeric string
-   */
-  var uid = ['0','0','0'];
-  function nextUid() {
-    var index = uid.length;
-    var digit;
-
-    while(index) {
-      index--;
-      digit = uid[index].charCodeAt(0);
-      if (digit === 57 /*'9'*/) {
-        uid[index] = 'A';
-        return uid.join('');
-      }
-      if (digit === 90  /*'Z'*/) {
-        uid[index] = '0';
-      } else {
-        uid[index] = String.fromCharCode(digit + 1);
-        return uid.join('');
-      }
-    }
-    uid.unshift('0');
-    return uid.join('');
-  }
-  var trackers = {};
-
-  this.$get = ['$q', '$timeout', function($q, $timeout) {
-    var self = this;
-
-    function Tracker(options) {
-      options = options || {};
-      var self = this,
-        //Define our callback types.  The user can catch when a promise starts,
-        //has an error, is successful, or just is done with error or success.
-        callbacks = {
-          start: [], //Start is called when a new promise is added
-          done: [], //Called when a promise is resolved (error or success)
-          error: [], //Called on error.
-          success: [] //Called on success.
-        },
-        trackedPromises = [];
-
-      //Allow an optional "minimum duration" that the tracker has to stay
-      //active for. For example, if minimum duration is 1000ms and the user 
-      //adds three promises that all resolve after 650ms, the tracker will 
-      //still count itself as active until 1000ms have passed.
-      self.setMinDuration = function(minimum) {
-        self._minDuration = minimum;
-      };
-      self.setMinDuration(options.minDuration);
-
-      //Allow an option "maximum duration" that the tracker can stay active.
-      //Ideally, the user would resolve his promises after a certain time to 
-      //achieve this 'maximum duration' option, but there are a few cases
-      //where it is necessary anyway.
-      self.setMaxDuration = function(maximum) {
-        self._maxDuration = maximum;
-      };
-      self.setMaxDuration(options.maxDuration);
-
-      //## active()
-      //Returns whether the promiseTracker is active - detect if we're 
-      //currently tracking any promises.
-      self.active = function() {
-        return trackedPromises.length > 0;
-      };
-
-      //## cancel()
-      //Resolves all the current promises, immediately ending the tracker.
-      self.cancel = function() {
-        angular.forEach(trackedPromises, function(deferred) {
-          deferred.resolve();
-        });
-      };
-
-      //Fire an event bound with #on().
-      //@param options: {id: uniqueId, event: string, value: someValue}
-      //Calls registered callbacks for `event` with params (`value`, `id`)
-      function fireEvent(options) {
-        angular.forEach(callbacks[options.event], function(cb) {
-          cb.call(self, options.value, options.id);
-        });
-      }
-
-      //Create a promise that will make our tracker active until it is resolved.
-      //@param startArg: params to pass to 'start' event
-      //@return deferred - our deferred object that is being tracked
-      function createPromise(startArg) {
-        //We create our own promise to track. This usually piggybacks on a given
-        //promise, or we give it back and someone else can resolve it (like 
-        //with the httpResponseInterceptor).
-        //Using our own promise also lets us do things like cancel early or add 
-        //a minimum duration.
-        var deferred = $q.defer();
-        var promiseId = nextUid();
-
-        trackedPromises.push(deferred);
-        fireEvent({
-          event: 'start',
-          id: promiseId,
-          value: startArg
-        });
-
-        //If the tracker was just inactive and this the first in the list of
-        //promises, we reset our 'minimum duration' and 'maximum duration'
-        //again.
-        if (trackedPromises.length === 1) {
-          if (self._minDuration) {
-            self.minPromise = $timeout(angular.noop, self._minDuration);
-          } else {
-            //No minDuration means we just instantly resolve for our 'wait'
-            //promise.
-            self.minPromise = $q.when(true);
-          }
-          if (self._maxDuration) {
-            self.maxPromise = $timeout(deferred.resolve, self._maxDuration);
-          }
-        }
-
-        //Create a callback for when this promise is done. It will remove our
-        //tracked promise from the array and call the appropriate event 
-        //callbacks depending on whether there was an error or not.
-        function onDone(isError) {
-          return function(value) {
-            //Before resolving our promise, make sure the minDuration timeout
-            //has finished.
-            self.minPromise.then(function() {
-              fireEvent({
-                event: isError ? 'error' : 'success',
-                id: promiseId,
-                value: value
-              });
-              fireEvent({
-                event: 'done', 
-                id: promiseId,
-                value: value
-              });
-
-              var index = trackedPromises.indexOf(deferred);
-              trackedPromises.splice(index, 1);
-
-              //If this is the last promise, cleanup the timeout
-              //for maxDuration so it doesn't stick around.
-              if (trackedPromises.length === 0 && self.maxPromise) {
-                $timeout.cancel(self.maxPromise);
-              }
-            });
-          };
-        }
-
-        deferred.promise.then(onDone(false), onDone(true));
-
-        return deferred;
-      }
-
-      //## addPromise()
-      //Adds a given promise to our tracking
-      self.addPromise = function(promise, startArg) {
-        var deferred = createPromise(startArg);
-
-        //When given promise is done, resolve our created promise
-        //Allow $then for angular-resource objects
-        (promise.$then || promise.then)(function success(value) {
-          deferred.resolve(value);
-          return value;
-        }, function error(value) {
-          deferred.reject(value);
-          return $q.reject(value);
-        });
-
-        return deferred;
-      };
-
-      //## createPromise()
-      //Create a new promise and return it, and let the user resolve it how
-      //they see fit.
-      self.createPromise = function(startArg) {
-        return createPromise(startArg);
-      };
-
-      //## on(), bind()
-      self.on = self.bind = function(event, cb) {
-        if (!callbacks[event]) {
-          throw "Cannot create callback for event '" + event + 
-          "'. Allowed types: 'start', 'done', 'error', 'success'";
-        }
-        callbacks[event].push(cb);
-        return self;
-      };
-      self.off = self.unbind = function(event, cb) {
-        if (!callbacks[event]) {
-          throw "Cannot create callback for event '" + event + 
-          "'. Allowed types: 'start', 'done', 'error', 'success'";
-        }
-        if (cb) {
-          var index = callbacks[event].indexOf(cb);
-          callbacks[event].splice(index, 1);
-        } else {
-          //Erase all events of this type if no cb specified to remvoe
-          callbacks[event].length = 0;
-        }
-        return self;
-      };
-    }
-    return function promiseTracker(trackerName, options) {
-      if (!trackers[trackerName])  {
-        trackers[trackerName] = new Tracker(options);
-      }
-      return trackers[trackerName];
-    };
-  }];
-})
-;
-
-/*! sprintf.js | Copyright (c) 2007-2013 Alexandru Marasteanu <hello at alexei dot ro> | 3 clause BSD license */
-
-(function(ctx) {
-  var sprintf = function() {
-    if (!sprintf.cache.hasOwnProperty(arguments[0])) {
-      sprintf.cache[arguments[0]] = sprintf.parse(arguments[0]);
-    }
-    return sprintf.format.call(null, sprintf.cache[arguments[0]], arguments);
-  };
-
-  sprintf.format = function(parse_tree, argv) {
-    var cursor = 1, tree_length = parse_tree.length, node_type = '', arg, output = [], i, k, match, pad, pad_character, pad_length;
-    for (i = 0; i < tree_length; i++) {
-      node_type = get_type(parse_tree[i]);
-      if (node_type === 'string') {
-        output.push(parse_tree[i]);
-      }
-      else if (node_type === 'array') {
-        match = parse_tree[i]; // convenience purposes only
-        if (match[2]) { // keyword argument
-          arg = argv[cursor];
-          for (k = 0; k < match[2].length; k++) {
-            if (!arg.hasOwnProperty(match[2][k])) {
-              throw(sprintf('[sprintf] property "%s" does not exist', match[2][k]));
-            }
-            arg = arg[match[2][k]];
-          }
-        }
-        else if (match[1]) { // positional argument (explicit)
-          arg = argv[match[1]];
-        }
-        else { // positional argument (implicit)
-          arg = argv[cursor++];
-        }
-
-        if (/[^s]/.test(match[8]) && (get_type(arg) != 'number')) {
-          throw(sprintf('[sprintf] expecting number but found %s', get_type(arg)));
-        }
-        switch (match[8]) {
-          case 'b': arg = arg.toString(2); break;
-          case 'c': arg = String.fromCharCode(arg); break;
-          case 'd': arg = parseInt(arg, 10); break;
-          case 'e': arg = match[7] ? arg.toExponential(match[7]) : arg.toExponential(); break;
-          case 'f': arg = match[7] ? parseFloat(arg).toFixed(match[7]) : parseFloat(arg); break;
-          case 'o': arg = arg.toString(8); break;
-          case 's': arg = ((arg = String(arg)) && match[7] ? arg.substring(0, match[7]) : arg); break;
-          case 'u': arg = arg >>> 0; break;
-          case 'x': arg = arg.toString(16); break;
-          case 'X': arg = arg.toString(16).toUpperCase(); break;
-        }
-        arg = (/[def]/.test(match[8]) && match[3] && arg >= 0 ? '+'+ arg : arg);
-        pad_character = match[4] ? match[4] == '0' ? '0' : match[4].charAt(1) : ' ';
-        pad_length = match[6] - String(arg).length;
-        pad = match[6] ? str_repeat(pad_character, pad_length) : '';
-        output.push(match[5] ? arg + pad : pad + arg);
-      }
-    }
-    return output.join('');
-  };
-
-  sprintf.cache = {};
-
-  sprintf.parse = function(fmt) {
-    var _fmt = fmt, match = [], parse_tree = [], arg_names = 0;
-    while (_fmt) {
-      if ((match = /^[^\x25]+/.exec(_fmt)) !== null) {
-        parse_tree.push(match[0]);
-      }
-      else if ((match = /^\x25{2}/.exec(_fmt)) !== null) {
-        parse_tree.push('%');
-      }
-      else if ((match = /^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-fosuxX])/.exec(_fmt)) !== null) {
-        if (match[2]) {
-          arg_names |= 1;
-          var field_list = [], replacement_field = match[2], field_match = [];
-          if ((field_match = /^([a-z_][a-z_\d]*)/i.exec(replacement_field)) !== null) {
-            field_list.push(field_match[1]);
-            while ((replacement_field = replacement_field.substring(field_match[0].length)) !== '') {
-              if ((field_match = /^\.([a-z_][a-z_\d]*)/i.exec(replacement_field)) !== null) {
-                field_list.push(field_match[1]);
-              }
-              else if ((field_match = /^\[(\d+)\]/.exec(replacement_field)) !== null) {
-                field_list.push(field_match[1]);
-              }
-              else {
-                throw('[sprintf] huh?');
-              }
-            }
-          }
-          else {
-            throw('[sprintf] huh?');
-          }
-          match[2] = field_list;
-        }
-        else {
-          arg_names |= 2;
-        }
-        if (arg_names === 3) {
-          throw('[sprintf] mixing positional and named placeholders is not (yet) supported');
-        }
-        parse_tree.push(match);
-      }
-      else {
-        throw('[sprintf] huh?');
-      }
-      _fmt = _fmt.substring(match[0].length);
-    }
-    return parse_tree;
-  };
-
-  var vsprintf = function(fmt, argv, _argv) {
-    _argv = argv.slice(0);
-    _argv.splice(0, 0, fmt);
-    return sprintf.apply(null, _argv);
-  };
-
-  /**
-   * helpers
-   */
-  function get_type(variable) {
-    return Object.prototype.toString.call(variable).slice(8, -1).toLowerCase();
-  }
-
-  function str_repeat(input, multiplier) {
-    for (var output = []; multiplier > 0; output[--multiplier] = input) {/* do nothing */}
-    return output.join('');
-  }
-
-  /**
-   * export to either browser or node.js
-   */
-  ctx.sprintf = sprintf;
-  ctx.vsprintf = vsprintf;
-})(typeof exports != "undefined" ? exports : window);
-/*global angular, CodeMirror, Error*/
-/**
- * Binds a CodeMirror widget to a <textarea> element.
- */
-angular.module('ui.codemirror', [])
-  .constant('uiCodemirrorConfig', {})
-  .directive('uiCodemirror', ['uiCodemirrorConfig', '$timeout', function (uiCodemirrorConfig, $timeout) {
-    'use strict';
-
-    var events = ["cursorActivity", "viewportChange", "gutterClick", "focus", "blur", "scroll", "update"];
-    return {
-      restrict: 'A',
-      require: 'ngModel',
-      link: function (scope, elm, attrs, ngModel) {
-        var options, opts, onChange, deferCodeMirror, codeMirror;
-
-        if (elm[0].type !== 'textarea') {
-          throw new Error('uiCodemirror3 can only be applied to a textarea element');
-        }
-
-        options = uiCodemirrorConfig.codemirror || {};
-        opts = angular.extend({}, options, scope.$eval(attrs.uiCodemirror));
-
-        onChange = function (aEvent) {
-          return function (instance, changeObj) {
-            var newValue = instance.getValue();
-            if (newValue !== ngModel.$viewValue) {
-              ngModel.$setViewValue(newValue);
-              if(!scope.$$phase){ scope.$apply(); }
-            }
-            if (typeof aEvent === "function") {
-              aEvent(instance, changeObj);
-            }
-          };
-        };
-
-        deferCodeMirror = function () {
-          codeMirror = CodeMirror.fromTextArea(elm[0], opts);
-          codeMirror.on("change", onChange(opts.onChange));
-
-          for (var i = 0, n = events.length, aEvent; i < n; ++i) {
-            aEvent = opts["on" + events[i].charAt(0).toUpperCase() + events[i].slice(1)];
-            if (aEvent === void 0) {
-              continue;
-            }
-            if (typeof aEvent !== "function") {
-              continue;
-            }
-            codeMirror.on(events[i], aEvent);
-          }
-
-          // CodeMirror expects a string, so make sure it gets one.
-          // This does not change the model.
-          ngModel.$formatters.push(function (value) {
-            if (angular.isUndefined(value) || value === null) {
-              return '';
-            }
-            else if (angular.isObject(value) || angular.isArray(value)) {
-              throw new Error('ui-codemirror cannot use an object or an array as a model');
-            }
-            return value;
-          });
-
-          // Override the ngModelController $render method, which is what gets called when the model is updated.
-          // This takes care of the synchronizing the codeMirror element with the underlying model, in the case that it is changed by something else.
-          ngModel.$render = function () {
-            codeMirror.setValue(ngModel.$viewValue);
-          };
-
-          // Watch ui-refresh and refresh the directive
-          if (attrs.uiRefresh) {
-            scope.$watch(attrs.uiRefresh, function (newVal, oldVal) {
-              // Skip the initial watch firing
-              if (newVal !== oldVal) {
-                $timeout(function(){codeMirror.refresh();});
-              }
-            });
-          }
-        };
-
-        $timeout(deferCodeMirror);
-
-      }
-    };
-  }]);
-/**
- * angular-ui-utils - Swiss-Army-Knife of AngularJS tools (with no external dependencies!)
- * @version v0.0.3 - 2013-05-28
- * @link http://angular-ui.github.com
- * @license MIT License, http://www.opensource.org/licenses/MIT
- */
-/**
- * General-purpose Event binding. Bind any event not natively supported by Angular
- * Pass an object with keynames for events to ui-event
- * Allows $event object and $params object to be passed
- *
- * @example <input ui-event="{ focus : 'counter++', blur : 'someCallback()' }">
- * @example <input ui-event="{ myCustomEvent : 'myEventHandler($event, $params)'}">
- *
- * @param ui-event {string|object literal} The event to bind to as a string or a hash of events with their callbacks
- */
-angular.module('ui.event',[]).directive('uiEvent', ['$parse',
-  function ($parse) {
-    return function ($scope, elm, attrs) {
-      var events = $scope.$eval(attrs.uiEvent);
-      angular.forEach(events, function (uiEvent, eventName) {
-        var fn = $parse(uiEvent);
-        elm.bind(eventName, function (evt) {
-          var params = Array.prototype.slice.call(arguments);
-          //Take out first paramater (event object);
-          params = params.splice(1);
-          fn($scope, {$event: evt, $params: params});
-          if (!$scope.$$phase) {
-            $scope.$apply();
-          }
-        });
-      });
-    };
-  }]);
-
-
-/**
- * A replacement utility for internationalization very similar to sprintf.
- *
- * @param replace {mixed} The tokens to replace depends on type
- *  string: all instances of $0 will be replaced
- *  array: each instance of $0, $1, $2 etc. will be placed with each array item in corresponding order
- *  object: all attributes will be iterated through, with :key being replaced with its corresponding value
- * @return string
- *
- * @example: 'Hello :name, how are you :day'.format({ name:'John', day:'Today' })
- * @example: 'Records $0 to $1 out of $2 total'.format(['10', '20', '3000'])
- * @example: '$0 agrees to all mentions $0 makes in the event that $0 hits a tree while $0 is driving drunk'.format('Bob')
- */
-angular.module('ui.format',[]).filter('format', function(){
-  return function(value, replace) {
-    if (!value) {
-      return value;
-    }
-    var target = value.toString(), token;
-    if (replace === undefined) {
-      return target;
-    }
-    if (!angular.isArray(replace) && !angular.isObject(replace)) {
-      return target.split('$0').join(replace);
-    }
-    token = angular.isArray(replace) && '$' || ':';
-
-    angular.forEach(replace, function(value, key){
-      target = target.split(token+key).join(value);
-    });
-    return target;
-  };
-});
-
-/**
- * Wraps the
- * @param text {string} haystack to search through
- * @param search {string} needle to search for
- * @param [caseSensitive] {boolean} optional boolean to use case-sensitive searching
- */
-angular.module('ui.highlight',[]).filter('highlight', function () {
-  return function (text, search, caseSensitive) {
-    if (search || angular.isNumber(search)) {
-      text = text.toString();
-      search = search.toString();
-      if (caseSensitive) {
-        return text.split(search).join('<span class="ui-match">' + search + '</span>');
-      } else {
-        return text.replace(new RegExp(search, 'gi'), '<span class="ui-match">$&</span>');
-      }
-    } else {
-      return text;
-    }
-  };
-});
-
-/**
- * Provides an easy way to toggle a checkboxes indeterminate property
- *
- * @example <input type="checkbox" ui-indeterminate="isUnkown">
- */
-angular.module('ui.indeterminate',[]).directive('uiIndeterminate', [
-  function () {
-    return {
-      compile: function(tElm, tAttrs) {
-        if (!tAttrs.type || tAttrs.type.toLowerCase() !== 'checkbox') {
-          return angular.noop;
-        }
-
-        return function ($scope, elm, attrs) {
-          $scope.$watch(attrs.uiIndeterminate, function(newVal, oldVal) {
-            elm[0].indeterminate = !!newVal;
-          });
-        };
-      }
-    };
-  }]);
-
-/**
- * Converts variable-esque naming conventions to something presentational, capitalized words separated by space.
- * @param {String} value The value to be parsed and prettified.
- * @param {String} [inflector] The inflector to use. Default: humanize.
- * @return {String}
- * @example {{ 'Here Is my_phoneNumber' | inflector:'humanize' }} => Here Is My Phone Number
- *          {{ 'Here Is my_phoneNumber' | inflector:'underscore' }} => here_is_my_phone_number
- *          {{ 'Here Is my_phoneNumber' | inflector:'variable' }} => hereIsMyPhoneNumber
- */
-angular.module('ui.inflector',[]).filter('inflector', function () {
-  function ucwords(text) {
-    return text.replace(/^([a-z])|\s+([a-z])/g, function ($1) {
-      return $1.toUpperCase();
-    });
-  }
-
-  function breakup(text, separator) {
-    return text.replace(/[A-Z]/g, function (match) {
-      return separator + match;
-    });
-  }
-
-  var inflectors = {
-    humanize: function (value) {
-      return ucwords(breakup(value, ' ').split('_').join(' '));
-    },
-    underscore: function (value) {
-      return value.substr(0, 1).toLowerCase() + breakup(value.substr(1), '_').toLowerCase().split(' ').join('_');
-    },
-    variable: function (value) {
-      value = value.substr(0, 1).toLowerCase() + ucwords(value.split('_').join(' ')).substr(1).split(' ').join('');
-      return value;
-    }
-  };
-
-  return function (text, inflector, separator) {
-    if (inflector !== false && angular.isString(text)) {
-      inflector = inflector || 'humanize';
-      return inflectors[inflector](text);
-    } else {
-      return text;
-    }
-  };
-});
-
-/**
- * General-purpose jQuery wrapper. Simply pass the plugin name as the expression.
- *
- * It is possible to specify a default set of parameters for each jQuery plugin.
- * Under the jq key, namespace each plugin by that which will be passed to ui-jq.
- * Unfortunately, at this time you can only pre-define the first parameter.
- * @example { jq : { datepicker : { showOn:'click' } } }
- *
- * @param ui-jq {string} The $elm.[pluginName]() to call.
- * @param [ui-options] {mixed} Expression to be evaluated and passed as options to the function
- *     Multiple parameters can be separated by commas
- * @param [ui-refresh] {expression} Watch expression and refire plugin on changes
- *
- * @example <input ui-jq="datepicker" ui-options="{showOn:'click'},secondParameter,thirdParameter" ui-refresh="iChange">
- */
-angular.module('ui.jq',[]).
-  value('uiJqConfig',{}).
-  directive('uiJq', ['uiJqConfig', '$timeout', function uiJqInjectingFunction(uiJqConfig, $timeout) {
-
-  return {
-    restrict: 'A',
-    compile: function uiJqCompilingFunction(tElm, tAttrs) {
-
-      if (!angular.isFunction(tElm[tAttrs.uiJq])) {
-        throw new Error('ui-jq: The "' + tAttrs.uiJq + '" function does not exist');
-      }
-      var options = uiJqConfig && uiJqConfig[tAttrs.uiJq];
-
-      return function uiJqLinkingFunction(scope, elm, attrs) {
-
-        var linkOptions = [];
-
-        // If ui-options are passed, merge (or override) them onto global defaults and pass to the jQuery method
-        if (attrs.uiOptions) {
-          linkOptions = scope.$eval('[' + attrs.uiOptions + ']');
-          if (angular.isObject(options) && angular.isObject(linkOptions[0])) {
-            linkOptions[0] = angular.extend({}, options, linkOptions[0]);
-          }
-        } else if (options) {
-          linkOptions = [options];
-        }
-        // If change compatibility is enabled, the form input's "change" event will trigger an "input" event
-        if (attrs.ngModel && elm.is('select,input,textarea')) {
-          elm.bind('change', function() {
-            elm.trigger('input');
-          });
-        }
-
-        // Call jQuery method and pass relevant options
-        function callPlugin() {
-          $timeout(function() {
-            elm[attrs.uiJq].apply(elm, linkOptions);
-          }, 0, false);
-        }
-
-        // If ui-refresh is used, re-fire the the method upon every change
-        if (attrs.uiRefresh) {
-          scope.$watch(attrs.uiRefresh, function(newVal) {
-            callPlugin();
-          });
-        }
-        callPlugin();
-      };
-    }
-  };
-}]);
-
-angular.module('ui.keypress',[]).
-factory('keypressHelper', ['$parse', function keypress($parse){
-  var keysByCode = {
-    8: 'backspace',
-    9: 'tab',
-    13: 'enter',
-    27: 'esc',
-    32: 'space',
-    33: 'pageup',
-    34: 'pagedown',
-    35: 'end',
-    36: 'home',
-    37: 'left',
-    38: 'up',
-    39: 'right',
-    40: 'down',
-    45: 'insert',
-    46: 'delete'
-  };
-
-  var capitaliseFirstLetter = function (string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  };
-
-  return function(mode, scope, elm, attrs) {
-    var params, combinations = [];
-    params = scope.$eval(attrs['ui'+capitaliseFirstLetter(mode)]);
-
-    // Prepare combinations for simple checking
-    angular.forEach(params, function (v, k) {
-      var combination, expression;
-      expression = $parse(v);
-
-      angular.forEach(k.split(' '), function(variation) {
-        combination = {
-          expression: expression,
-          keys: {}
-        };
-        angular.forEach(variation.split('-'), function (value) {
-          combination.keys[value] = true;
-        });
-        combinations.push(combination);
-      });
-    });
-
-    // Check only matching of pressed keys one of the conditions
-    elm.bind(mode, function (event) {
-      // No need to do that inside the cycle
-      var metaPressed = !!(event.metaKey && !event.ctrlKey);
-      var altPressed = !!event.altKey;
-      var ctrlPressed = !!event.ctrlKey;
-      var shiftPressed = !!event.shiftKey;
-      var keyCode = event.keyCode;
-
-      // normalize keycodes
-      if (mode === 'keypress' && !shiftPressed && keyCode >= 97 && keyCode <= 122) {
-        keyCode = keyCode - 32;
-      }
-
-      // Iterate over prepared combinations
-      angular.forEach(combinations, function (combination) {
-
-        var mainKeyPressed = combination.keys[keysByCode[event.keyCode]] || combination.keys[event.keyCode.toString()];
-
-        var metaRequired = !!combination.keys.meta;
-        var altRequired = !!combination.keys.alt;
-        var ctrlRequired = !!combination.keys.ctrl;
-        var shiftRequired = !!combination.keys.shift;
-
-        if (
-          mainKeyPressed &&
-          ( metaRequired === metaPressed ) &&
-          ( altRequired === altPressed ) &&
-          ( ctrlRequired === ctrlPressed ) &&
-          ( shiftRequired === shiftPressed )
-        ) {
-          // Run the function
-          scope.$apply(function () {
-            combination.expression(scope, { '$event': event });
-          });
-        }
-      });
-    });
-  };
-}]);
-
-/**
- * Bind one or more handlers to particular keys or their combination
- * @param hash {mixed} keyBindings Can be an object or string where keybinding expression of keys or keys combinations and AngularJS Exspressions are set. Object syntax: "{ keys1: expression1 [, keys2: expression2 [ , ... ]]}". String syntax: ""expression1 on keys1 [ and expression2 on keys2 [ and ... ]]"". Expression is an AngularJS Expression, and key(s) are dash-separated combinations of keys and modifiers (one or many, if any. Order does not matter). Supported modifiers are 'ctrl', 'shift', 'alt' and key can be used either via its keyCode (13 for Return) or name. Named keys are 'backspace', 'tab', 'enter', 'esc', 'space', 'pageup', 'pagedown', 'end', 'home', 'left', 'up', 'right', 'down', 'insert', 'delete'.
- * @example <input ui-keypress="{enter:'x = 1', 'ctrl-shift-space':'foo()', 'shift-13':'bar()'}" /> <input ui-keypress="foo = 2 on ctrl-13 and bar('hello') on shift-esc" />
- **/
-angular.module('ui.keypress').directive('uiKeydown', ['keypressHelper', function(keypressHelper){
-  return {
-    link: function (scope, elm, attrs) {
-      keypressHelper('keydown', scope, elm, attrs);
-    }
-  };
-}]);
-
-angular.module('ui.keypress').directive('uiKeypress', ['keypressHelper', function(keypressHelper){
-  return {
-    link: function (scope, elm, attrs) {
-      keypressHelper('keypress', scope, elm, attrs);
-    }
-  };
-}]);
-
-angular.module('ui.keypress').directive('uiKeyup', ['keypressHelper', function(keypressHelper){
-  return {
-    link: function (scope, elm, attrs) {
-      keypressHelper('keyup', scope, elm, attrs);
-    }
-  };
-}]);
-/*
- Attaches input mask onto input element
- */
-angular.module('ui.mask',[]).directive('uiMask', [
-  function () {
-    var maskDefinitions = {
-      '9': /\d/,
-      'A': /[a-zA-Z]/,
-      '*': /[a-zA-Z0-9]/
-    };
-    return {
-      priority: 100,
-      require: 'ngModel',
-      restrict: 'A',
-      link: function (scope, iElement, iAttrs, controller) {
-        var maskProcessed = false, eventsBound = false,
-            maskCaretMap, maskPatterns, maskPlaceholder, maskComponents,
-            // Minimum required length of the value to be considered valid
-            minRequiredLength,
-            value, valueMasked, isValid,
-            // Vars for initializing/uninitializing
-            originalPlaceholder = iAttrs.placeholder,
-            originalMaxlength   = iAttrs.maxlength,
-            // Vars used exclusively in eventHandler()
-            oldValue, oldValueUnmasked, oldCaretPosition, oldSelectionLength;
-
-        function initialize(maskAttr) {
-          if (!angular.isDefined(maskAttr)){
-            return uninitialize();
-          }
-          processRawMask(maskAttr);
-          if (!maskProcessed){
-            return uninitialize();
-          }
-          initializeElement();
-          bindEventListeners();
-        }
-
-        function formatter(fromModelValue) {
-          if (!maskProcessed){
-            return fromModelValue;
-          }
-          value   = unmaskValue(fromModelValue || '');
-          isValid = validateValue(value);
-          controller.$setValidity('mask', isValid);
-          return isValid && value.length ? maskValue(value) : undefined;
-        }
-
-
-        function parser(fromViewValue) {
-          if (!maskProcessed){
-            return fromViewValue;
-          }
-          value     = unmaskValue(fromViewValue || '');
-          isValid   = validateValue(value);
-          viewValue = value.length ? maskValue(value) : '';
-          // We have to set viewValue manually as the reformatting of the input
-          // value performed by eventHandler() doesn't happen until after
-          // this parser is called, which causes what the user sees in the input
-          // to be out-of-sync with what the controller's $viewValue is set to.
-          controller.$viewValue = viewValue;
-          controller.$setValidity('mask', isValid);
-          if (value === '' && controller.$error.required !== undefined){
-            controller.$setValidity('required', false);
-          }
-          return isValid ? value : undefined;
-        }
-
-        iAttrs.$observe('uiMask', initialize);
-        controller.$formatters.push(formatter);
-        controller.$parsers.push(parser);
-
-        function uninitialize() {
-          maskProcessed = false;
-          unbindEventListeners();
-
-          if (angular.isDefined(originalPlaceholder)){
-            iElement.attr('placeholder', originalPlaceholder);
-          }else{
-            iElement.removeAttr('placeholder');
-          }
-
-          if (angular.isDefined(originalMaxlength)){
-            iElement.attr('maxlength', originalMaxlength);
-          }else{
-            iElement.removeAttr('maxlength');
-          }
-
-          iElement.val(controller.$modelValue);
-          controller.$viewValue = controller.$modelValue;
-          return false;
-        }
-
-        function initializeElement() {
-          value       = oldValueUnmasked = unmaskValue(controller.$modelValue || '');
-          valueMasked = oldValue         = maskValue(value);
-          isValid     = validateValue(value);
-          viewValue   = isValid && value.length ? valueMasked : '';
-          if (iAttrs.maxlength){ // Double maxlength to allow pasting new val at end of mask
-            iElement.attr('maxlength', maskCaretMap[maskCaretMap.length-1]*2);
-          }
-          iElement.attr('placeholder', maskPlaceholder);
-          iElement.val(viewValue);
-          controller.$viewValue = viewValue;
-          // Not using $setViewValue so we don't clobber the model value and dirty the form
-          // without any kind of user interaction.
-        }
-
-        function bindEventListeners() {
-          if (eventsBound){
-            return true;
-          }
-          iElement.bind('blur',              blurHandler);
-          iElement.bind('mousedown mouseup', mouseDownUpHandler);
-          iElement.bind('input keyup click', eventHandler);
-          eventsBound = true;
-        }
-
-        function unbindEventListeners() {
-          if (!eventsBound){
-            return true;
-          }
-          iElement.unbind('blur',      blurHandler);
-          iElement.unbind('mousedown', mouseDownUpHandler);
-          iElement.unbind('mouseup',   mouseDownUpHandler);
-          iElement.unbind('input',     eventHandler);
-          iElement.unbind('keyup',     eventHandler);
-          iElement.unbind('click',     eventHandler);
-          eventsBound = false;
-        }
-
-
-        function validateValue(value) {
-          // Zero-length value validity is ngRequired's determination
-          return value.length ? value.length >= minRequiredLength : true;
-        }
-
-        function unmaskValue(value) {
-          var valueUnmasked    = '',
-              maskPatternsCopy = maskPatterns.slice();
-          // Preprocess by stripping mask components from value
-          value = value.toString();
-          angular.forEach(maskComponents, function(component, i) {
-            value = value.replace(component, '');
-          });
-          angular.forEach(value.split(''), function(chr, i) {
-            if (maskPatternsCopy.length && maskPatternsCopy[0].test(chr)) {
-              valueUnmasked += chr;
-              maskPatternsCopy.shift();
-            }
-          });
-          return valueUnmasked;
-        }
-
-        function maskValue(unmaskedValue) {
-          var valueMasked      = '',
-              maskCaretMapCopy = maskCaretMap.slice();
-          angular.forEach(maskPlaceholder.split(''), function(chr, i) {
-            if (unmaskedValue.length && i === maskCaretMapCopy[0]) {
-              valueMasked  += unmaskedValue.charAt(0) || '_';
-              unmaskedValue = unmaskedValue.substr(1);
-              maskCaretMapCopy.shift(); }
-            else{
-              valueMasked += chr;
-            }
-          });
-          return valueMasked;
-        }
-
-        function processRawMask(mask) {
-          var characterCount = 0;
-          maskCaretMap       = [];
-          maskPatterns       = [];
-          maskPlaceholder    = '';
-
-          // No complex mask support for now...
-          // if (mask instanceof Array) {
-          //   angular.forEach(mask, function(item, i) {
-          //     if (item instanceof RegExp) {
-          //       maskCaretMap.push(characterCount++);
-          //       maskPlaceholder += '_';
-          //       maskPatterns.push(item);
-          //     }
-          //     else if (typeof item == 'string') {
-          //       angular.forEach(item.split(''), function(chr, i) {
-          //         maskPlaceholder += chr;
-          //         characterCount++;
-          //       });
-          //     }
-          //   });
-          // }
-          // Otherwise it's a simple mask
-          // else
-
-          if (typeof mask === 'string') {
-            minRequiredLength = 0;
-            var isOptional = false;
-
-            angular.forEach(mask.split(''), function(chr, i) {
-              if (maskDefinitions[chr]) {
-                maskCaretMap.push(characterCount);
-                maskPlaceholder += '_';
-                maskPatterns.push(maskDefinitions[chr]);
-
-                characterCount++;
-                if (!isOptional) {
-                  minRequiredLength++;
-                }
-              }
-              else if (chr === "?") {
-                isOptional = true;
-              }
-              else{
-                maskPlaceholder += chr;
-                characterCount++;
-              }
-            });
-          }
-          // Caret position immediately following last position is valid.
-          maskCaretMap.push(maskCaretMap.slice().pop() + 1);
-          // Generate array of mask components that will be stripped from a masked value
-          // before processing to prevent mask components from being added to the unmasked value.
-          // E.g., a mask pattern of '+7 9999' won't have the 7 bleed into the unmasked value.
-                                                                // If a maskable char is followed by a mask char and has a mask
-                                                                // char behind it, we'll split it into it's own component so if
-                                                                // a user is aggressively deleting in the input and a char ahead
-                                                                // of the maskable char gets deleted, we'll still be able to strip
-                                                                // it in the unmaskValue() preprocessing.
-          maskComponents = maskPlaceholder.replace(/[_]+/g,'_').replace(/([^_]+)([a-zA-Z0-9])([^_])/g, '$1$2_$3').split('_');
-          maskProcessed  = maskCaretMap.length > 1 ? true : false;
-        }
-
-        function blurHandler(e) {
-          oldCaretPosition   = 0;
-          oldSelectionLength = 0;
-          if (!isValid || value.length === 0) {
-            valueMasked = '';
-            iElement.val('');
-            scope.$apply(function() {
-              controller.$setViewValue('');
-            });
-          }
-        }
-
-        function mouseDownUpHandler(e) {
-          if (e.type === 'mousedown'){
-            iElement.bind('mouseout', mouseoutHandler);
-          }else{
-            iElement.unbind('mouseout', mouseoutHandler);
-          }
-        }
-
-        iElement.bind('mousedown mouseup', mouseDownUpHandler);
-
-        function mouseoutHandler(e) {
-          oldSelectionLength = getSelectionLength(this);
-          iElement.unbind('mouseout', mouseoutHandler);
-        }
-
-        function eventHandler(e) {
-          e = e || {};
-          // Allows more efficient minification
-          var eventWhich = e.which,
-              eventType  = e.type;
-
-          // Prevent shift and ctrl from mucking with old values
-          if (eventWhich === 16 || eventWhich === 91){ return true;}
-
-          var val             = iElement.val(),
-              valOld          = oldValue,
-              valMasked,
-              valUnmasked     = unmaskValue(val),
-              valUnmaskedOld  = oldValueUnmasked,
-              valAltered      = false,
-
-              caretPos        = getCaretPosition(this) || 0,
-              caretPosOld     = oldCaretPosition || 0,
-              caretPosDelta   = caretPos - caretPosOld,
-              caretPosMin     = maskCaretMap[0],
-              caretPosMax     = maskCaretMap[valUnmasked.length] || maskCaretMap.slice().shift(),
-
-              selectionLen    = getSelectionLength(this),
-              selectionLenOld = oldSelectionLength || 0,
-              isSelected      = selectionLen > 0,
-              wasSelected     = selectionLenOld > 0,
-
-                                                                // Case: Typing a character to overwrite a selection
-              isAddition      = (val.length > valOld.length) || (selectionLenOld && val.length >  valOld.length - selectionLenOld),
-                                                                // Case: Delete and backspace behave identically on a selection
-              isDeletion      = (val.length < valOld.length) || (selectionLenOld && val.length === valOld.length - selectionLenOld),
-              isSelection     = (eventWhich >= 37 && eventWhich <= 40) && e.shiftKey, // Arrow key codes
-
-              isKeyLeftArrow  = eventWhich === 37,
-                                                    // Necessary due to "input" event not providing a key code
-              isKeyBackspace  = eventWhich === 8  || (eventType !== 'keyup' && isDeletion && (caretPosDelta === -1)),
-              isKeyDelete     = eventWhich === 46 || (eventType !== 'keyup' && isDeletion && (caretPosDelta === 0 ) && !wasSelected),
-
-              // Handles cases where caret is moved and placed in front of invalid maskCaretMap position. Logic below
-              // ensures that, on click or leftward caret placement, caret is moved leftward until directly right of
-              // non-mask character. Also applied to click since users are (arguably) more likely to backspace
-              // a character when clicking within a filled input.
-              caretBumpBack   = (isKeyLeftArrow || isKeyBackspace || eventType === 'click') && caretPos > caretPosMin;
-
-          oldSelectionLength  = selectionLen;
-
-          // These events don't require any action
-          if (isSelection || (isSelected && (eventType === 'click' || eventType === 'keyup'))){
-            return true;
-          }
-
-          // Value Handling
-          // ==============
-
-          // User attempted to delete but raw value was unaffected--correct this grievous offense
-          if ((eventType === 'input') && isDeletion && !wasSelected && valUnmasked === valUnmaskedOld) {
-            while (isKeyBackspace && caretPos > caretPosMin && !isValidCaretPosition(caretPos)){
-              caretPos--;
-            }
-            while (isKeyDelete && caretPos < caretPosMax && maskCaretMap.indexOf(caretPos) === -1){
-              caretPos++;
-            }
-            var charIndex = maskCaretMap.indexOf(caretPos);
-            // Strip out non-mask character that user would have deleted if mask hadn't been in the way.
-            valUnmasked = valUnmasked.substring(0, charIndex) + valUnmasked.substring(charIndex + 1);
-            valAltered  = true;
-          }
-
-          // Update values
-          valMasked        = maskValue(valUnmasked);
-          oldValue         = valMasked;
-          oldValueUnmasked = valUnmasked;
-          iElement.val(valMasked);
-          if (valAltered) {
-            // We've altered the raw value after it's been $digest'ed, we need to $apply the new value.
-            scope.$apply(function() {
-              controller.$setViewValue(valUnmasked);
-            });
-          }
-
-          // Caret Repositioning
-          // ===================
-
-          // Ensure that typing always places caret ahead of typed character in cases where the first char of
-          // the input is a mask char and the caret is placed at the 0 position.
-          if (isAddition && (caretPos <= caretPosMin)){
-            caretPos = caretPosMin + 1;
-          }
-
-          if (caretBumpBack){
-            caretPos--;
-          }
-
-          // Make sure caret is within min and max position limits
-          caretPos = caretPos > caretPosMax ? caretPosMax : caretPos < caretPosMin ? caretPosMin : caretPos;
-
-          // Scoot the caret back or forth until it's in a non-mask position and within min/max position limits
-          while (!isValidCaretPosition(caretPos) && caretPos > caretPosMin && caretPos < caretPosMax){
-            caretPos += caretBumpBack ? -1 : 1;
-          }
-
-          if ((caretBumpBack && caretPos < caretPosMax) || (isAddition && !isValidCaretPosition(caretPosOld))){
-            caretPos++;
-          }
-          oldCaretPosition = caretPos;
-          setCaretPosition(this, caretPos);
-        }
-
-        function isValidCaretPosition(pos) { return maskCaretMap.indexOf(pos) > -1; }
-
-        function getCaretPosition(input) {
-          if (input.selectionStart !== undefined){
-            return input.selectionStart;
-          }else if (document.selection) {
-            // Curse you IE
-            input.focus();
-            var selection = document.selection.createRange();
-            selection.moveStart('character', -input.value.length);
-            return selection.text.length;
-          }
-        }
-
-        function setCaretPosition(input, pos) {
-          if (input.offsetWidth === 0 || input.offsetHeight === 0){
-            return true; // Input's hidden
-          }
-          if (input.setSelectionRange) {
-            input.focus();
-            input.setSelectionRange(pos,pos); }
-          else if (input.createTextRange) {
-            // Curse you IE
-            var range = input.createTextRange();
-            range.collapse(true);
-            range.moveEnd('character', pos);
-            range.moveStart('character', pos);
-            range.select();
-          }
-        }
-
-        function getSelectionLength(input) {
-          if (input.selectionStart !== undefined){
-            return (input.selectionEnd - input.selectionStart);
-          }
-          if (document.selection){
-            return (document.selection.createRange().text.length);
-          }
-        }
-
-        // https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Array/indexOf
-        if (!Array.prototype.indexOf) {
-          Array.prototype.indexOf = function (searchElement /*, fromIndex */ ) {
-            "use strict";
-            if (this === null) {
-              throw new TypeError();
-            }
-            var t = Object(this);
-            var len = t.length >>> 0;
-            if (len === 0) {
-              return -1;
-            }
-            var n = 0;
-            if (arguments.length > 1) {
-              n = Number(arguments[1]);
-              if (n !== n) { // shortcut for verifying if it's NaN
-                n = 0;
-              } else if (n !== 0 && n !== Infinity && n !== -Infinity) {
-                n = (n > 0 || -1) * Math.floor(Math.abs(n));
-              }
-            }
-            if (n >= len) {
-              return -1;
-            }
-            var k = n >= 0 ? n : Math.max(len - Math.abs(n), 0);
-            for (; k < len; k++) {
-              if (k in t && t[k] === searchElement) {
-                return k;
-              }
-            }
-            return -1;
-          };
-        }
-
-      }
-    };
-  }
-]);
-/**
- * Add a clear button to form inputs to reset their value
- */
-angular.module('ui.reset',[]).value('uiResetConfig',null).directive('uiReset', ['uiResetConfig', function (uiResetConfig) {
-  var resetValue = null;
-  if (uiResetConfig !== undefined){
-      resetValue = uiResetConfig;
-  }
-  return {
-    require: 'ngModel',
-    link: function (scope, elm, attrs, ctrl) {
-      var aElement;
-      aElement = angular.element('<a class="ui-reset" />');
-      elm.wrap('<span class="ui-resetwrap" />').after(aElement);
-      aElement.bind('click', function (e) {
-        e.preventDefault();
-        scope.$apply(function () {
-          if (attrs.uiReset){
-            ctrl.$setViewValue(scope.$eval(attrs.uiReset));
-          }else{
-            ctrl.$setViewValue(resetValue);
-          }
-          ctrl.$render();
-        });
-      });
-    }
-  };
-}]);
-
-/**
- * Set a $uiRoute boolean to see if the current route matches
- */
-angular.module('ui.route', []).directive('uiRoute', ['$location', '$parse', function ($location, $parse) {
-  return {
-    restrict: 'AC',
-    scope: true,
-    compile: function(tElement, tAttrs) {
-      var useProperty;
-      if (tAttrs.uiRoute) {
-        useProperty = 'uiRoute';
-      } else if (tAttrs.ngHref) {
-        useProperty = 'ngHref';
-      } else if (tAttrs.href) {
-        useProperty = 'href';
-      } else {
-        throw new Error('uiRoute missing a route or href property on ' + tElement[0]);
-      }
-      return function ($scope, elm, attrs) {
-        var modelSetter = $parse(attrs.ngModel || attrs.routeModel || '$uiRoute').assign;
-        var watcher = angular.noop;
-
-        // Used by href and ngHref
-        function staticWatcher(newVal) {
-          if ((hash = newVal.indexOf('#')) > -1){
-            newVal = newVal.substr(hash + 1);
-          }
-          watcher = function watchHref() {
-            modelSetter($scope, ($location.path().indexOf(newVal) > -1));
-          };
-          watcher();
-        }
-        // Used by uiRoute
-        function regexWatcher(newVal) {
-          if ((hash = newVal.indexOf('#')) > -1){
-            newVal = newVal.substr(hash + 1);
-          }
-          watcher = function watchRegex() {
-            var regexp = new RegExp('^' + newVal + '$', ['i']);
-            modelSetter($scope, regexp.test($location.path()));
-          };
-          watcher();
-        }
-
-        switch (useProperty) {
-          case 'uiRoute':
-            // if uiRoute={{}} this will be undefined, otherwise it will have a value and $observe() never gets triggered
-            if (attrs.uiRoute){
-              regexWatcher(attrs.uiRoute);
-            }else{
-              attrs.$observe('uiRoute', regexWatcher);
-            }
-            break;
-          case 'ngHref':
-            // Setup watcher() every time ngHref changes
-            if (attrs.ngHref){
-              staticWatcher(attrs.ngHref);
-            }else{
-              attrs.$observe('ngHref', staticWatcher);
-            }
-            break;
-          case 'href':
-            // Setup watcher()
-            staticWatcher(attrs.href);
-        }
-
-        $scope.$on('$routeChangeSuccess', function(){
-          watcher();
-        });
-      };
-    }
-  };
-}]);
-
-/*global angular, $, document*/
-/**
- * Adds a 'ui-scrollfix' class to the element when the page scrolls past it's position.
- * @param [offset] {int} optional Y-offset to override the detected offset.
- *   Takes 300 (absolute) or -300 or +300 (relative to detected)
- */
-angular.module('ui.scrollfix',[]).directive('uiScrollfix', ['$window', function ($window) {
-  'use strict';
-  return {
-    require: '^?uiScrollfixTarget',
-    link: function (scope, elm, attrs, uiScrollfixTarget) {
-      var top = elm[0].offsetTop,
-          $target = uiScrollfixTarget && uiScrollfixTarget.$element || angular.element($window);
-      if (!attrs.uiScrollfix) {
-        attrs.uiScrollfix = top;
-      } else {
-        // chartAt is generally faster than indexOf: http://jsperf.com/indexof-vs-chartat
-        if (attrs.uiScrollfix.charAt(0) === '-') {
-          attrs.uiScrollfix = top - attrs.uiScrollfix.substr(1);
-        } else if (attrs.uiScrollfix.charAt(0) === '+') {
-          attrs.uiScrollfix = top + parseFloat(attrs.uiScrollfix.substr(1));
-        }
-      }
-
-      $target.bind('scroll.ui-scrollfix', function () {
-        // if pageYOffset is defined use it, otherwise use other crap for IE
-        var offset;
-        if (angular.isDefined($window.pageYOffset)) {
-          offset = $window.pageYOffset;
-        } else {
-          var iebody = (document.compatMode && document.compatMode !== "BackCompat") ? document.documentElement : document.body;
-          offset = iebody.scrollTop;
-        }
-        if (!elm.hasClass('ui-scrollfix') && offset > attrs.uiScrollfix) {
-          elm.addClass('ui-scrollfix');
-        } else if (elm.hasClass('ui-scrollfix') && offset < attrs.uiScrollfix) {
-          elm.removeClass('ui-scrollfix');
-        }
-      });
-    }
-  };
-}]).directive('uiScrollfixTarget', [function () {
-  'use strict';
-  return {
-    controller: function($element) {
-      this.$element = $element;
-    }
-  };
-}]);
-
-/**
- * uiShow Directive
- *
- * Adds a 'ui-show' class to the element instead of display:block
- * Created to allow tighter control  of CSS without bulkier directives
- *
- * @param expression {boolean} evaluated expression to determine if the class should be added
- */
-angular.module('ui.showhide',[])
-.directive('uiShow', [function () {
-  return function (scope, elm, attrs) {
-    scope.$watch(attrs.uiShow, function (newVal, oldVal) {
-      if (newVal) {
-        elm.addClass('ui-show');
-      } else {
-        elm.removeClass('ui-show');
-      }
-    });
-  };
-}])
-
-/**
- * uiHide Directive
- *
- * Adds a 'ui-hide' class to the element instead of display:block
- * Created to allow tighter control  of CSS without bulkier directives
- *
- * @param expression {boolean} evaluated expression to determine if the class should be added
- */
-.directive('uiHide', [function () {
-  return function (scope, elm, attrs) {
-    scope.$watch(attrs.uiHide, function (newVal, oldVal) {
-      if (newVal) {
-        elm.addClass('ui-hide');
-      } else {
-        elm.removeClass('ui-hide');
-      }
-    });
-  };
-}])
-
-/**
- * uiToggle Directive
- *
- * Adds a class 'ui-show' if true, and a 'ui-hide' if false to the element instead of display:block/display:none
- * Created to allow tighter control  of CSS without bulkier directives. This also allows you to override the
- * default visibility of the element using either class.
- *
- * @param expression {boolean} evaluated expression to determine if the class should be added
- */
-.directive('uiToggle', [function () {
-  return function (scope, elm, attrs) {
-    scope.$watch(attrs.uiToggle, function (newVal, oldVal) {
-      if (newVal) {
-        elm.removeClass('ui-hide').addClass('ui-show');
-      } else {
-        elm.removeClass('ui-show').addClass('ui-hide');
-      }
-    });
-  };
-}]);
-
-/**
- * Filters out all duplicate items from an array by checking the specified key
- * @param [key] {string} the name of the attribute of each object to compare for uniqueness
- if the key is empty, the entire object will be compared
- if the key === false then no filtering will be performed
- * @return {array}
- */
-angular.module('ui.unique',[]).filter('unique', ['$parse', function ($parse) {
-
-  return function (items, filterOn) {
-
-    if (filterOn === false) {
-      return items;
-    }
-
-    if ((filterOn || angular.isUndefined(filterOn)) && angular.isArray(items)) {
-      var hashCheck = {}, newItems = [],
-        get = angular.isString(filterOn) ? $parse(filterOn) : function (item) { return item; };
-
-      var extractValueToCompare = function (item) {
-        return angular.isObject(item) ? get(item) : item;
-      };
-
-      angular.forEach(items, function (item) {
-        var valueToCheck, isDuplicate = false;
-
-        for (var i = 0; i < newItems.length; i++) {
-          if (angular.equals(extractValueToCompare(newItems[i]), extractValueToCompare(item))) {
-            isDuplicate = true;
-            break;
-          }
-        }
-        if (!isDuplicate) {
-          newItems.push(item);
-        }
-
-      });
-      items = newItems;
-    }
-    return items;
-  };
-}]);
-
-/**
- * General-purpose validator for ngModel.
- * angular.js comes with several built-in validation mechanism for input fields (ngRequired, ngPattern etc.) but using
- * an arbitrary validation function requires creation of a custom formatters and / or parsers.
- * The ui-validate directive makes it easy to use any function(s) defined in scope as a validator function(s).
- * A validator function will trigger validation on both model and input changes.
- *
- * @example <input ui-validate=" 'myValidatorFunction($value)' ">
- * @example <input ui-validate="{ foo : '$value > anotherModel', bar : 'validateFoo($value)' }">
- * @example <input ui-validate="{ foo : '$value > anotherModel' }" ui-validate-watch=" 'anotherModel' ">
- * @example <input ui-validate="{ foo : '$value > anotherModel', bar : 'validateFoo($value)' }" ui-validate-watch=" { foo : 'anotherModel' } ">
- *
- * @param ui-validate {string|object literal} If strings is passed it should be a scope's function to be used as a validator.
- * If an object literal is passed a key denotes a validation error key while a value should be a validator function.
- * In both cases validator function should take a value to validate as its argument and should return true/false indicating a validation result.
- */
-angular.module('ui.validate',[]).directive('uiValidate', function () {
-
-  return {
-    restrict: 'A',
-    require: 'ngModel',
-    link: function (scope, elm, attrs, ctrl) {
-      var validateFn, watch, validators = {},
-        validateExpr = scope.$eval(attrs.uiValidate);
-
-      if (!validateExpr){ return;}
-
-      if (angular.isString(validateExpr)) {
-        validateExpr = { validator: validateExpr };
-      }
-
-      angular.forEach(validateExpr, function (exprssn, key) {
-        validateFn = function (valueToValidate) {
-          var expression = scope.$eval(exprssn, { '$value' : valueToValidate });
-          if (angular.isFunction(expression.then)) {
-            // expression is a promise
-            expression.then(function(){
-              ctrl.$setValidity(key, true);
-            }, function(){
-              ctrl.$setValidity(key, false);
-            });
-            return valueToValidate;
-          } else if (expression) {
-            // expression is true
-            ctrl.$setValidity(key, true);
-            return valueToValidate;
-          } else {
-            // expression is false
-            ctrl.$setValidity(key, false);
-            return undefined;
-          }
-        };
-        validators[key] = validateFn;
-        ctrl.$formatters.push(validateFn);
-        ctrl.$parsers.push(validateFn);
-      });
-
-      // Support for ui-validate-watch
-      if (attrs.uiValidateWatch) {
-        watch = scope.$eval(attrs.uiValidateWatch);
-        if (angular.isString(watch)) {
-          scope.$watch(watch, function(){
-            angular.forEach(validators, function(validatorFn, key){
-              validatorFn(ctrl.$modelValue);
-            });
-          });
-        } else {
-          angular.forEach(watch, function(expression, key){
-            scope.$watch(expression, function(){
-              validators[key](ctrl.$modelValue);
-            });
-          });
-        }
-      }
-    }
-  };
-});
-
-angular.module('ui.utils',  [
-  "ui.event",
-  "ui.format",
-  "ui.highlight",
-  "ui.indeterminate",
-  "ui.inflector",
-  "ui.jq",
-  "ui.keypress",
-  "ui.mask",
-  "ui.reset",
-  "ui.route",
-  "ui.scrollfix",
-  "ui.showhide",
-  "ui.unique",
-  "ui.validate"
-]);
-!function(e){"use strict";function t(e){var n;if(null===e||void 0===e)return!1;if(r.isArray(e))return e.length>0;if("string"==typeof e||"number"==typeof e||"boolean"==typeof e)return!0;for(n in e)if(e.hasOwnProperty(n)&&t(e[n]))return!0;return!1}var n=function(){function e(e){this.options=e}return e.prototype.toString=function(){return JSON&&JSON.stringify?JSON.stringify(this.options):this.options},e}(),r=function(){function e(e){return"[object Array]"===Object.prototype.toString.apply(e)}function t(e){return"[object String]"===Object.prototype.toString.apply(e)}function n(e){return"[object Number]"===Object.prototype.toString.apply(e)}function r(e){return"[object Boolean]"===Object.prototype.toString.apply(e)}function i(e,t){var n,r="",i=!0;for(n=0;n<e.length;n+=1)i?i=!1:r+=t,r+=e[n];return r}function o(e,t){for(var n=[],r=0;r<e.length;r+=1)n.push(t(e[r]));return n}function s(e,t){for(var n=[],r=0;r<e.length;r+=1)t(e[r])&&n.push(e[r]);return n}function a(e){if("object"!=typeof e||null===e)return e;Object.freeze(e);var t,n;for(n in e)e.hasOwnProperty(n)&&(t=e[n],"object"==typeof t&&u(t));return e}function u(e){return"function"==typeof Object.freeze?a(e):e}return{isArray:e,isString:t,isNumber:n,isBoolean:r,join:i,map:o,filter:s,deepFreeze:u}}(),i=function(){function e(e){return e>="a"&&"z">=e||e>="A"&&"Z">=e}function t(e){return e>="0"&&"9">=e}function n(e){return t(e)||e>="a"&&"f">=e||e>="A"&&"F">=e}return{isAlpha:e,isDigit:t,isHexDigit:n}}(),o=function(){function e(e){var t,n,r="",i=s.encode(e);for(n=0;n<i.length;n+=1)t=i.charCodeAt(n),r+="%"+(16>t?"0":"")+t.toString(16).toUpperCase();return r}function t(e,t){return"%"===e.charAt(t)&&i.isHexDigit(e.charAt(t+1))&&i.isHexDigit(e.charAt(t+2))}function n(e,t){return parseInt(e.substr(t,2),16)}function r(e){if(!t(e,0))return!1;var r=n(e,1),i=s.numBytes(r);if(0===i)return!1;for(var o=1;i>o;o+=1)if(!t(e,3*o)||!s.isValidFollowingCharCode(n(e,3*o+1)))return!1;return!0}function o(e,r){var i=e.charAt(r);if(!t(e,r))return i;var o=n(e,r+1),a=s.numBytes(o);if(0===a)return i;for(var u=1;a>u;u+=1)if(!t(e,r+3*u)||!s.isValidFollowingCharCode(n(e,r+3*u+1)))return i;return e.substr(r,3*a)}var s={encode:function(e){return unescape(encodeURIComponent(e))},numBytes:function(e){return 127>=e?1:e>=194&&223>=e?2:e>=224&&239>=e?3:e>=240&&244>=e?4:0},isValidFollowingCharCode:function(e){return e>=128&&191>=e}};return{encodeCharacter:e,isPctEncoded:r,pctCharAt:o}}(),s=function(){function e(e){return i.isAlpha(e)||i.isDigit(e)||"_"===e||o.isPctEncoded(e)}function t(e){return i.isAlpha(e)||i.isDigit(e)||"-"===e||"."===e||"_"===e||"~"===e}function n(e){return":"===e||"/"===e||"?"===e||"#"===e||"["===e||"]"===e||"@"===e||"!"===e||"$"===e||"&"===e||"("===e||")"===e||"*"===e||"+"===e||","===e||";"===e||"="===e||"'"===e}return{isVarchar:e,isUnreserved:t,isReserved:n}}(),a=function(){function e(e,t){var n,r="",i="";for(("number"==typeof e||"boolean"==typeof e)&&(e=e.toString()),n=0;n<e.length;n+=i.length)i=e.charAt(n),r+=s.isUnreserved(i)||t&&s.isReserved(i)?i:o.encodeCharacter(i);return r}function t(t){return e(t,!0)}function n(e,t){var n=o.pctCharAt(e,t);return n.length>1?n:s.isReserved(n)||s.isUnreserved(n)?n:o.encodeCharacter(n)}function r(e){var t,n="",r="";for(t=0;t<e.length;t+=r.length)r=o.pctCharAt(e,t),n+=r.length>1?r:s.isReserved(r)||s.isUnreserved(r)?r:o.encodeCharacter(r);return n}return{encode:e,encodePassReserved:t,encodeLiteral:r,encodeLiteralCharacter:n}}(),u=function(){function e(e){t[e]={symbol:e,separator:"?"===e?"&":""===e||"+"===e||"#"===e?",":e,named:";"===e||"&"===e||"?"===e,ifEmpty:"&"===e||"?"===e?"=":"",first:"+"===e?"":e,encode:"+"===e||"#"===e?a.encodePassReserved:a.encode,toString:function(){return this.symbol}}}var t={};return e(""),e("+"),e("#"),e("."),e("/"),e(";"),e("?"),e("&"),{valueOf:function(e){return t[e]?t[e]:"=,!@|".indexOf(e)>=0?null:t[""]}}}(),f=function(){function e(e){this.literal=a.encodeLiteral(e)}return e.prototype.expand=function(){return this.literal},e.prototype.toString=e.prototype.expand,e}(),p=function(){function e(e){function t(){var t=e.substring(h,f);if(0===t.length)throw new n({expressionText:e,message:"a varname must be specified",position:f});c={varname:t,exploded:!1,maxLength:null},h=null}function r(){if(d===f)throw new n({expressionText:e,message:"after a ':' you have to specify the length",position:f});c.maxLength=parseInt(e.substring(d,f),10),d=null}var a,f,p=[],c=null,h=null,d=null,g="";for(a=function(t){var r=u.valueOf(t);if(null===r)throw new n({expressionText:e,message:"illegal use of reserved operator",position:f,operator:t});return r}(e.charAt(0)),f=a.symbol.length,h=f;f<e.length;f+=g.length){if(g=o.pctCharAt(e,f),null!==h){if("."===g){if(h===f)throw new n({expressionText:e,message:"a varname MUST NOT start with a dot",position:f});continue}if(s.isVarchar(g))continue;t()}if(null!==d){if(f===d&&"0"===g)throw new n({expressionText:e,message:"A :prefix must not start with digit 0",position:f});if(i.isDigit(g)){if(f-d>=4)throw new n({expressionText:e,message:"A :prefix must have max 4 digits",position:f});continue}r()}if(":"!==g)if("*"!==g){if(","!==g)throw new n({expressionText:e,message:"illegal character",character:g,position:f});p.push(c),c=null,h=f+1}else{if(null===c)throw new n({expressionText:e,message:"exploded without varspec",position:f});if(c.exploded)throw new n({expressionText:e,message:"exploded twice",position:f});if(c.maxLength)throw new n({expressionText:e,message:"an explode (*) MUST NOT follow to a prefix",position:f});c.exploded=!0}else{if(null!==c.maxLength)throw new n({expressionText:e,message:"only one :maxLength is allowed per varspec",position:f});if(c.exploded)throw new n({expressionText:e,message:"an exploeded varspec MUST NOT be varspeced",position:f});d=f+1}}return null!==h&&t(),null!==d&&r(),p.push(c),new l(e,a,p)}function t(t){var r,i,o=[],s=null,a=0;for(r=0;r<t.length;r+=1)if(i=t.charAt(r),null===a){if(null===s)throw new Error("reached unreachable code");if("{"===i)throw new n({templateText:t,message:"brace already opened",position:r});if("}"===i){if(s+1===r)throw new n({templateText:t,message:"empty braces",position:s});try{o.push(e(t.substring(s+1,r)))}catch(u){if(u.prototype===n.prototype)throw new n({templateText:t,message:u.options.message,position:s+u.options.position,details:u.options});throw u}s=null,a=r+1}}else{if("}"===i)throw new n({templateText:t,message:"unopened brace closed",position:r});"{"===i&&(r>a&&o.push(new f(t.substring(a,r))),a=null,s=r)}if(null!==s)throw new n({templateText:t,message:"unclosed brace",position:s});return a<t.length&&o.push(new f(t.substr(a))),new c(t,o)}return t}(),l=function(){function e(e){return JSON&&JSON.stringify?JSON.stringify(e):e}function n(e){if(!t(e))return!0;if(r.isString(e))return""===e;if(r.isNumber(e)||r.isBoolean(e))return!1;if(r.isArray(e))return 0===e.length;for(var n in e)if(e.hasOwnProperty(n))return!1;return!0}function i(e){var t,n=[];for(t in e)e.hasOwnProperty(t)&&n.push({name:t,value:e[t]});return n}function o(e,t,n){this.templateText=e,this.operator=t,this.varspecs=n}function s(e,t,n){var r="";if(n=n.toString(),t.named){if(r+=a.encodeLiteral(e.varname),""===n)return r+=t.ifEmpty;r+="="}return null!==e.maxLength&&(n=n.substr(0,e.maxLength)),r+=t.encode(n)}function u(e){return t(e.value)}function f(e,o,s){var f=[],p="";if(o.named){if(p+=a.encodeLiteral(e.varname),n(s))return p+=o.ifEmpty;p+="="}return r.isArray(s)?(f=s,f=r.filter(f,t),f=r.map(f,o.encode),p+=r.join(f,",")):(f=i(s),f=r.filter(f,u),f=r.map(f,function(e){return o.encode(e.name)+","+o.encode(e.value)}),p+=r.join(f,",")),p}function p(e,o,s){var f=r.isArray(s),p=[];return f?(p=s,p=r.filter(p,t),p=r.map(p,function(t){var r=a.encodeLiteral(e.varname);return r+=n(t)?o.ifEmpty:"="+o.encode(t)})):(p=i(s),p=r.filter(p,u),p=r.map(p,function(e){var t=a.encodeLiteral(e.name);return t+=n(e.value)?o.ifEmpty:"="+o.encode(e.value)})),r.join(p,o.separator)}function l(e,n){var o=[],s="";return r.isArray(n)?(o=n,o=r.filter(o,t),o=r.map(o,e.encode),s+=r.join(o,e.separator)):(o=i(n),o=r.filter(o,function(e){return t(e.value)}),o=r.map(o,function(t){return e.encode(t.name)+"="+e.encode(t.value)}),s+=r.join(o,e.separator)),s}return o.prototype.toString=function(){return this.templateText},o.prototype.expand=function(i){var o,a,u,c,h=[],d=!1,g=this.operator;for(o=0;o<this.varspecs.length;o+=1)if(a=this.varspecs[o],u=i[a.varname],null!==u&&void 0!==u)if(a.exploded&&(d=!0),c=r.isArray(u),"string"==typeof u||"number"==typeof u||"boolean"==typeof u)h.push(s(a,g,u));else{if(a.maxLength&&t(u))throw new Error("Prefix modifiers are not applicable to variables that have composite values. You tried to expand "+this+" with "+e(u));a.exploded?t(u)&&(g.named?h.push(p(a,g,u)):h.push(l(g,u))):(g.named||!n(u))&&h.push(f(a,g,u))}return 0===h.length?"":g.first+r.join(h,g.separator)},o}(),c=function(){function e(e,t){this.templateText=e,this.expressions=t,r.deepFreeze(this)}return e.prototype.toString=function(){return this.templateText},e.prototype.expand=function(e){var t,n="";for(t=0;t<this.expressions.length;t+=1)n+=this.expressions[t].expand(e);return n},e.parse=p,e.UriTemplateError=n,e}();e(c)}(function(e){"use strict";"undefined"!=typeof module?module.exports=e:"function"==typeof define?define([],function(){return e}):"undefined"!=typeof window?window.UriTemplate=e:global.UriTemplate=e});
-
-
-bbAdminDirectives = angular.module('BBAdmin.Directives', []);
-
-bbAdminDirectives.controller('CalController', function($scope) {
-    /* config object */
-    $scope.calendarConfig = {
-        height: 450,
-        editiable: true,
-        dayClick: function(){
-            scope.$apply($scope.alertEventOnClick);
-        }
-    };
-});
-
-(function() {
-  angular.module('BBAdmin.Controllers').controller('BBAdminCtrl', function($controller, $scope, $location, $rootScope, halClient, $window, $http, $localCache, $q, BasketService, LoginService, AlertService, $sce, $element, $compile, $sniffer, $modal, $timeout, BBModel, BBWidget, SSOService, ErrorService, AppConfig) {
-    angular.extend(this, $controller('BBCtrl', {
-      $scope: $scope,
-      $location: $location,
-      $rootScope: $rootScope,
-      $window: $window,
-      $http: $http,
-      $localCache: $localCache,
-      $q: $q,
-      halClient: halClient,
-      BasketService: BasketService,
-      LoginService: LoginService,
-      AlertService: AlertService,
-      $sce: $sce,
-      $element: $element,
-      $compile: $compile,
-      $sniffer: $sniffer,
-      $modal: $modal,
-      $timeout: $timeout,
-      BBModel: BBModel,
-      BBWidget: BBWidget,
-      SSOService: SSOService,
-      ErrorService: ErrorService,
-      AppConfig: AppConfig
-    }));
-    $scope.loggedInDef = $q.defer();
-    $scope.logged_in = $scope.loggedInDef.promise;
-    $rootScope.bb = $scope.bb;
-    console.log("for admin only 1 widget", $rootScope.bb);
-    return $scope.old_init = (function(_this) {
-      return function(prms) {
-        var comp_id;
-        comp_id = prms.company_id;
-        if (comp_id) {
-          $scope.bb.company_id = comp_id;
-          return $scope.channel_name = "private-company-" + $scope.bb.company_id;
-        }
-      };
-    })(this);
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  angular.module('BBAdmin.Controllers').controller('CalendarCtrl', function($scope, AdminBookingService, $rootScope) {
-
-    /* event source that pulls from google.com
-    $scope.eventSource = {
-            url: "http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic",
-            className: 'gcal-event',           // an option!
-            currentTimezone: 'America/Chicago' // an option!
-    };
-     */
-    $scope.eventsF = function(start, end, tz, callback) {
-      var bookings, prms;
-      console.log(start, end, callback);
-      prms = {
-        company_id: 21
-      };
-      prms.start_date = start.format("YYYY-MM-DD");
-      prms.end_date = end.format("YYYY-MM-DD");
-      bookings = AdminBookingService.query(prms);
-      return bookings.then((function(_this) {
-        return function(s) {
-          console.log(s.items);
-          callback(s.items);
-          return s.addCallback(function(booking) {
-            return $scope.myCalendar.fullCalendar('renderEvent', booking, true);
-          });
-        };
-      })(this));
-    };
-    $scope.dayClick = function(date, allDay, jsEvent, view) {
-      return $scope.$apply((function(_this) {
-        return function() {
-          console.log(date, allDay, jsEvent, view);
-          return $scope.alertMessage = 'Day Clicked ' + date;
-        };
-      })(this));
-    };
-    $scope.alertOnDrop = function(event, revertFunc, jsEvent, ui, view) {
-      return $scope.$apply((function(_this) {
-        return function() {
-          return $scope.popupTimeAction({
-            action: "move",
-            booking: event,
-            newdate: event.start,
-            onCancel: revertFunc
-          });
-        };
-      })(this));
-    };
-    $scope.alertOnResize = function(event, revertFunc, jsEvent, ui, view) {
-      return $scope.$apply((function(_this) {
-        return function() {
-          return $scope.alertMessage = 'Event Resized ';
-        };
-      })(this));
-    };
-    $scope.addRemoveEventSource = function(sources, source) {
-      var canAdd;
-      canAdd = 0;
-      angular.forEach(sources, (function(_this) {
-        return function(value, key) {
-          if (sources[key] === source) {
-            sources.splice(key, 1);
-            return canAdd = 1;
-          }
-        };
-      })(this));
-      if (canAdd === 0) {
-        return sources.push(source);
-      }
-    };
-    $scope.addEvent = function() {
-      var m, y;
-      y = '';
-      m = '';
-      return $scope.events.push({
-        title: 'Open Sesame',
-        start: new Date(y, m, 28),
-        end: new Date(y, m, 29),
-        className: ['openSesame']
-      });
-    };
-    $scope.remove = function(index) {
-      return $scope.events.splice(index, 1);
-    };
-    $scope.changeView = function(view) {
-      return $scope.myCalendar.fullCalendar('changeView', view);
-    };
-    $scope.eventClick = function(event, jsEvent, view) {
-      return $scope.$apply((function(_this) {
-        return function() {
-          return $scope.selectBooking(event);
-        };
-      })(this));
-    };
-    $scope.selectTime = function(start, end, allDay) {
-      return $scope.$apply((function(_this) {
-        return function() {
-          $scope.popupTimeAction({
-            start_time: moment(start),
-            end_time: moment(end),
-            allDay: allDay
-          });
-          return $scope.myCalendar.fullCalendar('unselect');
-        };
-      })(this));
-    };
-    $scope.uiConfig = {
-      calendar: {
-        height: 450,
-        editable: true,
-        header: {
-          left: 'month agendaWeek agendaDay',
-          center: 'title',
-          right: 'today prev,next'
-        },
-        dayClick: $scope.dayClick,
-        eventClick: $scope.eventClick,
-        eventDrop: $scope.alertOnDrop,
-        eventResize: $scope.alertOnResize,
-        selectable: true,
-        selectHelper: true,
-        select: $scope.selectTime
-      }
-    };
-    return $scope.eventSources = [$scope.eventsF];
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdmin.Controllers').controller('CategoryList', function($scope, $location, CategoryService, $rootScope) {
-    $rootScope.connection_started.then((function(_this) {
-      return function() {
-        $scope.categories = CategoryService.query($scope.bb.company);
-        return $scope.categories.then(function(items) {});
-      };
-    })(this));
-    $scope.$watch('selectedCategory', (function(_this) {
-      return function(newValue, oldValue) {
-        var items;
-        $rootScope.category = newValue;
-        return items = $('.inline_time').each(function(idx, e) {
-          return angular.element(e).scope().clear();
-        });
-      };
-    })(this));
-    return $scope.$on("Refresh_Cat", (function(_this) {
-      return function(event, message) {
-        return $scope.$apply();
-      };
-    })(this));
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdmin.Controllers').controller('CompanyList', function($scope, $rootScope, $location) {
-    $scope.selectedCategory = null;
-    $rootScope.connection_started.then((function(_this) {
-      return function() {
-        var d, date, end, _results;
-        date = moment();
-        $scope.current_date = date;
-        $scope.companies = $scope.bb.company.companies;
-        if (!$scope.companies || $scope.companies.length === 0) {
-          $scope.companies = [$scope.bb.company];
-        }
-        $scope.dates = [];
-        end = moment(date).add('days', 21);
-        $scope.end_date = end;
-        d = moment(date);
-        _results = [];
-        while (d.isBefore(end)) {
-          $scope.dates.push(d.clone());
-          _results.push(d.add('days', 1));
-        }
-        return _results;
-      };
-    })(this));
-    $scope.selectCompany = function(item) {
-      return window.location = "/view/dashboard/pick_company/" + item.id;
-    };
-    $scope.advance_date = function(num) {
-      var d, date, _results;
-      date = $scope.current_date.add('days', num);
-      $scope.end_date = moment(date).add('days', 21);
-      $scope.current_date = moment(date);
-      $scope.dates = [];
-      d = date.clone();
-      _results = [];
-      while (d.isBefore($scope.end_date)) {
-        $scope.dates.push(d.clone());
-        _results.push(d.add('days', 1));
-      }
-      return _results;
-    };
-    return $scope.$on("Refresh_Comp", function(event, message) {
-      return $scope.$apply();
-    });
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdmin.Controllers').controller('DashboardContainer', function($scope, $rootScope, $location, $modal) {
-    var ModalInstanceCtrl;
-    $scope.selectedBooking = null;
-    $scope.poppedBooking = null;
-    $scope.selectBooking = function(booking) {
-      return $scope.selectedBooking = booking;
-    };
-    $scope.popupBooking = function(booking) {
-      var modalInstance;
-      $scope.poppedBooking = booking;
-      modalInstance = $modal.open({
-        templateUrl: 'full_booking_details',
-        controller: ModalInstanceCtrl,
-        scope: $scope,
-        backdrop: true,
-        resolve: {
-          items: (function(_this) {
-            return function() {
-              return {
-                booking: booking
-              };
-            };
-          })(this)
-        }
-      });
-      return modalInstance.result.then((function(_this) {
-        return function(selectedItem) {
-          return $scope.selected = selectedItem;
-        };
-      })(this), (function(_this) {
-        return function() {
-          return console.log('Modal dismissed at: ' + new Date());
-        };
-      })(this));
-    };
-    ModalInstanceCtrl = function($scope, $modalInstance, items) {
-      angular.extend($scope, items);
-      $scope.ok = function() {
-        console.log("closeing", items, items.booking && items.booking.self ? items.booking.$update() : void 0);
-        return $modalInstance.close();
-      };
-      return $scope.cancel = function() {
-        return $modalInstance.dismiss('cancel');
-      };
-    };
-    return $scope.popupTimeAction = function(prms) {
-      var modalInstance;
-      console.log(prms);
-      return modalInstance = $modal.open({
-        templateUrl: $scope.partial_url + 'time_popup',
-        controller: ModalInstanceCtrl,
-        scope: $scope,
-        backdrop: false,
-        resolve: {
-          items: (function(_this) {
-            return function() {
-              return prms;
-            };
-          })(this)
-        }
-      });
-    };
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  angular.module('BBAdmin.Controllers').controller('DashDayList', function($scope, $rootScope, $q, AdminDayService) {
-    $scope.init = (function(_this) {
-      return function(company_id) {
-        var date, dayListDef, prms, weekListDef;
-        $scope.inline_items = "";
-        if (company_id) {
-          $scope.bb.company_id = company_id;
-        }
-        if (!$scope.current_date) {
-          $scope.current_date = moment().startOf('month');
-        }
-        date = $scope.current_date;
-        prms = {
-          date: date.format('DD-MM-YYYY'),
-          company_id: $scope.bb.company_id
-        };
-        if ($scope.service_id) {
-          prms.service_id = $scope.service_id;
-        }
-        if ($scope.end_date) {
-          prms.edate = $scope.end_date.format('DD-MM-YYYY');
-        }
-        dayListDef = $q.defer();
-        weekListDef = $q.defer();
-        $scope.dayList = dayListDef.promise;
-        $scope.weeks = weekListDef.promise;
-        prms.url = $scope.bb.api_url;
-        return AdminDayService.query(prms).then(function(days) {
-          $scope.sdays = days;
-          dayListDef.resolve();
-          if ($scope.category) {
-            return $scope.update_days();
-          }
-        });
-      };
-    })(this);
-    $scope.format_date = (function(_this) {
-      return function(fmt) {
-        return $scope.current_date.format(fmt);
-      };
-    })(this);
-    $scope.selectDay = (function(_this) {
-      return function(day, dayBlock, e) {
-        var elm, seldate, xelm;
-        if (day.spaces === 0) {
-          return false;
-        }
-        seldate = moment($scope.current_date);
-        seldate.date(day.day);
-        $scope.selected_date = seldate;
-        elm = angular.element(e.toElement);
-        elm.parent().children().removeClass("selected");
-        elm.addClass("selected");
-        xelm = $('#tl_' + $scope.bb.company_id);
-        $scope.service_id = dayBlock.service_id;
-        $scope.service = {
-          id: dayBlock.service_id,
-          name: dayBlock.name
-        };
-        $scope.selected_day = day;
-        if (xelm.length === 0) {
-          return $scope.inline_items = "/view/dash/time_small";
-        } else {
-          return xelm.scope().init(day);
-        }
-      };
-    })(this);
-    $scope.$watch('current_date', (function(_this) {
-      return function(newValue, oldValue) {
-        if (newValue && $scope.bb.company_id) {
-          return $scope.init();
-        }
-      };
-    })(this));
-    $scope.update_days = (function(_this) {
-      return function() {
-        var day, _i, _len, _ref, _results;
-        $scope.dayList = [];
-        $scope.service_id = null;
-        _ref = $scope.sdays;
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          day = _ref[_i];
-          if (day.category_id === $scope.category.id) {
-            $scope.dayList.push(day);
-            _results.push($scope.service_id = day.id);
-          } else {
-            _results.push(void 0);
-          }
-        }
-        return _results;
-      };
-    })(this);
-    return $rootScope.$watch('category', (function(_this) {
-      return function(newValue, oldValue) {
-        if (newValue && $scope.sdays) {
-          return $scope.update_days();
-        }
-      };
-    })(this));
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdmin.Controllers').controller('EditBookingDetails', function($scope, $location, $rootScope) {});
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdmin.Directives').directive('bbAdminLogin', function() {
-    return {
-      restrict: 'AE',
-      replace: true,
-      scope: true,
-      controller: 'AdminLogin'
-    };
-  });
-
-  angular.module('BBAdmin.Controllers').controller('AdminLogin', function($scope, $rootScope, AdminLoginService, $q) {
-    $scope.login_sso = (function(_this) {
-      return function(token, route) {
-        return $rootScope.connection_started.then(function() {
-          return AdminLoginService.ssoLogin({
-            company_id: $scope.bb.company.id,
-            root: $scope.bb.api_url
-          }, {
-            token: token
-          }).then(function(user) {
-            return $scope.loggedInDef.resolve(user);
-          });
-        });
-      };
-    })(this);
-    return $scope.login_with_password = (function(_this) {
-      return function(email, password) {
-        return $rootScope.connection_started.then(function() {
-          return AdminLoginService.login({
-            email: email,
-            password: password,
-            company_id: $scope.bb.company.id
-          }, {}).then(function(user) {
-            $scope.loggedInDef.resolve(user);
-            return $scope.user = user;
-          });
-        });
-      };
-    })(this);
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdmin.Controllers').controller('SelectedBookingDetails', function($scope, $location, AdminBookingService, $rootScope) {
-    return $scope.$watch('selectedBooking', (function(_this) {
-      return function(newValue, oldValue) {
-        if (newValue) {
-          $scope.booking = newValue;
-          return $scope.showItemView = "/view/dash/booking_details";
-        }
-      };
-    })(this));
-  });
-
-}).call(this);
-
-'use strict';
-
-
-function SpaceMonitorCtrl($scope,  $location) {
-  
-
-
-  $scope.$on("Add_Space", function(event, message){
-     console.log("got new space", message)
-     $scope.$apply();
-   });
-
-
-
-
-}
-
-SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
-
-(function() {
-  'use strict';
-  angular.module('BBAdmin.Controllers').controller('DashTimeList', function($scope, $rootScope, $location, $q, $element, AdminTimeService) {
-    var $loaded;
-    $loaded = null;
-    $scope.init = (function(_this) {
-      return function(day) {
-        var elem, prms, timeListDef;
-        $scope.selected_day = day;
-        elem = angular.element($element);
-        elem.attr('id', "tl_" + $scope.bb.company_id);
-        angular.element($element).show();
-        prms = {
-          company_id: $scope.bb.company_id,
-          day: day
-        };
-        if ($scope.service_id) {
-          prms.service_id = $scope.service_id;
-        }
-        timeListDef = $q.defer();
-        $scope.slots = timeListDef.promise;
-        prms.url = $scope.bb.api_url;
-        $scope.aslots = AdminTimeService.query(prms);
-        return $scope.aslots.then(function(res) {
-          var k, slot, slots, x, xres, _i, _len;
-          $scope.loaded = true;
-          slots = {};
-          for (_i = 0, _len = res.length; _i < _len; _i++) {
-            x = res[_i];
-            if (!slots[x.time]) {
-              slots[x.time] = x;
-            }
-          }
-          xres = [];
-          for (k in slots) {
-            slot = slots[k];
-            xres.push(slot);
-          }
-          return timeListDef.resolve(xres);
-        });
-      };
-    })(this);
-    if ($scope.selected_day) {
-      $scope.init($scope.selected_day);
-    }
-    $scope.format_date = (function(_this) {
-      return function(fmt) {
-        return $scope.selected_date.format(fmt);
-      };
-    })(this);
-    $scope.selectSlot = (function(_this) {
-      return function(slot, route) {
-        $scope.pickTime(slot.time);
-        $scope.pickDate($scope.selected_date);
-        return $location.path(route);
-      };
-    })(this);
-    $scope.highlighSlot = (function(_this) {
-      return function(slot) {
-        $scope.pickTime(slot.time);
-        $scope.pickDate($scope.selected_date);
-        return $scope.setCheckout(true);
-      };
-    })(this);
-    $scope.clear = (function(_this) {
-      return function() {
-        $scope.loaded = false;
-        $scope.slots = null;
-        return angular.element($element).hide();
-      };
-    })(this);
-    return $scope.popupCheckout = (function(_this) {
-      return function(slot) {
-        var dHeight, dWidth, dlg, item, k, src, url, v, wHeight, wWidth;
-        item = {
-          time: slot.time,
-          date: $scope.selected_day.date,
-          company_id: $scope.bb.company_id,
-          duration: 30,
-          service_id: $scope.service_id,
-          event_id: slot.id
-        };
-        url = "/booking/new_checkout?";
-        for (k in item) {
-          v = item[k];
-          url += k + "=" + v + "&";
-        }
-        wWidth = $(window).width();
-        dWidth = wWidth * 0.8;
-        wHeight = $(window).height();
-        dHeight = wHeight * 0.8;
-        dlg = $("#dialog-modal");
-        src = dlg.html("<iframe frameborder=0 id='mod_dlg' onload='nowait();setTimeout(set_iframe_focus, 100);' width=100% height=99% src='" + url + "'></iframe>");
-        dlg.attr("title", "Checkout");
-        return dlg.dialog({
-          my: "top",
-          at: "top",
-          height: dHeight,
-          width: dWidth,
-          modal: true,
-          overlay: {
-            opacity: 0.1,
-            background: "black"
-          }
-        });
-      };
-    })(this);
-  });
-
-
-  /*
-    var sprice = "&price=" + price;
-    var slen = "&len=" + len
-    var sid = "&event_id=" + id
-    var str = pop_click_str + sid + slen + sprice + "&width=800"; // + "&style=wide";
-  = "/booking/new_checkout?" + siarray + sjd + sitime ;
-  
-  function show_IFrame(myUrl, options, width, height){
-    if (!height) height = 500;
-    if (!width) width = 790;
-    opts = Object.extend({className: "white", pctHeight:1, width:width+20,top:'5%', height:'90%',closable:true, recenterAuto:false}, options || {});
-    x = Dialog.info("", opts);
-      x.setHTMLContent("<iframe frameborder=0 id='mod_dlg' onload='nowait();setTimeout(set_iframe_focus, 100);' width=" + width + " height=96%" + " src='" + myUrl + "'></iframe>");
-    x.element.setStyle({top:'5%'});
-    x.element.setStyle({height:'90%'});
-  }
-   */
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdmin.Controllers').controller('TimeOptions', function($scope, $location, $rootScope, AdminResourceService, AdminPersonService) {
-    AdminResourceService.query({
-      company: $scope.bb.company
-    }).then(function(resources) {
-      return $scope.resources = resources;
-    });
-    AdminPersonService.query({
-      company: $scope.bb.company
-    }).then(function(people) {
-      return $scope.people = people;
-    });
-    return $scope.block = function() {
-      if ($scope.person) {
-        AdminPersonService.block($scope.bb.company, $scope.person, {
-          start_time: $scope.start_time,
-          end_time: $scope.end_time
-        });
-      }
-      return $scope.ok();
-    };
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  var bbAdminFilters;
-
-  bbAdminFilters = angular.module('BBAdmin.Filters', []);
-
-  bbAdminFilters.filter('rag', function() {
-    return function(value, v1, v2) {
-      if (value <= v1) {
-        return "red";
-      } else if (value <= v2) {
-        return "amber";
-      } else {
-        return "green";
-      }
-    };
-  });
-
-  bbAdminFilters.filter('time', function($window) {
-    return function(v) {
-      return $window.sprintf("%02d:%02d", Math.floor(v / 60), v % 60);
-    };
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  var __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  angular.module('BB.Models').factory("Admin.AdministratorModel", function($q, BBModel, BaseModel) {
-    var Admin_Administrator;
-    return Admin_Administrator = (function(_super) {
-      __extends(Admin_Administrator, _super);
-
-      function Admin_Administrator(data) {
-        Admin_Administrator.__super__.constructor.call(this, data);
-      }
-
-      return Admin_Administrator;
-
-    })(BaseModel);
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  var __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  angular.module('BB.Models').factory("Admin.BookingModel", function($q, BBModel, BaseModel) {
-    var Admin_Booking;
-    return Admin_Booking = (function(_super) {
-      __extends(Admin_Booking, _super);
-
-      function Admin_Booking(data) {
-        Admin_Booking.__super__.constructor.apply(this, arguments);
-        this.datetime = moment(this.datetime);
-        this.start = this.datetime;
-        this.end = this.datetime.clone().add('minutes', this.duration);
-        this.title = this.full_describe;
-        this.allDay = false;
-        if (this.status === 3) {
-          this.className = "status_blocked";
-        } else if (this.status === 4) {
-          this.className = "status_booked";
-        }
-      }
-
-      Admin_Booking.prototype.getPostData = function() {
-        var data;
-        data = {};
-        data.date = this.start.format("YYYY-MM-DD");
-        data.time = this.start.hour() * 60 + this.start.minute();
-        data.duration = this.duration;
-        data.id = this.id;
-        return data;
-      };
-
-      Admin_Booking.prototype.$update = function() {
-        var data;
-        data = this.getPostData();
-        return this.$put('self', {}, data).then((function(_this) {
-          return function(res) {
-            _this.constructor(res);
-            return console.log(_this);
-          };
-        })(this));
-      };
-
-      return Admin_Booking;
-
-    })(BaseModel);
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  var __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  angular.module('BB.Models').factory("Admin.SlotModel", function($q, BBModel, BaseModel, TimeSlotModel) {
-    var Admin_Slot;
-    return Admin_Slot = (function(_super) {
-      __extends(Admin_Slot, _super);
-
-      function Admin_Slot(data) {
-        Admin_Slot.__super__.constructor.call(this, data);
-        this.title = this.full_describe;
-        if (this.status === 0) {
-          this.title = "Available";
-        }
-        this.datetime = moment(this.datetime);
-        this.start = this.datetime;
-        this.end = this.datetime.clone().add('minutes', this.duration);
-        this.allDay = false;
-        if (this.status === 3) {
-          this.className = "status_blocked";
-        } else if (this.status === 4) {
-          this.className = "status_booked";
-        } else if (this.status === 0) {
-          this.className = "status_available";
-        }
-      }
-
-      return Admin_Slot;
-
-    })(TimeSlotModel);
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  var __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  angular.module('BB.Models').factory("Admin.UserModel", function($q, BBModel, BaseModel) {
-    var Admin_User;
-    return Admin_User = (function(_super) {
-      __extends(Admin_User, _super);
-
-      function Admin_User(data) {
-        Admin_User.__super__.constructor.call(this, data);
-        this.companies = [];
-        if (data) {
-          if (this.$has('companies')) {
-            this.$get('companies').then((function(_this) {
-              return function(comps) {
-                return _this.companies = comps;
-              };
-            })(this));
-          }
-        }
-      }
-
-      return Admin_User;
-
-    })(BaseModel);
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdmin.Services').factory('AdminAdministratorService', function($q, BBModel) {
-    return {
-      query: function(params) {
-        var company, defer;
-        company = params.company;
-        defer = $q.defer();
-        company.$get('administrators').then(function(collection) {
-          return collection.$get('administrators').then(function(administrators) {
-            var a, models;
-            models = (function() {
-              var _i, _len, _results;
-              _results = [];
-              for (_i = 0, _len = administrators.length; _i < _len; _i++) {
-                a = administrators[_i];
-                _results.push(new BBModel.Admin.Administrator(a));
-              }
-              return _results;
-            })();
-            return defer.resolve(models);
-          }, function(err) {
-            return defer.reject(err);
-          });
-        }, function(err) {
-          return defer.reject(err);
-        });
-        return defer.promise;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdmin.Services').factory('AdminBookingService', function($q, $window, halClient, BookingCollections, BBModel) {
-    return {
-      query: function(prms) {
-        var deferred, href, uri, url;
-        if (prms.slot) {
-          prms.slot_id = prms.slot.id;
-        }
-        url = "";
-        if (prms.url) {
-          url = prms.url;
-        }
-        href = url + "/api/v1/admin/{company_id}/bookings{?slot_id,start_date,end_date,service_id,resource_id,person_id,page,per_page,include_cancelled}";
-        uri = new $window.UriTemplate.parse(href).expand(prms || {});
-        deferred = $q.defer();
-        halClient.$get(uri, {}).then((function(_this) {
-          return function(found) {
-            return found.$get('bookings').then(function(items) {
-              var item, sitems, spaces, _i, _len;
-              sitems = [];
-              for (_i = 0, _len = items.length; _i < _len; _i++) {
-                item = items[_i];
-                sitems.push(new BBModel.Admin.Booking(item));
-              }
-              spaces = new $window.Collection.Booking(found, sitems, prms);
-              BookingCollections.add(spaces);
-              return deferred.resolve(spaces);
-            });
-          };
-        })(this), (function(_this) {
-          return function(err) {
-            return deferred.reject(err);
-          };
-        })(this));
-        return deferred.promise;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdmin.Services').factory('AdminCompanyService', function($q, BBModel, AdminLoginService, $rootScope) {
-    return {
-      query: function(params) {
-        var defer, login_form, options, _base, _base1;
-        defer = $q.defer();
-        $rootScope.bb || ($rootScope.bb = {});
-        (_base = $rootScope.bb).api_url || (_base.api_url = params.apiUrl);
-        (_base1 = $rootScope.bb).api_url || (_base1.api_url = "http://www.bookingbug.com");
-        login_form = {
-          email: params.adminEmail,
-          password: params.adminPassword
-        };
-        options = {
-          company_id: params.companyId
-        };
-        AdminLoginService.login(login_form, options).then(function(user) {
-          return user.$get('company').then(function(company) {
-            return defer.resolve(company);
-          }, function(err) {
-            return defer.reject(err);
-          });
-        }, function(err) {
-          return defer.reject(err);
-        });
-        return defer.promise;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdmin.Services').factory('AdminDayService', function($q, $window, halClient, BBModel) {
-    return {
-      query: function(prms) {
-        var deferred, href, uri, url;
-        url = "";
-        if (prms.url) {
-          url = prms.url;
-        }
-        href = url + "/api/v1/{company_id}/day_data{?month,week,date,edate,event_id,service_id}";
-        uri = new $window.UriTemplate.parse(href).expand(prms || {});
-        deferred = $q.defer();
-        halClient.$get(uri, {}).then((function(_this) {
-          return function(found) {
-            var item, mdays, _i, _len, _ref;
-            if (found.items) {
-              mdays = [];
-              _ref = found.items;
-              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                item = _ref[_i];
-                halClient.$get(item.uri).then(function(data) {
-                  var days, dcol, i, _j, _len1, _ref1;
-                  days = [];
-                  _ref1 = data.days;
-                  for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-                    i = _ref1[_j];
-                    if (i.type === prms.item) {
-                      days.push(new BBModel.Day(i));
-                    }
-                  }
-                  dcol = new $window.Collection.Day(data, days, {});
-                  return mdays.push(dcol);
-                });
-              }
-              return deferred.resolve(mdays);
-            }
-          };
-        })(this), (function(_this) {
-          return function(err) {
-            return deferred.reject(err);
-          };
-        })(this));
-        return deferred.promise;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdmin.Services').factory("AdminLoginService", function($q, halClient, $rootScope, BBModel) {
-    return {
-      login: function(form, options) {
-        var deferred, url;
-        deferred = $q.defer();
-        url = "" + $rootScope.bb.api_url + "/api/v1/login/admin/" + options.company_id;
-        halClient.$post(url, options, form).then((function(_this) {
-          return function(login) {
-            var login_model;
-            if (login.$has('administrator')) {
-              return login.$get('administrator').then(function(user) {
-                user = _this.setLogin(user);
-                return deferred.resolve(user);
-              });
-            } else if (login.$has('administrators')) {
-              login_model = new BBModel.Admin.Login(login);
-              return deferred.resolve(login_model);
-            } else {
-              return deferred.reject("No admin account for login");
-            }
-          };
-        })(this), (function(_this) {
-          return function(err) {
-            var login, login_model;
-            if (err.status === 400) {
-              login = halClient.$parse(err.data);
-              if (login.$has('administrators')) {
-                login_model = new BBModel.Admin.Login(login);
-                return deferred.resolve(login_model);
-              } else {
-                return deferred.reject(err);
-              }
-            } else {
-              return deferred.reject(err);
-            }
-          };
-        })(this));
-        return deferred.promise;
-      },
-      ssoLogin: function(options, data) {
-        var deferred, url;
-        deferred = $q.defer();
-        url = $rootScope.bb.api_url + "/api/v1/login/sso/" + options['company_id'];
-        halClient.$post(url, {}, data).then((function(_this) {
-          return function(login) {
-            var login_model;
-            if (login.$has('administrator')) {
-              return login.$get('administrator').then(function(user) {
-                user = _this.setLogin(user);
-                return deferred.resolve(user);
-              });
-            } else if (login.$has('administrators')) {
-              login_model = new BBModel.Admin.Login(login);
-              return deferred.resolve(login_model);
-            } else {
-              return deferred.reject("No admin account for login");
-            }
-          };
-        })(this), (function(_this) {
-          return function(err) {
-            var login, login_model;
-            if (err.status === 400) {
-              login = halClient.$parse(err.data);
-              if (login.$has('administrators')) {
-                login_model = new BBModel.Admin.Login(login);
-                return deferred.resolve(login_model);
-              } else {
-                return deferred.reject(err);
-              }
-            } else {
-              return deferred.reject(err);
-            }
-          };
-        })(this));
-        return deferred.promise;
-      },
-      isLoggedIn: function() {
-        this.checkLogin();
-        if ($rootScope.user) {
-          return true;
-        } else {
-          return false;
-        }
-      },
-      setLogin: function(user) {
-        var auth_token;
-        auth_token = user.getOption('auth_token');
-        user = new BBModel.Admin.User(user);
-        sessionStorage.setItem("user", user.$toStore());
-        sessionStorage.setItem("auth_token", auth_token);
-        $rootScope.user = user;
-        return user;
-      },
-      user: function() {
-        this.checkLogin();
-        return $rootScope.user;
-      },
-      checkLogin: function() {
-        var user;
-        if ($rootScope.user) {
-          return;
-        }
-        user = sessionStorage.getItem("user");
-        if (user) {
-          return $rootScope.user = halClient.createResource(user);
-        }
-      },
-      logout: function() {
-        $rootScope.user = null;
-        sessionStorage.removeItem("user");
-        return sessionStorage.removeItem("auth_token");
-      },
-      getLogin: function(options) {
-        var defer, url;
-        defer = $q.defer();
-        url = "" + $rootScope.bb.api_url + "/api/v1/login/admin/" + options.company_id;
-        halClient.$get(url, options).then((function(_this) {
-          return function(login) {
-            if (login.$has('administrator')) {
-              return login.$get('administrator').then(function(user) {
-                user = _this.setLogin(user);
-                return defer.resolve(user);
-              }, function(err) {
-                return defer.reject(err);
-              });
-            } else {
-              return defer.reject();
-            }
-          };
-        })(this), function(err) {
-          return defer.reject(err);
-        });
-        return defer.promise;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdmin.Services').factory('AdminPersonService', function($q, $window, $rootScope, halClient, SlotCollections, BBModel, LoginService) {
-    return {
-      query: function(prms) {
-        var deferred, href, uri, url;
-        if (prms.company) {
-          prms.company_id = prms.company.id;
-        }
-        url = "";
-        if ($rootScope.bb.api_url) {
-          url = $rootScope.bb.api_url;
-        }
-        href = url + "/api/v1/admin/{company_id}/people";
-        uri = new $window.UriTemplate.parse(href).expand(prms || {});
-        deferred = $q.defer();
-        halClient.$get(uri, {}).then((function(_this) {
-          return function(resource) {
-            return resource.$get('people').then(function(items) {
-              var i, people, _i, _len;
-              people = [];
-              for (_i = 0, _len = items.length; _i < _len; _i++) {
-                i = items[_i];
-                people.push(new BBModel.Person(i));
-              }
-              return deferred.resolve(people);
-            });
-          };
-        })(this), (function(_this) {
-          return function(err) {
-            return deferred.reject(err);
-          };
-        })(this));
-        return deferred.promise;
-      },
-      block: function(company, person, data) {
-        var deferred, href, prms, uri;
-        prms = {
-          id: person.id,
-          company_id: company.id
-        };
-        deferred = $q.defer();
-        href = "/api/v1/admin/{company_id}/people/{id}/block";
-        uri = new $window.UriTemplate.parse(href).expand(prms || {});
-        halClient.$put(uri, {}, data).then((function(_this) {
-          return function(slot) {
-            slot = new BBModel.Admin.Slot(slot);
-            SlotCollections.checkItems(slot);
-            return deferred.resolve(slot);
-          };
-        })(this), (function(_this) {
-          return function(err) {
-            return deferred.reject(err);
-          };
-        })(this));
-        return deferred.promise;
-      },
-      signup: function(user, data) {
-        var defer;
-        defer = $q.defer();
-        return user.$get('company').then(function(company) {
-          var params;
-          params = {};
-          company.$post('people', params, data).then(function(person) {
-            if (person.$has('administrator')) {
-              return person.$get('administrator').then(function(user) {
-                LoginService.setLogin(user);
-                return defer.resolve(person);
-              });
-            } else {
-              return defer.resolve(person);
-            }
-          }, function(err) {
-            return defer.reject(err);
-          });
-          return defer.promise;
-        });
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdmin.Services').factory('AdminResourceService', function($q, $window, halClient, SlotCollections, BBModel) {
-    return {
-      query: function(prms) {
-        var deferred, href, uri, url;
-        if (prms.company) {
-          prms.company_id = prms.company.id;
-        }
-        url = "";
-        if (prms.url) {
-          url = prms.url;
-        }
-        href = url + "/api/v1/admin/{company_id}/resources";
-        uri = new $window.UriTemplate.parse(href).expand(prms || {});
-        deferred = $q.defer();
-        halClient.$get(uri, {}).then((function(_this) {
-          return function(resource) {
-            return resource.$get('resources').then(function(items) {
-              var i, resources, _i, _len;
-              resources = [];
-              for (_i = 0, _len = items.length; _i < _len; _i++) {
-                i = items[_i];
-                resources.push(new BBModel.Resource(i));
-              }
-              return deferred.resolve(resources);
-            });
-          };
-        })(this), (function(_this) {
-          return function(err) {
-            return deferred.reject(err);
-          };
-        })(this));
-        return deferred.promise;
-      },
-      block: function(company, resource, data) {
-        var deferred, href, prms, uri;
-        prms = {
-          id: resource.id,
-          company_id: company.id
-        };
-        deferred = $q.defer();
-        href = "/api/v1/admin/{company_id}/resource/{id}/block";
-        uri = new $window.UriTemplate.parse(href).expand(prms || {});
-        halClient.$put(uri, {}, data).then((function(_this) {
-          return function(slot) {
-            slot = new BBModel.Admin.Slot(slot);
-            SlotCollections.checkItems(slot);
-            return deferred.resolve(slot);
-          };
-        })(this), (function(_this) {
-          return function(err) {
-            return deferred.reject(err);
-          };
-        })(this));
-        return deferred.promise;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdmin.Services').factory('AdminSlotService', function($q, $window, halClient, SlotCollections, BBModel) {
-    return {
-      query: function(prms) {
-        var deferred, existing, href, uri, url;
-        deferred = $q.defer();
-        existing = SlotCollections.find(prms);
-        if (existing) {
-          deferred.resolve(existing);
-        } else {
-          url = "";
-          if (prms.url) {
-            url = prms.url;
-          }
-          href = url + "/api/v1/admin/{company_id}/slots{?start_date,end_date,service_id,resource_id,person_id,page,per_page}";
-          uri = new $window.UriTemplate.parse(href).expand(prms || {});
-          halClient.$get(uri, {}).then((function(_this) {
-            return function(found) {
-              return found.$get('slots').then(function(items) {
-                var item, sitems, slots, _i, _len;
-                sitems = [];
-                for (_i = 0, _len = items.length; _i < _len; _i++) {
-                  item = items[_i];
-                  sitems.push(new BBModel.Admin.Slot(item));
-                }
-                slots = new $window.Collection.Slot(found, sitems, prms);
-                SlotCollections.add(slots);
-                return deferred.resolve(slots);
-              });
-            };
-          })(this), (function(_this) {
-            return function(err) {
-              return deferred.reject(err);
-            };
-          })(this));
-        }
-        return deferred.promise;
-      },
-      create: function(prms, data) {
-        var deferred, href, uri, url;
-        url = "";
-        if (prms.url) {
-          url = prms.url;
-        }
-        href = url + "/api/v1/admin/{company_id}/slots";
-        uri = new $window.UriTemplate.parse(href).expand(prms || {});
-        deferred = $q.defer();
-        halClient.$post(uri, {}, data).then((function(_this) {
-          return function(slot) {
-            slot = new BBModel.Admin.Slot(slot);
-            SlotCollections.checkItems(slot);
-            return deferred.resolve(slot);
-          };
-        })(this), (function(_this) {
-          return function(err) {
-            return deferred.reject(err);
-          };
-        })(this));
-        return deferred.promise;
-      },
-      "delete": function(item) {
-        var deferred;
-        deferred = $q.defer();
-        item.$del('self').then((function(_this) {
-          return function(slot) {
-            slot = new BBModel.Admin.Slot(slot);
-            SlotCollections.deleteItems(slot);
-            return deferred.resolve(slot);
-          };
-        })(this), (function(_this) {
-          return function(err) {
-            return deferred.reject(err);
-          };
-        })(this));
-        return deferred.promise;
-      },
-      update: function(item, data) {
-        var deferred;
-        deferred = $q.defer();
-        item.$put('self', {}, data).then((function(_this) {
-          return function(slot) {
-            slot = new BBModel.Admin.Slot(slot);
-            SlotCollections.checkItems(slot);
-            return deferred.resolve(slot);
-          };
-        })(this), (function(_this) {
-          return function(err) {
-            return deferred.reject(err);
-          };
-        })(this));
-        return deferred.promise;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdmin.Services').factory('AdminTimeService', function($q, $window, halClient, BBModel) {
-    return {
-      query: function(prms) {
-        var deferred, href, uri, url;
-        if (prms.day) {
-          prms.date = prms.day.date;
-        }
-        url = "";
-        if (prms.url) {
-          url = prms.url;
-        }
-        href = url + "/api/v1/{company_id}/time_data{?date,event_id,service_id}";
-        uri = new $window.UriTemplate.parse(href).expand(prms || {});
-        deferred = $q.defer();
-        halClient.$get(uri, {}).then((function(_this) {
-          return function(found) {
-            var afound, i, times, ts, _i, _j, _len, _len1, _ref, _ref1;
-            times = [];
-            _ref = found.times;
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              afound = _ref[_i];
-              _ref1 = afound.data;
-              for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-                i = _ref1[_j];
-                ts = new BBModel.TimeSlot(i);
-                ts.id = afound.id;
-                times.push(ts);
-              }
-            }
-            return deferred.resolve(times);
-          };
-        })(this), (function(_this) {
-          return function(err) {
-            return deferred.reject(err);
-          };
-        })(this));
-        return deferred.promise;
-      }
-    };
-  });
-
-}).call(this);
 
 (function() {
   var __hasProp = {}.hasOwnProperty,
@@ -101709,7 +95181,7 @@ SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
       _fn2(model);
     }
     funcs['Member'] = mfuncs;
-    admin_models = ['Booking', 'Slot', 'User', 'Administrator'];
+    admin_models = ['Booking', 'Slot', 'User', 'Administrator', 'Schedule', 'Resource', 'Person'];
     afuncs = {};
     _fn3 = (function(_this) {
       return function(model) {
@@ -104527,580 +97999,6 @@ SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
 }).call(this);
 
 (function() {
-  angular.module('BBMember').controller('editBookingModalForm', function($scope, $modalInstance, $log, booking) {
-    $scope.title = 'Booking Details';
-    booking.$get('edit_booking').then(function(booking_schema) {
-      $scope.form = booking_schema.form;
-      $scope.schema = booking_schema.schema;
-      return booking.getAnswersPromise().then(function(answers) {
-        var answer, _i, _len, _ref;
-        _ref = answers.answers;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          answer = _ref[_i];
-          booking["question" + answer.question_id] = answer.value;
-        }
-        return $scope.booking = booking;
-      });
-    });
-    $scope.submit = function(booking) {
-      return $scope.booking.$put('self', {}, booking).then(function(booking) {
-        $log.info("Booking update success");
-        return $modalInstance.close($scope.booking);
-      }, function(err) {
-        return $log.error("Booking update failure");
-      });
-    };
-    return $scope.cancel = function() {
-      return $modalInstance.dismiss('cancel');
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBMember.Controllers').controller('MembersBookings', function($scope, $rootScope, $location, $filter, $q, $timeout, $modal, MemberBookingService, LoginService, BBModel) {
-    var doCancel, flushBookings, getBookings;
-    $scope.init = (function(_this) {
-      return function(options) {
-        _this.type = options.type;
-        return _this.limit = options.limit;
-      };
-    })(this);
-    $scope.$watch("members", (function(_this) {
-      return function(new_value, old_value) {
-        if ($scope.members) {
-          return getBookings();
-        }
-      };
-    })(this));
-    $scope.$watch("member", (function(_this) {
-      return function(new_value, old_value) {
-        if ($scope.member) {
-          return getBookings();
-        }
-      };
-    })(this));
-    $scope.$on("updateBookings", (function(_this) {
-      return function() {
-        flushBookings();
-        return getBookings();
-      };
-    })(this));
-    getBookings = (function(_this) {
-      return function() {
-        switch (_this.type) {
-          case 'upcoming':
-            return $scope.upcoming();
-          case 'historical':
-            return $scope.historical('years', -1);
-        }
-      };
-    })(this);
-    flushBookings = (function(_this) {
-      return function() {
-        var member, params;
-        switch (_this.type) {
-          case 'upcoming':
-            params = {
-              start_date: moment().format('YYYY-MM-DD')
-            };
-            member = $scope.member;
-            return MemberBookingService.flush(member, params);
-        }
-      };
-    })(this);
-    $scope.filter_bookings = function(booking) {
-      return booking.deleted === true;
-    };
-    doCancel = function(member, booking) {
-      return MemberBookingService.cancel(member, booking).then(function() {
-        return _.without($scope.bookings, booking);
-      }, function(err) {
-        return console.log('cancel error');
-      });
-    };
-    $scope.cancel = function(booking) {
-      var modalInstance;
-      modalInstance = $modal.open({
-        templateUrl: "deleteModal.html",
-        windowClass: "bbug",
-        controller: function($scope, $rootScope, $modalInstance, booking) {
-          $scope.controller = "ModalDelete";
-          $scope.booking = booking;
-          $scope.confirm_delete = function() {
-            return $modalInstance.close(booking);
-          };
-          return $scope.cancel = function() {
-            return $modalInstance.dismiss("cancel");
-          };
-        },
-        resolve: {
-          booking: function() {
-            return booking;
-          }
-        }
-      });
-      return modalInstance.result.then(function(booking) {
-        if ($scope.member) {
-          return doCancel($scope.member, booking);
-        } else if ($scope.members) {
-          return booking.$get('member').then(function(member) {
-            return doCancel(member, booking);
-          });
-        }
-      });
-    };
-    $scope.upcoming = (function(_this) {
-      return function() {
-        var member, members, params, promises;
-        $scope.notLoaded($scope);
-        params = {
-          start_date: moment().format('YYYY-MM-DD')
-        };
-        if (_this.limit) {
-          params.per_page = _this.limit;
-        }
-        if ($scope.members) {
-          members = $scope.members;
-        } else if ($scope.member) {
-          members = [$scope.member];
-        }
-        promises = (function() {
-          var _i, _len, _results;
-          _results = [];
-          for (_i = 0, _len = members.length; _i < _len; _i++) {
-            member = members[_i];
-            _results.push(MemberBookingService.query(member, params));
-          }
-          return _results;
-        })();
-        return $q.all(promises).then(function(bookings) {
-          $scope.setLoaded($scope);
-          return $scope.bookings = [].concat.apply([], bookings);
-        }, function(err) {
-          return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
-        });
-      };
-    })(this);
-    $scope.historical = (function(_this) {
-      return function(type, num) {
-        var date, member, members, params, promises;
-        $scope.notLoaded($scope);
-        date = moment().add(type, num);
-        params = {
-          start_date: date.format('YYYY-MM-DD'),
-          end_date: moment().format('YYYY-MM-DD')
-        };
-        if (_this.limit) {
-          params.per_page = _this.limit;
-        }
-        if ($scope.members) {
-          members = $scope.members;
-        } else if ($scope.member) {
-          members = [$scope.member];
-        }
-        promises = (function() {
-          var _i, _len, _results;
-          _results = [];
-          for (_i = 0, _len = members.length; _i < _len; _i++) {
-            member = members[_i];
-            _results.push(MemberBookingService.query(member, params));
-          }
-          return _results;
-        })();
-        return $q.all(promises).then(function(bookings) {
-          $scope.setLoaded($scope);
-          return $scope.bookings = [].concat.apply([], bookings);
-        }, function(err) {
-          return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
-        });
-      };
-    })(this);
-    $scope.move = function(booking, route, options) {
-      if (options == null) {
-        options = {};
-      }
-      return booking.getMemberPromise().then(function(member) {
-        $scope.setClient(member);
-        $scope.notLoaded($scope);
-        $scope.initWidget({
-          company_id: booking.company_id,
-          no_route: true
-        });
-        $scope.clearPage();
-        return $timeout((function(_this) {
-          return function() {
-            var new_item;
-            $scope.bb.moving_booking = booking;
-            new_item = new BBModel.BasketItem(booking, $scope.bb);
-            new_item.setSrcBooking(booking);
-            new_item.ready = false;
-            if (booking.$has('resource') && options.use_resource) {
-              return booking.$get('resource').then(function(resource) {
-                new_item.setResource(new BBModel.Resource(resource));
-                if (booking.$has('service')) {
-                  return booking.$get('service').then(function(service) {
-                    new_item.setService(new BBModel.Service(service));
-                    $scope.setBasketItem(new_item);
-                    $scope.setLoaded($scope);
-                    return $scope.decideNextPage(route);
-                  }, function(err) {
-                    return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
-                  });
-                } else {
-                  $scope.setBasketItem(new_item);
-                  $scope.setLoaded($scope);
-                  return $scope.decideNextPage(route);
-                }
-              });
-            } else {
-              if (booking.$has('service')) {
-                return booking.$get('service').then(function(service) {
-                  new_item.setService(new BBModel.Service(service));
-                  $scope.setBasketItem(new_item);
-                  $scope.setLoaded($scope);
-                  return $scope.decideNextPage(route);
-                }, function(err) {
-                  return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
-                });
-              } else {
-                $scope.setBasketItem(new_item);
-                $scope.setLoaded($scope);
-                return $scope.decideNextPage(route);
-              }
-            }
-          };
-        })(this));
-      });
-    };
-    return $scope.isMovable = function(booking) {
-      if (booking.min_cancellation_time) {
-        return moment().isBefore(booking.min_cancellation_time);
-      }
-      return booking.datetime.isAfter(moment());
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBMember').directive('memberBookingsTable', function($modal, $log, $rootScope, MemberLoginService, MemberBookingService, $compile, $templateCache) {
-    var controller, link;
-    controller = function($scope, $modal) {
-      var getBookings;
-      $scope.loading = true;
-      $scope.fields || ($scope.fields = ['describe', 'full_describe']);
-      $scope.$watch('member', function(member) {
-        if (member != null) {
-          return getBookings($scope, member);
-        }
-      });
-      $scope.edit = function(id) {
-        var booking;
-        booking = _.find($scope.booking_models, function(b) {
-          return b.id === id;
-        });
-        return $modal.open({
-          templateUrl: 'edit_booking_modal_form.html',
-          controller: 'editBookingModalForm',
-          resolve: {
-            booking: function() {
-              return booking;
-            }
-          }
-        });
-      };
-      return getBookings = function($scope, member) {
-        var params;
-        params = {
-          start_date: moment().format('YYYY-MM-DD')
-        };
-        return MemberBookingService.query(member, params).then(function(bookings) {
-          $scope.booking_models = bookings;
-          $scope.bookings = _.map(bookings, function(booking) {
-            return _.pick(booking, 'id', 'full_describe', 'describe');
-          });
-          return $scope.loading = false;
-        }, function(err) {
-          $log.error(err.data);
-          return $scope.loading = false;
-        });
-      };
-    };
-    link = function(scope, element, attrs) {
-      var _base, _base1;
-      $rootScope.bb || ($rootScope.bb = {});
-      (_base = $rootScope.bb).api_url || (_base.api_url = scope.apiUrl);
-      return (_base1 = $rootScope.bb).api_url || (_base1.api_url = "http://www.bookingbug.com");
-    };
-    return {
-      link: link,
-      controller: controller,
-      templateUrl: 'member_bookings_table.html',
-      scope: {
-        apiUrl: '@',
-        fields: '=?',
-        member: '='
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBMember').directive('memberForm', function($modal, $log, $rootScope, MemberLoginService, MemberBookingService) {
-    var controller, link;
-    controller = function($scope) {
-      $scope.loading = true;
-      $scope.$watch('member', function(member) {
-        console.log('member ', member);
-        if (member != null) {
-          console.log('member ', member);
-          return member.$get('edit_member').then(function(member_schema) {
-            $scope.form = member_schema.form;
-            $scope.schema = member_schema.schema;
-            return $scope.loading = false;
-          });
-        }
-      });
-      return $scope.submit = function(form) {
-        $scope.loading = true;
-        return $scope.member.$put('self', {}, form).then(function(member) {
-          $log.info("Successfully updated member");
-          return $scope.loading = false;
-        }, function(err) {
-          $log.error("Failed to update member - " + err);
-          return $scope.loading = false;
-        });
-      };
-    };
-    link = function(scope, element, attrs) {
-      var _base, _base1;
-      $rootScope.bb || ($rootScope.bb = {});
-      (_base = $rootScope.bb).api_url || (_base.api_url = attrs.apiUrl);
-      return (_base1 = $rootScope.bb).api_url || (_base1.api_url = "http://www.bookingbug.com");
-    };
-    return {
-      link: link,
-      controller: controller,
-      template: "<div ng-show=\"loading\"><img src='/BB_wait.gif' class=\"loader\"></div>\n<form sf-schema=\"schema\" sf-form=\"form\" sf-model=\"member\"\n  ng-submit=\"submit(member)\" ng-hide=\"loading\"></form>"
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBMember').directive('loginMember', function($modal, $log, $rootScope, MemberLoginService, $templateCache, $q) {
-    var link, loginMemberController, pickCompanyController;
-    loginMemberController = function($scope, $modalInstance, company_id) {
-      $scope.title = 'Login';
-      $scope.schema = {
-        type: 'object',
-        properties: {
-          email: {
-            type: 'string',
-            title: 'Email'
-          },
-          password: {
-            type: 'string',
-            title: 'Password'
-          }
-        }
-      };
-      $scope.form = [
-        {
-          key: 'email',
-          type: 'email',
-          feedback: false,
-          autofocus: true
-        }, {
-          key: 'password',
-          type: 'password',
-          feedback: false
-        }
-      ];
-      $scope.login_form = {};
-      $scope.submit = function(form) {
-        var options;
-        options = {
-          company_id: company_id
-        };
-        return MemberLoginService.login(form, options).then(function(member) {
-          member.email = form.email;
-          member.password = form.password;
-          return $modalInstance.close(member);
-        }, function(err) {
-          return $modalInstance.dismiss(err);
-        });
-      };
-      return $scope.cancel = function() {
-        return $modalInstance.dismiss('cancel');
-      };
-    };
-    pickCompanyController = function($scope, $modalInstance, companies) {
-      var c;
-      $scope.title = 'Pick Company';
-      $scope.schema = {
-        type: 'object',
-        properties: {
-          company_id: {
-            type: 'integer',
-            title: 'Company'
-          }
-        }
-      };
-      $scope.schema.properties.company_id["enum"] = (function() {
-        var _i, _len, _results;
-        _results = [];
-        for (_i = 0, _len = companies.length; _i < _len; _i++) {
-          c = companies[_i];
-          _results.push(c.id);
-        }
-        return _results;
-      })();
-      $scope.form = [
-        {
-          key: 'company_id',
-          type: 'select',
-          titleMap: (function() {
-            var _i, _len, _results;
-            _results = [];
-            for (_i = 0, _len = companies.length; _i < _len; _i++) {
-              c = companies[_i];
-              _results.push({
-                value: c.id,
-                name: c.name
-              });
-            }
-            return _results;
-          })(),
-          autofocus: true
-        }
-      ];
-      $scope.pick_company_form = {};
-      $scope.submit = function(form) {
-        return $modalInstance.close(form.company_id);
-      };
-      return $scope.cancel = function() {
-        return $modalInstance.dismiss('cancel');
-      };
-    };
-    link = function(scope, element, attrs) {
-      var loginModal, pickCompanyModal, tryLogin, _base, _base1;
-      $rootScope.bb || ($rootScope.bb = {});
-      (_base = $rootScope.bb).api_url || (_base.api_url = scope.apiUrl);
-      (_base1 = $rootScope.bb).api_url || (_base1.api_url = "http://www.bookingbug.com");
-      loginModal = function() {
-        var modalInstance;
-        modalInstance = $modal.open({
-          templateUrl: 'login_modal_form.html',
-          controller: loginMemberController,
-          resolve: {
-            company_id: function() {
-              return scope.companyId;
-            }
-          }
-        });
-        return modalInstance.result.then(function(result) {
-          scope.memberEmail = result.email;
-          scope.memberPassword = result.password;
-          if (result.$has('members')) {
-            return result.$get('members').then(function(members) {
-              var m;
-              scope.members = members;
-              return $q.all((function() {
-                var _i, _len, _results;
-                _results = [];
-                for (_i = 0, _len = members.length; _i < _len; _i++) {
-                  m = members[_i];
-                  _results.push(m.$get('company'));
-                }
-                return _results;
-              })()).then(function(companies) {
-                return pickCompanyModal(companies);
-              });
-            });
-          } else {
-            return scope.member = result;
-          }
-        }, function() {
-          return loginModal();
-        });
-      };
-      pickCompanyModal = function(companies) {
-        var modalInstance;
-        modalInstance = $modal.open({
-          templateUrl: 'pick_company_modal_form.html',
-          controller: pickCompanyController,
-          resolve: {
-            companies: function() {
-              return companies;
-            }
-          }
-        });
-        return modalInstance.result.then(function(company_id) {
-          scope.companyId = company_id;
-          return tryLogin();
-        }, function() {
-          return pickCompanyModal();
-        });
-      };
-      tryLogin = function() {
-        var login_form, options;
-        login_form = {
-          email: scope.memberEmail,
-          password: scope.memberPassword
-        };
-        options = {
-          company_id: scope.companyId
-        };
-        return MemberLoginService.login(login_form, options).then(function(result) {
-          if (result.$has('members')) {
-            return result.$get('members').then(function(members) {
-              var m;
-              scope.members = members;
-              return $q.all((function() {
-                var _i, _len, _results;
-                _results = [];
-                for (_i = 0, _len = members.length; _i < _len; _i++) {
-                  m = members[_i];
-                  _results.push(m.$get('company'));
-                }
-                return _results;
-              })()).then(function(companies) {
-                return pickCompanyModal(companies);
-              });
-            });
-          } else {
-            return scope.member = result;
-          }
-        }, function(err) {
-          return loginModal();
-        });
-      };
-      if (scope.memberEmail && scope.memberPassword) {
-        return tryLogin();
-      } else {
-        return loginModal();
-      }
-    };
-    return {
-      link: link,
-      scope: {
-        memberEmail: '@',
-        memberPassword: '@',
-        companyId: '@',
-        apiUrl: '@',
-        member: '='
-      },
-      transclude: true,
-      template: "<div ng-hide='member'><img src='/BB_wait.gif' class=\"loader\"></div>\n<div ng-show='member' ng-transclude></div>"
-    };
-  });
-
-}).call(this);
-
-(function() {
   angular.module('BB.Services').factory("AddressListService", function($q, $window, halClient) {
     return {
       query: function(prms) {
@@ -106591,6 +99489,123 @@ SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
 }).call(this);
 
 (function() {
+  angular.module('BB.Services').factory('ModalForm', function($modal, $log) {
+    var editForm, newForm;
+    newForm = function($scope, $modalInstance, company, title, new_rel, post_rel, success, fail) {
+      $scope.title = title;
+      $scope.company = company;
+      $scope.company.$get(new_rel).then(function(schema) {
+        $scope.form = _.reject(schema.form, function(x) {
+          return x.type === 'submit';
+        });
+        $scope.schema = schema.schema;
+        return $scope.form_model = {};
+      });
+      $scope.submit = function(form) {
+        $scope.$broadcast('schemaFormValidate');
+        return $scope.company.$post(post_rel, {}, $scope.form_model).then(function(model) {
+          $modalInstance.close(model);
+          if (success) {
+            return success(model);
+          }
+        }, function(err) {
+          $modalInstance.close(err);
+          $log.error('Failed to create');
+          if (fail) {
+            return fail(err);
+          }
+        });
+      };
+      return $scope.cancel = function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        return $modalInstance.dismiss('cancel');
+      };
+    };
+    editForm = function($scope, $modalInstance, model, title, success, fail) {
+      $scope.title = title;
+      $scope.model = model;
+      $scope.model.$get('edit').then(function(schema) {
+        $scope.form = _.reject(schema.form, function(x) {
+          return x.type === 'submit';
+        });
+        $scope.schema = schema.schema;
+        return $scope.form_model = $scope.model;
+      });
+      $scope.submit = function(form) {
+        $scope.$broadcast('schemaFormValidate');
+        return $scope.model.$put('self', {}, $scope.form_model).then(function(model) {
+          $modalInstance.close(model);
+          if (success) {
+            return success();
+          }
+        }, function(err) {
+          $modalInstance.close(err);
+          $log.error('Failed to create');
+          if (fail) {
+            return fail();
+          }
+        });
+      };
+      return $scope.cancel = function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        return $modalInstance.dismiss('cancel');
+      };
+    };
+    return {
+      "new": function(config) {
+        return $modal.open({
+          templateUrl: 'modal_form.html',
+          controller: newForm,
+          resolve: {
+            company: function() {
+              return config.company;
+            },
+            title: function() {
+              return config.title;
+            },
+            new_rel: function() {
+              return config.new_rel;
+            },
+            post_rel: function() {
+              return config.post_rel;
+            },
+            success: function() {
+              return config.success;
+            },
+            fail: function() {
+              return config.fail;
+            }
+          }
+        });
+      },
+      edit: function(config) {
+        return $modal.open({
+          templateUrl: 'modal_form.html',
+          controller: editForm,
+          resolve: {
+            model: function() {
+              return config.model;
+            },
+            title: function() {
+              return config.title;
+            },
+            success: function() {
+              return config.success;
+            },
+            fail: function() {
+              return config.fail;
+            }
+          }
+        });
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
   angular.module('BB.Services').factory("MutexService", function($q, $window, $rootScope) {
     return {
       getLock: function(prms) {
@@ -107120,6 +100135,39 @@ SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
 }).call(this);
 
 (function() {
+  angular.module('BB.Services').factory('TimeSlotService', function($q, BBModel) {
+    return {
+      query: function(params) {
+        var company, defer;
+        defer = $q.defer();
+        company = params.company;
+        company.$get('slots', params).then(function(collection) {
+          return collection.$get('slots').then(function(slots) {
+            var s;
+            slots = (function() {
+              var _i, _len, _results;
+              _results = [];
+              for (_i = 0, _len = slots.length; _i < _len; _i++) {
+                s = slots[_i];
+                _results.push(new BBModel.TimeSlot(s));
+              }
+              return _results;
+            })();
+            return defer.resolve(slots);
+          }, function(err) {
+            return defer.reject(err);
+          });
+        }, function(err) {
+          return defer.reject(err);
+        });
+        return defer.promise;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
   angular.module('BB.Services').factory("BB.Service.address", function($q, BBModel) {
     return {
       unwrap: function(resource) {
@@ -107639,6 +100687,578 @@ SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
 }).call(this);
 
 (function() {
+  angular.module('BBMember').controller('editBookingModalForm', function($scope, $modalInstance, $log, booking) {
+    $scope.title = 'Booking Details';
+    booking.$get('edit_booking').then(function(booking_schema) {
+      $scope.form = booking_schema.form;
+      $scope.schema = booking_schema.schema;
+      return booking.getAnswersPromise().then(function(answers) {
+        var answer, _i, _len, _ref;
+        _ref = answers.answers;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          answer = _ref[_i];
+          booking["question" + answer.question_id] = answer.value;
+        }
+        return $scope.booking = booking;
+      });
+    });
+    $scope.submit = function(booking) {
+      return $scope.booking.$put('self', {}, booking).then(function(booking) {
+        $log.info("Booking update success");
+        return $modalInstance.close($scope.booking);
+      }, function(err) {
+        return $log.error("Booking update failure");
+      });
+    };
+    return $scope.cancel = function() {
+      return $modalInstance.dismiss('cancel');
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBMember.Controllers').controller('MembersBookings', function($scope, $rootScope, $location, $filter, $q, $timeout, $modal, MemberBookingService, LoginService, BBModel) {
+    var doCancel, flushBookings, getBookings;
+    $scope.init = (function(_this) {
+      return function(options) {
+        _this.type = options.type;
+        return _this.limit = options.limit;
+      };
+    })(this);
+    $scope.$watch("members", (function(_this) {
+      return function(new_value, old_value) {
+        if ($scope.members) {
+          return getBookings();
+        }
+      };
+    })(this));
+    $scope.$watch("member", (function(_this) {
+      return function(new_value, old_value) {
+        if ($scope.member) {
+          return getBookings();
+        }
+      };
+    })(this));
+    $scope.$on("updateBookings", (function(_this) {
+      return function() {
+        flushBookings();
+        return getBookings();
+      };
+    })(this));
+    getBookings = (function(_this) {
+      return function() {
+        switch (_this.type) {
+          case 'upcoming':
+            return $scope.upcoming();
+          case 'historical':
+            return $scope.historical('years', -1);
+        }
+      };
+    })(this);
+    flushBookings = (function(_this) {
+      return function() {
+        var member, params;
+        switch (_this.type) {
+          case 'upcoming':
+            params = {
+              start_date: moment().format('YYYY-MM-DD')
+            };
+            member = $scope.member;
+            return MemberBookingService.flush(member, params);
+        }
+      };
+    })(this);
+    $scope.filter_bookings = function(booking) {
+      return booking.deleted === true;
+    };
+    doCancel = function(member, booking) {
+      return MemberBookingService.cancel(member, booking).then(function() {
+        return _.without($scope.bookings, booking);
+      }, function(err) {
+        return console.log('cancel error');
+      });
+    };
+    $scope.cancel = function(booking) {
+      var modalInstance;
+      modalInstance = $modal.open({
+        templateUrl: "deleteModal.html",
+        windowClass: "bbug",
+        controller: function($scope, $rootScope, $modalInstance, booking) {
+          $scope.controller = "ModalDelete";
+          $scope.booking = booking;
+          $scope.confirm_delete = function() {
+            return $modalInstance.close(booking);
+          };
+          return $scope.cancel = function() {
+            return $modalInstance.dismiss("cancel");
+          };
+        },
+        resolve: {
+          booking: function() {
+            return booking;
+          }
+        }
+      });
+      return modalInstance.result.then(function(booking) {
+        if ($scope.member) {
+          return doCancel($scope.member, booking);
+        } else if ($scope.members) {
+          return booking.$get('member').then(function(member) {
+            return doCancel(member, booking);
+          });
+        }
+      });
+    };
+    $scope.upcoming = (function(_this) {
+      return function() {
+        var member, members, params, promises;
+        $scope.notLoaded($scope);
+        params = {
+          start_date: moment().format('YYYY-MM-DD')
+        };
+        if (_this.limit) {
+          params.per_page = _this.limit;
+        }
+        if ($scope.members) {
+          members = $scope.members;
+        } else if ($scope.member) {
+          members = [$scope.member];
+        }
+        promises = (function() {
+          var _i, _len, _results;
+          _results = [];
+          for (_i = 0, _len = members.length; _i < _len; _i++) {
+            member = members[_i];
+            _results.push(MemberBookingService.query(member, params));
+          }
+          return _results;
+        })();
+        return $q.all(promises).then(function(bookings) {
+          $scope.setLoaded($scope);
+          return $scope.bookings = [].concat.apply([], bookings);
+        }, function(err) {
+          return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
+        });
+      };
+    })(this);
+    $scope.historical = (function(_this) {
+      return function(type, num) {
+        var date, member, members, params, promises;
+        $scope.notLoaded($scope);
+        date = moment().add(type, num);
+        params = {
+          start_date: date.format('YYYY-MM-DD'),
+          end_date: moment().format('YYYY-MM-DD')
+        };
+        if (_this.limit) {
+          params.per_page = _this.limit;
+        }
+        if ($scope.members) {
+          members = $scope.members;
+        } else if ($scope.member) {
+          members = [$scope.member];
+        }
+        promises = (function() {
+          var _i, _len, _results;
+          _results = [];
+          for (_i = 0, _len = members.length; _i < _len; _i++) {
+            member = members[_i];
+            _results.push(MemberBookingService.query(member, params));
+          }
+          return _results;
+        })();
+        return $q.all(promises).then(function(bookings) {
+          $scope.setLoaded($scope);
+          return $scope.bookings = [].concat.apply([], bookings);
+        }, function(err) {
+          return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
+        });
+      };
+    })(this);
+    $scope.move = function(booking, route, options) {
+      if (options == null) {
+        options = {};
+      }
+      return booking.getMemberPromise().then(function(member) {
+        $scope.setClient(member);
+        $scope.notLoaded($scope);
+        $scope.initWidget({
+          company_id: booking.company_id,
+          no_route: true
+        });
+        $scope.clearPage();
+        return $timeout((function(_this) {
+          return function() {
+            var new_item;
+            $scope.bb.moving_booking = booking;
+            new_item = new BBModel.BasketItem(booking, $scope.bb);
+            new_item.setSrcBooking(booking);
+            new_item.ready = false;
+            if (booking.$has('resource') && options.use_resource) {
+              return booking.$get('resource').then(function(resource) {
+                new_item.setResource(new BBModel.Resource(resource));
+                if (booking.$has('service')) {
+                  return booking.$get('service').then(function(service) {
+                    new_item.setService(new BBModel.Service(service));
+                    $scope.setBasketItem(new_item);
+                    $scope.setLoaded($scope);
+                    return $scope.decideNextPage(route);
+                  }, function(err) {
+                    return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
+                  });
+                } else {
+                  $scope.setBasketItem(new_item);
+                  $scope.setLoaded($scope);
+                  return $scope.decideNextPage(route);
+                }
+              });
+            } else {
+              if (booking.$has('service')) {
+                return booking.$get('service').then(function(service) {
+                  new_item.setService(new BBModel.Service(service));
+                  $scope.setBasketItem(new_item);
+                  $scope.setLoaded($scope);
+                  return $scope.decideNextPage(route);
+                }, function(err) {
+                  return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
+                });
+              } else {
+                $scope.setBasketItem(new_item);
+                $scope.setLoaded($scope);
+                return $scope.decideNextPage(route);
+              }
+            }
+          };
+        })(this));
+      });
+    };
+    return $scope.isMovable = function(booking) {
+      if (booking.min_cancellation_time) {
+        return moment().isBefore(booking.min_cancellation_time);
+      }
+      return booking.datetime.isAfter(moment());
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBMember').directive('memberBookingsTable', function($modal, $log, $rootScope, MemberLoginService, MemberBookingService, $compile, $templateCache) {
+    var controller, link;
+    controller = function($scope, $modal) {
+      var getBookings;
+      $scope.loading = true;
+      $scope.fields || ($scope.fields = ['describe', 'full_describe']);
+      $scope.$watch('member', function(member) {
+        if (member != null) {
+          return getBookings($scope, member);
+        }
+      });
+      $scope.edit = function(id) {
+        var booking;
+        booking = _.find($scope.booking_models, function(b) {
+          return b.id === id;
+        });
+        return $modal.open({
+          templateUrl: 'edit_booking_modal_form.html',
+          controller: 'editBookingModalForm',
+          resolve: {
+            booking: function() {
+              return booking;
+            }
+          }
+        });
+      };
+      return getBookings = function($scope, member) {
+        var params;
+        params = {
+          start_date: moment().format('YYYY-MM-DD')
+        };
+        return MemberBookingService.query(member, params).then(function(bookings) {
+          $scope.booking_models = bookings;
+          $scope.bookings = _.map(bookings, function(booking) {
+            return _.pick(booking, 'id', 'full_describe', 'describe');
+          });
+          return $scope.loading = false;
+        }, function(err) {
+          $log.error(err.data);
+          return $scope.loading = false;
+        });
+      };
+    };
+    link = function(scope, element, attrs) {
+      var _base, _base1;
+      $rootScope.bb || ($rootScope.bb = {});
+      (_base = $rootScope.bb).api_url || (_base.api_url = scope.apiUrl);
+      return (_base1 = $rootScope.bb).api_url || (_base1.api_url = "http://www.bookingbug.com");
+    };
+    return {
+      link: link,
+      controller: controller,
+      templateUrl: 'member_bookings_table.html',
+      scope: {
+        apiUrl: '@',
+        fields: '=?',
+        member: '='
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBMember').directive('memberForm', function($modal, $log, $rootScope, MemberLoginService, MemberBookingService) {
+    var controller, link;
+    controller = function($scope) {
+      $scope.loading = true;
+      $scope.$watch('member', function(member) {
+        if (member != null) {
+          return member.$get('edit_member').then(function(member_schema) {
+            $scope.form = member_schema.form;
+            $scope.schema = member_schema.schema;
+            return $scope.loading = false;
+          });
+        }
+      });
+      return $scope.submit = function(form) {
+        $scope.loading = true;
+        return $scope.member.$put('self', {}, form).then(function(member) {
+          $log.info("Successfully updated member");
+          return $scope.loading = false;
+        }, function(err) {
+          $log.error("Failed to update member - " + err);
+          return $scope.loading = false;
+        });
+      };
+    };
+    link = function(scope, element, attrs) {
+      var _base, _base1;
+      $rootScope.bb || ($rootScope.bb = {});
+      (_base = $rootScope.bb).api_url || (_base.api_url = attrs.apiUrl);
+      return (_base1 = $rootScope.bb).api_url || (_base1.api_url = "http://www.bookingbug.com");
+    };
+    return {
+      link: link,
+      controller: controller,
+      template: "<div ng-show=\"loading\"><img src='/BB_wait.gif' class=\"loader\"></div>\n<form sf-schema=\"schema\" sf-form=\"form\" sf-model=\"member\"\n  ng-submit=\"submit(member)\" ng-hide=\"loading\"></form>"
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBMember').directive('loginMember', function($modal, $log, $rootScope, MemberLoginService, $templateCache, $q) {
+    var link, loginMemberController, pickCompanyController;
+    loginMemberController = function($scope, $modalInstance, company_id) {
+      $scope.title = 'Login';
+      $scope.schema = {
+        type: 'object',
+        properties: {
+          email: {
+            type: 'string',
+            title: 'Email'
+          },
+          password: {
+            type: 'string',
+            title: 'Password'
+          }
+        }
+      };
+      $scope.form = [
+        {
+          key: 'email',
+          type: 'email',
+          feedback: false,
+          autofocus: true
+        }, {
+          key: 'password',
+          type: 'password',
+          feedback: false
+        }
+      ];
+      $scope.login_form = {};
+      $scope.submit = function(form) {
+        var options;
+        options = {
+          company_id: company_id
+        };
+        return MemberLoginService.login(form, options).then(function(member) {
+          member.email = form.email;
+          member.password = form.password;
+          return $modalInstance.close(member);
+        }, function(err) {
+          return $modalInstance.dismiss(err);
+        });
+      };
+      return $scope.cancel = function() {
+        return $modalInstance.dismiss('cancel');
+      };
+    };
+    pickCompanyController = function($scope, $modalInstance, companies) {
+      var c;
+      $scope.title = 'Pick Company';
+      $scope.schema = {
+        type: 'object',
+        properties: {
+          company_id: {
+            type: 'integer',
+            title: 'Company'
+          }
+        }
+      };
+      $scope.schema.properties.company_id["enum"] = (function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = companies.length; _i < _len; _i++) {
+          c = companies[_i];
+          _results.push(c.id);
+        }
+        return _results;
+      })();
+      $scope.form = [
+        {
+          key: 'company_id',
+          type: 'select',
+          titleMap: (function() {
+            var _i, _len, _results;
+            _results = [];
+            for (_i = 0, _len = companies.length; _i < _len; _i++) {
+              c = companies[_i];
+              _results.push({
+                value: c.id,
+                name: c.name
+              });
+            }
+            return _results;
+          })(),
+          autofocus: true
+        }
+      ];
+      $scope.pick_company_form = {};
+      $scope.submit = function(form) {
+        return $modalInstance.close(form.company_id);
+      };
+      return $scope.cancel = function() {
+        return $modalInstance.dismiss('cancel');
+      };
+    };
+    link = function(scope, element, attrs) {
+      var loginModal, pickCompanyModal, tryLogin, _base, _base1;
+      $rootScope.bb || ($rootScope.bb = {});
+      (_base = $rootScope.bb).api_url || (_base.api_url = scope.apiUrl);
+      (_base1 = $rootScope.bb).api_url || (_base1.api_url = "http://www.bookingbug.com");
+      loginModal = function() {
+        var modalInstance;
+        modalInstance = $modal.open({
+          templateUrl: 'login_modal_form.html',
+          controller: loginMemberController,
+          resolve: {
+            company_id: function() {
+              return scope.companyId;
+            }
+          }
+        });
+        return modalInstance.result.then(function(result) {
+          scope.memberEmail = result.email;
+          scope.memberPassword = result.password;
+          if (result.$has('members')) {
+            return result.$get('members').then(function(members) {
+              var m;
+              scope.members = members;
+              return $q.all((function() {
+                var _i, _len, _results;
+                _results = [];
+                for (_i = 0, _len = members.length; _i < _len; _i++) {
+                  m = members[_i];
+                  _results.push(m.$get('company'));
+                }
+                return _results;
+              })()).then(function(companies) {
+                return pickCompanyModal(companies);
+              });
+            });
+          } else {
+            return scope.member = result;
+          }
+        }, function() {
+          return loginModal();
+        });
+      };
+      pickCompanyModal = function(companies) {
+        var modalInstance;
+        modalInstance = $modal.open({
+          templateUrl: 'pick_company_modal_form.html',
+          controller: pickCompanyController,
+          resolve: {
+            companies: function() {
+              return companies;
+            }
+          }
+        });
+        return modalInstance.result.then(function(company_id) {
+          scope.companyId = company_id;
+          return tryLogin();
+        }, function() {
+          return pickCompanyModal();
+        });
+      };
+      tryLogin = function() {
+        var login_form, options;
+        login_form = {
+          email: scope.memberEmail,
+          password: scope.memberPassword
+        };
+        options = {
+          company_id: scope.companyId
+        };
+        return MemberLoginService.login(login_form, options).then(function(result) {
+          if (result.$has('members')) {
+            return result.$get('members').then(function(members) {
+              var m;
+              scope.members = members;
+              return $q.all((function() {
+                var _i, _len, _results;
+                _results = [];
+                for (_i = 0, _len = members.length; _i < _len; _i++) {
+                  m = members[_i];
+                  _results.push(m.$get('company'));
+                }
+                return _results;
+              })()).then(function(companies) {
+                return pickCompanyModal(companies);
+              });
+            });
+          } else {
+            return scope.member = result;
+          }
+        }, function(err) {
+          return loginModal();
+        });
+      };
+      if (scope.memberEmail && scope.memberPassword) {
+        return tryLogin();
+      } else {
+        return loginModal();
+      }
+    };
+    return {
+      link: link,
+      scope: {
+        memberEmail: '@',
+        memberPassword: '@',
+        companyId: '@',
+        apiUrl: '@',
+        member: '='
+      },
+      transclude: true,
+      template: "<div ng-hide='member'><img src='/BB_wait.gif' class=\"loader\"></div>\n<div ng-show='member' ng-transclude></div>"
+    };
+  });
+
+}).call(this);
+
+(function() {
   'use strict';
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
@@ -107921,7 +101541,6 @@ SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
           url = "" + url + "/member/" + options.company_id;
         }
         halClient.$post(url, options, form).then(function(login) {
-          console.log('login ', login);
           if (login.$has('member')) {
             return login.$get('member').then(function(member) {
               member = new BBModel.Member.Member(member);
@@ -108031,6 +101650,6707 @@ SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
             };
           })(this));
         }
+        return deferred.promise;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdminServices').directive('personTable', function(AdminCompanyService, AdminPersonService, $modal, $log, ModalForm) {
+    var controller, link;
+    controller = function($scope) {
+      console.log("loading person tabl");
+      $scope.getPeople = function() {
+        var params;
+        params = {
+          company: $scope.company
+        };
+        return AdminPersonService.query(params).then(function(people) {
+          $scope.people_models = people;
+          return $scope.people = _.map(people, function(person) {
+            return _.pick(person, 'id', 'name', 'mobile');
+          });
+        });
+      };
+      $scope.newPerson = function() {
+        return ModalForm["new"]({
+          company: $scope.company,
+          title: 'New Person',
+          new_rel: 'new_person',
+          post_rel: 'people',
+          success: function(person) {
+            return $scope.people.push(person);
+          }
+        });
+      };
+      $scope["delete"] = function(id) {
+        var person;
+        person = _.find($scope.people_models, function(p) {
+          return p.id === id;
+        });
+        return person.$del('self').then(function() {
+          return $scope.people = _.reject($scope.people, function(p) {
+            return p.id === id;
+          });
+        }, function(err) {
+          return $log.error("Failed to delete person");
+        });
+      };
+      return $scope.edit = function(id) {
+        var person;
+        person = _.find($scope.people_models, function(p) {
+          return p.id === id;
+        });
+        return ModalForm.edit({
+          model: person,
+          title: 'Edit Person'
+        });
+      };
+    };
+    link = function(scope, element, attrs) {
+      if (scope.company) {
+        return scope.getPeople();
+      } else {
+        return AdminCompanyService.query(attrs).then(function(company) {
+          scope.company = company;
+          return scope.getPeople();
+        });
+      }
+    };
+    return {
+      controller: controller,
+      link: link,
+      templateUrl: 'person_table_main.html'
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdminServices').directive('resourceTable', function(AdminCompanyService, AdminResourceService, $modal, $log, ModalForm) {
+    var controller, link;
+    controller = function($scope) {
+      $scope.getResources = function() {
+        var params;
+        params = {
+          company: $scope.company
+        };
+        return AdminResourceService.query(params).then(function(resources) {
+          $scope.resources_models = resources;
+          return $scope.resources = _.map(resources, function(resource) {
+            return _.pick(resource, 'id', 'name', 'mobile');
+          });
+        });
+      };
+      $scope.newResource = function() {
+        return ModalForm["new"]({
+          company: $scope.company,
+          title: 'New Resource',
+          new_rel: 'new_resource',
+          post_rel: 'resources',
+          success: function(resource) {
+            return $scope.resources.push(resource);
+          }
+        });
+      };
+      $scope["delete"] = function(id) {
+        var resource;
+        resource = _.find($scope.resources_models, function(p) {
+          return p.id === id;
+        });
+        return resource.$del('self').then(function() {
+          return $scope.resources = _.reject($scope.resources, function(p) {
+            return p.id === id;
+          });
+        }, function(err) {
+          return $log.error("Failed to delete resource");
+        });
+      };
+      return $scope.edit = function(id) {
+        var resource;
+        resource = _.find($scope.resources_models, function(p) {
+          return p.id === id;
+        });
+        return ModalForm.edit({
+          model: resource,
+          title: 'Edit Resource'
+        });
+      };
+    };
+    link = function(scope, element, attrs) {
+      if (scope.company) {
+        return scope.getResources();
+      } else {
+        return AdminCompanyService.query(attrs).then(function(company) {
+          scope.company = company;
+          return scope.getResources();
+        });
+      }
+    };
+    return {
+      controller: controller,
+      link: link,
+      templateUrl: 'resource_table_main.html'
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdminServices').directive('scheduleTable', function(AdminCompanyService, AdminScheduleService, $modal, $log, ModalForm) {
+    var controller, link;
+    controller = function($scope) {
+      $scope.getSchedules = function() {
+        var params;
+        params = {
+          company: $scope.company
+        };
+        return AdminScheduleService.query(params).then(function(schedule) {
+          $scope.schedules_models = schedules;
+          return $scope.schedules = _.map(schedules, function(schedule) {
+            return _.pick(schedule, 'id', 'name', 'mobile');
+          });
+        });
+      };
+      $scope.newSchedule = function() {
+        return ModalForm["new"]({
+          company: $scope.company,
+          title: 'New Schedule',
+          new_rel: 'new_schedule',
+          post_rel: 'schedules',
+          success: function(schedule) {
+            return $scope.schedules.push(schedule);
+          }
+        });
+      };
+      $scope["delete"] = function(id) {
+        var schedule;
+        schedule = _.find($scope.schedules_models, function(p) {
+          return p.id === id;
+        });
+        return schedule.$del('self').then(function() {
+          return $scope.schedules = _.reject($scope.schedules, function(p) {
+            return p.id === id;
+          });
+        }, function(err) {
+          return $log.error("Failed to delete schedule");
+        });
+      };
+      return $scope.edit = function(id) {
+        var schedule;
+        schedule = _.find($scope.schedules_models, function(p) {
+          return p.id === id;
+        });
+        return ModalForm.edit({
+          model: schedule,
+          title: 'Edit Schedule'
+        });
+      };
+    };
+    link = function(scope, element, attrs) {
+      if (scope.company) {
+        return scope.getSchedules();
+      } else {
+        return AdminCompanyService.query(attrs).then(function(company) {
+          scope.company = company;
+          return scope.getSchedules();
+        });
+      }
+    };
+    return {
+      controller: controller,
+      link: link,
+      templateUrl: 'schedule_table_main.html'
+    };
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  angular.module('BB.Models').factory("Admin.PersonModel", function($q, BBModel, BaseModel) {
+    var Person;
+    return Person = (function(_super) {
+      __extends(Person, _super);
+
+      function Person() {
+        return Person.__super__.constructor.apply(this, arguments);
+      }
+
+      return Person;
+
+    })(BBModel.Person);
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  angular.module('BB.Models').factory("Admin.ResourceModel", function($q, BBModel, BaseModel) {
+    var Resource;
+    return Resource = (function(_super) {
+      __extends(Resource, _super);
+
+      function Resource() {
+        return Resource.__super__.constructor.apply(this, arguments);
+      }
+
+      return Resource;
+
+    })(BBModel.Resource);
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  angular.module('BB.Models').factory("Admin.ScheduleModel", function($q, BBModel, BaseModel) {
+    var Admin_Schedule;
+    return Admin_Schedule = (function(_super) {
+      __extends(Admin_Schedule, _super);
+
+      function Admin_Schedule(data) {
+        Admin_Schedule.__super__.constructor.call(this, data);
+      }
+
+      return Admin_Schedule;
+
+    })(BaseModel);
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdminServices').factory('AdminPersonService', function($q, $window, $rootScope, halClient, SlotCollections, BBModel, LoginService) {
+    return {
+      query: function(prms) {
+        var deferred, href, uri, url;
+        if (prms.company) {
+          prms.company_id = prms.company.id;
+        }
+        url = "";
+        if ($rootScope.bb.api_url) {
+          url = $rootScope.bb.api_url;
+        }
+        href = url + "/api/v1/admin/{company_id}/people";
+        uri = new $window.UriTemplate.parse(href).expand(prms || {});
+        deferred = $q.defer();
+        halClient.$get(uri, {}).then((function(_this) {
+          return function(resource) {
+            return resource.$get('people').then(function(items) {
+              var i, people, _i, _len;
+              people = [];
+              for (_i = 0, _len = items.length; _i < _len; _i++) {
+                i = items[_i];
+                people.push(new BBModel.Person(i));
+              }
+              return deferred.resolve(people);
+            });
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            return deferred.reject(err);
+          };
+        })(this));
+        return deferred.promise;
+      },
+      block: function(company, person, data) {
+        var deferred, href, prms, uri;
+        prms = {
+          id: person.id,
+          company_id: company.id
+        };
+        deferred = $q.defer();
+        href = "/api/v1/admin/{company_id}/people/{id}/block";
+        uri = new $window.UriTemplate.parse(href).expand(prms || {});
+        halClient.$put(uri, {}, data).then((function(_this) {
+          return function(slot) {
+            slot = new BBModel.Admin.Slot(slot);
+            SlotCollections.checkItems(slot);
+            return deferred.resolve(slot);
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            return deferred.reject(err);
+          };
+        })(this));
+        return deferred.promise;
+      },
+      signup: function(user, data) {
+        var defer;
+        defer = $q.defer();
+        return user.$get('company').then(function(company) {
+          var params;
+          params = {};
+          company.$post('people', params, data).then(function(person) {
+            if (person.$has('administrator')) {
+              return person.$get('administrator').then(function(user) {
+                LoginService.setLogin(user);
+                return defer.resolve(person);
+              });
+            } else {
+              return defer.resolve(person);
+            }
+          }, function(err) {
+            return defer.reject(err);
+          });
+          return defer.promise;
+        });
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdminServices').factory('AdminResourceService', function($q, $window, halClient, SlotCollections, BBModel) {
+    return {
+      query: function(prms) {
+        var deferred, href, uri, url;
+        if (prms.company) {
+          prms.company_id = prms.company.id;
+        }
+        url = "";
+        if (prms.url) {
+          url = prms.url;
+        }
+        href = url + "/api/v1/admin/{company_id}/resources";
+        uri = new $window.UriTemplate.parse(href).expand(prms || {});
+        deferred = $q.defer();
+        halClient.$get(uri, {}).then((function(_this) {
+          return function(resource) {
+            return resource.$get('resources').then(function(items) {
+              var i, resources, _i, _len;
+              resources = [];
+              for (_i = 0, _len = items.length; _i < _len; _i++) {
+                i = items[_i];
+                resources.push(new BBModel.Resource(i));
+              }
+              return deferred.resolve(resources);
+            });
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            return deferred.reject(err);
+          };
+        })(this));
+        return deferred.promise;
+      },
+      block: function(company, resource, data) {
+        var deferred, href, prms, uri;
+        prms = {
+          id: resource.id,
+          company_id: company.id
+        };
+        deferred = $q.defer();
+        href = "/api/v1/admin/{company_id}/resource/{id}/block";
+        uri = new $window.UriTemplate.parse(href).expand(prms || {});
+        halClient.$put(uri, {}, data).then((function(_this) {
+          return function(slot) {
+            slot = new BBModel.Admin.Slot(slot);
+            SlotCollections.checkItems(slot);
+            return deferred.resolve(slot);
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            return deferred.reject(err);
+          };
+        })(this));
+        return deferred.promise;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdminServices').factory('AdminScheduleService', function($q, $window, $rootScope, halClient, SlotCollections, BBModel, LoginService) {
+    return {
+      query: function(prms) {
+        var deferred, href, uri, url;
+        if (prms.company) {
+          prms.company_id = prms.company.id;
+        }
+        url = "";
+        if ($rootScope.bb.api_url) {
+          url = $rootScope.bb.api_url;
+        }
+        href = url + "/api/v1/admin/{company_id}/schedules";
+        uri = new $window.UriTemplate.parse(href).expand(prms || {});
+        deferred = $q.defer();
+        halClient.$get(uri, {}).then((function(_this) {
+          return function(resource) {
+            return resource.$get('schedules').then(function(items) {
+              var i, scheduless, _i, _len;
+              scheduless = [];
+              for (_i = 0, _len = items.length; _i < _len; _i++) {
+                i = items[_i];
+                scheduless.push(new BBModel.Schedule(i));
+              }
+              return deferred.resolve(schedules);
+            });
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            return deferred.reject(err);
+          };
+        })(this));
+        return deferred.promise;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdminSettings').directive('adminTable', function(AdminCompanyService, AdminAdministratorService, $modal, $log, ModalForm) {
+    var controller, link;
+    controller = function($scope) {
+      $scope.getAdministrators = function() {
+        var params;
+        params = {
+          company: $scope.company
+        };
+        return AdminAdministratorService.query(params).then(function(administrators) {
+          $scope.admin_models = administrators;
+          return $scope.administrators = _.map(administrators, function(administrator) {
+            return _.pick(administrator, 'id', 'name', 'email', 'role');
+          });
+        });
+      };
+      $scope.newAdministrator = function() {
+        return ModalForm["new"]({
+          company: $scope.company,
+          title: 'New Administrator',
+          new_rel: 'new_administrator',
+          post_rel: 'administrators',
+          success: function(administrator) {
+            return $scope.administrators.push(administrator);
+          }
+        });
+      };
+      return $scope.edit = function(id) {
+        var admin;
+        admin = _.find($scope.admin_models, function(p) {
+          return p.id === id;
+        });
+        return ModalForm.edit({
+          model: admin,
+          title: 'Edit Administrator'
+        });
+      };
+    };
+    link = function(scope, element, attrs) {
+      if (scope.company) {
+        return scope.getAdministrators();
+      } else {
+        return AdminCompanyService.query(attrs).then(function(company) {
+          scope.company = company;
+          return scope.getAdministrators();
+        });
+      }
+    };
+    return {
+      controller: controller,
+      link: link,
+      templateUrl: 'admin_table_main.html'
+    };
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  angular.module('BB.Models').factory("Admin.AdministratorModel", function($q, BBModel, BaseModel) {
+    var Admin_Administrator;
+    return Admin_Administrator = (function(_super) {
+      __extends(Admin_Administrator, _super);
+
+      function Admin_Administrator(data) {
+        Admin_Administrator.__super__.constructor.call(this, data);
+      }
+
+      return Admin_Administrator;
+
+    })(BaseModel);
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  angular.module('BB.Models').factory("Admin.UserModel", function($q, BBModel, BaseModel) {
+    var Admin_User;
+    return Admin_User = (function(_super) {
+      __extends(Admin_User, _super);
+
+      function Admin_User(data) {
+        Admin_User.__super__.constructor.call(this, data);
+        this.companies = [];
+        if (data) {
+          if (this.$has('companies')) {
+            this.$get('companies').then((function(_this) {
+              return function(comps) {
+                return _this.companies = comps;
+              };
+            })(this));
+          }
+        }
+      }
+
+      return Admin_User;
+
+    })(BaseModel);
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdmin.Services').factory('AdminAdministratorService', function($q, BBModel) {
+    return {
+      query: function(params) {
+        var company, defer;
+        company = params.company;
+        defer = $q.defer();
+        company.$get('administrators').then(function(collection) {
+          return collection.$get('administrators').then(function(administrators) {
+            var a, models;
+            models = (function() {
+              var _i, _len, _results;
+              _results = [];
+              for (_i = 0, _len = administrators.length; _i < _len; _i++) {
+                a = administrators[_i];
+                _results.push(new BBModel.Admin.Administrator(a));
+              }
+              return _results;
+            })();
+            return defer.resolve(models);
+          }, function(err) {
+            return defer.reject(err);
+          });
+        }, function(err) {
+          return defer.reject(err);
+        });
+        return defer.promise;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  window.Collection.Booking = (function(_super) {
+    __extends(Booking, _super);
+
+    function Booking() {
+      return Booking.__super__.constructor.apply(this, arguments);
+    }
+
+    Booking.prototype.checkItem = function(item) {
+      return Booking.__super__.checkItem.apply(this, arguments);
+    };
+
+    return Booking;
+
+  })(window.Collection.Base);
+
+  angular.module('BB.Services').provider("BookingCollections", function() {
+    return {
+      $get: function() {
+        return new window.BaseCollections();
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  window.Collection.Slot = (function(_super) {
+    __extends(Slot, _super);
+
+    function Slot() {
+      return Slot.__super__.constructor.apply(this, arguments);
+    }
+
+    Slot.prototype.checkItem = function(item) {
+      return Slot.__super__.checkItem.apply(this, arguments);
+    };
+
+    Slot.prototype.matchesParams = function(item) {
+      if (this.params.start_date) {
+        this.start_date || (this.start_date = moment(this.params.start_date));
+        if (this.start_date.isAfter(item.date)) {
+          return false;
+        }
+      }
+      if (this.params.end_date) {
+        this.end_date || (this.end_date = moment(this.params.end_date));
+        if (this.end_date.isBefore(item.date)) {
+          return false;
+        }
+      }
+      return true;
+    };
+
+    return Slot;
+
+  })(window.Collection.Base);
+
+  angular.module('BB.Services').provider("SlotCollections", function() {
+    return {
+      $get: function() {
+        return new window.BaseCollections();
+      }
+    };
+  });
+
+}).call(this);
+
+
+angular.module('ngLocalData', ['angular-hal']).
+ factory('$localCache', ['halClient', '$q', function( halClient, $q) {
+    data = {};
+
+    jsonData = function(data) {
+        return data && JSON.parse(data);
+    }
+
+    storage = function()
+    {
+      return sessionStorage
+    } 
+    localSave = function(key, item){
+      storage().setItem(key, item.$toStore())   
+    } 
+    localLoad = function(key){
+      res =  jsonData(storage().getItem(key))
+      if (res)
+      {  
+        r = halClient.createResource(res)
+        def = $q.defer()
+        def.resolve(r)
+        return def.promise
+      }
+      return null
+    } 
+    localDelete = function(key) {
+      storage().removeItem(key)
+    }
+
+    return {
+
+      set: function(key, val)
+      {
+        data[key] = val
+        val.then(function(item){
+          localSave(key, item)
+        })
+        return val
+      },
+      get: function(key)
+      {
+        localLoad(key)
+        if (!data[key])
+          data[key] = localLoad(key)
+        return data[key]
+      },
+      del: function(key)
+      {
+        localDelete(key)
+        delete data[key]
+      },
+      has: function(key)
+      {
+        if (!data[key])
+        { 
+          res = localLoad(key)
+          if (res)
+            data[key] = res
+        }
+        return (key in data)
+      }      
+    }
+
+}]).
+ factory('$localData', ['$http', '$rootScope', function($http, $rootScope) {
+    function LocalDataFactory(name) {
+      function LocalData(value){
+        this.setStore(value);
+      }
+
+      LocalData.prototype.jsonData = function(data) {
+          return data && JSON.parse(data);
+      }
+
+      LocalData.prototype.storage = function()
+      {
+        return sessionStorage
+      }  
+
+      LocalData.prototype.localSave = function(item)
+      {
+        this.storage().setItem(this.store_name + item.id, JSON.stringify(item))
+      }
+
+
+      LocalData.prototype.localSaveIndex = function(ids)
+      {
+        this.storage().setItem(this.store_name, ids.join(","))
+        this.ids = ids;
+      }
+
+      LocalData.prototype.localLoadIndex = function()
+      {
+        store = this.storage().getItem(this.store_name)
+        records = (store && store.split(",")) || [];
+        return records
+      }
+
+      LocalData.prototype.localLoad = function( id)
+      {
+        return this.jsonData(this.storage().getItem(this.store_name + id))
+      }
+
+      LocalData.prototype.count = function()
+      {
+        return this.ids.length
+      }
+
+      LocalData.prototype.setStore = function(name)
+      {
+        this.store_name = name;
+        this.data_store = []
+        this.ids = this.localLoadIndex();
+        for (a = 0; a < this.ids.length; a++){
+          this.data_store.push(this.localLoad(this.ids[a]));
+        }
+    //    var channel = pusher.subscribe(name);
+    //    var ds = this;
+
+     //   channel.bind('add', function(data) {
+     //     ds.data_store.push(data);
+     //     $rootScope.$broadcast("Refresh_" + ds.store_name, "Updated");          
+     //   });
+
+      }
+
+      LocalData.prototype.update = function(data)
+      {
+        ids = []
+        for (x in data){
+          if (data[x].id){
+           ids.push(data[x].id)
+           this.localSave(data[x])
+         }
+        }
+        this.localSaveIndex(ids)
+      }
+
+      return new LocalData(name)
+
+    };
+
+
+    
+    return LocalDataFactory
+}]);
+
+/***********************************************
+* ng-grid JavaScript Library
+* Authors: https://github.com/angular-ui/ng-grid/blob/master/README.md 
+* License: MIT (http://www.opensource.org/licenses/mit-license.php)
+* Compiled At: 04/23/2013 14:36
+***********************************************/
+(function(window, $) {
+'use strict';
+
+var EXCESS_ROWS = 6;
+var SCROLL_THRESHOLD = 4;
+var ASC = "asc";
+
+var DESC = "desc";
+
+var NG_FIELD = '_ng_field_';
+var NG_DEPTH = '_ng_depth_';
+var NG_HIDDEN = '_ng_hidden_';
+var NG_COLUMN = '_ng_column_';
+var CUSTOM_FILTERS = /CUSTOM_FILTERS/g;
+var COL_FIELD = /COL_FIELD/g;
+var DISPLAY_CELL_TEMPLATE = /DISPLAY_CELL_TEMPLATE/g;
+var EDITABLE_CELL_TEMPLATE = /EDITABLE_CELL_TEMPLATE/g;
+var TEMPLATE_REGEXP = /<.+>/;
+window.ngGrid = {};
+window.ngGrid.i18n = {};
+var ngGridServices = angular.module('ngGrid.services', []);
+var ngGridDirectives = angular.module('ngGrid.directives', []);
+var ngGridFilters = angular.module('ngGrid.filters', []);
+
+angular.module('ngGrid', ['ngGrid.services', 'ngGrid.directives', 'ngGrid.filters']);
+
+var ngMoveSelectionHandler = function($scope, elm, evt, grid) {
+    if ($scope.selectionProvider.selectedItems === undefined) {
+        return true;
+    }
+    var charCode = evt.which || evt.keyCode,
+        newColumnIndex,
+        lastInRow = false,
+        firstInRow = false,
+        rowIndex = $scope.selectionProvider.lastClickedRow.rowIndex,
+        visibleCols = $scope.columns.filter(function(c) { return c.visible; }),
+        pinnedCols = $scope.columns.filter(function(c) { return c.pinned; });
+
+    if ($scope.col) {
+        newColumnIndex = visibleCols.indexOf($scope.col);
+    }
+    if(charCode != 37 && charCode != 38 && charCode != 39 && charCode != 40 && charCode != 9 && charCode != 13){
+    return true;
+  }
+  if($scope.enableCellSelection){
+    if(charCode == 9){ 
+      evt.preventDefault();
+    }
+    var focusedOnFirstColumn = $scope.showSelectionCheckbox ? $scope.col.index == 1 : $scope.col.index == 0;
+        var focusedOnFirstVisibleColumns = $scope.$index == 1 || $scope.$index == 0;
+        var focusedOnLastVisibleColumns = $scope.$index == ($scope.renderedColumns.length - 1) || $scope.$index == ($scope.renderedColumns.length - 2);
+        var focusedOnLastColumn = visibleCols.indexOf($scope.col) == (visibleCols.length - 1);
+        var focusedOnLastPinnedColumn = pinnedCols.indexOf($scope.col) == (pinnedCols.length - 1);
+        if (charCode == 37 || charCode == 9 && evt.shiftKey) {
+            var scrollTo = 0;
+            if (!focusedOnFirstColumn) {
+                newColumnIndex -= 1;
+            }
+      if (focusedOnFirstVisibleColumns) {
+        if(focusedOnFirstColumn && charCode ==  9 && evt.shiftKey){
+            scrollTo = grid.$canvas.width();
+          newColumnIndex = visibleCols.length - 1;
+          firstInRow = true;
+        } else {
+            scrollTo = grid.$viewport.scrollLeft() - $scope.col.width;
+        }
+      } else if (pinnedCols.length > 0) {
+          scrollTo = grid.$viewport.scrollLeft() - visibleCols[newColumnIndex].width;
+      }
+            grid.$viewport.scrollLeft(scrollTo);
+    } else if(charCode == 39 || charCode ==  9 && !evt.shiftKey){
+            if (focusedOnLastVisibleColumns) {
+        if(focusedOnLastColumn && charCode ==  9 && !evt.shiftKey){
+          grid.$viewport.scrollLeft(0);
+          newColumnIndex = $scope.showSelectionCheckbox ? 1 : 0;  
+          lastInRow = true;
+        } else {
+
+            grid.$viewport.scrollLeft(grid.$viewport.scrollLeft() + $scope.col.width);
+        }
+            } else if (focusedOnLastPinnedColumn) {
+                grid.$viewport.scrollLeft(0);
+            }
+      if(!focusedOnLastColumn){
+        newColumnIndex += 1;
+      }
+    }
+  }
+  var items;
+  if ($scope.configGroups.length > 0) {
+     items = grid.rowFactory.parsedData.filter(function (row) {
+       return !row.isAggRow;
+     });
+  } else {
+     items = grid.filteredRows;
+  }
+  var offset = 0;
+  if(rowIndex != 0 && (charCode == 38 || charCode == 13 && evt.shiftKey || charCode == 9 && evt.shiftKey && firstInRow)){ 
+    offset = -1;
+  } else if(rowIndex != items.length - 1 && (charCode == 40 || charCode == 13 && !evt.shiftKey || charCode == 9 && lastInRow)){
+    offset = 1;
+  }
+  if (offset) {
+      var r = items[rowIndex + offset];
+      if (r.beforeSelectionChange(r, evt)) {
+          r.continueSelection(evt);
+          $scope.$emit('ngGridEventDigestGridParent');
+
+          if ($scope.selectionProvider.lastClickedRow.renderedRowIndex >= $scope.renderedRows.length - EXCESS_ROWS - 2) {
+              grid.$viewport.scrollTop(grid.$viewport.scrollTop() + $scope.rowHeight);
+          } else if ($scope.selectionProvider.lastClickedRow.renderedRowIndex <= EXCESS_ROWS + 2) {
+              grid.$viewport.scrollTop(grid.$viewport.scrollTop() - $scope.rowHeight);
+          }
+      }
+  }
+    if($scope.enableCellSelection){
+        setTimeout(function(){
+            $scope.domAccessProvider.focusCellElement($scope, $scope.renderedColumns.indexOf(visibleCols[newColumnIndex]));
+        },3);
+    }
+    return false;
+};
+
+if (!String.prototype.trim) {
+    String.prototype.trim = function() {
+        return this.replace(/^\s+|\s+$/g, '');
+    };
+}
+if (!Array.prototype.indexOf) {
+    Array.prototype.indexOf = function(elt ) {
+        var len = this.length >>> 0;
+        var from = Number(arguments[1]) || 0;
+        from = (from < 0) ? Math.ceil(from) : Math.floor(from);
+        if (from < 0) {
+            from += len;
+        }
+        for (; from < len; from++) {
+            if (from in this && this[from] === elt) {
+                return from;
+            }
+        }
+        return -1;
+    };
+}
+if (!Array.prototype.filter) {
+    Array.prototype.filter = function(fun ) {
+        "use strict";
+        var t = Object(this);
+        var len = t.length >>> 0;
+        if (typeof fun !== "function") {
+            throw new TypeError();
+        }
+        var res = [];
+        var thisp = arguments[1];
+        for (var i = 0; i < len; i++) {
+            if (i in t) {
+                var val = t[i]; 
+                if (fun.call(thisp, val, i, t)) {
+                    res.push(val);
+                }
+            }
+        }
+        return res;
+    };
+}
+ngGridFilters.filter('checkmark', function() {
+    return function(input) {
+        return input ? '\u2714' : '\u2718';
+    };
+});
+ngGridFilters.filter('ngColumns', function() {
+    return function(input) {
+        return input.filter(function(col) {
+            return !col.isAggCol;
+        });
+    };
+});
+ngGridServices.factory('$domUtilityService',['$utilityService', function($utils) {
+    var domUtilityService = {};
+    var regexCache = {};
+    var getWidths = function() {
+        var $testContainer = $('<div></div>');
+        $testContainer.appendTo('body');
+        $testContainer.height(100).width(100).css("position", "absolute").css("overflow", "scroll");
+        $testContainer.append('<div style="height: 400px; width: 400px;"></div>');
+        domUtilityService.ScrollH = ($testContainer.height() - $testContainer[0].clientHeight);
+        domUtilityService.ScrollW = ($testContainer.width() - $testContainer[0].clientWidth);
+        $testContainer.empty();
+        $testContainer.attr('style', '');
+        $testContainer.append('<span style="font-family: Verdana, Helvetica, Sans-Serif; font-size: 14px;"><strong>M</strong></span>');
+        domUtilityService.LetterW = $testContainer.children().first().width();
+        $testContainer.remove();
+    };
+    domUtilityService.eventStorage = {};
+    domUtilityService.AssignGridContainers = function($scope, rootEl, grid) {
+        grid.$root = $(rootEl);
+        grid.$topPanel = grid.$root.find(".ngTopPanel");
+        grid.$groupPanel = grid.$root.find(".ngGroupPanel");
+        grid.$headerContainer = grid.$topPanel.find(".ngHeaderContainer");
+        $scope.$headerContainer = grid.$headerContainer;
+
+        grid.$headerScroller = grid.$topPanel.find(".ngHeaderScroller");
+        grid.$headers = grid.$headerScroller.children();
+        grid.$viewport = grid.$root.find(".ngViewport");
+        grid.$canvas = grid.$viewport.find(".ngCanvas");
+        grid.$footerPanel = grid.$root.find(".ngFooterPanel");
+        $scope.$watch(function () {
+            return grid.$viewport.scrollLeft();
+        }, function (newLeft) {
+            return grid.$headerContainer.scrollLeft(newLeft);
+        });
+        domUtilityService.UpdateGridLayout($scope, grid);
+    };
+    domUtilityService.getRealWidth = function (obj) {
+        var width = 0;
+        var props = { visibility: "hidden", display: "block" };
+        var hiddenParents = obj.parents().andSelf().not(':visible');
+        $.swap(hiddenParents[0], props, function () {
+            width = obj.outerWidth();
+        });
+        return width;
+    };
+    domUtilityService.UpdateGridLayout = function($scope, grid) {
+        var scrollTop = grid.$viewport.scrollTop();
+        grid.elementDims.rootMaxW = grid.$root.width();
+        if (grid.$root.is(':hidden')) {
+            grid.elementDims.rootMaxW = domUtilityService.getRealWidth(grid.$root);
+        }
+        grid.elementDims.rootMaxH = grid.$root.height();
+        grid.refreshDomSizes();
+        $scope.adjustScrollTop(scrollTop, true); 
+    };
+    domUtilityService.numberOfGrids = 0;
+    domUtilityService.BuildStyles = function($scope, grid, digest) {
+        var rowHeight = grid.config.rowHeight,
+            $style = grid.$styleSheet,
+            gridId = grid.gridId,
+            css,
+            cols = $scope.columns,
+            sumWidth = 0;
+
+        if (!$style) {
+            $style = $('#' + gridId);
+            if (!$style[0]) {
+                $style = $("<style id='" + gridId + "' type='text/css' rel='stylesheet' />").appendTo(grid.$root);
+            }
+        }
+        $style.empty();
+        var trw = $scope.totalRowWidth();
+        css = "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
+            "." + gridId + " .ngRow { width: " + trw + "px; }" +
+            "." + gridId + " .ngCanvas { width: " + trw + "px; }" +
+            "." + gridId + " .ngHeaderScroller { width: " + (trw + domUtilityService.ScrollH) + "px}";
+        for (var i = 0; i < cols.length; i++) {
+            var col = cols[i];
+            if (col.visible !== false) {
+                var colLeft = col.pinned ? grid.$viewport.scrollLeft() + sumWidth : sumWidth;
+                css += "." + gridId + " .col" + i + " { width: " + col.width + "px; left: " + colLeft + "px; height: " + rowHeight + "px }" +
+                    "." + gridId + " .colt" + i + " { width: " + col.width + "px; }";
+                sumWidth += col.width;
+            }
+        };
+        if ($utils.isIe) { 
+            $style[0].styleSheet.cssText = css;
+        } else {
+            $style[0].appendChild(document.createTextNode(css));
+        }
+        grid.$styleSheet = $style;
+        if (digest) {
+            $scope.adjustScrollLeft(grid.$viewport.scrollLeft());
+            domUtilityService.digest($scope);
+        }
+    };
+    domUtilityService.setColLeft = function(col, colLeft, grid) {
+        if (grid.$styleSheet) {
+            var regex = regexCache[col.index];
+            if (!regex) {
+                regex = regexCache[col.index] = new RegExp("\.col" + col.index + " \{ width: [0-9]+px; left: [0-9]+px");
+            }
+      var str = grid.$styleSheet.html();
+      var newStr = str.replace(regex, "\.col" + col.index + " \{ width: " + col.width + "px; left: " + colLeft + "px");
+      if ($utils.isIe) { 
+          setTimeout(function() {
+              grid.$styleSheet.html(newStr);
+          });
+      } else {
+          grid.$styleSheet.html(newStr);
+      }
+    }
+    };
+    domUtilityService.setColLeft.immediate = 1;
+  domUtilityService.RebuildGrid = function($scope, grid){
+    domUtilityService.UpdateGridLayout($scope, grid);
+    if (grid.config.maintainColumnRatios) {
+      grid.configureColumnWidths();
+    }
+    $scope.adjustScrollLeft(grid.$viewport.scrollLeft());
+    domUtilityService.BuildStyles($scope, grid, true);
+  };
+
+    domUtilityService.digest = function($scope) {
+        if (!$scope.$root.$$phase) {
+            $scope.$digest();
+        }
+    };
+    domUtilityService.ScrollH = 17; 
+    domUtilityService.ScrollW = 17; 
+    domUtilityService.LetterW = 10;
+    getWidths();
+    return domUtilityService;
+}]);
+ngGridServices.factory('$sortService', ['$parse', function($parse) {
+    var sortService = {};
+    sortService.colSortFnCache = {};
+    sortService.guessSortFn = function(item) {
+        var itemType = typeof(item);
+        switch (itemType) {
+            case "number":
+                return sortService.sortNumber;
+            case "boolean":
+                return sortService.sortBool;
+            case "string":
+                return item.match(/^-?[£$¤]?[\d,.]+%?$/) ? sortService.sortNumberStr : sortService.sortAlpha;
+            default:
+                if (Object.prototype.toString.call(item) === '[object Date]') {
+                    return sortService.sortDate;
+                } else {
+                    return sortService.basicSort;
+                }
+        }
+    };
+    sortService.basicSort = function(a, b) {
+        if (a == b) {
+            return 0;
+        }
+        if (a < b) {
+            return -1;
+        }
+        return 1;
+    };
+    sortService.sortNumber = function(a, b) {
+        return a - b;
+    };
+    sortService.sortNumberStr = function(a, b) {
+        var numA, numB, badA = false, badB = false;
+        numA = parseFloat(a.replace(/[^0-9.-]/g, ''));
+        if (isNaN(numA)) {
+            badA = true;
+        }
+        numB = parseFloat(b.replace(/[^0-9.-]/g, ''));
+        if (isNaN(numB)) {
+            badB = true;
+        }
+        if (badA && badB) {
+            return 0;
+        }
+        if (badA) {
+            return 1;
+        }
+        if (badB) {
+            return -1;
+        }
+        return numA - numB;
+    };
+    sortService.sortAlpha = function(a, b) {
+        var strA = a.toLowerCase(),
+            strB = b.toLowerCase();
+        return strA == strB ? 0 : (strA < strB ? -1 : 1);
+    };
+    sortService.sortDate = function(a, b) {
+        var timeA = a.getTime(),
+            timeB = b.getTime();
+        return timeA == timeB ? 0 : (timeA < timeB ? -1 : 1);
+    };
+    sortService.sortBool = function(a, b) {
+        if (a && b) {
+            return 0;
+        }
+        if (!a && !b) {
+            return 0;
+        } else {
+            return a ? 1 : -1;
+        }
+    };
+    sortService.sortData = function(sortInfo, data ) {
+        if (!data || !sortInfo) {
+            return;
+        }
+        var l = sortInfo.fields.length,
+            order = sortInfo.fields,
+            col,
+            direction,
+            d = data.slice(0);
+        data.sort(function (itemA, itemB) {
+            var tem = 0,
+                indx = 0,
+                sortFn;
+            while (tem == 0 && indx < l) {
+                col = sortInfo.columns[indx];
+                direction = sortInfo.directions[indx],
+                sortFn = sortService.getSortFn(col, d);
+                var propA = $parse(order[indx])(itemA);
+                var propB = $parse(order[indx])(itemB);
+                if ((!propA && propA != 0) || (!propB && propB != 0)) {
+                    if (!propB && !propA) {
+                        tem = 0;
+                    } else if (!propA) {
+                        tem = 1;
+                    } else if (!propB) {
+                        tem = -1;
+                    }
+                } else {
+                    tem = sortFn(propA, propB);
+                }
+                indx++;
+            }
+            if (direction === ASC) {
+                return tem;
+            } else {
+                return 0 - tem;
+            }
+        });
+    };
+    sortService.Sort = function(sortInfo, data) {
+        if (sortService.isSorting) {
+            return;
+        }
+        sortService.isSorting = true;
+        sortService.sortData(sortInfo, data);
+        sortService.isSorting = false;
+    };
+    sortService.getSortFn = function(col, data) {
+        var sortFn = undefined, item;
+        if (sortService.colSortFnCache[col.field]) {
+            sortFn = sortService.colSortFnCache[col.field];
+        } else if (col.sortingAlgorithm != undefined) {
+            sortFn = col.sortingAlgorithm;
+            sortService.colSortFnCache[col.field] = col.sortingAlgorithm;
+        } else { 
+            item = data[0];
+            if (!item) {
+                return sortFn;
+            }
+            sortFn = sortService.guessSortFn($parse(col.field)(item));
+            if (sortFn) {
+                sortService.colSortFnCache[col.field] = sortFn;
+            } else {
+                sortFn = sortService.sortAlpha;
+            }
+        }
+        return sortFn;
+    };
+    return sortService;
+}]);
+
+ngGridServices.factory('$utilityService', ['$parse', function ($parse) {
+    var funcNameRegex = /function (.{1,})\(/;
+    var utils = {
+        visualLength: function(node) {
+            var elem = document.getElementById('testDataLength');
+            if (!elem) {
+                elem = document.createElement('SPAN');
+                elem.id = "testDataLength";
+                elem.style.visibility = "hidden";
+                document.body.appendChild(elem);
+            }
+            $(elem).css('font', $(node).css('font'));
+            elem.innerHTML = $(node).text();
+            return elem.offsetWidth;
+        },
+        forIn: function(obj, action) {
+            for (var prop in obj) {
+                if (obj.hasOwnProperty(prop)) {
+                    action(obj[prop], prop);
+                }
+            }
+        },
+        evalProperty: function (entity, path) {
+            return $parse(path)(entity);
+        },
+        endsWith: function(str, suffix) {
+            if (!str || !suffix || typeof str != "string") {
+                return false;
+            }
+            return str.indexOf(suffix, str.length - suffix.length) !== -1;
+        },
+        isNullOrUndefined: function(obj) {
+            if (obj === undefined || obj === null) {
+                return true;
+            }
+            return false;
+        },
+        getElementsByClassName: function(cl) {
+            var retnode = [];
+            var myclass = new RegExp('\\b' + cl + '\\b');
+            var elem = document.getElementsByTagName('*');
+            for (var i = 0; i < elem.length; i++) {
+                var classes = elem[i].className;
+                if (myclass.test(classes)) {
+                    retnode.push(elem[i]);
+                }
+            }
+            return retnode;
+        },
+        newId: (function() {
+            var seedId = new Date().getTime();
+            return function() {
+                return seedId += 1;
+            };
+        })(),
+        seti18n: function($scope, language) {
+            var $langPack = window.ngGrid.i18n[language];
+            for (var label in $langPack) {
+                $scope.i18n[label] = $langPack[label];
+            }
+        },
+        getInstanceType: function (o) {
+            var results = (funcNameRegex).exec(o.constructor.toString());
+            return (results && results.length > 1) ? results[1] : "";
+        },
+        ieVersion: (function() {
+            var version = 3, div = document.createElement('div'), iElems = div.getElementsByTagName('i');
+            while (div.innerHTML = '<!--[if gt IE ' + (++version) + ']><i></i><![endif]-->',
+            iElems[0]) ;
+            return version > 4 ? version : undefined;
+        })()
+    };
+
+    $.extend(utils, {
+        isIe: (function() {
+            return utils.ieVersion !== undefined;
+        })()
+    });
+    return utils;
+}]);
+var ngAggregate = function (aggEntity, rowFactory, rowHeight, groupInitState) {
+    var self = this;
+    self.rowIndex = 0;
+    self.offsetTop = self.rowIndex * rowHeight;
+    self.entity = aggEntity;
+    self.label = aggEntity.gLabel;
+    self.field = aggEntity.gField;
+    self.depth = aggEntity.gDepth;
+    self.parent = aggEntity.parent;
+    self.children = aggEntity.children;
+    self.aggChildren = aggEntity.aggChildren;
+    self.aggIndex = aggEntity.aggIndex;
+    self.collapsed = groupInitState;
+    self.isAggRow = true;
+    self.offsetLeft = aggEntity.gDepth * 25;
+    self.aggLabelFilter = aggEntity.aggLabelFilter;
+    self.toggleExpand = function() {
+        self.collapsed = self.collapsed ? false : true;
+        if (self.orig) {
+            self.orig.collapsed = self.collapsed;
+        }
+        self.notifyChildren();
+    };
+    self.setExpand = function(state) {
+        self.collapsed = state;
+        self.notifyChildren();
+    };
+    self.notifyChildren = function () {
+        var longest = Math.max(rowFactory.aggCache.length, self.children.length);
+        for (var i = 0; i < longest; i++) {
+            if (self.aggChildren[i]) {
+                self.aggChildren[i].entity[NG_HIDDEN] = self.collapsed;
+                if (self.collapsed) {
+                    self.aggChildren[i].setExpand(self.collapsed);
+                }
+            }
+            if (self.children[i]) {
+                self.children[i][NG_HIDDEN] = self.collapsed;
+            }
+            if (i > self.aggIndex && rowFactory.aggCache[i]) {
+                var agg = rowFactory.aggCache[i];
+                var offset = (30 * self.children.length);
+                agg.offsetTop = self.collapsed ? agg.offsetTop - offset : agg.offsetTop + offset;
+            }
+        };
+        rowFactory.renderedChange();
+    };
+    self.aggClass = function() {
+        return self.collapsed ? "ngAggArrowCollapsed" : "ngAggArrowExpanded";
+    };
+    self.totalChildren = function() {
+        if (self.aggChildren.length > 0) {
+            var i = 0;
+            var recurse = function(cur) {
+                if (cur.aggChildren.length > 0) {
+                    angular.forEach(cur.aggChildren, function(a) {
+                        recurse(a);
+                    });
+                } else {
+                    i += cur.children.length;
+                }
+            };
+            recurse(self);
+            return i;
+        } else {
+            return self.children.length;
+        }
+    };
+    self.copy = function () {
+        var ret = new ngAggregate(self.entity, rowFactory, rowHeight, groupInitState);
+        ret.orig = self;
+        return ret;
+    };
+};
+var ngColumn = function (config, $scope, grid, domUtilityService, $templateCache, $utils) {
+    var self = this,
+        colDef = config.colDef,
+        delay = 500,
+        clicks = 0,
+        timer = null;
+    self.colDef = config.colDef;
+    self.width = colDef.width;
+    self.groupIndex = 0;
+    self.isGroupedBy = false;
+    self.minWidth = !colDef.minWidth ? 50 : colDef.minWidth;
+    self.maxWidth = !colDef.maxWidth ? 9000 : colDef.maxWidth;
+  self.enableCellEdit = config.enableCellEdit || colDef.enableCellEdit;
+    self.headerRowHeight = config.headerRowHeight;
+    self.displayName = colDef.displayName || colDef.field;
+    self.index = config.index;
+    self.isAggCol = config.isAggCol;
+    self.cellClass = colDef.cellClass;
+    self.sortPriority = undefined;
+    self.cellFilter = colDef.cellFilter ? colDef.cellFilter : "";
+    self.field = colDef.field;
+    self.aggLabelFilter = colDef.cellFilter || colDef.aggLabelFilter;
+    self.visible = $utils.isNullOrUndefined(colDef.visible) || colDef.visible;
+    self.sortable = false;
+    self.resizable = false;
+    self.pinnable = false;
+    self.pinned = (config.enablePinning && colDef.pinned);
+    self.originalIndex = self.index;
+    self.groupable = $utils.isNullOrUndefined(colDef.groupable) || colDef.groupable;
+    if (config.enableSort) {
+        self.sortable = $utils.isNullOrUndefined(colDef.sortable) || colDef.sortable;
+    }
+    if (config.enableResize) {
+        self.resizable = $utils.isNullOrUndefined(colDef.resizable) || colDef.resizable;
+    }
+    if (config.enablePinning) {
+        self.pinnable = $utils.isNullOrUndefined(colDef.pinnable) || colDef.pinnable;
+    }
+    self.sortDirection = undefined;
+    self.sortingAlgorithm = colDef.sortFn;
+    self.headerClass = colDef.headerClass;
+    self.cursor = self.sortable ? 'pointer' : 'default';
+    self.headerCellTemplate = colDef.headerCellTemplate || $templateCache.get('headerCellTemplate.html');
+    self.cellTemplate = colDef.cellTemplate || $templateCache.get('cellTemplate.html').replace(CUSTOM_FILTERS, self.cellFilter ? "|" + self.cellFilter : "");
+  if(self.enableCellEdit) {
+      self.cellEditTemplate = $templateCache.get('cellEditTemplate.html');
+      self.editableCellTemplate = colDef.editableCellTemplate || $templateCache.get('editableCellTemplate.html');
+  }
+    if (colDef.cellTemplate && !TEMPLATE_REGEXP.test(colDef.cellTemplate)) {
+        self.cellTemplate = $.ajax({
+            type: "GET",
+            url: colDef.cellTemplate,
+            async: false
+        }).responseText;
+    }
+  if (self.enableCellEdit && colDef.editableCellTemplate && !TEMPLATE_REGEXP.test(colDef.editableCellTemplate)) {
+        self.editableCellTemplate = $.ajax({
+            type: "GET",
+            url: colDef.editableCellTemplate,
+            async: false
+        }).responseText;
+    }
+    if (colDef.headerCellTemplate && !TEMPLATE_REGEXP.test(colDef.headerCellTemplate)) {
+        self.headerCellTemplate = $.ajax({
+            type: "GET",
+            url: colDef.headerCellTemplate,
+            async: false
+        }).responseText;
+    }
+    self.colIndex = function () {
+        var classes = self.pinned ? "pinned " : "";
+        classes += "col" + self.index + " colt" + self.index;
+        if (self.cellClass) {
+            classes += " " + self.cellClass;
+        }
+        return classes;
+    };
+    self.groupedByClass = function() {
+        return self.isGroupedBy ? "ngGroupedByIcon" : "ngGroupIcon";
+    };
+    self.toggleVisible = function() {
+        self.visible = !self.visible;
+    };
+    self.showSortButtonUp = function() {
+        return self.sortable ? self.sortDirection === DESC : self.sortable;
+    };
+    self.showSortButtonDown = function() {
+        return self.sortable ? self.sortDirection === ASC : self.sortable;
+    };
+    self.noSortVisible = function() {
+        return !self.sortDirection;
+    };
+    self.sort = function(evt) {
+        if (!self.sortable) {
+            return true; 
+        }
+        var dir = self.sortDirection === ASC ? DESC : ASC;
+        self.sortDirection = dir;
+        config.sortCallback(self, evt);
+        return false;
+    };
+    self.gripClick = function() {
+        clicks++; 
+        if (clicks === 1) {
+            timer = setTimeout(function() {
+                clicks = 0; 
+            }, delay);
+        } else {
+            clearTimeout(timer); 
+            config.resizeOnDataCallback(self); 
+            clicks = 0; 
+        }
+    };
+    self.gripOnMouseDown = function(event) {
+        if (event.ctrlKey && !self.pinned) {
+            self.toggleVisible();
+            domUtilityService.BuildStyles($scope, grid);
+            return true;
+        }
+        event.target.parentElement.style.cursor = 'col-resize';
+        self.startMousePosition = event.clientX;
+        self.origWidth = self.width;
+        $(document).mousemove(self.onMouseMove);
+        $(document).mouseup(self.gripOnMouseUp);
+        return false;
+    };
+    self.onMouseMove = function(event) {
+        var diff = event.clientX - self.startMousePosition;
+        var newWidth = diff + self.origWidth;
+        self.width = (newWidth < self.minWidth ? self.minWidth : (newWidth > self.maxWidth ? self.maxWidth : newWidth));
+        domUtilityService.BuildStyles($scope, grid);
+        return false;
+    };
+    self.gripOnMouseUp = function (event) {
+        $(document).off('mousemove', self.onMouseMove);
+        $(document).off('mouseup', self.gripOnMouseUp);
+        event.target.parentElement.style.cursor = 'default';
+        $scope.adjustScrollLeft(0);
+        domUtilityService.digest($scope);
+        return false;
+    };
+    self.copy = function() {
+        var ret = new ngColumn(config, $scope, grid, domUtilityService, $templateCache);
+        ret.isClone = true;
+        ret.orig = self;
+        return ret;
+    };
+    self.setVars = function (fromCol) {
+        self.orig = fromCol;
+        self.width = fromCol.width;
+        self.groupIndex = fromCol.groupIndex;
+        self.isGroupedBy = fromCol.isGroupedBy;
+        self.displayName = fromCol.displayName;
+        self.index = fromCol.index;
+        self.isAggCol = fromCol.isAggCol;
+        self.cellClass = fromCol.cellClass;
+        self.cellFilter = fromCol.cellFilter;
+        self.field = fromCol.field;
+        self.aggLabelFilter = fromCol.aggLabelFilter;
+        self.visible = fromCol.visible;
+        self.sortable = fromCol.sortable;
+        self.resizable = fromCol.resizable;
+        self.pinnable = fromCol.pinnable;
+        self.pinned = fromCol.pinned;
+        self.originalIndex = fromCol.originalIndex;
+        self.sortDirection = fromCol.sortDirection;
+        self.sortingAlgorithm = fromCol.sortingAlgorithm;
+        self.headerClass = fromCol.headerClass;
+        self.headerCellTemplate = fromCol.headerCellTemplate;
+        self.cellTemplate = fromCol.cellTemplate;
+        self.cellEditTemplate = fromCol.cellEditTemplate;
+    };
+};
+
+var ngDimension = function (options) {
+    this.outerHeight = null;
+    this.outerWidth = null;
+    $.extend(this, options);
+};
+var ngDomAccessProvider = function (grid) {
+  var self = this, previousColumn;
+  self.selectInputElement = function(elm){
+    var node = elm.nodeName.toLowerCase();
+    if(node == 'input' || node == 'textarea'){
+      elm.select();
+    }
+  };
+  self.focusCellElement = function($scope, index){  
+    if($scope.selectionProvider.lastClickedRow){
+      var columnIndex = index != undefined ? index : previousColumn;
+      var elm = $scope.selectionProvider.lastClickedRow.clone ? $scope.selectionProvider.lastClickedRow.clone.elm : $scope.selectionProvider.lastClickedRow.elm;
+      if (columnIndex != undefined && elm) {
+        var columns = angular.element(elm[0].children).filter(function () { return this.nodeType != 8;}); 
+        var i = Math.max(Math.min($scope.renderedColumns.length - 1, columnIndex), 0);
+        if(grid.config.showSelectionCheckbox && angular.element(columns[i]).scope() && angular.element(columns[i]).scope().col.index == 0){
+          i = 1; 
+        }
+        if (columns[i]) {
+          columns[i].children[0].focus();
+        }
+        previousColumn = columnIndex;
+      }
+    }
+  };
+  var changeUserSelect = function(elm, value) {
+    elm.css({
+      '-webkit-touch-callout': value,
+      '-webkit-user-select': value,
+      '-khtml-user-select': value,
+      '-moz-user-select': value == 'none'
+        ? '-moz-none'
+        : value,
+      '-ms-user-select': value,
+      'user-select': value
+    });
+  };
+  self.selectionHandlers = function($scope, elm){
+    var doingKeyDown = false;
+    elm.bind('keydown', function(evt) {
+      if (evt.keyCode == 16) { 
+        changeUserSelect(elm, 'none', evt);
+        return true;
+      } else if (!doingKeyDown) {
+        doingKeyDown = true;
+        var ret = ngMoveSelectionHandler($scope, elm, evt, grid);
+        doingKeyDown = false;
+        return ret;
+      }
+      return true;
+    });
+    elm.bind('keyup', function(evt) {
+      if (evt.keyCode == 16) { 
+        changeUserSelect(elm, 'text', evt);
+      }
+      return true;
+    });
+  };
+};
+var ngEventProvider = function (grid, $scope, domUtilityService, $timeout) {
+    var self = this;
+    self.colToMove = undefined;
+    self.groupToMove = undefined;
+    self.assignEvents = function() {
+        if (grid.config.jqueryUIDraggable && !grid.config.enablePinning) {
+            grid.$groupPanel.droppable({
+                addClasses: false,
+                drop: function(event) {
+                    self.onGroupDrop(event);
+                }
+            });
+        } else {
+            grid.$groupPanel.on('mousedown', self.onGroupMouseDown).on('dragover', self.dragOver).on('drop', self.onGroupDrop);
+            grid.$headerScroller.on('mousedown', self.onHeaderMouseDown).on('dragover', self.dragOver);
+            if (grid.config.enableColumnReordering && !grid.config.enablePinning) {
+                grid.$headerScroller.on('drop', self.onHeaderDrop);
+            }
+            if (grid.config.enableRowReordering) {
+                grid.$viewport.on('mousedown', self.onRowMouseDown).on('dragover', self.dragOver).on('drop', self.onRowDrop);
+            }
+        }
+        $scope.$watch('renderedColumns', function() {
+            $timeout(self.setDraggables);
+        });
+    };
+    self.dragStart = function(evt){
+      evt.dataTransfer.setData('text', ''); 
+    };
+    self.dragOver = function(evt) {
+        evt.preventDefault();
+    };
+    self.setDraggables = function() {
+        if (!grid.config.jqueryUIDraggable) {
+            var columns = grid.$root.find('.ngHeaderSortColumn'); 
+            angular.forEach(columns, function(col){
+                col.setAttribute('draggable', 'true');
+                if (col.addEventListener) { 
+                    col.addEventListener('dragstart', self.dragStart);
+                }
+            });
+            if (navigator.userAgent.indexOf("MSIE") != -1){
+                grid.$root.find('.ngHeaderSortColumn').bind('selectstart', function () { 
+                    this.dragDrop(); 
+                    return false; 
+                }); 
+            }
+        } else {
+            grid.$root.find('.ngHeaderSortColumn').draggable({
+                helper: 'clone',
+                appendTo: 'body',
+                stack: 'div',
+                addClasses: false,
+                start: function(event) {
+                    self.onHeaderMouseDown(event);
+                }
+            }).droppable({
+                drop: function(event) {
+                    self.onHeaderDrop(event);
+                }
+            });
+        }
+    };
+    self.onGroupMouseDown = function(event) {
+        var groupItem = $(event.target);
+        if (groupItem[0].className != 'ngRemoveGroup') {
+            var groupItemScope = angular.element(groupItem).scope();
+            if (groupItemScope) {
+                if (!grid.config.jqueryUIDraggable) {
+                    groupItem.attr('draggable', 'true');
+                    if(this.addEventListener){
+                        this.addEventListener('dragstart', self.dragStart); 
+                    }
+                    if (navigator.userAgent.indexOf("MSIE") != -1){
+                        groupItem.bind('selectstart', function () { 
+                            this.dragDrop(); 
+                            return false; 
+                        }); 
+                    }
+                }
+                self.groupToMove = { header: groupItem, groupName: groupItemScope.group, index: groupItemScope.$index };
+            }
+        } else {
+            self.groupToMove = undefined;
+        }
+    };
+    self.onGroupDrop = function(event) {
+        event.stopPropagation();
+        var groupContainer;
+        var groupScope;
+        if (self.groupToMove) {
+            groupContainer = $(event.target).closest('.ngGroupElement'); 
+            if (groupContainer.context.className == 'ngGroupPanel') {
+                $scope.configGroups.splice(self.groupToMove.index, 1);
+                $scope.configGroups.push(self.groupToMove.groupName);
+            } else {
+                groupScope = angular.element(groupContainer).scope();
+                if (groupScope) {
+                    if (self.groupToMove.index != groupScope.$index) {
+                        $scope.configGroups.splice(self.groupToMove.index, 1);
+                        $scope.configGroups.splice(groupScope.$index, 0, self.groupToMove.groupName);
+                    }
+                }
+            }
+            self.groupToMove = undefined;
+            grid.fixGroupIndexes();
+        } else if (self.colToMove) {
+            if ($scope.configGroups.indexOf(self.colToMove.col) == -1) {
+                groupContainer = $(event.target).closest('.ngGroupElement'); 
+                if (groupContainer.context.className == 'ngGroupPanel' || groupContainer.context.className == 'ngGroupPanelDescription ng-binding') {
+                    $scope.groupBy(self.colToMove.col);
+                } else {
+                    groupScope = angular.element(groupContainer).scope();
+                    if (groupScope) {
+                        $scope.removeGroup(groupScope.$index);
+                    }
+                }
+            }
+            self.colToMove = undefined;
+        }
+        if (!$scope.$$phase) {
+            $scope.$apply();
+        }
+    };
+    self.onHeaderMouseDown = function(event) {
+        var headerContainer = $(event.target).closest('.ngHeaderSortColumn');
+        var headerScope = angular.element(headerContainer).scope();
+        if (headerScope) {
+            self.colToMove = { header: headerContainer, col: headerScope.col };
+        }
+    };
+    self.onHeaderDrop = function(event) {
+        if (!self.colToMove || self.colToMove.col.pinned) {
+            return;
+        }
+        var headerContainer = $(event.target).closest('.ngHeaderSortColumn');
+        var headerScope = angular.element(headerContainer).scope();
+        if (headerScope) {
+            if (self.colToMove.col == headerScope.col) {
+                return;
+            }
+            $scope.columns.splice(self.colToMove.col.index, 1);
+            $scope.columns.splice(headerScope.col.index, 0, self.colToMove.col);
+            grid.fixColumnIndexes();
+            domUtilityService.BuildStyles($scope, grid, true);
+            self.colToMove = undefined;
+        }
+    };
+    self.onRowMouseDown = function(event) {
+        var targetRow = $(event.target).closest('.ngRow');
+        var rowScope = angular.element(targetRow).scope();
+        if (rowScope) {
+            targetRow.attr('draggable', 'true');
+            domUtilityService.eventStorage.rowToMove = { targetRow: targetRow, scope: rowScope };
+        }
+    };
+    self.onRowDrop = function(event) {
+        var targetRow = $(event.target).closest('.ngRow');
+        var rowScope = angular.element(targetRow).scope();
+        if (rowScope) {
+            var prevRow = domUtilityService.eventStorage.rowToMove;
+            if (prevRow.scope.row == rowScope.row) {
+                return;
+            }
+            grid.changeRowOrder(prevRow.scope.row, rowScope.row);
+            grid.searchProvider.evalFilter();
+            domUtilityService.eventStorage.rowToMove = undefined;
+            domUtilityService.digest(rowScope.$root);
+        }
+    };
+
+    self.assignGridEventHandlers = function() {
+        if (grid.config.tabIndex === -1) {
+            grid.$viewport.attr('tabIndex', domUtilityService.numberOfGrids);
+            domUtilityService.numberOfGrids++;
+        } else {
+            grid.$viewport.attr('tabIndex', grid.config.tabIndex);
+        }
+        $(window).resize(function() {
+            domUtilityService.RebuildGrid($scope,grid);
+        });
+        $(grid.$root.parent()).on('resize', function() {
+            domUtilityService.RebuildGrid($scope, grid);
+        });
+    };
+    self.assignGridEventHandlers();
+    self.assignEvents();
+};
+
+var ngFooter = function ($scope, grid) {
+    $scope.maxRows = function () {
+        var ret = Math.max(grid.config.totalServerItems, grid.data.length);
+        return ret;
+    };
+    $scope.multiSelect = (grid.config.enableRowSelection && grid.config.multiSelect);
+    $scope.selectedItemCount = grid.selectedItemCount;
+    $scope.maxPages = function () {
+        return Math.ceil($scope.maxRows() / $scope.pagingOptions.pageSize);
+    };
+
+    $scope.pageForward = function() {
+        var page = $scope.pagingOptions.currentPage;
+        if (grid.config.totalServerItems > 0) {
+            $scope.pagingOptions.currentPage = Math.min(page + 1, $scope.maxPages());
+        } else {
+            $scope.pagingOptions.currentPage++;
+        }
+    };
+
+    $scope.pageBackward = function() {
+        var page = $scope.pagingOptions.currentPage;
+        $scope.pagingOptions.currentPage = Math.max(page - 1, 1);
+    };
+
+    $scope.pageToFirst = function() {
+        $scope.pagingOptions.currentPage = 1;
+    };
+
+    $scope.pageToLast = function() {
+        var maxPages = $scope.maxPages();
+        $scope.pagingOptions.currentPage = maxPages;
+    };
+
+    $scope.cantPageForward = function() {
+        var curPage = $scope.pagingOptions.currentPage;
+        var maxPages = $scope.maxPages();
+        if (grid.config.totalServerItems > 0) {
+            return !(curPage < maxPages);
+        } else {
+            return grid.data.length < 1;
+        }
+
+    };
+    $scope.cantPageToLast = function() {
+        if (grid.config.totalServerItems > 0) {
+            return $scope.cantPageForward();
+        } else {
+            return true;
+        }
+    };
+    $scope.cantPageBackward = function() {
+        var curPage = $scope.pagingOptions.currentPage;
+        return !(curPage > 1);
+    };
+};
+
+var ngGrid = function ($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse, $http, $q) {
+    var defaults = {
+        aggregateTemplate: undefined,
+        afterSelectionChange: function() {
+        },
+        beforeSelectionChange: function() {
+            return true;
+        },
+        checkboxCellTemplate: undefined,
+        checkboxHeaderTemplate: undefined,
+        columnDefs: undefined,
+        data: [],
+        dataUpdated: function() {
+        },
+        enableCellEdit: false,
+        enableCellSelection: false,
+        enableColumnResize: false,
+        enableColumnReordering: false,
+        enableColumnHeavyVirt: false,
+        enablePaging: false,
+        enablePinning: false,
+        enableRowReordering: false,
+        enableRowSelection: true,
+        enableSorting: true,
+        enableHighlighting: false,
+        excludeProperties: [],
+        filterOptions: {
+            filterText: "",
+            useExternalFilter: false
+        },
+        footerRowHeight: 55,
+        footerTemplate: undefined,
+        groups: [],
+    groupsCollapsedByDefault: true,
+        headerRowHeight: 30,
+        headerRowTemplate: undefined,
+        jqueryUIDraggable: false,
+        jqueryUITheme: false,
+        keepLastSelected: true,
+        maintainColumnRatios: undefined,
+        menuTemplate: undefined,
+        multiSelect: true,
+        pagingOptions: {
+            pageSizes: [250, 500, 1000],
+            pageSize: 250,
+            currentPage: 1
+        },
+        pinSelectionCheckbox: false,
+        plugins: [],
+        primaryKey: undefined,
+        rowHeight: 30,
+        rowTemplate: undefined,
+        selectedItems: [],
+        selectWithCheckboxOnly: false,
+        showColumnMenu: false,
+        showFilter: false,
+        showFooter: false,
+        showGroupPanel: false,
+        showSelectionCheckbox: false,
+        sortInfo: {fields: [], columns: [], directions: [] },
+        tabIndex: -1,
+        totalServerItems: 0,
+        useExternalSorting: false,
+        i18n: 'en',
+        virtualizationThreshold: 50
+    },
+        self = this;
+    self.maxCanvasHt = 0;
+    self.config = $.extend(defaults, window.ngGrid.config, options);
+    self.config.showSelectionCheckbox = (self.config.showSelectionCheckbox && self.config.enableColumnHeavyVirt === false);
+    self.config.enablePinning = (self.config.enablePinning && self.config.enableColumnHeavyVirt === false);
+    self.config.selectWithCheckboxOnly = (self.config.selectWithCheckboxOnly && self.config.showSelectionCheckbox !== false);
+    self.config.pinSelectionCheckbox = self.config.enablePinning;
+
+    if (typeof options.columnDefs == "string") {
+        self.config.columnDefs = $scope.$eval(options.columnDefs);
+    }
+    self.rowCache = [];
+    self.rowMap = [];
+    self.gridId = "ng" + $utils.newId();
+    self.$root = null; 
+    self.$groupPanel = null;
+    self.$topPanel = null;
+    self.$headerContainer = null;
+    self.$headerScroller = null;
+    self.$headers = null;
+    self.$viewport = null;
+    self.$canvas = null;
+    self.rootDim = self.config.gridDim;
+    self.data = [];
+    self.lateBindColumns = false;
+    self.filteredRows = [];
+
+    self.initTemplates = function() {
+        var templates = ['rowTemplate', 'aggregateTemplate', 'headerRowTemplate', 'checkboxCellTemplate', 'checkboxHeaderTemplate', 'menuTemplate', 'footerTemplate'];
+
+        var promises = [];
+        templates.forEach(function(template) {
+            promises.push( self.getTemplate(template) );
+        });
+
+        return $q.all(promises);
+    };
+    self.getTemplate = function (key) {
+        var t = self.config[key];
+        var uKey = self.gridId + key + ".html";
+        var p = $q.defer();
+        if (t && !TEMPLATE_REGEXP.test(t)) {
+            $http.get(t, {
+                cache: $templateCache
+            })
+            .success(function(data){
+                $templateCache.put(uKey, data);
+                p.resolve();
+            })
+            .error(function(err){
+                p.reject("Could not load template: " + t);
+            });
+        } else if (t) {
+            $templateCache.put(uKey, t);
+            p.resolve();
+        } else {
+            var dKey = key + ".html";
+            $templateCache.put(uKey, $templateCache.get(dKey));
+            p.resolve();
+        }
+
+        return p.promise;
+    };
+
+    if (typeof self.config.data == "object") {
+        self.data = self.config.data; 
+    }
+    self.calcMaxCanvasHeight = function() {
+        return (self.config.groups.length > 0) ? (self.rowFactory.parsedData.filter(function(e) {
+            return !e[NG_HIDDEN];
+        }).length * self.config.rowHeight) : (self.filteredRows.length * self.config.rowHeight);
+    };
+    self.elementDims = {
+        scrollW: 0,
+        scrollH: 0,
+        rowIndexCellW: 25,
+        rowSelectedCellW: 25,
+        rootMaxW: 0,
+        rootMaxH: 0
+    };
+    self.setRenderedRows = function (newRows) {
+        $scope.renderedRows.length = newRows.length;
+        for (var i = 0; i < newRows.length; i++) {
+            if (!$scope.renderedRows[i] || (newRows[i].isAggRow || $scope.renderedRows[i].isAggRow)) {
+                $scope.renderedRows[i] = newRows[i].copy();
+                $scope.renderedRows[i].collapsed = newRows[i].collapsed;
+                if (!newRows[i].isAggRow) {
+                    $scope.renderedRows[i].setVars(newRows[i]);
+                }
+            } else {
+                $scope.renderedRows[i].setVars(newRows[i]);
+            }
+            $scope.renderedRows[i].rowIndex = newRows[i].rowIndex;
+            $scope.renderedRows[i].offsetTop = newRows[i].offsetTop;
+            $scope.renderedRows[i].selected = newRows[i].selected;
+      newRows[i].renderedRowIndex = i;
+        }
+        self.refreshDomSizes();
+        $scope.$emit('ngGridEventRows', newRows);
+    };
+    self.minRowsToRender = function() {
+        var viewportH = $scope.viewportDimHeight() || 1;
+        return Math.floor(viewportH / self.config.rowHeight);
+    };
+    self.refreshDomSizes = function() {
+        var dim = new ngDimension();
+        dim.outerWidth = self.elementDims.rootMaxW;
+        dim.outerHeight = self.elementDims.rootMaxH;
+        self.rootDim = dim;
+        self.maxCanvasHt = self.calcMaxCanvasHeight();
+    };
+    self.buildColumnDefsFromData = function () {
+        self.config.columnDefs = [];
+        var item = self.data[0];
+        if (!item) {
+            self.lateBoundColumns = true;
+            return;
+        }
+        $utils.forIn(item, function (prop, propName) {
+            if (self.config.excludeProperties.indexOf(propName) == -1) {
+                self.config.columnDefs.push({
+                    field: propName
+                });
+            }
+        });
+    };
+    self.buildColumns = function() {
+        var columnDefs = self.config.columnDefs,
+            cols = [];
+        if (!columnDefs) {
+            self.buildColumnDefsFromData();
+            columnDefs = self.config.columnDefs;
+        }
+        if (self.config.showSelectionCheckbox) {
+            cols.push(new ngColumn({
+                colDef: {
+                    field: '\u2714',
+                    width: self.elementDims.rowSelectedCellW,
+                    sortable: false,
+                    resizable: false,
+                    groupable: false,
+                    headerCellTemplate: $templateCache.get($scope.gridId + 'checkboxHeaderTemplate.html'),
+                    cellTemplate: $templateCache.get($scope.gridId + 'checkboxCellTemplate.html'),
+                    pinned: self.config.pinSelectionCheckbox,
+                },
+                index: 0,
+                headerRowHeight: self.config.headerRowHeight,
+                sortCallback: self.sortData,
+                resizeOnDataCallback: self.resizeOnData,
+                enableResize: self.config.enableColumnResize,
+                enableSort: self.config.enableSorting,
+                enablePinning: self.config.enablePinning
+            }, $scope, self, domUtilityService, $templateCache, $utils));
+        }
+        if (columnDefs.length > 0) {
+            var indexOffset = self.config.showSelectionCheckbox ? self.config.groups.length + 1 : self.config.groups.length;
+            $scope.configGroups.length = 0;
+            angular.forEach(columnDefs, function(colDef, i) {
+                i += indexOffset;
+                var column = new ngColumn({
+                    colDef: colDef,
+                    index: i,
+                    headerRowHeight: self.config.headerRowHeight,
+                    sortCallback: self.sortData,
+                    resizeOnDataCallback: self.resizeOnData,
+                    enableResize: self.config.enableColumnResize,
+                    enableSort: self.config.enableSorting,
+                    enablePinning: self.config.enablePinning,
+                    enableCellEdit: self.config.enableCellEdit 
+                }, $scope, self, domUtilityService, $templateCache, $utils);
+                var indx = self.config.groups.indexOf(colDef.field);
+                if (indx != -1) {
+                    column.isGroupedBy = true;
+                    $scope.configGroups.splice(indx, 0, column);
+                    column.groupIndex = $scope.configGroups.length;
+                }
+                cols.push(column);
+            });
+            $scope.columns = cols;
+        }
+    };
+    self.configureColumnWidths = function() {
+        var cols = self.config.columnDefs;
+        var indexOffset = self.config.showSelectionCheckbox ? $scope.configGroups.length + 1 : $scope.configGroups.length;
+        var numOfCols = cols.length + indexOffset,
+            asterisksArray = [],
+            percentArray = [],
+            asteriskNum = 0,
+            totalWidth = 0;
+        totalWidth += self.config.showSelectionCheckbox ? 25 : 0;
+        angular.forEach(cols, function(col, i) {
+                i += indexOffset;
+                var isPercent = false, t = undefined;
+                if ($utils.isNullOrUndefined(col.width)) {
+                    col.width = "*";
+                } else { 
+                    isPercent = isNaN(col.width) ? $utils.endsWith(col.width, "%") : false;
+                    t = isPercent ? col.width : parseInt(col.width, 10);
+                }
+            if (isNaN(t)) {
+                t = col.width;
+                if (t == 'auto') { 
+                    $scope.columns[i].width = col.minWidth;
+                    totalWidth += $scope.columns[i].width;
+                    var temp = $scope.columns[i];
+                    $timeout(function () {
+                        self.resizeOnData(temp, true);
+                    });
+                    return;
+                } else if (t.indexOf("*") != -1) { 
+                    if (col.visible !== false) {
+                        asteriskNum += t.length;
+                    }
+                    col.index = i;
+                    asterisksArray.push(col);
+                    return;
+                } else if (isPercent) { 
+                    col.index = i;
+                    percentArray.push(col);
+                    return;
+                } else { 
+                    throw "unable to parse column width, use percentage (\"10%\",\"20%\", etc...) or \"*\" to use remaining width of grid";
+                }
+            } else if (col.visible !== false) {
+                totalWidth += $scope.columns[i].width = parseInt(col.width, 10);
+            }
+        });
+        if (asterisksArray.length > 0) {
+            self.config.maintainColumnRatios === false ? angular.noop() : self.config.maintainColumnRatios = true;
+            var remainigWidth = self.rootDim.outerWidth - totalWidth;
+            var asteriskVal = Math.floor(remainigWidth / asteriskNum);
+            angular.forEach(asterisksArray, function(col) {
+                var t = col.width.length;
+                $scope.columns[col.index].width = asteriskVal * t;
+                var offset = 1;
+        if (self.maxCanvasHt > $scope.viewportDimHeight()) {
+          offset += domUtilityService.ScrollW;
+        }
+                $scope.columns[col.index].width -= offset;
+                if (col.visible !== false) {
+                    totalWidth += $scope.columns[col.index].width;
+                }
+            });
+        }
+        if (percentArray.length > 0) {
+            angular.forEach(percentArray, function(col) {
+                var t = col.width;
+                $scope.columns[col.index].width = Math.floor(self.rootDim.outerWidth * (parseInt(t.slice(0, -1), 10) / 100));
+            });
+        }
+    };
+    self.init = function() {
+        return self.initTemplates().then(function(){
+            $scope.selectionProvider = new ngSelectionProvider(self, $scope, $parse);
+            $scope.domAccessProvider = new ngDomAccessProvider(self);
+        self.rowFactory = new ngRowFactory(self, $scope, domUtilityService, $templateCache, $utils);
+            self.searchProvider = new ngSearchProvider($scope, self, $filter);
+            self.styleProvider = new ngStyleProvider($scope, self);
+            $scope.$watch('configGroups', function(a) {
+              var tempArr = [];
+              angular.forEach(a, function(item) {
+                tempArr.push(item.field || item);
+              });
+              self.config.groups = tempArr;
+              self.rowFactory.filteredRowsChanged();
+              $scope.$emit('ngGridEventGroups', a);
+            }, true);
+            $scope.$watch('columns', function (a) {
+                domUtilityService.BuildStyles($scope, self, true);
+                $scope.$emit('ngGridEventColumns', a);
+            }, true);
+            $scope.$watch(function() {
+                return options.i18n;
+            }, function(newLang) {
+                $utils.seti18n($scope, newLang);
+            });
+            self.maxCanvasHt = self.calcMaxCanvasHeight();
+            if (self.config.sortInfo.fields && self.config.sortInfo.fields.length > 0) {
+                self.getColsFromFields();
+                self.sortActual();
+            }
+        });
+    };
+    self.resizeOnData = function(col) {
+        var longest = col.minWidth;
+        var arr = $utils.getElementsByClassName('col' + col.index);
+        angular.forEach(arr, function(elem, index) {
+            var i;
+            if (index === 0) {
+                var kgHeaderText = $(elem).find('.ngHeaderText');
+                i = $utils.visualLength(kgHeaderText) + 10; 
+            } else {
+                var ngCellText = $(elem).find('.ngCellText');
+                i = $utils.visualLength(ngCellText) + 10; 
+            }
+            if (i > longest) {
+                longest = i;
+            }
+        });
+        col.width = col.longest = Math.min(col.maxWidth, longest + 7); 
+        domUtilityService.BuildStyles($scope, self, true);
+    };
+    self.lastSortedColumns = [];
+    self.changeRowOrder = function(prevRow, targetRow) {
+        var i = self.rowCache.indexOf(prevRow);
+        var j = self.rowCache.indexOf(targetRow);
+        self.rowCache.splice(i, 1);
+        self.rowCache.splice(j, 0, prevRow);
+        $scope.$emit('ngGridEventChangeOrder', self.rowCache);
+    };
+    self.sortData = function(col, evt) {
+        if (evt && evt.shiftKey && self.config.sortInfo) {
+            var indx = self.config.sortInfo.columns.indexOf(col);
+            if (indx === -1) {
+                if (self.config.sortInfo.columns.length == 1) {
+                    self.config.sortInfo.columns[0].sortPriority = 1;
+                }
+                self.config.sortInfo.columns.push(col);
+                col.sortPriority = self.config.sortInfo.columns.length;
+                self.config.sortInfo.fields.push(col.field);
+                self.config.sortInfo.directions.push(col.sortDirection);
+                self.lastSortedColumns.push(col);
+            } else {
+                self.config.sortInfo.directions[indx] = col.sortDirection;
+            }
+        } else {
+            var isArr = $.isArray(col);
+            self.config.sortInfo.columns.length = 0;
+            self.config.sortInfo.fields.length = 0;
+            self.config.sortInfo.directions.length = 0;
+            var push = function (c) {
+                self.config.sortInfo.columns.push(c);
+                self.config.sortInfo.fields.push(c.field);
+                self.config.sortInfo.directions.push(c.sortDirection);
+                self.lastSortedColumns.push(c);
+            };
+            if (isArr) {
+                self.clearSortingData();
+                angular.forEach(col, function (c, i) {
+                    c.sortPriority = i + 1;
+                    push(c);
+                });
+            } else {
+                self.clearSortingData(col);
+                col.sortPriority = undefined;
+                push(col);
+            }
+        }
+        self.sortActual();
+        self.searchProvider.evalFilter();
+        $scope.$emit('ngGridEventSorted', self.config.sortInfo);
+    };
+    self.getColsFromFields = function() {
+        if (self.config.sortInfo.columns) {
+            self.config.sortInfo.columns.length = 0;
+        } else {
+            self.config.sortInfo.columns = [];
+        }
+        angular.forEach($scope.columns, function(c) {
+            var i = self.config.sortInfo.fields.indexOf(c.field);
+            if (i != -1) {
+                c.sortDirection = self.config.sortInfo.directions[i] || 'asc';
+                self.config.sortInfo.columns.push(c);
+            }
+            return false;
+        });
+    };
+    self.sortActual = function() {
+        if (!self.config.useExternalSorting) {
+            var tempData = self.data.slice(0);
+            angular.forEach(tempData, function(item, i) {
+                var e = self.rowMap[i];
+                if (e != undefined) {
+                    var v = self.rowCache[i];
+                    if(v != undefined) {
+                        item.preSortSelected = v.selected;
+                        item.preSortIndex = i;
+                    }
+                }
+            });
+            sortService.Sort(self.config.sortInfo, tempData);
+            angular.forEach(tempData, function(item, i) {
+                self.rowCache[i].entity = item;
+                self.rowCache[i].selected = item.preSortSelected;
+                self.rowMap[item.preSortIndex] = i;
+                delete item.preSortSelected;
+                delete item.preSortIndex;
+            });
+        }
+    };
+
+    self.clearSortingData = function (col) {
+        if (!col) {
+            angular.forEach(self.lastSortedColumns, function (c) {
+                c.sortDirection = "";
+                c.sortPriority = null;
+            });
+            self.lastSortedColumns = [];
+        } else {
+            angular.forEach(self.lastSortedColumns, function (c) {
+                if (col.index != c.index) {
+                    c.sortDirection = "";
+                    c.sortPriority = null;
+                }
+            });
+            self.lastSortedColumns[0] = col;
+            self.lastSortedColumns.length = 1;
+        };
+    };
+    self.fixColumnIndexes = function() {
+        for (var i = 0; i < $scope.columns.length; i++) {
+            if ($scope.columns[i].visible !== false) {
+                $scope.columns[i].index = i;
+            }
+        }
+    };
+    self.fixGroupIndexes = function() {
+        angular.forEach($scope.configGroups, function(item, i) {
+            item.groupIndex = i + 1;
+        });
+    };
+    $scope.elementsNeedMeasuring = true;
+    $scope.columns = [];
+    $scope.renderedRows = [];
+    $scope.renderedColumns = [];
+    $scope.headerRow = null;
+    $scope.rowHeight = self.config.rowHeight;
+    $scope.jqueryUITheme = self.config.jqueryUITheme;
+    $scope.showSelectionCheckbox = self.config.showSelectionCheckbox;
+    $scope.enableCellSelection = self.config.enableCellSelection;
+    $scope.footer = null;
+    $scope.selectedItems = self.config.selectedItems;
+    $scope.multiSelect = self.config.multiSelect;
+    $scope.showFooter = self.config.showFooter;
+    $scope.footerRowHeight = $scope.showFooter ? self.config.footerRowHeight : 0;
+    $scope.showColumnMenu = self.config.showColumnMenu;
+    $scope.showMenu = false;
+    $scope.configGroups = [];
+    $scope.gridId = self.gridId;
+    $scope.enablePaging = self.config.enablePaging;
+    $scope.pagingOptions = self.config.pagingOptions;
+    $scope.i18n = {};
+    $utils.seti18n($scope, self.config.i18n);
+    $scope.adjustScrollLeft = function (scrollLeft) {
+        var colwidths = 0,
+            totalLeft = 0,
+            x = $scope.columns.length,
+            newCols = [],
+            dcv = !self.config.enableColumnHeavyVirt;
+        var r = 0;
+        var addCol = function (c) {
+            if (dcv) {
+                newCols.push(c);
+            } else {
+                if (!$scope.renderedColumns[r]) {
+                    $scope.renderedColumns[r] = c.copy();
+                } else {
+                    $scope.renderedColumns[r].setVars(c);
+                }
+            }
+            r++;
+        };
+        for (var i = 0; i < x; i++) {
+            var col = $scope.columns[i];
+            if (col.visible !== false) {
+                var w = col.width + colwidths;
+                if (col.pinned) {
+                    addCol(col);
+                    var newLeft = i > 0 ? (scrollLeft + totalLeft) : scrollLeft;
+                    domUtilityService.setColLeft(col, newLeft, self);
+                    totalLeft += col.width;
+                } else {
+                    if (w >= scrollLeft) {
+                        if (colwidths <= scrollLeft + self.rootDim.outerWidth) {
+                            addCol(col);
+                        }
+                    }
+                }
+                colwidths += col.width;
+            }
+        }
+        if (dcv) {
+            $scope.renderedColumns = newCols;
+        }
+    };
+    self.prevScrollTop = 0;
+    self.prevScrollIndex = 0;
+    $scope.adjustScrollTop = function(scrollTop, force) {
+        if (self.prevScrollTop === scrollTop && !force) {
+            return;
+        }
+        if (scrollTop > 0 && self.$viewport[0].scrollHeight - scrollTop <= self.$viewport.outerHeight()) {
+            $scope.$emit('ngGridEventScroll');
+        }
+        var rowIndex = Math.floor(scrollTop / self.config.rowHeight);
+      var newRange;
+      if (self.filteredRows.length > self.config.virtualizationThreshold) {
+          if (self.prevScrollTop < scrollTop && rowIndex < self.prevScrollIndex + SCROLL_THRESHOLD) {
+              return;
+          }
+          if (self.prevScrollTop > scrollTop && rowIndex > self.prevScrollIndex - SCROLL_THRESHOLD) {
+              return;
+          }
+          newRange = new ngRange(Math.max(0, rowIndex - EXCESS_ROWS), rowIndex + self.minRowsToRender() + EXCESS_ROWS);
+      } else {
+          var maxLen = $scope.configGroups.length > 0 ? self.rowFactory.parsedData.length : self.data.length;
+          newRange = new ngRange(0, Math.max(maxLen, self.minRowsToRender() + EXCESS_ROWS));
+      }
+      self.prevScrollTop = scrollTop;
+      self.rowFactory.UpdateViewableRange(newRange);
+      self.prevScrollIndex = rowIndex;
+    };
+    $scope.toggleShowMenu = function() {
+        $scope.showMenu = !$scope.showMenu;
+    };
+    $scope.toggleSelectAll = function(a) {
+        $scope.selectionProvider.toggleSelectAll(a);
+    };
+    $scope.totalFilteredItemsLength = function() {
+        return self.filteredRows.length;
+    };
+    $scope.showGroupPanel = function() {
+        return self.config.showGroupPanel;
+    };
+    $scope.topPanelHeight = function() {
+        return self.config.showGroupPanel === true ? self.config.headerRowHeight + 32 : self.config.headerRowHeight;
+    };
+
+    $scope.viewportDimHeight = function() {
+        return Math.max(0, self.rootDim.outerHeight - $scope.topPanelHeight() - $scope.footerRowHeight - 2);
+    };
+    $scope.groupBy = function (col) {
+        if (self.data.length < 1 || !col.groupable  || !col.field) {
+            return;
+        }
+        if (!col.sortDirection) col.sort({ shiftKey: $scope.configGroups.length > 0 ? true : false });
+
+        var indx = $scope.configGroups.indexOf(col);
+        if (indx == -1) {
+            col.isGroupedBy = true;
+            $scope.configGroups.push(col);
+            col.groupIndex = $scope.configGroups.length;
+        } else {
+            $scope.removeGroup(indx);
+        }
+        self.$viewport.scrollTop(0);
+        domUtilityService.digest($scope);
+    };
+    $scope.removeGroup = function(index) {
+        var col = $scope.columns.filter(function(item) {
+            return item.groupIndex == (index + 1);
+        })[0];
+        col.isGroupedBy = false;
+        col.groupIndex = 0;
+        if ($scope.columns[index].isAggCol) {
+            $scope.columns.splice(index, 1);
+            $scope.configGroups.splice(index, 1);
+            self.fixGroupIndexes();
+        }
+        if ($scope.configGroups.length === 0) {
+            self.fixColumnIndexes();
+            domUtilityService.digest($scope);
+        }
+        $scope.adjustScrollLeft(0);
+    };
+    $scope.togglePin = function (col) {
+        var indexFrom = col.index;
+        var indexTo = 0;
+        for (var i = 0; i < $scope.columns.length; i++) {
+            if (!$scope.columns[i].pinned) {
+                break;
+            }
+            indexTo++;
+        }
+        if (col.pinned) {
+            indexTo = Math.max(col.originalIndex, indexTo - 1);
+        }
+        col.pinned = !col.pinned;
+        $scope.columns.splice(indexFrom, 1);
+        $scope.columns.splice(indexTo, 0, col);
+        self.fixColumnIndexes();
+        domUtilityService.BuildStyles($scope, self, true);
+        self.$viewport.scrollLeft(self.$viewport.scrollLeft() - col.width);
+    };
+    $scope.totalRowWidth = function() {
+        var totalWidth = 0,
+            cols = $scope.columns;
+        for (var i = 0; i < cols.length; i++) {
+            if (cols[i].visible !== false) {
+                totalWidth += cols[i].width;
+            }
+        }
+        return totalWidth;
+    };
+    $scope.headerScrollerDim = function() {
+        var viewportH = $scope.viewportDimHeight(),
+            maxHeight = self.maxCanvasHt,
+            vScrollBarIsOpen = (maxHeight > viewportH),
+            newDim = new ngDimension();
+
+        newDim.autoFitHeight = true;
+        newDim.outerWidth = $scope.totalRowWidth();
+        if (vScrollBarIsOpen) {
+            newDim.outerWidth += self.elementDims.scrollW;
+        } else if ((maxHeight - viewportH) <= self.elementDims.scrollH) { 
+            newDim.outerWidth += self.elementDims.scrollW;
+        }
+        return newDim;
+    };
+};
+
+var ngRange = function (top, bottom) {
+    this.topRow = top;
+    this.bottomRow = bottom;
+};
+var ngRow = function (entity, config, selectionProvider, rowIndex, $utils) {
+    var self = this, 
+        enableRowSelection = config.enableRowSelection;
+
+    self.jqueryUITheme = config.jqueryUITheme;
+    self.rowClasses = config.rowClasses;
+    self.entity = entity;
+    self.selectionProvider = selectionProvider;
+  self.selected = selectionProvider.getSelection(entity);
+    self.cursor = enableRowSelection ? 'pointer' : 'default';
+  self.setSelection = function(isSelected) {
+    self.selectionProvider.setSelection(self, isSelected);
+    self.selectionProvider.lastClickedRow = self;
+  };
+    self.continueSelection = function(event) {
+        self.selectionProvider.ChangeSelection(self, event);
+    };
+    self.ensureEntity = function(expected) {
+        if (self.entity != expected) {
+            self.entity = expected;
+            self.selected = self.selectionProvider.getSelection(self.entity);
+        }
+    };
+    self.toggleSelected = function(event) {
+        if (!enableRowSelection && !config.enableCellSelection) {
+            return true;
+        }
+        var element = event.target || event;
+        if (element.type == "checkbox" && element.parentElement.className != "ngSelectionCell ng-scope") {
+            return true;
+        }
+        if (config.selectWithCheckboxOnly && element.type != "checkbox") {
+            self.selectionProvider.lastClickedRow = self;
+            return true;
+        } else {
+            if (self.beforeSelectionChange(self, event)) {
+                self.continueSelection(event);
+            }
+        }
+        return false;
+    };
+    self.rowIndex = rowIndex;
+    self.offsetTop = self.rowIndex * config.rowHeight;
+    self.rowDisplayIndex = 0;
+    self.alternatingRowClass = function () {
+        var isEven = (self.rowIndex % 2) === 0;
+        var classes = {
+            'ngRow' : true,
+            'selected': self.selected,
+            'even': isEven,
+            'odd': !isEven,
+            'ui-state-default': self.jqueryUITheme && isEven,
+            'ui-state-active': self.jqueryUITheme && !isEven
+        };
+        return classes;
+    };
+    self.beforeSelectionChange = config.beforeSelectionChangeCallback;
+    self.afterSelectionChange = config.afterSelectionChangeCallback;
+
+    self.getProperty = function(path) {
+        return $utils.evalProperty(self.entity, path);
+    };
+    self.copy = function () {
+        self.clone = new ngRow(entity, config, selectionProvider, rowIndex, $utils);
+        self.clone.isClone = true;
+        self.clone.elm = self.elm;
+        self.clone.orig = self;
+        return self.clone;
+    };
+    self.setVars = function (fromRow) {
+        fromRow.clone = self;
+        self.entity = fromRow.entity;
+        self.selected = fromRow.selected;
+    };
+};
+var ngRowFactory = function (grid, $scope, domUtilityService, $templateCache, $utils) {
+    var self = this;
+    self.aggCache = {};
+    self.parentCache = []; 
+    self.dataChanged = true;
+    self.parsedData = [];
+    self.rowConfig = {};
+    self.selectionProvider = $scope.selectionProvider;
+    self.rowHeight = 30;
+    self.numberOfAggregates = 0;
+    self.groupedData = undefined;
+    self.rowHeight = grid.config.rowHeight;
+    self.rowConfig = {
+        enableRowSelection: grid.config.enableRowSelection,
+        rowClasses: grid.config.rowClasses,
+        selectedItems: $scope.selectedItems,
+        selectWithCheckboxOnly: grid.config.selectWithCheckboxOnly,
+        beforeSelectionChangeCallback: grid.config.beforeSelectionChange,
+        afterSelectionChangeCallback: grid.config.afterSelectionChange,
+        jqueryUITheme: grid.config.jqueryUITheme,
+        enableCellSelection: grid.config.enableCellSelection,
+        rowHeight: grid.config.rowHeight
+    };
+
+    self.renderedRange = new ngRange(0, grid.minRowsToRender() + EXCESS_ROWS);
+    self.buildEntityRow = function(entity, rowIndex) {
+        return new ngRow(entity, self.rowConfig, self.selectionProvider, rowIndex, $utils);
+    };
+
+    self.buildAggregateRow = function(aggEntity, rowIndex) {
+        var agg = self.aggCache[aggEntity.aggIndex]; 
+        if (!agg) {
+            agg = new ngAggregate(aggEntity, self, self.rowConfig.rowHeight, grid.config.groupsCollapsedByDefault);
+            self.aggCache[aggEntity.aggIndex] = agg;
+        }
+        agg.rowIndex = rowIndex;
+        agg.offsetTop = rowIndex * self.rowConfig.rowHeight;
+        return agg;
+    };
+    self.UpdateViewableRange = function(newRange) {
+        self.renderedRange = newRange;
+        self.renderedChange();
+    };
+    self.filteredRowsChanged = function() {
+        if (grid.lateBoundColumns && grid.filteredRows.length > 0) {
+            grid.config.columnDefs = undefined;
+            grid.buildColumns();
+            grid.lateBoundColumns = false;
+            $scope.$evalAsync(function() {
+                $scope.adjustScrollLeft(0);
+            });
+        }
+        self.dataChanged = true;
+        if (grid.config.groups.length > 0) {
+            self.getGrouping(grid.config.groups);
+        }
+        self.UpdateViewableRange(self.renderedRange);
+    };
+
+    self.renderedChange = function() {
+        if (!self.groupedData || grid.config.groups.length < 1) {
+            self.renderedChangeNoGroups();
+            grid.refreshDomSizes();
+            return;
+        }
+        self.wasGrouped = true;
+        self.parentCache = [];
+        var x = 0;
+        var temp = self.parsedData.filter(function (e) {
+            if (e.isAggRow) {
+                if (e.parent && e.parent.collapsed) {
+                    return false;
+                }
+                return true;
+            }
+            if (!e[NG_HIDDEN]) {
+                e.rowIndex = x++;
+            }
+            return !e[NG_HIDDEN];
+        });
+        self.totalRows = temp.length;
+        var rowArr = [];
+        for (var i = self.renderedRange.topRow; i < self.renderedRange.bottomRow; i++) {
+            if (temp[i]) {
+                temp[i].offsetTop = i * grid.config.rowHeight;
+                rowArr.push(temp[i]);
+            }
+        }
+        grid.setRenderedRows(rowArr);
+    };
+
+    self.renderedChangeNoGroups = function () {
+        var rowArr = [];
+        for (var i = self.renderedRange.topRow; i < self.renderedRange.bottomRow; i++) {
+            if (grid.filteredRows[i]) {
+                grid.filteredRows[i].rowIndex = i;
+                grid.filteredRows[i].offsetTop = i * grid.config.rowHeight;
+                rowArr.push(grid.filteredRows[i]);
+            }
+        }
+        grid.setRenderedRows(rowArr);
+    };
+
+    self.fixRowCache = function () {
+        var newLen = grid.data.length;
+        var diff = newLen - grid.rowCache.length;
+        if (diff < 0) {
+            grid.rowCache.length = grid.rowMap.length = newLen;
+        } else {
+            for (var i = grid.rowCache.length; i < newLen; i++) {
+                grid.rowCache[i] = grid.rowFactory.buildEntityRow(grid.data[i], i);
+            }
+        }
+    };
+    self.parseGroupData = function(g) {
+        if (g.values) {
+            for (var x = 0; x < g.values.length; x++){
+                self.parentCache[self.parentCache.length - 1].children.push(g.values[x]);
+                self.parsedData.push(g.values[x]);
+            }
+        } else {
+            for (var prop in g) {
+                if (prop == NG_FIELD || prop == NG_DEPTH || prop == NG_COLUMN) {
+                    continue;
+                } else if (g.hasOwnProperty(prop)) {
+                    var agg = self.buildAggregateRow({
+                        gField: g[NG_FIELD],
+                        gLabel: prop,
+                        gDepth: g[NG_DEPTH],
+                        isAggRow: true,
+                        '_ng_hidden_': false,
+                        children: [],
+                        aggChildren: [],
+                        aggIndex: self.numberOfAggregates,
+                        aggLabelFilter: g[NG_COLUMN].aggLabelFilter
+                    }, 0);
+                    self.numberOfAggregates++;
+                    agg.parent = self.parentCache[agg.depth - 1];
+                    if (agg.parent) {
+                        agg.parent.collapsed = false;
+                        agg.parent.aggChildren.push(agg);
+                    }
+                    self.parsedData.push(agg);
+                    self.parentCache[agg.depth] = agg;
+                    self.parseGroupData(g[prop]);
+                }
+            }
+        }
+    };
+    self.getGrouping = function(groups) {
+        self.aggCache = [];
+        self.numberOfAggregates = 0;
+        self.groupedData = {};
+        var rows = grid.filteredRows,
+            maxDepth = groups.length,
+            cols = $scope.columns;
+
+        for (var x = 0; x < rows.length; x++){
+            var model = rows[x].entity;
+            if (!model) return;
+            rows[x][NG_HIDDEN] = grid.config.groupsCollapsedByDefault;
+            var ptr = self.groupedData;
+            for (var y = 0; y < groups.length; y++) {
+                var group = groups[y];
+                var col = cols.filter(function(c) {
+                    return c.field == group;
+                })[0];
+                var val = $utils.evalProperty(model, group);
+                val = val ? val.toString() : 'null';
+                if (!ptr[val]) {
+                    ptr[val] = {};
+                }
+                if (!ptr[NG_FIELD]) {
+                    ptr[NG_FIELD] = group;
+                }
+                if (!ptr[NG_DEPTH]) {
+                    ptr[NG_DEPTH] = y;
+                }
+                if (!ptr[NG_COLUMN]) {
+                    ptr[NG_COLUMN] = col;
+                }
+                ptr = ptr[val];
+            }
+            if (!ptr.values) {
+                ptr.values = [];
+            }
+            ptr.values.push(rows[x]);
+        };
+        for (var z = 0; z < groups.length; z++) {
+            if (!cols[z].isAggCol && z <= maxDepth) {
+                cols.splice(0, 0, new ngColumn({
+                    colDef: {
+                        field: '',
+                        width: 25,
+                        sortable: false,
+                        resizable: false,
+                        headerCellTemplate: '<div class="ngAggHeader"></div>',
+                        pinned: grid.config.pinSelectionCheckbox
+                    },
+                    enablePinning: grid.config.enablePinning,
+                    isAggCol: true,
+                    headerRowHeight: grid.config.headerRowHeight,
+                }, $scope, grid, domUtilityService, $templateCache, $utils));
+            }
+        }
+        domUtilityService.BuildStyles($scope, grid, true);
+    grid.fixColumnIndexes();
+        $scope.adjustScrollLeft(0);
+        self.parsedData.length = 0;
+        self.parseGroupData(self.groupedData);
+        self.fixRowCache();
+    };
+
+    if (grid.config.groups.length > 0 && grid.filteredRows.length > 0) {
+        self.getGrouping(grid.config.groups);
+    }
+};
+var ngSearchProvider = function ($scope, grid, $filter) {
+    var self = this,
+        searchConditions = [];
+    self.extFilter = grid.config.filterOptions.useExternalFilter;
+    $scope.showFilter = grid.config.showFilter;
+    $scope.filterText = '';
+
+    self.fieldMap = {};
+
+    self.evalFilter = function () {
+        var filterFunc = function(item) {
+            for (var x = 0, len = searchConditions.length; x < len; x++) {
+                var condition = searchConditions[x];
+                var result;
+                if (!condition.column) {
+                    for (var prop in item) {
+                        if (item.hasOwnProperty(prop)) {
+                            var c = self.fieldMap[prop];
+                            if (!c)
+                                continue;
+                            var f = null,
+                                s = null;
+                            if (c && c.cellFilter) {
+                                s = c.cellFilter.split(':');
+                                f = $filter(s[0]);
+                            }
+                            var pVal = item[prop];
+                            if (pVal != null) {
+                                if (typeof f == 'function') {
+                                    var filterRes = f(typeof pVal === 'object' ? evalObject(pVal, c.field) : pVal, s[1]).toString();
+                                    result = condition.regex.test(filterRes);
+                                } else {
+                                    result = condition.regex.test(typeof pVal === 'object' ? evalObject(pVal, c.field).toString() : pVal.toString());
+                                }
+                                if (pVal && result) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                    return false;
+                }
+                var col = self.fieldMap[condition.columnDisplay];
+                if (!col) {
+                    return false;
+                }
+                var sp = col.cellFilter.split(':');
+                var filter = col.cellFilter ? $filter(sp[0]) : null;
+                var value = item[condition.column] || item[col.field.split('.')[0]];
+                if (value == null)
+                    return false;
+                if (typeof filter == 'function') {
+                    var filterResults = filter(typeof value === 'object' ? evalObject(value, col.field) : value, sp[1]).toString();
+                    result = condition.regex.test(filterResults);
+                } else {
+                    result = condition.regex.test(typeof value === 'object' ? evalObject(value, col.field).toString() : value.toString());
+                }
+                if (!value || !result) {
+                    return false;
+                }
+            }
+            return true;
+        };
+        if (searchConditions.length === 0) {
+            grid.filteredRows = grid.rowCache;
+        } else {
+            grid.filteredRows = grid.rowCache.filter(function(row) {
+                return filterFunc(row.entity);
+            });
+        }
+        for (var i = 0; i < grid.filteredRows.length; i++)
+        {
+            grid.filteredRows[i].rowIndex = i;
+        }
+        grid.rowFactory.filteredRowsChanged();
+    };
+    var evalObject = function (obj, columnName) {
+        if (typeof obj != 'object' || typeof columnName != 'string')
+            return obj;
+        var args = columnName.split('.');
+        var cObj = obj;
+        if (args.length > 1) {
+            for (var i = 1, len = args.length; i < len; i++) {
+                cObj = cObj[args[i]];
+                if (!cObj)
+                    return obj;
+            }
+            return cObj;
+        }
+        return obj;
+    };
+    var getRegExp = function (str, modifiers) {
+        try {
+            return new RegExp(str, modifiers);
+        } catch (err) {
+            return new RegExp(str.replace(/(\^|\$|\(|\)|\<|\>|\[|\]|\{|\}|\\|\||\.|\*|\+|\?)/g, '\\$1'));
+        }
+    };
+    var buildSearchConditions = function (a) {
+        searchConditions = [];
+        var qStr;
+        if (!(qStr = $.trim(a))) {
+            return;
+        }
+        var columnFilters = qStr.split(";");
+        for (var i = 0; i < columnFilters.length; i++) {
+            var args = columnFilters[i].split(':');
+            if (args.length > 1) {
+                var columnName = $.trim(args[0]);
+                var columnValue = $.trim(args[1]);
+                if (columnName && columnValue) {
+                    searchConditions.push({
+                        column: columnName,
+                        columnDisplay: columnName.replace(/\s+/g, '').toLowerCase(),
+                        regex: getRegExp(columnValue, 'i')
+                    });
+                }
+            } else {
+                var val = $.trim(args[0]);
+                if (val) {
+                    searchConditions.push({
+                        column: '',
+                        regex: getRegExp(val, 'i')
+                    });
+                }
+            }
+        };
+    };
+  $scope.$watch(function() {
+      return grid.config.filterOptions.filterText;
+  }, function(a){
+    $scope.filterText = a;
+  });
+  $scope.$watch('filterText', function(a){
+    if(!self.extFilter){
+      $scope.$emit('ngGridEventFilter', a);
+            buildSearchConditions(a);
+            self.evalFilter();
+        }
+  });
+    if (!self.extFilter) {
+        $scope.$watch('columns', function (cs) {
+            for (var i = 0; i < cs.length; i++) {
+                var col = cs[i];
+        if(col.field)
+          self.fieldMap[col.field.split('.')[0]] = col;
+        if(col.displayName)
+          self.fieldMap[col.displayName.toLowerCase().replace(/\s+/g, '')] = col;
+            };
+        });
+    }
+};
+var ngSelectionProvider = function (grid, $scope, $parse) {
+    var self = this;
+    self.multi = grid.config.multiSelect;
+    self.selectedItems = grid.config.selectedItems;
+    self.selectedIndex = grid.config.selectedIndex;
+    self.lastClickedRow = undefined;
+    self.ignoreSelectedItemChanges = false; 
+    self.pKeyParser = $parse(grid.config.primaryKey);
+    self.ChangeSelection = function (rowItem, evt) {
+    var charCode = evt.which || evt.keyCode;
+    var isUpDownKeyPress = (charCode === 40 || charCode === 38);
+        if (evt && (!evt.keyCode || isUpDownKeyPress) && !evt.ctrlKey && !evt.shiftKey) {
+            self.toggleSelectAll(false, true);
+        }
+        if (evt && evt.shiftKey && !evt.keyCode && self.multi && grid.config.enableRowSelection) {
+            if (self.lastClickedRow) {
+                var rowsArr;
+                if ($scope.configGroups.length > 0) {
+                    rowsArr = grid.rowFactory.parsedData.filter(function(row) {
+                        return !row.isAggRow;
+                    });
+                } else {
+                    rowsArr = grid.filteredRows;
+                }
+                var thisIndx = rowItem.rowIndex;
+                var prevIndx = self.lastClickedRow.rowIndex;
+                self.lastClickedRow = rowItem;
+                if (thisIndx == prevIndx) {
+                    return false;
+                }
+                if (thisIndx < prevIndx) {
+                    thisIndx = thisIndx ^ prevIndx;
+                    prevIndx = thisIndx ^ prevIndx;
+                    thisIndx = thisIndx ^ prevIndx;
+          thisIndx--;
+                } else {
+          prevIndx++;
+        }
+                var rows = [];
+                for (; prevIndx <= thisIndx; prevIndx++) {
+                    rows.push(rowsArr[prevIndx]);
+                }
+                if (rows[rows.length - 1].beforeSelectionChange(rows, evt)) {
+                    for (var i = 0; i < rows.length; i++) {
+                        var ri = rows[i];
+                        var selectionState = ri.selected;
+                        ri.selected = !selectionState;
+                        if (ri.clone) {
+                            ri.clone.selected = ri.selected;
+                        }
+                        var index = self.selectedItems.indexOf(ri.entity);
+                        if (index === -1) {
+                            self.selectedItems.push(ri.entity);
+                        } else {
+                            self.selectedItems.splice(index, 1);
+                        }
+                    }
+                    rows[rows.length - 1].afterSelectionChange(rows, evt);
+                }
+                return true;
+            }
+        } else if (!self.multi) {
+            if (self.lastClickedRow == rowItem) {
+                self.setSelection(self.lastClickedRow, grid.config.keepLastSelected ? true : !rowItem.selected);
+            } else {
+                if (self.lastClickedRow) {
+                    self.setSelection(self.lastClickedRow, false);
+                }
+                self.setSelection(rowItem, !rowItem.selected);
+            }
+        } else if (!evt.keyCode || isUpDownKeyPress) {
+            self.setSelection(rowItem, !rowItem.selected);
+        }
+    self.lastClickedRow = rowItem;
+        return true;
+    };
+
+    self.getSelection = function (entity) {
+        var isSelected = false;
+        if (grid.config.primaryKey) {
+            var val = self.pKeyParser(entity);
+            angular.forEach(self.selectedItems, function (c) {
+                if (val == self.pKeyParser(c)) {
+                    isSelected = true;
+                }
+            });
+        } else {
+            isSelected = self.selectedItems.indexOf(entity) !== -1;
+        }
+        return isSelected;
+    };
+    self.setSelection = function (rowItem, isSelected) {
+    if(grid.config.enableRowSelection){
+      if (!isSelected) {
+        var indx = self.selectedItems.indexOf(rowItem.entity);
+        if(indx != -1){
+          self.selectedItems.splice(indx, 1);
+        }
+      } else {
+        if (self.selectedItems.indexOf(rowItem.entity) === -1) {
+          if(!self.multi && self.selectedItems.length > 0){
+            self.toggleSelectAll(false, true);
+          }
+          self.selectedItems.push(rowItem.entity);
+        }
+      }
+      rowItem.selected = isSelected;
+      if (rowItem.orig) {
+          rowItem.orig.selected = isSelected;
+      }
+      if (rowItem.clone) {
+          rowItem.clone.selected = isSelected;
+      }
+      rowItem.afterSelectionChange(rowItem);
+    }
+    };
+    self.toggleSelectAll = function (checkAll, bypass) {
+        if (bypass || grid.config.beforeSelectionChange(grid.filteredRows, checkAll)) {
+            var selectedlength = self.selectedItems.length;
+            if (selectedlength > 0) {
+                self.selectedItems.length = 0;
+            }
+            for (var i = 0; i < grid.filteredRows.length; i++) {
+                grid.filteredRows[i].selected = checkAll;
+                if (grid.filteredRows[i].clone) {
+                    grid.filteredRows[i].clone.selected = checkAll;
+                }
+                if (checkAll) {
+                    self.selectedItems.push(grid.filteredRows[i].entity);
+                }
+            }
+            if (!bypass) {
+                grid.config.afterSelectionChange(grid.filteredRows, checkAll);
+            }
+        }
+    };
+};
+var ngStyleProvider = function($scope, grid) {
+    $scope.headerCellStyle = function(col) {
+        return { "height": col.headerRowHeight + "px" };
+    };
+    $scope.rowStyle = function (row) {
+        var ret = { "top": row.offsetTop + "px", "height": $scope.rowHeight + "px" };
+        if (row.isAggRow) {
+            ret.left = row.offsetLeft;
+        }
+        return ret;
+    };
+    $scope.canvasStyle = function() {
+        return { "height": grid.maxCanvasHt.toString() + "px" };
+    };
+    $scope.headerScrollerStyle = function() {
+        return { "height": grid.config.headerRowHeight + "px" };
+    };
+    $scope.topPanelStyle = function() {
+        return { "width": grid.rootDim.outerWidth + "px", "height": $scope.topPanelHeight() + "px" };
+    };
+    $scope.headerStyle = function() {
+        return { "width": (grid.rootDim.outerWidth) + "px", "height": grid.config.headerRowHeight + "px" };
+    };
+    $scope.groupPanelStyle = function () {
+        return { "width": (grid.rootDim.outerWidth) + "px", "height": "32px" };
+    };
+    $scope.viewportStyle = function() {
+        return { "width": grid.rootDim.outerWidth + "px", "height": $scope.viewportDimHeight() + "px" };
+    };
+    $scope.footerStyle = function() {
+        return { "width": grid.rootDim.outerWidth + "px", "height": $scope.footerRowHeight + "px" };
+    };
+};
+ngGridDirectives.directive('ngCellHasFocus', ['$domUtilityService',
+  function (domUtilityService) {
+    var focusOnInputElement = function($scope, elm){
+      $scope.isFocused = true;
+      domUtilityService.digest($scope); 
+      var elementWithoutComments = angular.element(elm[0].children).filter(function () { return this.nodeType != 8; });
+      var inputElement = angular.element(elementWithoutComments[0].children[0]); 
+      if(inputElement.length > 0){
+        angular.element(inputElement).focus();
+        $scope.domAccessProvider.selectInputElement(inputElement[0]);
+        angular.element(inputElement).bind('blur', function(){  
+          $scope.isFocused = false; 
+          domUtilityService.digest($scope);
+          return true;
+        }); 
+      }
+    };
+    return function($scope, elm) {
+            var isFocused = false;
+            $scope.editCell = function(){
+                setTimeout(function() {
+                    focusOnInputElement($scope,elm);
+                }, 0);
+            };
+      elm.bind('mousedown', function(){
+        elm.focus();
+        return true;
+      });
+      elm.bind('focus', function(){
+        isFocused = true;
+        return true;
+      });   
+      elm.bind('blur', function(){
+        isFocused = false;
+        return true;
+      });
+      elm.bind('keydown', function(evt){
+        if(isFocused && evt.keyCode != 37 && evt.keyCode != 38 && evt.keyCode != 39 && evt.keyCode != 40 && evt.keyCode != 9 && !evt.shiftKey && evt.keyCode != 13){
+          focusOnInputElement($scope,elm);
+        }
+        if(evt.keyCode == 27){
+          elm.focus();
+        }
+        return true;
+      });
+    };
+  }]);
+ngGridDirectives.directive('ngCellText',
+  function () {
+      return function(scope, elm) {
+          elm.bind('mouseover', function(evt) {
+              evt.preventDefault();
+              elm.css({
+                  'cursor': 'text'
+              });
+          });
+          elm.bind('mouseleave', function(evt) {
+              evt.preventDefault();
+              elm.css({
+                  'cursor': 'default'
+              });
+          });
+      };
+  });
+ngGridDirectives.directive('ngCell', ['$compile', '$domUtilityService', function ($compile, domUtilityService) {
+    var ngCell = {
+        scope: false,
+        compile: function() {
+            return {
+                pre: function($scope, iElement) {
+                    var html;
+                    var cellTemplate = $scope.col.cellTemplate.replace(COL_FIELD, '$eval(\'row.entity.\' + col.field)');
+          if($scope.col.enableCellEdit){
+            html =  $scope.col.cellEditTemplate;
+            html = html.replace(DISPLAY_CELL_TEMPLATE, cellTemplate);
+            html = html.replace(EDITABLE_CELL_TEMPLATE, $scope.col.editableCellTemplate.replace(COL_FIELD, '$eval(\'row.entity.\' + col.field)'));
+          } else {
+              html = cellTemplate;
+          }
+          var cellElement = $compile(html)($scope);
+          if($scope.enableCellSelection && cellElement[0].className.indexOf('ngSelectionCell') == -1){
+            cellElement[0].setAttribute('tabindex', 0);
+            cellElement.addClass('ngCellElement');
+          }
+                    iElement.append(cellElement);
+                },
+        post: function($scope, iElement){ 
+          if($scope.enableCellSelection){
+            $scope.domAccessProvider.selectionHandlers($scope, iElement);
+          }
+          $scope.$on('ngGridEventDigestCell', function(){
+            domUtilityService.digest($scope);
+          });
+        }
+            };
+        }
+    };
+    return ngCell;
+}]);
+ngGridDirectives.directive('ngGridFooter', ['$compile', '$templateCache', function ($compile, $templateCache) {
+    var ngGridFooter = {
+        scope: false,
+        compile: function () {
+            return {
+                pre: function ($scope, iElement) {
+                    if (iElement.children().length === 0) {
+                        iElement.append($compile($templateCache.get($scope.gridId + 'footerTemplate.html'))($scope));
+                    }
+                }
+            };
+        }
+    };
+    return ngGridFooter;
+}]);
+ngGridDirectives.directive('ngGridMenu', ['$compile', '$templateCache', function ($compile, $templateCache) {
+    var ngGridMenu = {
+        scope: false,
+        compile: function () {
+            return {
+                pre: function ($scope, iElement) {
+                    if (iElement.children().length === 0) {
+                        iElement.append($compile($templateCache.get($scope.gridId + 'menuTemplate.html'))($scope));
+                    }
+                }
+            };
+        }
+    };
+    return ngGridMenu;
+}]);
+ngGridDirectives.directive('ngGrid', ['$compile', '$filter', '$templateCache', '$sortService', '$domUtilityService', '$utilityService', '$timeout', '$parse', '$http', '$q', function ($compile, $filter, $templateCache, sortService, domUtilityService, $utils, $timeout, $parse, $http, $q) {
+    var ngGridDirective = {
+        scope: true,
+        compile: function() {
+            return {
+                pre: function($scope, iElement, iAttrs) {
+                    var $element = $(iElement);
+                    var options = $scope.$eval(iAttrs.ngGrid);
+                    options.gridDim = new ngDimension({ outerHeight: $($element).height(), outerWidth: $($element).width() });
+
+                    var grid = new ngGrid($scope, options, sortService, domUtilityService, $filter, $templateCache, $utils, $timeout, $parse, $http, $q);
+                    return grid.init().then(function() {
+                        if (typeof options.columnDefs == "string") {
+                            $scope.$parent.$watch(options.columnDefs, function (a) {
+                                if (!a) {
+                                    grid.refreshDomSizes();
+                                    grid.buildColumns();
+                                    return;
+                                }
+                                grid.lateBoundColumns = false;
+                                $scope.columns = [];
+                                grid.config.columnDefs = a;
+                                grid.buildColumns();
+                                grid.configureColumnWidths();
+                                grid.eventProvider.assignEvents();
+                                domUtilityService.RebuildGrid($scope, grid);
+                            }, true);
+                        } else {
+                grid.buildColumns();
+              }
+                        if (typeof options.data == "string") {
+                            var dataWatcher = function (a) {
+                                grid.data = $.extend([], a);
+                                grid.rowFactory.fixRowCache();
+                                angular.forEach(grid.data, function (item, j) {
+                                    var indx = grid.rowMap[j] || j;
+                                    if (grid.rowCache[indx]) {
+                                        grid.rowCache[indx].ensureEntity(item);
+                                    }
+                                    grid.rowMap[indx] = j;
+                                });
+                                grid.searchProvider.evalFilter();
+                                grid.configureColumnWidths();
+                                grid.refreshDomSizes();
+                                if (grid.config.sortInfo.fields.length > 0) {
+                                    grid.getColsFromFields();
+                                    grid.sortActual();
+                                    grid.searchProvider.evalFilter();
+                                    $scope.$emit('ngGridEventSorted', grid.config.sortInfo);
+                                }
+                                $scope.$emit("ngGridEventData", grid.gridId);
+                            };
+                            $scope.$parent.$watch(options.data, dataWatcher);
+                            $scope.$parent.$watch(options.data + '.length', function() {
+                                dataWatcher($scope.$eval(options.data));
+                            });
+                        }
+                        grid.footerController = new ngFooter($scope, grid);
+                        iElement.addClass("ngGrid").addClass(grid.gridId.toString());
+                        if (!options.enableHighlighting) {
+                            iElement.addClass("unselectable");
+                        }
+                        if (options.jqueryUITheme) {
+                            iElement.addClass('ui-widget');
+                        }
+                        iElement.append($compile($templateCache.get('gridTemplate.html'))($scope));
+                        domUtilityService.AssignGridContainers($scope, iElement, grid);
+                        grid.eventProvider = new ngEventProvider(grid, $scope, domUtilityService, $timeout);
+                        options.selectRow = function (rowIndex, state) {
+                            if (grid.rowCache[rowIndex]) {
+                                if (grid.rowCache[rowIndex].clone) {
+                                    grid.rowCache[rowIndex].clone.setSelection(state ? true : false);
+                                } 
+                                grid.rowCache[rowIndex].setSelection(state ? true : false);
+                            }
+                        };
+                        options.selectItem = function (itemIndex, state) {
+                            options.selectRow(grid.rowMap[itemIndex], state);
+                        };
+                        options.selectAll = function (state) {
+                            $scope.toggleSelectAll(state);
+                        };
+                        options.groupBy = function (field) {
+                            if (field) {
+                                $scope.groupBy($scope.columns.filter(function(c) {
+                                    return c.field == field;
+                                })[0]);
+                            } else {
+                                var arr = $.extend(true, [], $scope.configGroups);
+                                angular.forEach(arr, $scope.groupBy);
+                            }
+                        };
+                        options.sortBy = function (field) {
+                            var col = $scope.columns.filter(function (c) {
+                                return c.field == field;
+                            })[0];
+                            if (col) col.sort();
+                        };
+              options.gridId = grid.gridId;
+              options.ngGrid = grid;
+              options.$gridScope = $scope;
+                        options.$gridServices = { SortService: sortService, DomUtilityService: domUtilityService };
+              $scope.$on('ngGridEventDigestGrid', function(){
+                domUtilityService.digest($scope.$parent);
+              });
+              $scope.$on('ngGridEventDigestGridParent', function(){
+                domUtilityService.digest($scope.$parent);
+              });
+                        $scope.$evalAsync(function() {
+                            $scope.adjustScrollLeft(0);
+                        });
+                        angular.forEach(options.plugins, function (p) {
+                            if (typeof p === 'function') {
+                                p = p.call(this);
+                            }
+                            p.init($scope.$new(), grid, options.$gridServices);
+                            options.plugins[$utils.getInstanceType(p)] = p;
+                        });
+                        if (options.init == "function") {
+                            options.init(grid, $scope);
+                        }
+                        return null;
+                    });
+                }
+            };
+        }
+    };
+    return ngGridDirective;
+}]);
+ngGridDirectives.directive('ngHeaderCell', ['$compile', function($compile) {
+    var ngHeaderCell = {
+        scope: false,
+        compile: function() {
+            return {
+                pre: function($scope, iElement) {
+                    iElement.append($compile($scope.col.headerCellTemplate)($scope));
+                }
+            };
+        }
+    };
+    return ngHeaderCell;
+}]);
+
+ngGridDirectives.directive('ngIf', [function () {
+  return {
+    transclude: 'element',
+    priority: 1000,
+    terminal: true,
+    restrict: 'A',
+    compile: function (e, a, transclude) {
+      return function (scope, element, attr) {
+
+        var childElement;
+        var childScope;
+        scope.$watch(attr['ngIf'], function (newValue) {
+          if (childElement) {
+            childElement.remove();
+            childElement = undefined;
+          }
+          if (childScope) {
+            childScope.$destroy();
+            childScope = undefined;
+          }
+
+          if (newValue) {
+            childScope = scope.$new();
+            transclude(childScope, function (clone) {
+              childElement = clone;
+              element.after(clone);
+            });
+          }
+        });
+      };
+    }
+  };
+}]);
+ngGridDirectives.directive('ngInput',['$parse', function($parse) {
+    return function ($scope, elm, attrs) {
+        var getter = $parse($scope.$eval(attrs.ngInput));
+    var setter = getter.assign;
+    var oldCellValue = getter($scope.row.entity);
+    elm.val(oldCellValue);
+        elm.bind('keyup', function() {
+            var newVal = elm.val();
+            if (!$scope.$root.$$phase) {
+                $scope.$apply(function(){setter($scope.row.entity,newVal); });
+            }
+        });
+    elm.bind('keydown', function(evt){
+      switch(evt.keyCode){
+        case 37:
+        case 38:
+        case 39:
+        case 40:
+          evt.stopPropagation();
+          break;
+        case 27:
+          if (!$scope.$root.$$phase) {
+            $scope.$apply(function(){
+              setter($scope.row.entity,oldCellValue);
+              elm.val(oldCellValue);
+              elm.blur();
+            });
+          }
+        default:
+          break;
+      }
+      return true;
+    });
+    };
+}]);
+ngGridDirectives.directive('ngRow', ['$compile', '$domUtilityService', '$templateCache', function ($compile, domUtilityService, $templateCache) {
+    var ngRow = {
+        scope: false,
+        compile: function() {
+            return {
+                pre: function($scope, iElement) {
+                    $scope.row.elm = iElement;
+                    if ($scope.row.clone) {
+                        $scope.row.clone.elm = iElement;
+                    }
+                    if ($scope.row.isAggRow) {
+                        var html = $templateCache.get($scope.gridId + 'aggregateTemplate.html');
+                        if ($scope.row.aggLabelFilter) {
+                            html = html.replace(CUSTOM_FILTERS, '| ' + $scope.row.aggLabelFilter);
+                        } else {
+                            html = html.replace(CUSTOM_FILTERS, "");
+                        }
+                        iElement.append($compile(html)($scope));
+                    } else {
+                        iElement.append($compile($templateCache.get($scope.gridId + 'rowTemplate.html'))($scope));
+                    }
+          $scope.$on('ngGridEventDigestRow', function(){
+            domUtilityService.digest($scope);
+          });
+                }
+            };
+        }
+    };
+    return ngRow;
+}]);
+ngGridDirectives.directive('ngViewport', [function() {
+    return function($scope, elm) {
+        var isMouseWheelActive;
+        var prevScollLeft;
+        var prevScollTop = 0;
+        elm.bind('scroll', function(evt) {
+            var scrollLeft = evt.target.scrollLeft,
+                scrollTop = evt.target.scrollTop;
+            if ($scope.$headerContainer) {
+                $scope.$headerContainer.scrollLeft(scrollLeft);
+            }
+            $scope.adjustScrollLeft(scrollLeft);
+            $scope.adjustScrollTop(scrollTop);
+            if (!$scope.$root.$$phase) {
+                $scope.$digest();
+            }
+            prevScollLeft = scrollLeft;
+            prevScollTop = prevScollTop;
+            isMouseWheelActive = false;
+            return true;
+        });
+        elm.bind("mousewheel DOMMouseScroll", function() {
+            isMouseWheelActive = true;
+      elm.focus();
+            return true;
+        });
+        if (!$scope.enableCellSelection) {
+            $scope.domAccessProvider.selectionHandlers($scope, elm);
+        }
+    };
+}]);
+window.ngGrid.i18n['en'] = {
+    ngAggregateLabel: 'items',
+    ngGroupPanelDescription: 'Drag a column header here and drop it to group by that column.',
+    ngSearchPlaceHolder: 'Search...',
+    ngMenuText: 'Choose Columns:',
+    ngShowingItemsLabel: 'Showing Items:',
+    ngTotalItemsLabel: 'Total Items:',
+    ngSelectedItemsLabel: 'Selected Items:',
+    ngPageSizeLabel: 'Page Size:',
+    ngPagerFirstTitle: 'First Page',
+    ngPagerNextTitle: 'Next Page',
+    ngPagerPrevTitle: 'Previous Page',
+    ngPagerLastTitle: 'Last Page'
+};
+window.ngGrid.i18n['fr'] = {
+    ngAggregateLabel: 'articles',
+    ngGroupPanelDescription: 'Faites glisser un en-tête de colonne ici et déposez-le vers un groupe par cette colonne.',
+    ngSearchPlaceHolder: 'Recherche...',
+    ngMenuText: 'Choisir des colonnes:',
+    ngShowingItemsLabel: 'Articles Affichage des:',
+    ngTotalItemsLabel: 'Nombre total d\'articles:',
+    ngSelectedItemsLabel: 'Éléments Articles:',
+    ngPageSizeLabel: 'Taille de page:',
+    ngPagerFirstTitle: 'Première page',
+    ngPagerNextTitle: 'Page Suivante',
+    ngPagerPrevTitle: 'Page précédente',
+    ngPagerLastTitle: 'Dernière page'
+};
+window.ngGrid.i18n['ge'] = {
+    ngAggregateLabel: 'artikel',
+    ngGroupPanelDescription: 'Ziehen Sie eine Spaltenüberschrift hier und legen Sie es der Gruppe nach dieser Spalte.',
+    ngSearchPlaceHolder: 'Suche...',
+    ngMenuText: 'Spalten auswählen:',
+    ngShowingItemsLabel: 'Zeige Artikel:',
+    ngTotalItemsLabel: 'Meiste Artikel:',
+    ngSelectedItemsLabel: 'Ausgewählte Artikel:',
+    ngPageSizeLabel: 'Größe Seite:',
+    ngPagerFirstTitle: 'Erste Page',
+    ngPagerNextTitle: 'Nächste Page',
+    ngPagerPrevTitle: 'Vorherige Page',
+    ngPagerLastTitle: 'Letzte Page'
+};
+window.ngGrid.i18n['sp'] = {
+    ngAggregateLabel: 'Artículos',
+    ngGroupPanelDescription: 'Arrastre un encabezado de columna aquí y soltarlo para agrupar por esa columna.',
+    ngSearchPlaceHolder: 'Buscar...',
+    ngMenuText: 'Elegir columnas:',
+    ngShowingItemsLabel: 'Artículos Mostrando:',
+    ngTotalItemsLabel: 'Artículos Totales:',
+    ngSelectedItemsLabel: 'Artículos Seleccionados:',
+    ngPageSizeLabel: 'Tamaño de Página:',
+    ngPagerFirstTitle: 'Primera Página',
+    ngPagerNextTitle: 'Página Siguiente',
+    ngPagerPrevTitle: 'Página Anterior',
+    ngPagerLastTitle: 'Última Página'
+};
+window.ngGrid.i18n['zh-cn'] = {
+    ngAggregateLabel: '条目',
+    ngGroupPanelDescription: '拖曳表头到此处以进行分组',
+    ngSearchPlaceHolder: '搜索...',
+    ngMenuText: '数据分组与选择列：',
+    ngShowingItemsLabel: '当前显示条目：',
+    ngTotalItemsLabel: '条目总数：',
+    ngSelectedItemsLabel: '选中条目：',
+    ngPageSizeLabel: '每页显示数：',
+    ngPagerFirstTitle: '回到首页',
+    ngPagerNextTitle: '下一页',
+    ngPagerPrevTitle: '上一页',
+    ngPagerLastTitle: '前往尾页' 
+};
+
+window.ngGrid.i18n['zh-tw'] = {
+    ngAggregateLabel: '筆',
+    ngGroupPanelDescription: '拖拉表頭到此處以進行分組',
+    ngSearchPlaceHolder: '搜尋...',
+    ngMenuText: '選擇欄位：',
+    ngShowingItemsLabel: '目前顯示筆數：',
+    ngTotalItemsLabel: '總筆數：',
+    ngSelectedItemsLabel: '選取筆數：',
+    ngPageSizeLabel: '每頁顯示：',
+    ngPagerFirstTitle: '第一頁',
+    ngPagerNextTitle: '下一頁',
+    ngPagerPrevTitle: '上一頁',
+    ngPagerLastTitle: '最後頁'
+};
+
+angular.module("ngGrid").run(["$templateCache", function($templateCache) {
+
+  $templateCache.put("aggregateTemplate.html",
+    "<div ng-click=\"row.toggleExpand()\" ng-style=\"rowStyle(row)\" class=\"ngAggregate\">" +
+    "    <span class=\"ngAggregateText\">{{row.label CUSTOM_FILTERS}} ({{row.totalChildren()}} {{AggItemsLabel}})</span>" +
+    "    <div class=\"{{row.aggClass()}}\"></div>" +
+    "</div>" +
+    ""
+  );
+
+  $templateCache.put("cellEditTemplate.html",
+    "<div ng-cell-has-focus ng-dblclick=\"editCell()\">" +
+    " <div ng-if=\"!isFocused\">" +
+    " DISPLAY_CELL_TEMPLATE" +
+    " </div>" +
+    " <div ng-if=\"isFocused\">" +
+    " EDITABLE_CELL_TEMPLATE" +
+    " </div>" +
+    "</div>"
+  );
+
+  $templateCache.put("cellTemplate.html",
+    "<div class=\"ngCellText\" ng-class=\"col.colIndex()\"><span ng-cell-text>{{COL_FIELD CUSTOM_FILTERS}}</span></div>"
+  );
+
+  $templateCache.put("checkboxCellTemplate.html",
+    "<div class=\"ngSelectionCell\"><input tabindex=\"-1\" class=\"ngSelectionCheckbox\" type=\"checkbox\" ng-checked=\"row.selected\" /></div>"
+  );
+
+  $templateCache.put("checkboxHeaderTemplate.html",
+    "<input class=\"ngSelectionHeader\" type=\"checkbox\" ng-show=\"multiSelect\" ng-model=\"allSelected\" ng-change=\"toggleSelectAll(allSelected)\"/>"
+  );
+
+  $templateCache.put("editableCellTemplate.html",
+    "<input ng-class=\"'colt' + col.index\" ng-input=\"COL_FIELD\" />"
+  );
+
+  $templateCache.put("footerTemplate.html",
+    "<div ng-show=\"showFooter\" class=\"ngFooterPanel\" ng-class=\"{'ui-widget-content': jqueryUITheme, 'ui-corner-bottom': jqueryUITheme}\" ng-style=\"footerStyle()\">" +
+    "    <div class=\"ngTotalSelectContainer\" >" +
+    "        <div class=\"ngFooterTotalItems\" ng-class=\"{'ngNoMultiSelect': !multiSelect}\" >" +
+    "            <span class=\"ngLabel\">{{i18n.ngTotalItemsLabel}} {{maxRows()}}</span><span ng-show=\"filterText.length > 0\" class=\"ngLabel\">({{i18n.ngShowingItemsLabel}} {{totalFilteredItemsLength()}})</span>" +
+    "        </div>" +
+    "        <div class=\"ngFooterSelectedItems\" ng-show=\"multiSelect\">" +
+    "            <span class=\"ngLabel\">{{i18n.ngSelectedItemsLabel}} {{selectedItems.length}}</span>" +
+    "        </div>" +
+    "    </div>" +
+    "    <div class=\"ngPagerContainer\" style=\"float: right; margin-top: 10px;\" ng-show=\"enablePaging\" ng-class=\"{'ngNoMultiSelect': !multiSelect}\">" +
+    "        <div style=\"float:left; margin-right: 10px;\" class=\"ngRowCountPicker\">" +
+    "            <span style=\"float: left; margin-top: 3px;\" class=\"ngLabel\">{{i18n.ngPageSizeLabel}}</span>" +
+    "            <select style=\"float: left;height: 27px; width: 100px\" ng-model=\"pagingOptions.pageSize\" >" +
+    "                <option ng-repeat=\"size in pagingOptions.pageSizes\">{{size}}</option>" +
+    "            </select>" +
+    "        </div>" +
+    "        <div style=\"float:left; margin-right: 10px; line-height:25px;\" class=\"ngPagerControl\" style=\"float: left; min-width: 135px;\">" +
+    "            <button class=\"ngPagerButton\" ng-click=\"pageToFirst()\" ng-disabled=\"cantPageBackward()\" title=\"{{i18n.ngPagerFirstTitle}}\"><div class=\"ngPagerFirstTriangle\"><div class=\"ngPagerFirstBar\"></div></div></button>" +
+    "            <button class=\"ngPagerButton\" ng-click=\"pageBackward()\" ng-disabled=\"cantPageBackward()\" title=\"{{i18n.ngPagerPrevTitle}}\"><div class=\"ngPagerFirstTriangle ngPagerPrevTriangle\"></div></button>" +
+    "            <input class=\"ngPagerCurrent\" type=\"number\" style=\"width:50px; height: 24px; margin-top: 1px; padding: 0 4px;\" ng-model=\"pagingOptions.currentPage\"/>" +
+    "            <button class=\"ngPagerButton\" ng-click=\"pageForward()\" ng-disabled=\"cantPageForward()\" title=\"{{i18n.ngPagerNextTitle}}\"><div class=\"ngPagerLastTriangle ngPagerNextTriangle\"></div></button>" +
+    "            <button class=\"ngPagerButton\" ng-click=\"pageToLast()\" ng-disabled=\"cantPageToLast()\" title=\"{{i18n.ngPagerLastTitle}}\"><div class=\"ngPagerLastTriangle\"><div class=\"ngPagerLastBar\"></div></div></button>" +
+    "        </div>" +
+    "    </div>" +
+    "</div>"
+  );
+
+  $templateCache.put("gridTemplate.html",
+    "<div class=\"ngTopPanel\" ng-class=\"{'ui-widget-header':jqueryUITheme, 'ui-corner-top': jqueryUITheme}\" ng-style=\"topPanelStyle()\">" +
+    "    <div class=\"ngGroupPanel\" ng-show=\"showGroupPanel()\" ng-style=\"groupPanelStyle()\">" +
+    "        <div class=\"ngGroupPanelDescription\" ng-show=\"configGroups.length == 0\">{{i18n.ngGroupPanelDescription}}</div>" +
+    "        <ul ng-show=\"configGroups.length > 0\" class=\"ngGroupList\">" +
+    "            <li class=\"ngGroupItem\" ng-repeat=\"group in configGroups\">" +
+    "                <span class=\"ngGroupElement\">" +
+    "                    <span class=\"ngGroupName\">{{group.displayName}}" +
+    "                        <span ng-click=\"removeGroup($index)\" class=\"ngRemoveGroup\">x</span>" +
+    "                    </span>" +
+    "                    <span ng-hide=\"$last\" class=\"ngGroupArrow\"></span>" +
+    "                </span>" +
+    "            </li>" +
+    "        </ul>" +
+    "    </div>" +
+    "    <div class=\"ngHeaderContainer\" ng-style=\"headerStyle()\">" +
+    "        <div class=\"ngHeaderScroller\" ng-style=\"headerScrollerStyle()\" ng-include=\"gridId + 'headerRowTemplate.html'\"></div>" +
+    "    </div>" +
+    "    <div ng-grid-menu></div>" +
+    "</div>" +
+    "<div class=\"ngViewport\" unselectable=\"on\" ng-viewport ng-class=\"{'ui-widget-content': jqueryUITheme}\" ng-style=\"viewportStyle()\">" +
+    "    <div class=\"ngCanvas\" ng-style=\"canvasStyle()\">" +
+    "        <div ng-style=\"rowStyle(row)\" ng-repeat=\"row in renderedRows\" ng-click=\"row.toggleSelected($event)\" ng-class=\"row.alternatingRowClass()\" ng-row></div>" +
+    "    </div>" +
+    "</div>" +
+    "<div ng-grid-footer></div>" +
+    ""
+  );
+
+  $templateCache.put("headerCellTemplate.html",
+    "<div class=\"ngHeaderSortColumn {{col.headerClass}}\" ng-style=\"{'cursor': col.cursor}\" ng-class=\"{ 'ngSorted': !noSortVisible }\">" +
+    "    <div ng-click=\"col.sort($event)\" ng-class=\"'colt' + col.index\" class=\"ngHeaderText\">{{col.displayName}}</div>" +
+    "    <div class=\"ngSortButtonDown\" ng-show=\"col.showSortButtonDown()\"></div>" +
+    "    <div class=\"ngSortButtonUp\" ng-show=\"col.showSortButtonUp()\"></div>" +
+    "    <div class=\"ngSortPriority\">{{col.sortPriority}}</div>" +
+    "    <div ng-class=\"{ ngPinnedIcon: col.pinned, ngUnPinnedIcon: !col.pinned }\" ng-click=\"togglePin(col)\" ng-show=\"col.pinnable\"></div>" +
+    "</div>" +
+    "<div ng-show=\"col.resizable\" class=\"ngHeaderGrip\" ng-click=\"col.gripClick($event)\" ng-mousedown=\"col.gripOnMouseDown($event)\"></div>"
+  );
+
+  $templateCache.put("headerRowTemplate.html",
+    "<div ng-style=\"{ height: col.headerRowHeight }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngHeaderCell\" ng-header-cell></div>"
+  );
+
+  $templateCache.put("menuTemplate.html",
+    "<div ng-show=\"showColumnMenu || showFilter\"  class=\"ngHeaderButton\" ng-click=\"toggleShowMenu()\">" +
+    "    <div class=\"ngHeaderButtonArrow\"></div>" +
+    "</div>" +
+    "<div ng-show=\"showMenu\" class=\"ngColMenu\">" +
+    "    <div ng-show=\"showFilter\">" +
+    "        <input placeholder=\"{{i18n.ngSearchPlaceHolder}}\" type=\"text\" ng-model=\"filterText\"/>" +
+    "    </div>" +
+    "    <div ng-show=\"showColumnMenu\">" +
+    "        <span class=\"ngMenuText\">{{i18n.ngMenuText}}</span>" +
+    "        <ul class=\"ngColList\">" +
+    "            <li class=\"ngColListItem\" ng-repeat=\"col in columns | ngColumns\">" +
+    "                <label><input ng-disabled=\"col.pinned\" type=\"checkbox\" class=\"ngColListCheckbox\" ng-model=\"col.visible\"/>{{col.displayName}}</label>" +
+    "       <a title=\"Group By\" ng-class=\"col.groupedByClass()\" ng-show=\"col.groupable && col.visible\" ng-click=\"groupBy(col)\"></a>" +
+    "       <span class=\"ngGroupingNumber\" ng-show=\"col.groupIndex > 0\">{{col.groupIndex}}</span>          " +
+    "            </li>" +
+    "        </ul>" +
+    "    </div>" +
+    "</div>"
+  );
+
+  $templateCache.put("rowTemplate.html",
+    "<div ng-style=\"{ 'cursor': row.cursor }\" ng-repeat=\"col in renderedColumns\" ng-class=\"col.colIndex()\" class=\"ngCell {{col.cellClass}}\" ng-cell></div>"
+  );
+
+}]);
+
+}(window, jQuery));
+/*
+ * promise-tracker - v1.3.3 - 2013-04-29
+ * http://github.com/ajoslin/angular-promise-tracker
+ * Created by Andy Joslin; Licensed under Public Domain
+ */
+angular.module('ajoslin.promise-tracker', []);
+
+
+angular.module('ajoslin.promise-tracker')
+
+/*
+ * Intercept all http requests that have a `tracker` option in their config,
+ * and add that http promise to the specified `tracker`
+ */
+
+//angular versions before 1.1.4 use responseInterceptor format
+.factory('trackerResponseInterceptor', ['$q', 'promiseTracker', '$injector', 
+function($q, promiseTracker, $injector) {
+  //We use $injector get around circular dependency problem for $http
+  var $http;
+  return function spinnerResponseInterceptor(promise) {
+    if (!$http) $http = $injector.get('$http'); //lazy-load http
+    //We know the latest request is always going to be last in the list
+    var config = $http.pendingRequests[$http.pendingRequests.length-1];
+    if (config.tracker) {
+      promiseTracker(config.tracker).addPromise(promise, config);
+    }
+    return promise;
+  };
+}])
+
+.factory('trackerHttpInterceptor', ['$q', 'promiseTracker', '$injector', 
+function($q, promiseTracker, $injector) {
+  return {
+    request: function(config) {
+      if (config.tracker) {
+        var deferred = promiseTracker(config.tracker).createPromise(config);
+        config.$promiseTrackerDeferred = deferred;
+      }
+      return $q.when(config);
+    },
+    response: function(response) {
+      if (response.config.$promiseTrackerDeferred) {
+        response.config.$promiseTrackerDeferred.resolve(response);
+      }
+      return $q.when(response);
+    },
+    responseError: function(response) {
+      if (response.config.$promiseTrackerDeferred) {
+        response.config.$promiseTrackerDeferred.reject(response);
+      }
+      return $q.reject(response);
+    }
+  };
+}])
+
+.config(['$httpProvider', function($httpProvider) {
+  if ($httpProvider.interceptors) {
+    //Support angularJS 1.1.4: interceptors
+    $httpProvider.interceptors.push('trackerHttpInterceptor');
+  } else {
+    //Support angularJS pre 1.1.4: responseInterceptors
+    $httpProvider.responseInterceptors.push('trackerResponseInterceptor');
+  }
+}])
+
+;
+
+
+angular.module('ajoslin.promise-tracker')
+
+.provider('promiseTracker', function() {
+
+  /**
+   * uid(), from angularjs source
+   *
+   * A consistent way of creating unique IDs in angular. The ID is a sequence of alpha numeric
+   * characters such as '012ABC'. The reason why we are not using simply a number counter is that
+   * the number string gets longer over time, and it can also overflow, where as the nextId
+   * will grow much slower, it is a string, and it will never overflow.
+   *
+   * @returns string unique alpha-numeric string
+   */
+  var uid = ['0','0','0'];
+  function nextUid() {
+    var index = uid.length;
+    var digit;
+
+    while(index) {
+      index--;
+      digit = uid[index].charCodeAt(0);
+      if (digit === 57 /*'9'*/) {
+        uid[index] = 'A';
+        return uid.join('');
+      }
+      if (digit === 90  /*'Z'*/) {
+        uid[index] = '0';
+      } else {
+        uid[index] = String.fromCharCode(digit + 1);
+        return uid.join('');
+      }
+    }
+    uid.unshift('0');
+    return uid.join('');
+  }
+  var trackers = {};
+
+  this.$get = ['$q', '$timeout', function($q, $timeout) {
+    var self = this;
+
+    function Tracker(options) {
+      options = options || {};
+      var self = this,
+        //Define our callback types.  The user can catch when a promise starts,
+        //has an error, is successful, or just is done with error or success.
+        callbacks = {
+          start: [], //Start is called when a new promise is added
+          done: [], //Called when a promise is resolved (error or success)
+          error: [], //Called on error.
+          success: [] //Called on success.
+        },
+        trackedPromises = [];
+
+      //Allow an optional "minimum duration" that the tracker has to stay
+      //active for. For example, if minimum duration is 1000ms and the user 
+      //adds three promises that all resolve after 650ms, the tracker will 
+      //still count itself as active until 1000ms have passed.
+      self.setMinDuration = function(minimum) {
+        self._minDuration = minimum;
+      };
+      self.setMinDuration(options.minDuration);
+
+      //Allow an option "maximum duration" that the tracker can stay active.
+      //Ideally, the user would resolve his promises after a certain time to 
+      //achieve this 'maximum duration' option, but there are a few cases
+      //where it is necessary anyway.
+      self.setMaxDuration = function(maximum) {
+        self._maxDuration = maximum;
+      };
+      self.setMaxDuration(options.maxDuration);
+
+      //## active()
+      //Returns whether the promiseTracker is active - detect if we're 
+      //currently tracking any promises.
+      self.active = function() {
+        return trackedPromises.length > 0;
+      };
+
+      //## cancel()
+      //Resolves all the current promises, immediately ending the tracker.
+      self.cancel = function() {
+        angular.forEach(trackedPromises, function(deferred) {
+          deferred.resolve();
+        });
+      };
+
+      //Fire an event bound with #on().
+      //@param options: {id: uniqueId, event: string, value: someValue}
+      //Calls registered callbacks for `event` with params (`value`, `id`)
+      function fireEvent(options) {
+        angular.forEach(callbacks[options.event], function(cb) {
+          cb.call(self, options.value, options.id);
+        });
+      }
+
+      //Create a promise that will make our tracker active until it is resolved.
+      //@param startArg: params to pass to 'start' event
+      //@return deferred - our deferred object that is being tracked
+      function createPromise(startArg) {
+        //We create our own promise to track. This usually piggybacks on a given
+        //promise, or we give it back and someone else can resolve it (like 
+        //with the httpResponseInterceptor).
+        //Using our own promise also lets us do things like cancel early or add 
+        //a minimum duration.
+        var deferred = $q.defer();
+        var promiseId = nextUid();
+
+        trackedPromises.push(deferred);
+        fireEvent({
+          event: 'start',
+          id: promiseId,
+          value: startArg
+        });
+
+        //If the tracker was just inactive and this the first in the list of
+        //promises, we reset our 'minimum duration' and 'maximum duration'
+        //again.
+        if (trackedPromises.length === 1) {
+          if (self._minDuration) {
+            self.minPromise = $timeout(angular.noop, self._minDuration);
+          } else {
+            //No minDuration means we just instantly resolve for our 'wait'
+            //promise.
+            self.minPromise = $q.when(true);
+          }
+          if (self._maxDuration) {
+            self.maxPromise = $timeout(deferred.resolve, self._maxDuration);
+          }
+        }
+
+        //Create a callback for when this promise is done. It will remove our
+        //tracked promise from the array and call the appropriate event 
+        //callbacks depending on whether there was an error or not.
+        function onDone(isError) {
+          return function(value) {
+            //Before resolving our promise, make sure the minDuration timeout
+            //has finished.
+            self.minPromise.then(function() {
+              fireEvent({
+                event: isError ? 'error' : 'success',
+                id: promiseId,
+                value: value
+              });
+              fireEvent({
+                event: 'done', 
+                id: promiseId,
+                value: value
+              });
+
+              var index = trackedPromises.indexOf(deferred);
+              trackedPromises.splice(index, 1);
+
+              //If this is the last promise, cleanup the timeout
+              //for maxDuration so it doesn't stick around.
+              if (trackedPromises.length === 0 && self.maxPromise) {
+                $timeout.cancel(self.maxPromise);
+              }
+            });
+          };
+        }
+
+        deferred.promise.then(onDone(false), onDone(true));
+
+        return deferred;
+      }
+
+      //## addPromise()
+      //Adds a given promise to our tracking
+      self.addPromise = function(promise, startArg) {
+        var deferred = createPromise(startArg);
+
+        //When given promise is done, resolve our created promise
+        //Allow $then for angular-resource objects
+        (promise.$then || promise.then)(function success(value) {
+          deferred.resolve(value);
+          return value;
+        }, function error(value) {
+          deferred.reject(value);
+          return $q.reject(value);
+        });
+
+        return deferred;
+      };
+
+      //## createPromise()
+      //Create a new promise and return it, and let the user resolve it how
+      //they see fit.
+      self.createPromise = function(startArg) {
+        return createPromise(startArg);
+      };
+
+      //## on(), bind()
+      self.on = self.bind = function(event, cb) {
+        if (!callbacks[event]) {
+          throw "Cannot create callback for event '" + event + 
+          "'. Allowed types: 'start', 'done', 'error', 'success'";
+        }
+        callbacks[event].push(cb);
+        return self;
+      };
+      self.off = self.unbind = function(event, cb) {
+        if (!callbacks[event]) {
+          throw "Cannot create callback for event '" + event + 
+          "'. Allowed types: 'start', 'done', 'error', 'success'";
+        }
+        if (cb) {
+          var index = callbacks[event].indexOf(cb);
+          callbacks[event].splice(index, 1);
+        } else {
+          //Erase all events of this type if no cb specified to remvoe
+          callbacks[event].length = 0;
+        }
+        return self;
+      };
+    }
+    return function promiseTracker(trackerName, options) {
+      if (!trackers[trackerName])  {
+        trackers[trackerName] = new Tracker(options);
+      }
+      return trackers[trackerName];
+    };
+  }];
+})
+;
+
+/*! sprintf.js | Copyright (c) 2007-2013 Alexandru Marasteanu <hello at alexei dot ro> | 3 clause BSD license */
+
+(function(ctx) {
+  var sprintf = function() {
+    if (!sprintf.cache.hasOwnProperty(arguments[0])) {
+      sprintf.cache[arguments[0]] = sprintf.parse(arguments[0]);
+    }
+    return sprintf.format.call(null, sprintf.cache[arguments[0]], arguments);
+  };
+
+  sprintf.format = function(parse_tree, argv) {
+    var cursor = 1, tree_length = parse_tree.length, node_type = '', arg, output = [], i, k, match, pad, pad_character, pad_length;
+    for (i = 0; i < tree_length; i++) {
+      node_type = get_type(parse_tree[i]);
+      if (node_type === 'string') {
+        output.push(parse_tree[i]);
+      }
+      else if (node_type === 'array') {
+        match = parse_tree[i]; // convenience purposes only
+        if (match[2]) { // keyword argument
+          arg = argv[cursor];
+          for (k = 0; k < match[2].length; k++) {
+            if (!arg.hasOwnProperty(match[2][k])) {
+              throw(sprintf('[sprintf] property "%s" does not exist', match[2][k]));
+            }
+            arg = arg[match[2][k]];
+          }
+        }
+        else if (match[1]) { // positional argument (explicit)
+          arg = argv[match[1]];
+        }
+        else { // positional argument (implicit)
+          arg = argv[cursor++];
+        }
+
+        if (/[^s]/.test(match[8]) && (get_type(arg) != 'number')) {
+          throw(sprintf('[sprintf] expecting number but found %s', get_type(arg)));
+        }
+        switch (match[8]) {
+          case 'b': arg = arg.toString(2); break;
+          case 'c': arg = String.fromCharCode(arg); break;
+          case 'd': arg = parseInt(arg, 10); break;
+          case 'e': arg = match[7] ? arg.toExponential(match[7]) : arg.toExponential(); break;
+          case 'f': arg = match[7] ? parseFloat(arg).toFixed(match[7]) : parseFloat(arg); break;
+          case 'o': arg = arg.toString(8); break;
+          case 's': arg = ((arg = String(arg)) && match[7] ? arg.substring(0, match[7]) : arg); break;
+          case 'u': arg = arg >>> 0; break;
+          case 'x': arg = arg.toString(16); break;
+          case 'X': arg = arg.toString(16).toUpperCase(); break;
+        }
+        arg = (/[def]/.test(match[8]) && match[3] && arg >= 0 ? '+'+ arg : arg);
+        pad_character = match[4] ? match[4] == '0' ? '0' : match[4].charAt(1) : ' ';
+        pad_length = match[6] - String(arg).length;
+        pad = match[6] ? str_repeat(pad_character, pad_length) : '';
+        output.push(match[5] ? arg + pad : pad + arg);
+      }
+    }
+    return output.join('');
+  };
+
+  sprintf.cache = {};
+
+  sprintf.parse = function(fmt) {
+    var _fmt = fmt, match = [], parse_tree = [], arg_names = 0;
+    while (_fmt) {
+      if ((match = /^[^\x25]+/.exec(_fmt)) !== null) {
+        parse_tree.push(match[0]);
+      }
+      else if ((match = /^\x25{2}/.exec(_fmt)) !== null) {
+        parse_tree.push('%');
+      }
+      else if ((match = /^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-fosuxX])/.exec(_fmt)) !== null) {
+        if (match[2]) {
+          arg_names |= 1;
+          var field_list = [], replacement_field = match[2], field_match = [];
+          if ((field_match = /^([a-z_][a-z_\d]*)/i.exec(replacement_field)) !== null) {
+            field_list.push(field_match[1]);
+            while ((replacement_field = replacement_field.substring(field_match[0].length)) !== '') {
+              if ((field_match = /^\.([a-z_][a-z_\d]*)/i.exec(replacement_field)) !== null) {
+                field_list.push(field_match[1]);
+              }
+              else if ((field_match = /^\[(\d+)\]/.exec(replacement_field)) !== null) {
+                field_list.push(field_match[1]);
+              }
+              else {
+                throw('[sprintf] huh?');
+              }
+            }
+          }
+          else {
+            throw('[sprintf] huh?');
+          }
+          match[2] = field_list;
+        }
+        else {
+          arg_names |= 2;
+        }
+        if (arg_names === 3) {
+          throw('[sprintf] mixing positional and named placeholders is not (yet) supported');
+        }
+        parse_tree.push(match);
+      }
+      else {
+        throw('[sprintf] huh?');
+      }
+      _fmt = _fmt.substring(match[0].length);
+    }
+    return parse_tree;
+  };
+
+  var vsprintf = function(fmt, argv, _argv) {
+    _argv = argv.slice(0);
+    _argv.splice(0, 0, fmt);
+    return sprintf.apply(null, _argv);
+  };
+
+  /**
+   * helpers
+   */
+  function get_type(variable) {
+    return Object.prototype.toString.call(variable).slice(8, -1).toLowerCase();
+  }
+
+  function str_repeat(input, multiplier) {
+    for (var output = []; multiplier > 0; output[--multiplier] = input) {/* do nothing */}
+    return output.join('');
+  }
+
+  /**
+   * export to either browser or node.js
+   */
+  ctx.sprintf = sprintf;
+  ctx.vsprintf = vsprintf;
+})(typeof exports != "undefined" ? exports : window);
+/*global angular, CodeMirror, Error*/
+/**
+ * Binds a CodeMirror widget to a <textarea> element.
+ */
+angular.module('ui.codemirror', [])
+  .constant('uiCodemirrorConfig', {})
+  .directive('uiCodemirror', ['uiCodemirrorConfig', '$timeout', function (uiCodemirrorConfig, $timeout) {
+    'use strict';
+
+    var events = ["cursorActivity", "viewportChange", "gutterClick", "focus", "blur", "scroll", "update"];
+    return {
+      restrict: 'A',
+      require: 'ngModel',
+      link: function (scope, elm, attrs, ngModel) {
+        var options, opts, onChange, deferCodeMirror, codeMirror;
+
+        if (elm[0].type !== 'textarea') {
+          throw new Error('uiCodemirror3 can only be applied to a textarea element');
+        }
+
+        options = uiCodemirrorConfig.codemirror || {};
+        opts = angular.extend({}, options, scope.$eval(attrs.uiCodemirror));
+
+        onChange = function (aEvent) {
+          return function (instance, changeObj) {
+            var newValue = instance.getValue();
+            if (newValue !== ngModel.$viewValue) {
+              ngModel.$setViewValue(newValue);
+              if(!scope.$$phase){ scope.$apply(); }
+            }
+            if (typeof aEvent === "function") {
+              aEvent(instance, changeObj);
+            }
+          };
+        };
+
+        deferCodeMirror = function () {
+          codeMirror = CodeMirror.fromTextArea(elm[0], opts);
+          codeMirror.on("change", onChange(opts.onChange));
+
+          for (var i = 0, n = events.length, aEvent; i < n; ++i) {
+            aEvent = opts["on" + events[i].charAt(0).toUpperCase() + events[i].slice(1)];
+            if (aEvent === void 0) {
+              continue;
+            }
+            if (typeof aEvent !== "function") {
+              continue;
+            }
+            codeMirror.on(events[i], aEvent);
+          }
+
+          // CodeMirror expects a string, so make sure it gets one.
+          // This does not change the model.
+          ngModel.$formatters.push(function (value) {
+            if (angular.isUndefined(value) || value === null) {
+              return '';
+            }
+            else if (angular.isObject(value) || angular.isArray(value)) {
+              throw new Error('ui-codemirror cannot use an object or an array as a model');
+            }
+            return value;
+          });
+
+          // Override the ngModelController $render method, which is what gets called when the model is updated.
+          // This takes care of the synchronizing the codeMirror element with the underlying model, in the case that it is changed by something else.
+          ngModel.$render = function () {
+            codeMirror.setValue(ngModel.$viewValue);
+          };
+
+          // Watch ui-refresh and refresh the directive
+          if (attrs.uiRefresh) {
+            scope.$watch(attrs.uiRefresh, function (newVal, oldVal) {
+              // Skip the initial watch firing
+              if (newVal !== oldVal) {
+                $timeout(function(){codeMirror.refresh();});
+              }
+            });
+          }
+        };
+
+        $timeout(deferCodeMirror);
+
+      }
+    };
+  }]);
+/**
+ * angular-ui-utils - Swiss-Army-Knife of AngularJS tools (with no external dependencies!)
+ * @version v0.0.3 - 2013-05-28
+ * @link http://angular-ui.github.com
+ * @license MIT License, http://www.opensource.org/licenses/MIT
+ */
+/**
+ * General-purpose Event binding. Bind any event not natively supported by Angular
+ * Pass an object with keynames for events to ui-event
+ * Allows $event object and $params object to be passed
+ *
+ * @example <input ui-event="{ focus : 'counter++', blur : 'someCallback()' }">
+ * @example <input ui-event="{ myCustomEvent : 'myEventHandler($event, $params)'}">
+ *
+ * @param ui-event {string|object literal} The event to bind to as a string or a hash of events with their callbacks
+ */
+angular.module('ui.event',[]).directive('uiEvent', ['$parse',
+  function ($parse) {
+    return function ($scope, elm, attrs) {
+      var events = $scope.$eval(attrs.uiEvent);
+      angular.forEach(events, function (uiEvent, eventName) {
+        var fn = $parse(uiEvent);
+        elm.bind(eventName, function (evt) {
+          var params = Array.prototype.slice.call(arguments);
+          //Take out first paramater (event object);
+          params = params.splice(1);
+          fn($scope, {$event: evt, $params: params});
+          if (!$scope.$$phase) {
+            $scope.$apply();
+          }
+        });
+      });
+    };
+  }]);
+
+
+/**
+ * A replacement utility for internationalization very similar to sprintf.
+ *
+ * @param replace {mixed} The tokens to replace depends on type
+ *  string: all instances of $0 will be replaced
+ *  array: each instance of $0, $1, $2 etc. will be placed with each array item in corresponding order
+ *  object: all attributes will be iterated through, with :key being replaced with its corresponding value
+ * @return string
+ *
+ * @example: 'Hello :name, how are you :day'.format({ name:'John', day:'Today' })
+ * @example: 'Records $0 to $1 out of $2 total'.format(['10', '20', '3000'])
+ * @example: '$0 agrees to all mentions $0 makes in the event that $0 hits a tree while $0 is driving drunk'.format('Bob')
+ */
+angular.module('ui.format',[]).filter('format', function(){
+  return function(value, replace) {
+    if (!value) {
+      return value;
+    }
+    var target = value.toString(), token;
+    if (replace === undefined) {
+      return target;
+    }
+    if (!angular.isArray(replace) && !angular.isObject(replace)) {
+      return target.split('$0').join(replace);
+    }
+    token = angular.isArray(replace) && '$' || ':';
+
+    angular.forEach(replace, function(value, key){
+      target = target.split(token+key).join(value);
+    });
+    return target;
+  };
+});
+
+/**
+ * Wraps the
+ * @param text {string} haystack to search through
+ * @param search {string} needle to search for
+ * @param [caseSensitive] {boolean} optional boolean to use case-sensitive searching
+ */
+angular.module('ui.highlight',[]).filter('highlight', function () {
+  return function (text, search, caseSensitive) {
+    if (search || angular.isNumber(search)) {
+      text = text.toString();
+      search = search.toString();
+      if (caseSensitive) {
+        return text.split(search).join('<span class="ui-match">' + search + '</span>');
+      } else {
+        return text.replace(new RegExp(search, 'gi'), '<span class="ui-match">$&</span>');
+      }
+    } else {
+      return text;
+    }
+  };
+});
+
+/**
+ * Provides an easy way to toggle a checkboxes indeterminate property
+ *
+ * @example <input type="checkbox" ui-indeterminate="isUnkown">
+ */
+angular.module('ui.indeterminate',[]).directive('uiIndeterminate', [
+  function () {
+    return {
+      compile: function(tElm, tAttrs) {
+        if (!tAttrs.type || tAttrs.type.toLowerCase() !== 'checkbox') {
+          return angular.noop;
+        }
+
+        return function ($scope, elm, attrs) {
+          $scope.$watch(attrs.uiIndeterminate, function(newVal, oldVal) {
+            elm[0].indeterminate = !!newVal;
+          });
+        };
+      }
+    };
+  }]);
+
+/**
+ * Converts variable-esque naming conventions to something presentational, capitalized words separated by space.
+ * @param {String} value The value to be parsed and prettified.
+ * @param {String} [inflector] The inflector to use. Default: humanize.
+ * @return {String}
+ * @example {{ 'Here Is my_phoneNumber' | inflector:'humanize' }} => Here Is My Phone Number
+ *          {{ 'Here Is my_phoneNumber' | inflector:'underscore' }} => here_is_my_phone_number
+ *          {{ 'Here Is my_phoneNumber' | inflector:'variable' }} => hereIsMyPhoneNumber
+ */
+angular.module('ui.inflector',[]).filter('inflector', function () {
+  function ucwords(text) {
+    return text.replace(/^([a-z])|\s+([a-z])/g, function ($1) {
+      return $1.toUpperCase();
+    });
+  }
+
+  function breakup(text, separator) {
+    return text.replace(/[A-Z]/g, function (match) {
+      return separator + match;
+    });
+  }
+
+  var inflectors = {
+    humanize: function (value) {
+      return ucwords(breakup(value, ' ').split('_').join(' '));
+    },
+    underscore: function (value) {
+      return value.substr(0, 1).toLowerCase() + breakup(value.substr(1), '_').toLowerCase().split(' ').join('_');
+    },
+    variable: function (value) {
+      value = value.substr(0, 1).toLowerCase() + ucwords(value.split('_').join(' ')).substr(1).split(' ').join('');
+      return value;
+    }
+  };
+
+  return function (text, inflector, separator) {
+    if (inflector !== false && angular.isString(text)) {
+      inflector = inflector || 'humanize';
+      return inflectors[inflector](text);
+    } else {
+      return text;
+    }
+  };
+});
+
+/**
+ * General-purpose jQuery wrapper. Simply pass the plugin name as the expression.
+ *
+ * It is possible to specify a default set of parameters for each jQuery plugin.
+ * Under the jq key, namespace each plugin by that which will be passed to ui-jq.
+ * Unfortunately, at this time you can only pre-define the first parameter.
+ * @example { jq : { datepicker : { showOn:'click' } } }
+ *
+ * @param ui-jq {string} The $elm.[pluginName]() to call.
+ * @param [ui-options] {mixed} Expression to be evaluated and passed as options to the function
+ *     Multiple parameters can be separated by commas
+ * @param [ui-refresh] {expression} Watch expression and refire plugin on changes
+ *
+ * @example <input ui-jq="datepicker" ui-options="{showOn:'click'},secondParameter,thirdParameter" ui-refresh="iChange">
+ */
+angular.module('ui.jq',[]).
+  value('uiJqConfig',{}).
+  directive('uiJq', ['uiJqConfig', '$timeout', function uiJqInjectingFunction(uiJqConfig, $timeout) {
+
+  return {
+    restrict: 'A',
+    compile: function uiJqCompilingFunction(tElm, tAttrs) {
+
+      if (!angular.isFunction(tElm[tAttrs.uiJq])) {
+        throw new Error('ui-jq: The "' + tAttrs.uiJq + '" function does not exist');
+      }
+      var options = uiJqConfig && uiJqConfig[tAttrs.uiJq];
+
+      return function uiJqLinkingFunction(scope, elm, attrs) {
+
+        var linkOptions = [];
+
+        // If ui-options are passed, merge (or override) them onto global defaults and pass to the jQuery method
+        if (attrs.uiOptions) {
+          linkOptions = scope.$eval('[' + attrs.uiOptions + ']');
+          if (angular.isObject(options) && angular.isObject(linkOptions[0])) {
+            linkOptions[0] = angular.extend({}, options, linkOptions[0]);
+          }
+        } else if (options) {
+          linkOptions = [options];
+        }
+        // If change compatibility is enabled, the form input's "change" event will trigger an "input" event
+        if (attrs.ngModel && elm.is('select,input,textarea')) {
+          elm.bind('change', function() {
+            elm.trigger('input');
+          });
+        }
+
+        // Call jQuery method and pass relevant options
+        function callPlugin() {
+          $timeout(function() {
+            elm[attrs.uiJq].apply(elm, linkOptions);
+          }, 0, false);
+        }
+
+        // If ui-refresh is used, re-fire the the method upon every change
+        if (attrs.uiRefresh) {
+          scope.$watch(attrs.uiRefresh, function(newVal) {
+            callPlugin();
+          });
+        }
+        callPlugin();
+      };
+    }
+  };
+}]);
+
+angular.module('ui.keypress',[]).
+factory('keypressHelper', ['$parse', function keypress($parse){
+  var keysByCode = {
+    8: 'backspace',
+    9: 'tab',
+    13: 'enter',
+    27: 'esc',
+    32: 'space',
+    33: 'pageup',
+    34: 'pagedown',
+    35: 'end',
+    36: 'home',
+    37: 'left',
+    38: 'up',
+    39: 'right',
+    40: 'down',
+    45: 'insert',
+    46: 'delete'
+  };
+
+  var capitaliseFirstLetter = function (string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
+  return function(mode, scope, elm, attrs) {
+    var params, combinations = [];
+    params = scope.$eval(attrs['ui'+capitaliseFirstLetter(mode)]);
+
+    // Prepare combinations for simple checking
+    angular.forEach(params, function (v, k) {
+      var combination, expression;
+      expression = $parse(v);
+
+      angular.forEach(k.split(' '), function(variation) {
+        combination = {
+          expression: expression,
+          keys: {}
+        };
+        angular.forEach(variation.split('-'), function (value) {
+          combination.keys[value] = true;
+        });
+        combinations.push(combination);
+      });
+    });
+
+    // Check only matching of pressed keys one of the conditions
+    elm.bind(mode, function (event) {
+      // No need to do that inside the cycle
+      var metaPressed = !!(event.metaKey && !event.ctrlKey);
+      var altPressed = !!event.altKey;
+      var ctrlPressed = !!event.ctrlKey;
+      var shiftPressed = !!event.shiftKey;
+      var keyCode = event.keyCode;
+
+      // normalize keycodes
+      if (mode === 'keypress' && !shiftPressed && keyCode >= 97 && keyCode <= 122) {
+        keyCode = keyCode - 32;
+      }
+
+      // Iterate over prepared combinations
+      angular.forEach(combinations, function (combination) {
+
+        var mainKeyPressed = combination.keys[keysByCode[event.keyCode]] || combination.keys[event.keyCode.toString()];
+
+        var metaRequired = !!combination.keys.meta;
+        var altRequired = !!combination.keys.alt;
+        var ctrlRequired = !!combination.keys.ctrl;
+        var shiftRequired = !!combination.keys.shift;
+
+        if (
+          mainKeyPressed &&
+          ( metaRequired === metaPressed ) &&
+          ( altRequired === altPressed ) &&
+          ( ctrlRequired === ctrlPressed ) &&
+          ( shiftRequired === shiftPressed )
+        ) {
+          // Run the function
+          scope.$apply(function () {
+            combination.expression(scope, { '$event': event });
+          });
+        }
+      });
+    });
+  };
+}]);
+
+/**
+ * Bind one or more handlers to particular keys or their combination
+ * @param hash {mixed} keyBindings Can be an object or string where keybinding expression of keys or keys combinations and AngularJS Exspressions are set. Object syntax: "{ keys1: expression1 [, keys2: expression2 [ , ... ]]}". String syntax: ""expression1 on keys1 [ and expression2 on keys2 [ and ... ]]"". Expression is an AngularJS Expression, and key(s) are dash-separated combinations of keys and modifiers (one or many, if any. Order does not matter). Supported modifiers are 'ctrl', 'shift', 'alt' and key can be used either via its keyCode (13 for Return) or name. Named keys are 'backspace', 'tab', 'enter', 'esc', 'space', 'pageup', 'pagedown', 'end', 'home', 'left', 'up', 'right', 'down', 'insert', 'delete'.
+ * @example <input ui-keypress="{enter:'x = 1', 'ctrl-shift-space':'foo()', 'shift-13':'bar()'}" /> <input ui-keypress="foo = 2 on ctrl-13 and bar('hello') on shift-esc" />
+ **/
+angular.module('ui.keypress').directive('uiKeydown', ['keypressHelper', function(keypressHelper){
+  return {
+    link: function (scope, elm, attrs) {
+      keypressHelper('keydown', scope, elm, attrs);
+    }
+  };
+}]);
+
+angular.module('ui.keypress').directive('uiKeypress', ['keypressHelper', function(keypressHelper){
+  return {
+    link: function (scope, elm, attrs) {
+      keypressHelper('keypress', scope, elm, attrs);
+    }
+  };
+}]);
+
+angular.module('ui.keypress').directive('uiKeyup', ['keypressHelper', function(keypressHelper){
+  return {
+    link: function (scope, elm, attrs) {
+      keypressHelper('keyup', scope, elm, attrs);
+    }
+  };
+}]);
+/*
+ Attaches input mask onto input element
+ */
+angular.module('ui.mask',[]).directive('uiMask', [
+  function () {
+    var maskDefinitions = {
+      '9': /\d/,
+      'A': /[a-zA-Z]/,
+      '*': /[a-zA-Z0-9]/
+    };
+    return {
+      priority: 100,
+      require: 'ngModel',
+      restrict: 'A',
+      link: function (scope, iElement, iAttrs, controller) {
+        var maskProcessed = false, eventsBound = false,
+            maskCaretMap, maskPatterns, maskPlaceholder, maskComponents,
+            // Minimum required length of the value to be considered valid
+            minRequiredLength,
+            value, valueMasked, isValid,
+            // Vars for initializing/uninitializing
+            originalPlaceholder = iAttrs.placeholder,
+            originalMaxlength   = iAttrs.maxlength,
+            // Vars used exclusively in eventHandler()
+            oldValue, oldValueUnmasked, oldCaretPosition, oldSelectionLength;
+
+        function initialize(maskAttr) {
+          if (!angular.isDefined(maskAttr)){
+            return uninitialize();
+          }
+          processRawMask(maskAttr);
+          if (!maskProcessed){
+            return uninitialize();
+          }
+          initializeElement();
+          bindEventListeners();
+        }
+
+        function formatter(fromModelValue) {
+          if (!maskProcessed){
+            return fromModelValue;
+          }
+          value   = unmaskValue(fromModelValue || '');
+          isValid = validateValue(value);
+          controller.$setValidity('mask', isValid);
+          return isValid && value.length ? maskValue(value) : undefined;
+        }
+
+
+        function parser(fromViewValue) {
+          if (!maskProcessed){
+            return fromViewValue;
+          }
+          value     = unmaskValue(fromViewValue || '');
+          isValid   = validateValue(value);
+          viewValue = value.length ? maskValue(value) : '';
+          // We have to set viewValue manually as the reformatting of the input
+          // value performed by eventHandler() doesn't happen until after
+          // this parser is called, which causes what the user sees in the input
+          // to be out-of-sync with what the controller's $viewValue is set to.
+          controller.$viewValue = viewValue;
+          controller.$setValidity('mask', isValid);
+          if (value === '' && controller.$error.required !== undefined){
+            controller.$setValidity('required', false);
+          }
+          return isValid ? value : undefined;
+        }
+
+        iAttrs.$observe('uiMask', initialize);
+        controller.$formatters.push(formatter);
+        controller.$parsers.push(parser);
+
+        function uninitialize() {
+          maskProcessed = false;
+          unbindEventListeners();
+
+          if (angular.isDefined(originalPlaceholder)){
+            iElement.attr('placeholder', originalPlaceholder);
+          }else{
+            iElement.removeAttr('placeholder');
+          }
+
+          if (angular.isDefined(originalMaxlength)){
+            iElement.attr('maxlength', originalMaxlength);
+          }else{
+            iElement.removeAttr('maxlength');
+          }
+
+          iElement.val(controller.$modelValue);
+          controller.$viewValue = controller.$modelValue;
+          return false;
+        }
+
+        function initializeElement() {
+          value       = oldValueUnmasked = unmaskValue(controller.$modelValue || '');
+          valueMasked = oldValue         = maskValue(value);
+          isValid     = validateValue(value);
+          viewValue   = isValid && value.length ? valueMasked : '';
+          if (iAttrs.maxlength){ // Double maxlength to allow pasting new val at end of mask
+            iElement.attr('maxlength', maskCaretMap[maskCaretMap.length-1]*2);
+          }
+          iElement.attr('placeholder', maskPlaceholder);
+          iElement.val(viewValue);
+          controller.$viewValue = viewValue;
+          // Not using $setViewValue so we don't clobber the model value and dirty the form
+          // without any kind of user interaction.
+        }
+
+        function bindEventListeners() {
+          if (eventsBound){
+            return true;
+          }
+          iElement.bind('blur',              blurHandler);
+          iElement.bind('mousedown mouseup', mouseDownUpHandler);
+          iElement.bind('input keyup click', eventHandler);
+          eventsBound = true;
+        }
+
+        function unbindEventListeners() {
+          if (!eventsBound){
+            return true;
+          }
+          iElement.unbind('blur',      blurHandler);
+          iElement.unbind('mousedown', mouseDownUpHandler);
+          iElement.unbind('mouseup',   mouseDownUpHandler);
+          iElement.unbind('input',     eventHandler);
+          iElement.unbind('keyup',     eventHandler);
+          iElement.unbind('click',     eventHandler);
+          eventsBound = false;
+        }
+
+
+        function validateValue(value) {
+          // Zero-length value validity is ngRequired's determination
+          return value.length ? value.length >= minRequiredLength : true;
+        }
+
+        function unmaskValue(value) {
+          var valueUnmasked    = '',
+              maskPatternsCopy = maskPatterns.slice();
+          // Preprocess by stripping mask components from value
+          value = value.toString();
+          angular.forEach(maskComponents, function(component, i) {
+            value = value.replace(component, '');
+          });
+          angular.forEach(value.split(''), function(chr, i) {
+            if (maskPatternsCopy.length && maskPatternsCopy[0].test(chr)) {
+              valueUnmasked += chr;
+              maskPatternsCopy.shift();
+            }
+          });
+          return valueUnmasked;
+        }
+
+        function maskValue(unmaskedValue) {
+          var valueMasked      = '',
+              maskCaretMapCopy = maskCaretMap.slice();
+          angular.forEach(maskPlaceholder.split(''), function(chr, i) {
+            if (unmaskedValue.length && i === maskCaretMapCopy[0]) {
+              valueMasked  += unmaskedValue.charAt(0) || '_';
+              unmaskedValue = unmaskedValue.substr(1);
+              maskCaretMapCopy.shift(); }
+            else{
+              valueMasked += chr;
+            }
+          });
+          return valueMasked;
+        }
+
+        function processRawMask(mask) {
+          var characterCount = 0;
+          maskCaretMap       = [];
+          maskPatterns       = [];
+          maskPlaceholder    = '';
+
+          // No complex mask support for now...
+          // if (mask instanceof Array) {
+          //   angular.forEach(mask, function(item, i) {
+          //     if (item instanceof RegExp) {
+          //       maskCaretMap.push(characterCount++);
+          //       maskPlaceholder += '_';
+          //       maskPatterns.push(item);
+          //     }
+          //     else if (typeof item == 'string') {
+          //       angular.forEach(item.split(''), function(chr, i) {
+          //         maskPlaceholder += chr;
+          //         characterCount++;
+          //       });
+          //     }
+          //   });
+          // }
+          // Otherwise it's a simple mask
+          // else
+
+          if (typeof mask === 'string') {
+            minRequiredLength = 0;
+            var isOptional = false;
+
+            angular.forEach(mask.split(''), function(chr, i) {
+              if (maskDefinitions[chr]) {
+                maskCaretMap.push(characterCount);
+                maskPlaceholder += '_';
+                maskPatterns.push(maskDefinitions[chr]);
+
+                characterCount++;
+                if (!isOptional) {
+                  minRequiredLength++;
+                }
+              }
+              else if (chr === "?") {
+                isOptional = true;
+              }
+              else{
+                maskPlaceholder += chr;
+                characterCount++;
+              }
+            });
+          }
+          // Caret position immediately following last position is valid.
+          maskCaretMap.push(maskCaretMap.slice().pop() + 1);
+          // Generate array of mask components that will be stripped from a masked value
+          // before processing to prevent mask components from being added to the unmasked value.
+          // E.g., a mask pattern of '+7 9999' won't have the 7 bleed into the unmasked value.
+                                                                // If a maskable char is followed by a mask char and has a mask
+                                                                // char behind it, we'll split it into it's own component so if
+                                                                // a user is aggressively deleting in the input and a char ahead
+                                                                // of the maskable char gets deleted, we'll still be able to strip
+                                                                // it in the unmaskValue() preprocessing.
+          maskComponents = maskPlaceholder.replace(/[_]+/g,'_').replace(/([^_]+)([a-zA-Z0-9])([^_])/g, '$1$2_$3').split('_');
+          maskProcessed  = maskCaretMap.length > 1 ? true : false;
+        }
+
+        function blurHandler(e) {
+          oldCaretPosition   = 0;
+          oldSelectionLength = 0;
+          if (!isValid || value.length === 0) {
+            valueMasked = '';
+            iElement.val('');
+            scope.$apply(function() {
+              controller.$setViewValue('');
+            });
+          }
+        }
+
+        function mouseDownUpHandler(e) {
+          if (e.type === 'mousedown'){
+            iElement.bind('mouseout', mouseoutHandler);
+          }else{
+            iElement.unbind('mouseout', mouseoutHandler);
+          }
+        }
+
+        iElement.bind('mousedown mouseup', mouseDownUpHandler);
+
+        function mouseoutHandler(e) {
+          oldSelectionLength = getSelectionLength(this);
+          iElement.unbind('mouseout', mouseoutHandler);
+        }
+
+        function eventHandler(e) {
+          e = e || {};
+          // Allows more efficient minification
+          var eventWhich = e.which,
+              eventType  = e.type;
+
+          // Prevent shift and ctrl from mucking with old values
+          if (eventWhich === 16 || eventWhich === 91){ return true;}
+
+          var val             = iElement.val(),
+              valOld          = oldValue,
+              valMasked,
+              valUnmasked     = unmaskValue(val),
+              valUnmaskedOld  = oldValueUnmasked,
+              valAltered      = false,
+
+              caretPos        = getCaretPosition(this) || 0,
+              caretPosOld     = oldCaretPosition || 0,
+              caretPosDelta   = caretPos - caretPosOld,
+              caretPosMin     = maskCaretMap[0],
+              caretPosMax     = maskCaretMap[valUnmasked.length] || maskCaretMap.slice().shift(),
+
+              selectionLen    = getSelectionLength(this),
+              selectionLenOld = oldSelectionLength || 0,
+              isSelected      = selectionLen > 0,
+              wasSelected     = selectionLenOld > 0,
+
+                                                                // Case: Typing a character to overwrite a selection
+              isAddition      = (val.length > valOld.length) || (selectionLenOld && val.length >  valOld.length - selectionLenOld),
+                                                                // Case: Delete and backspace behave identically on a selection
+              isDeletion      = (val.length < valOld.length) || (selectionLenOld && val.length === valOld.length - selectionLenOld),
+              isSelection     = (eventWhich >= 37 && eventWhich <= 40) && e.shiftKey, // Arrow key codes
+
+              isKeyLeftArrow  = eventWhich === 37,
+                                                    // Necessary due to "input" event not providing a key code
+              isKeyBackspace  = eventWhich === 8  || (eventType !== 'keyup' && isDeletion && (caretPosDelta === -1)),
+              isKeyDelete     = eventWhich === 46 || (eventType !== 'keyup' && isDeletion && (caretPosDelta === 0 ) && !wasSelected),
+
+              // Handles cases where caret is moved and placed in front of invalid maskCaretMap position. Logic below
+              // ensures that, on click or leftward caret placement, caret is moved leftward until directly right of
+              // non-mask character. Also applied to click since users are (arguably) more likely to backspace
+              // a character when clicking within a filled input.
+              caretBumpBack   = (isKeyLeftArrow || isKeyBackspace || eventType === 'click') && caretPos > caretPosMin;
+
+          oldSelectionLength  = selectionLen;
+
+          // These events don't require any action
+          if (isSelection || (isSelected && (eventType === 'click' || eventType === 'keyup'))){
+            return true;
+          }
+
+          // Value Handling
+          // ==============
+
+          // User attempted to delete but raw value was unaffected--correct this grievous offense
+          if ((eventType === 'input') && isDeletion && !wasSelected && valUnmasked === valUnmaskedOld) {
+            while (isKeyBackspace && caretPos > caretPosMin && !isValidCaretPosition(caretPos)){
+              caretPos--;
+            }
+            while (isKeyDelete && caretPos < caretPosMax && maskCaretMap.indexOf(caretPos) === -1){
+              caretPos++;
+            }
+            var charIndex = maskCaretMap.indexOf(caretPos);
+            // Strip out non-mask character that user would have deleted if mask hadn't been in the way.
+            valUnmasked = valUnmasked.substring(0, charIndex) + valUnmasked.substring(charIndex + 1);
+            valAltered  = true;
+          }
+
+          // Update values
+          valMasked        = maskValue(valUnmasked);
+          oldValue         = valMasked;
+          oldValueUnmasked = valUnmasked;
+          iElement.val(valMasked);
+          if (valAltered) {
+            // We've altered the raw value after it's been $digest'ed, we need to $apply the new value.
+            scope.$apply(function() {
+              controller.$setViewValue(valUnmasked);
+            });
+          }
+
+          // Caret Repositioning
+          // ===================
+
+          // Ensure that typing always places caret ahead of typed character in cases where the first char of
+          // the input is a mask char and the caret is placed at the 0 position.
+          if (isAddition && (caretPos <= caretPosMin)){
+            caretPos = caretPosMin + 1;
+          }
+
+          if (caretBumpBack){
+            caretPos--;
+          }
+
+          // Make sure caret is within min and max position limits
+          caretPos = caretPos > caretPosMax ? caretPosMax : caretPos < caretPosMin ? caretPosMin : caretPos;
+
+          // Scoot the caret back or forth until it's in a non-mask position and within min/max position limits
+          while (!isValidCaretPosition(caretPos) && caretPos > caretPosMin && caretPos < caretPosMax){
+            caretPos += caretBumpBack ? -1 : 1;
+          }
+
+          if ((caretBumpBack && caretPos < caretPosMax) || (isAddition && !isValidCaretPosition(caretPosOld))){
+            caretPos++;
+          }
+          oldCaretPosition = caretPos;
+          setCaretPosition(this, caretPos);
+        }
+
+        function isValidCaretPosition(pos) { return maskCaretMap.indexOf(pos) > -1; }
+
+        function getCaretPosition(input) {
+          if (input.selectionStart !== undefined){
+            return input.selectionStart;
+          }else if (document.selection) {
+            // Curse you IE
+            input.focus();
+            var selection = document.selection.createRange();
+            selection.moveStart('character', -input.value.length);
+            return selection.text.length;
+          }
+        }
+
+        function setCaretPosition(input, pos) {
+          if (input.offsetWidth === 0 || input.offsetHeight === 0){
+            return true; // Input's hidden
+          }
+          if (input.setSelectionRange) {
+            input.focus();
+            input.setSelectionRange(pos,pos); }
+          else if (input.createTextRange) {
+            // Curse you IE
+            var range = input.createTextRange();
+            range.collapse(true);
+            range.moveEnd('character', pos);
+            range.moveStart('character', pos);
+            range.select();
+          }
+        }
+
+        function getSelectionLength(input) {
+          if (input.selectionStart !== undefined){
+            return (input.selectionEnd - input.selectionStart);
+          }
+          if (document.selection){
+            return (document.selection.createRange().text.length);
+          }
+        }
+
+        // https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Array/indexOf
+        if (!Array.prototype.indexOf) {
+          Array.prototype.indexOf = function (searchElement /*, fromIndex */ ) {
+            "use strict";
+            if (this === null) {
+              throw new TypeError();
+            }
+            var t = Object(this);
+            var len = t.length >>> 0;
+            if (len === 0) {
+              return -1;
+            }
+            var n = 0;
+            if (arguments.length > 1) {
+              n = Number(arguments[1]);
+              if (n !== n) { // shortcut for verifying if it's NaN
+                n = 0;
+              } else if (n !== 0 && n !== Infinity && n !== -Infinity) {
+                n = (n > 0 || -1) * Math.floor(Math.abs(n));
+              }
+            }
+            if (n >= len) {
+              return -1;
+            }
+            var k = n >= 0 ? n : Math.max(len - Math.abs(n), 0);
+            for (; k < len; k++) {
+              if (k in t && t[k] === searchElement) {
+                return k;
+              }
+            }
+            return -1;
+          };
+        }
+
+      }
+    };
+  }
+]);
+/**
+ * Add a clear button to form inputs to reset their value
+ */
+angular.module('ui.reset',[]).value('uiResetConfig',null).directive('uiReset', ['uiResetConfig', function (uiResetConfig) {
+  var resetValue = null;
+  if (uiResetConfig !== undefined){
+      resetValue = uiResetConfig;
+  }
+  return {
+    require: 'ngModel',
+    link: function (scope, elm, attrs, ctrl) {
+      var aElement;
+      aElement = angular.element('<a class="ui-reset" />');
+      elm.wrap('<span class="ui-resetwrap" />').after(aElement);
+      aElement.bind('click', function (e) {
+        e.preventDefault();
+        scope.$apply(function () {
+          if (attrs.uiReset){
+            ctrl.$setViewValue(scope.$eval(attrs.uiReset));
+          }else{
+            ctrl.$setViewValue(resetValue);
+          }
+          ctrl.$render();
+        });
+      });
+    }
+  };
+}]);
+
+/**
+ * Set a $uiRoute boolean to see if the current route matches
+ */
+angular.module('ui.route', []).directive('uiRoute', ['$location', '$parse', function ($location, $parse) {
+  return {
+    restrict: 'AC',
+    scope: true,
+    compile: function(tElement, tAttrs) {
+      var useProperty;
+      if (tAttrs.uiRoute) {
+        useProperty = 'uiRoute';
+      } else if (tAttrs.ngHref) {
+        useProperty = 'ngHref';
+      } else if (tAttrs.href) {
+        useProperty = 'href';
+      } else {
+        throw new Error('uiRoute missing a route or href property on ' + tElement[0]);
+      }
+      return function ($scope, elm, attrs) {
+        var modelSetter = $parse(attrs.ngModel || attrs.routeModel || '$uiRoute').assign;
+        var watcher = angular.noop;
+
+        // Used by href and ngHref
+        function staticWatcher(newVal) {
+          if ((hash = newVal.indexOf('#')) > -1){
+            newVal = newVal.substr(hash + 1);
+          }
+          watcher = function watchHref() {
+            modelSetter($scope, ($location.path().indexOf(newVal) > -1));
+          };
+          watcher();
+        }
+        // Used by uiRoute
+        function regexWatcher(newVal) {
+          if ((hash = newVal.indexOf('#')) > -1){
+            newVal = newVal.substr(hash + 1);
+          }
+          watcher = function watchRegex() {
+            var regexp = new RegExp('^' + newVal + '$', ['i']);
+            modelSetter($scope, regexp.test($location.path()));
+          };
+          watcher();
+        }
+
+        switch (useProperty) {
+          case 'uiRoute':
+            // if uiRoute={{}} this will be undefined, otherwise it will have a value and $observe() never gets triggered
+            if (attrs.uiRoute){
+              regexWatcher(attrs.uiRoute);
+            }else{
+              attrs.$observe('uiRoute', regexWatcher);
+            }
+            break;
+          case 'ngHref':
+            // Setup watcher() every time ngHref changes
+            if (attrs.ngHref){
+              staticWatcher(attrs.ngHref);
+            }else{
+              attrs.$observe('ngHref', staticWatcher);
+            }
+            break;
+          case 'href':
+            // Setup watcher()
+            staticWatcher(attrs.href);
+        }
+
+        $scope.$on('$routeChangeSuccess', function(){
+          watcher();
+        });
+      };
+    }
+  };
+}]);
+
+/*global angular, $, document*/
+/**
+ * Adds a 'ui-scrollfix' class to the element when the page scrolls past it's position.
+ * @param [offset] {int} optional Y-offset to override the detected offset.
+ *   Takes 300 (absolute) or -300 or +300 (relative to detected)
+ */
+angular.module('ui.scrollfix',[]).directive('uiScrollfix', ['$window', function ($window) {
+  'use strict';
+  return {
+    require: '^?uiScrollfixTarget',
+    link: function (scope, elm, attrs, uiScrollfixTarget) {
+      var top = elm[0].offsetTop,
+          $target = uiScrollfixTarget && uiScrollfixTarget.$element || angular.element($window);
+      if (!attrs.uiScrollfix) {
+        attrs.uiScrollfix = top;
+      } else {
+        // chartAt is generally faster than indexOf: http://jsperf.com/indexof-vs-chartat
+        if (attrs.uiScrollfix.charAt(0) === '-') {
+          attrs.uiScrollfix = top - attrs.uiScrollfix.substr(1);
+        } else if (attrs.uiScrollfix.charAt(0) === '+') {
+          attrs.uiScrollfix = top + parseFloat(attrs.uiScrollfix.substr(1));
+        }
+      }
+
+      $target.bind('scroll.ui-scrollfix', function () {
+        // if pageYOffset is defined use it, otherwise use other crap for IE
+        var offset;
+        if (angular.isDefined($window.pageYOffset)) {
+          offset = $window.pageYOffset;
+        } else {
+          var iebody = (document.compatMode && document.compatMode !== "BackCompat") ? document.documentElement : document.body;
+          offset = iebody.scrollTop;
+        }
+        if (!elm.hasClass('ui-scrollfix') && offset > attrs.uiScrollfix) {
+          elm.addClass('ui-scrollfix');
+        } else if (elm.hasClass('ui-scrollfix') && offset < attrs.uiScrollfix) {
+          elm.removeClass('ui-scrollfix');
+        }
+      });
+    }
+  };
+}]).directive('uiScrollfixTarget', [function () {
+  'use strict';
+  return {
+    controller: function($element) {
+      this.$element = $element;
+    }
+  };
+}]);
+
+/**
+ * uiShow Directive
+ *
+ * Adds a 'ui-show' class to the element instead of display:block
+ * Created to allow tighter control  of CSS without bulkier directives
+ *
+ * @param expression {boolean} evaluated expression to determine if the class should be added
+ */
+angular.module('ui.showhide',[])
+.directive('uiShow', [function () {
+  return function (scope, elm, attrs) {
+    scope.$watch(attrs.uiShow, function (newVal, oldVal) {
+      if (newVal) {
+        elm.addClass('ui-show');
+      } else {
+        elm.removeClass('ui-show');
+      }
+    });
+  };
+}])
+
+/**
+ * uiHide Directive
+ *
+ * Adds a 'ui-hide' class to the element instead of display:block
+ * Created to allow tighter control  of CSS without bulkier directives
+ *
+ * @param expression {boolean} evaluated expression to determine if the class should be added
+ */
+.directive('uiHide', [function () {
+  return function (scope, elm, attrs) {
+    scope.$watch(attrs.uiHide, function (newVal, oldVal) {
+      if (newVal) {
+        elm.addClass('ui-hide');
+      } else {
+        elm.removeClass('ui-hide');
+      }
+    });
+  };
+}])
+
+/**
+ * uiToggle Directive
+ *
+ * Adds a class 'ui-show' if true, and a 'ui-hide' if false to the element instead of display:block/display:none
+ * Created to allow tighter control  of CSS without bulkier directives. This also allows you to override the
+ * default visibility of the element using either class.
+ *
+ * @param expression {boolean} evaluated expression to determine if the class should be added
+ */
+.directive('uiToggle', [function () {
+  return function (scope, elm, attrs) {
+    scope.$watch(attrs.uiToggle, function (newVal, oldVal) {
+      if (newVal) {
+        elm.removeClass('ui-hide').addClass('ui-show');
+      } else {
+        elm.removeClass('ui-show').addClass('ui-hide');
+      }
+    });
+  };
+}]);
+
+/**
+ * Filters out all duplicate items from an array by checking the specified key
+ * @param [key] {string} the name of the attribute of each object to compare for uniqueness
+ if the key is empty, the entire object will be compared
+ if the key === false then no filtering will be performed
+ * @return {array}
+ */
+angular.module('ui.unique',[]).filter('unique', ['$parse', function ($parse) {
+
+  return function (items, filterOn) {
+
+    if (filterOn === false) {
+      return items;
+    }
+
+    if ((filterOn || angular.isUndefined(filterOn)) && angular.isArray(items)) {
+      var hashCheck = {}, newItems = [],
+        get = angular.isString(filterOn) ? $parse(filterOn) : function (item) { return item; };
+
+      var extractValueToCompare = function (item) {
+        return angular.isObject(item) ? get(item) : item;
+      };
+
+      angular.forEach(items, function (item) {
+        var valueToCheck, isDuplicate = false;
+
+        for (var i = 0; i < newItems.length; i++) {
+          if (angular.equals(extractValueToCompare(newItems[i]), extractValueToCompare(item))) {
+            isDuplicate = true;
+            break;
+          }
+        }
+        if (!isDuplicate) {
+          newItems.push(item);
+        }
+
+      });
+      items = newItems;
+    }
+    return items;
+  };
+}]);
+
+/**
+ * General-purpose validator for ngModel.
+ * angular.js comes with several built-in validation mechanism for input fields (ngRequired, ngPattern etc.) but using
+ * an arbitrary validation function requires creation of a custom formatters and / or parsers.
+ * The ui-validate directive makes it easy to use any function(s) defined in scope as a validator function(s).
+ * A validator function will trigger validation on both model and input changes.
+ *
+ * @example <input ui-validate=" 'myValidatorFunction($value)' ">
+ * @example <input ui-validate="{ foo : '$value > anotherModel', bar : 'validateFoo($value)' }">
+ * @example <input ui-validate="{ foo : '$value > anotherModel' }" ui-validate-watch=" 'anotherModel' ">
+ * @example <input ui-validate="{ foo : '$value > anotherModel', bar : 'validateFoo($value)' }" ui-validate-watch=" { foo : 'anotherModel' } ">
+ *
+ * @param ui-validate {string|object literal} If strings is passed it should be a scope's function to be used as a validator.
+ * If an object literal is passed a key denotes a validation error key while a value should be a validator function.
+ * In both cases validator function should take a value to validate as its argument and should return true/false indicating a validation result.
+ */
+angular.module('ui.validate',[]).directive('uiValidate', function () {
+
+  return {
+    restrict: 'A',
+    require: 'ngModel',
+    link: function (scope, elm, attrs, ctrl) {
+      var validateFn, watch, validators = {},
+        validateExpr = scope.$eval(attrs.uiValidate);
+
+      if (!validateExpr){ return;}
+
+      if (angular.isString(validateExpr)) {
+        validateExpr = { validator: validateExpr };
+      }
+
+      angular.forEach(validateExpr, function (exprssn, key) {
+        validateFn = function (valueToValidate) {
+          var expression = scope.$eval(exprssn, { '$value' : valueToValidate });
+          if (angular.isFunction(expression.then)) {
+            // expression is a promise
+            expression.then(function(){
+              ctrl.$setValidity(key, true);
+            }, function(){
+              ctrl.$setValidity(key, false);
+            });
+            return valueToValidate;
+          } else if (expression) {
+            // expression is true
+            ctrl.$setValidity(key, true);
+            return valueToValidate;
+          } else {
+            // expression is false
+            ctrl.$setValidity(key, false);
+            return undefined;
+          }
+        };
+        validators[key] = validateFn;
+        ctrl.$formatters.push(validateFn);
+        ctrl.$parsers.push(validateFn);
+      });
+
+      // Support for ui-validate-watch
+      if (attrs.uiValidateWatch) {
+        watch = scope.$eval(attrs.uiValidateWatch);
+        if (angular.isString(watch)) {
+          scope.$watch(watch, function(){
+            angular.forEach(validators, function(validatorFn, key){
+              validatorFn(ctrl.$modelValue);
+            });
+          });
+        } else {
+          angular.forEach(watch, function(expression, key){
+            scope.$watch(expression, function(){
+              validators[key](ctrl.$modelValue);
+            });
+          });
+        }
+      }
+    }
+  };
+});
+
+angular.module('ui.utils',  [
+  "ui.event",
+  "ui.format",
+  "ui.highlight",
+  "ui.indeterminate",
+  "ui.inflector",
+  "ui.jq",
+  "ui.keypress",
+  "ui.mask",
+  "ui.reset",
+  "ui.route",
+  "ui.scrollfix",
+  "ui.showhide",
+  "ui.unique",
+  "ui.validate"
+]);
+!function(e){"use strict";function t(e){var n;if(null===e||void 0===e)return!1;if(r.isArray(e))return e.length>0;if("string"==typeof e||"number"==typeof e||"boolean"==typeof e)return!0;for(n in e)if(e.hasOwnProperty(n)&&t(e[n]))return!0;return!1}var n=function(){function e(e){this.options=e}return e.prototype.toString=function(){return JSON&&JSON.stringify?JSON.stringify(this.options):this.options},e}(),r=function(){function e(e){return"[object Array]"===Object.prototype.toString.apply(e)}function t(e){return"[object String]"===Object.prototype.toString.apply(e)}function n(e){return"[object Number]"===Object.prototype.toString.apply(e)}function r(e){return"[object Boolean]"===Object.prototype.toString.apply(e)}function i(e,t){var n,r="",i=!0;for(n=0;n<e.length;n+=1)i?i=!1:r+=t,r+=e[n];return r}function o(e,t){for(var n=[],r=0;r<e.length;r+=1)n.push(t(e[r]));return n}function s(e,t){for(var n=[],r=0;r<e.length;r+=1)t(e[r])&&n.push(e[r]);return n}function a(e){if("object"!=typeof e||null===e)return e;Object.freeze(e);var t,n;for(n in e)e.hasOwnProperty(n)&&(t=e[n],"object"==typeof t&&u(t));return e}function u(e){return"function"==typeof Object.freeze?a(e):e}return{isArray:e,isString:t,isNumber:n,isBoolean:r,join:i,map:o,filter:s,deepFreeze:u}}(),i=function(){function e(e){return e>="a"&&"z">=e||e>="A"&&"Z">=e}function t(e){return e>="0"&&"9">=e}function n(e){return t(e)||e>="a"&&"f">=e||e>="A"&&"F">=e}return{isAlpha:e,isDigit:t,isHexDigit:n}}(),o=function(){function e(e){var t,n,r="",i=s.encode(e);for(n=0;n<i.length;n+=1)t=i.charCodeAt(n),r+="%"+(16>t?"0":"")+t.toString(16).toUpperCase();return r}function t(e,t){return"%"===e.charAt(t)&&i.isHexDigit(e.charAt(t+1))&&i.isHexDigit(e.charAt(t+2))}function n(e,t){return parseInt(e.substr(t,2),16)}function r(e){if(!t(e,0))return!1;var r=n(e,1),i=s.numBytes(r);if(0===i)return!1;for(var o=1;i>o;o+=1)if(!t(e,3*o)||!s.isValidFollowingCharCode(n(e,3*o+1)))return!1;return!0}function o(e,r){var i=e.charAt(r);if(!t(e,r))return i;var o=n(e,r+1),a=s.numBytes(o);if(0===a)return i;for(var u=1;a>u;u+=1)if(!t(e,r+3*u)||!s.isValidFollowingCharCode(n(e,r+3*u+1)))return i;return e.substr(r,3*a)}var s={encode:function(e){return unescape(encodeURIComponent(e))},numBytes:function(e){return 127>=e?1:e>=194&&223>=e?2:e>=224&&239>=e?3:e>=240&&244>=e?4:0},isValidFollowingCharCode:function(e){return e>=128&&191>=e}};return{encodeCharacter:e,isPctEncoded:r,pctCharAt:o}}(),s=function(){function e(e){return i.isAlpha(e)||i.isDigit(e)||"_"===e||o.isPctEncoded(e)}function t(e){return i.isAlpha(e)||i.isDigit(e)||"-"===e||"."===e||"_"===e||"~"===e}function n(e){return":"===e||"/"===e||"?"===e||"#"===e||"["===e||"]"===e||"@"===e||"!"===e||"$"===e||"&"===e||"("===e||")"===e||"*"===e||"+"===e||","===e||";"===e||"="===e||"'"===e}return{isVarchar:e,isUnreserved:t,isReserved:n}}(),a=function(){function e(e,t){var n,r="",i="";for(("number"==typeof e||"boolean"==typeof e)&&(e=e.toString()),n=0;n<e.length;n+=i.length)i=e.charAt(n),r+=s.isUnreserved(i)||t&&s.isReserved(i)?i:o.encodeCharacter(i);return r}function t(t){return e(t,!0)}function n(e,t){var n=o.pctCharAt(e,t);return n.length>1?n:s.isReserved(n)||s.isUnreserved(n)?n:o.encodeCharacter(n)}function r(e){var t,n="",r="";for(t=0;t<e.length;t+=r.length)r=o.pctCharAt(e,t),n+=r.length>1?r:s.isReserved(r)||s.isUnreserved(r)?r:o.encodeCharacter(r);return n}return{encode:e,encodePassReserved:t,encodeLiteral:r,encodeLiteralCharacter:n}}(),u=function(){function e(e){t[e]={symbol:e,separator:"?"===e?"&":""===e||"+"===e||"#"===e?",":e,named:";"===e||"&"===e||"?"===e,ifEmpty:"&"===e||"?"===e?"=":"",first:"+"===e?"":e,encode:"+"===e||"#"===e?a.encodePassReserved:a.encode,toString:function(){return this.symbol}}}var t={};return e(""),e("+"),e("#"),e("."),e("/"),e(";"),e("?"),e("&"),{valueOf:function(e){return t[e]?t[e]:"=,!@|".indexOf(e)>=0?null:t[""]}}}(),f=function(){function e(e){this.literal=a.encodeLiteral(e)}return e.prototype.expand=function(){return this.literal},e.prototype.toString=e.prototype.expand,e}(),p=function(){function e(e){function t(){var t=e.substring(h,f);if(0===t.length)throw new n({expressionText:e,message:"a varname must be specified",position:f});c={varname:t,exploded:!1,maxLength:null},h=null}function r(){if(d===f)throw new n({expressionText:e,message:"after a ':' you have to specify the length",position:f});c.maxLength=parseInt(e.substring(d,f),10),d=null}var a,f,p=[],c=null,h=null,d=null,g="";for(a=function(t){var r=u.valueOf(t);if(null===r)throw new n({expressionText:e,message:"illegal use of reserved operator",position:f,operator:t});return r}(e.charAt(0)),f=a.symbol.length,h=f;f<e.length;f+=g.length){if(g=o.pctCharAt(e,f),null!==h){if("."===g){if(h===f)throw new n({expressionText:e,message:"a varname MUST NOT start with a dot",position:f});continue}if(s.isVarchar(g))continue;t()}if(null!==d){if(f===d&&"0"===g)throw new n({expressionText:e,message:"A :prefix must not start with digit 0",position:f});if(i.isDigit(g)){if(f-d>=4)throw new n({expressionText:e,message:"A :prefix must have max 4 digits",position:f});continue}r()}if(":"!==g)if("*"!==g){if(","!==g)throw new n({expressionText:e,message:"illegal character",character:g,position:f});p.push(c),c=null,h=f+1}else{if(null===c)throw new n({expressionText:e,message:"exploded without varspec",position:f});if(c.exploded)throw new n({expressionText:e,message:"exploded twice",position:f});if(c.maxLength)throw new n({expressionText:e,message:"an explode (*) MUST NOT follow to a prefix",position:f});c.exploded=!0}else{if(null!==c.maxLength)throw new n({expressionText:e,message:"only one :maxLength is allowed per varspec",position:f});if(c.exploded)throw new n({expressionText:e,message:"an exploeded varspec MUST NOT be varspeced",position:f});d=f+1}}return null!==h&&t(),null!==d&&r(),p.push(c),new l(e,a,p)}function t(t){var r,i,o=[],s=null,a=0;for(r=0;r<t.length;r+=1)if(i=t.charAt(r),null===a){if(null===s)throw new Error("reached unreachable code");if("{"===i)throw new n({templateText:t,message:"brace already opened",position:r});if("}"===i){if(s+1===r)throw new n({templateText:t,message:"empty braces",position:s});try{o.push(e(t.substring(s+1,r)))}catch(u){if(u.prototype===n.prototype)throw new n({templateText:t,message:u.options.message,position:s+u.options.position,details:u.options});throw u}s=null,a=r+1}}else{if("}"===i)throw new n({templateText:t,message:"unopened brace closed",position:r});"{"===i&&(r>a&&o.push(new f(t.substring(a,r))),a=null,s=r)}if(null!==s)throw new n({templateText:t,message:"unclosed brace",position:s});return a<t.length&&o.push(new f(t.substr(a))),new c(t,o)}return t}(),l=function(){function e(e){return JSON&&JSON.stringify?JSON.stringify(e):e}function n(e){if(!t(e))return!0;if(r.isString(e))return""===e;if(r.isNumber(e)||r.isBoolean(e))return!1;if(r.isArray(e))return 0===e.length;for(var n in e)if(e.hasOwnProperty(n))return!1;return!0}function i(e){var t,n=[];for(t in e)e.hasOwnProperty(t)&&n.push({name:t,value:e[t]});return n}function o(e,t,n){this.templateText=e,this.operator=t,this.varspecs=n}function s(e,t,n){var r="";if(n=n.toString(),t.named){if(r+=a.encodeLiteral(e.varname),""===n)return r+=t.ifEmpty;r+="="}return null!==e.maxLength&&(n=n.substr(0,e.maxLength)),r+=t.encode(n)}function u(e){return t(e.value)}function f(e,o,s){var f=[],p="";if(o.named){if(p+=a.encodeLiteral(e.varname),n(s))return p+=o.ifEmpty;p+="="}return r.isArray(s)?(f=s,f=r.filter(f,t),f=r.map(f,o.encode),p+=r.join(f,",")):(f=i(s),f=r.filter(f,u),f=r.map(f,function(e){return o.encode(e.name)+","+o.encode(e.value)}),p+=r.join(f,",")),p}function p(e,o,s){var f=r.isArray(s),p=[];return f?(p=s,p=r.filter(p,t),p=r.map(p,function(t){var r=a.encodeLiteral(e.varname);return r+=n(t)?o.ifEmpty:"="+o.encode(t)})):(p=i(s),p=r.filter(p,u),p=r.map(p,function(e){var t=a.encodeLiteral(e.name);return t+=n(e.value)?o.ifEmpty:"="+o.encode(e.value)})),r.join(p,o.separator)}function l(e,n){var o=[],s="";return r.isArray(n)?(o=n,o=r.filter(o,t),o=r.map(o,e.encode),s+=r.join(o,e.separator)):(o=i(n),o=r.filter(o,function(e){return t(e.value)}),o=r.map(o,function(t){return e.encode(t.name)+"="+e.encode(t.value)}),s+=r.join(o,e.separator)),s}return o.prototype.toString=function(){return this.templateText},o.prototype.expand=function(i){var o,a,u,c,h=[],d=!1,g=this.operator;for(o=0;o<this.varspecs.length;o+=1)if(a=this.varspecs[o],u=i[a.varname],null!==u&&void 0!==u)if(a.exploded&&(d=!0),c=r.isArray(u),"string"==typeof u||"number"==typeof u||"boolean"==typeof u)h.push(s(a,g,u));else{if(a.maxLength&&t(u))throw new Error("Prefix modifiers are not applicable to variables that have composite values. You tried to expand "+this+" with "+e(u));a.exploded?t(u)&&(g.named?h.push(p(a,g,u)):h.push(l(g,u))):(g.named||!n(u))&&h.push(f(a,g,u))}return 0===h.length?"":g.first+r.join(h,g.separator)},o}(),c=function(){function e(e,t){this.templateText=e,this.expressions=t,r.deepFreeze(this)}return e.prototype.toString=function(){return this.templateText},e.prototype.expand=function(e){var t,n="";for(t=0;t<this.expressions.length;t+=1)n+=this.expressions[t].expand(e);return n},e.parse=p,e.UriTemplateError=n,e}();e(c)}(function(e){"use strict";"undefined"!=typeof module?module.exports=e:"function"==typeof define?define([],function(){return e}):"undefined"!=typeof window?window.UriTemplate=e:global.UriTemplate=e});
+
+
+bbAdminDirectives = angular.module('BBAdmin.Directives', []);
+
+bbAdminDirectives.controller('CalController', function($scope) {
+    /* config object */
+    $scope.calendarConfig = {
+        height: 450,
+        editiable: true,
+        dayClick: function(){
+            scope.$apply($scope.alertEventOnClick);
+        }
+    };
+});
+
+(function() {
+  angular.module('BBAdmin.Controllers').controller('BBAdminCtrl', function($controller, $scope, $location, $rootScope, halClient, $window, $http, $localCache, $q, BasketService, LoginService, AlertService, $sce, $element, $compile, $sniffer, $modal, $timeout, BBModel, BBWidget, SSOService, ErrorService, AppConfig) {
+    angular.extend(this, $controller('BBCtrl', {
+      $scope: $scope,
+      $location: $location,
+      $rootScope: $rootScope,
+      $window: $window,
+      $http: $http,
+      $localCache: $localCache,
+      $q: $q,
+      halClient: halClient,
+      BasketService: BasketService,
+      LoginService: LoginService,
+      AlertService: AlertService,
+      $sce: $sce,
+      $element: $element,
+      $compile: $compile,
+      $sniffer: $sniffer,
+      $modal: $modal,
+      $timeout: $timeout,
+      BBModel: BBModel,
+      BBWidget: BBWidget,
+      SSOService: SSOService,
+      ErrorService: ErrorService,
+      AppConfig: AppConfig
+    }));
+    $scope.loggedInDef = $q.defer();
+    $scope.logged_in = $scope.loggedInDef.promise;
+    $rootScope.bb = $scope.bb;
+    console.log("for admin only 1 widget", $rootScope.bb);
+    return $scope.old_init = (function(_this) {
+      return function(prms) {
+        var comp_id;
+        comp_id = prms.company_id;
+        if (comp_id) {
+          $scope.bb.company_id = comp_id;
+          return $scope.channel_name = "private-company-" + $scope.bb.company_id;
+        }
+      };
+    })(this);
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  angular.module('BBAdmin.Controllers').controller('CalendarCtrl', function($scope, AdminBookingService, $rootScope) {
+
+    /* event source that pulls from google.com
+    $scope.eventSource = {
+            url: "http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic",
+            className: 'gcal-event',           // an option!
+            currentTimezone: 'America/Chicago' // an option!
+    };
+     */
+    $scope.eventsF = function(start, end, tz, callback) {
+      var bookings, prms;
+      console.log(start, end, callback);
+      prms = {
+        company_id: 21
+      };
+      prms.start_date = start.format("YYYY-MM-DD");
+      prms.end_date = end.format("YYYY-MM-DD");
+      bookings = AdminBookingService.query(prms);
+      return bookings.then((function(_this) {
+        return function(s) {
+          console.log(s.items);
+          callback(s.items);
+          return s.addCallback(function(booking) {
+            return $scope.myCalendar.fullCalendar('renderEvent', booking, true);
+          });
+        };
+      })(this));
+    };
+    $scope.dayClick = function(date, allDay, jsEvent, view) {
+      return $scope.$apply((function(_this) {
+        return function() {
+          console.log(date, allDay, jsEvent, view);
+          return $scope.alertMessage = 'Day Clicked ' + date;
+        };
+      })(this));
+    };
+    $scope.alertOnDrop = function(event, revertFunc, jsEvent, ui, view) {
+      return $scope.$apply((function(_this) {
+        return function() {
+          return $scope.popupTimeAction({
+            action: "move",
+            booking: event,
+            newdate: event.start,
+            onCancel: revertFunc
+          });
+        };
+      })(this));
+    };
+    $scope.alertOnResize = function(event, revertFunc, jsEvent, ui, view) {
+      return $scope.$apply((function(_this) {
+        return function() {
+          return $scope.alertMessage = 'Event Resized ';
+        };
+      })(this));
+    };
+    $scope.addRemoveEventSource = function(sources, source) {
+      var canAdd;
+      canAdd = 0;
+      angular.forEach(sources, (function(_this) {
+        return function(value, key) {
+          if (sources[key] === source) {
+            sources.splice(key, 1);
+            return canAdd = 1;
+          }
+        };
+      })(this));
+      if (canAdd === 0) {
+        return sources.push(source);
+      }
+    };
+    $scope.addEvent = function() {
+      var m, y;
+      y = '';
+      m = '';
+      return $scope.events.push({
+        title: 'Open Sesame',
+        start: new Date(y, m, 28),
+        end: new Date(y, m, 29),
+        className: ['openSesame']
+      });
+    };
+    $scope.remove = function(index) {
+      return $scope.events.splice(index, 1);
+    };
+    $scope.changeView = function(view) {
+      return $scope.myCalendar.fullCalendar('changeView', view);
+    };
+    $scope.eventClick = function(event, jsEvent, view) {
+      return $scope.$apply((function(_this) {
+        return function() {
+          return $scope.selectBooking(event);
+        };
+      })(this));
+    };
+    $scope.selectTime = function(start, end, allDay) {
+      return $scope.$apply((function(_this) {
+        return function() {
+          $scope.popupTimeAction({
+            start_time: moment(start),
+            end_time: moment(end),
+            allDay: allDay
+          });
+          return $scope.myCalendar.fullCalendar('unselect');
+        };
+      })(this));
+    };
+    $scope.uiConfig = {
+      calendar: {
+        height: 450,
+        editable: true,
+        header: {
+          left: 'month agendaWeek agendaDay',
+          center: 'title',
+          right: 'today prev,next'
+        },
+        dayClick: $scope.dayClick,
+        eventClick: $scope.eventClick,
+        eventDrop: $scope.alertOnDrop,
+        eventResize: $scope.alertOnResize,
+        selectable: true,
+        selectHelper: true,
+        select: $scope.selectTime
+      }
+    };
+    return $scope.eventSources = [$scope.eventsF];
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdmin.Controllers').controller('CategoryList', function($scope, $location, CategoryService, $rootScope) {
+    $rootScope.connection_started.then((function(_this) {
+      return function() {
+        $scope.categories = CategoryService.query($scope.bb.company);
+        return $scope.categories.then(function(items) {});
+      };
+    })(this));
+    $scope.$watch('selectedCategory', (function(_this) {
+      return function(newValue, oldValue) {
+        var items;
+        $rootScope.category = newValue;
+        return items = $('.inline_time').each(function(idx, e) {
+          return angular.element(e).scope().clear();
+        });
+      };
+    })(this));
+    return $scope.$on("Refresh_Cat", (function(_this) {
+      return function(event, message) {
+        return $scope.$apply();
+      };
+    })(this));
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdmin.Controllers').controller('CompanyList', function($scope, $rootScope, $location) {
+    $scope.selectedCategory = null;
+    $rootScope.connection_started.then((function(_this) {
+      return function() {
+        var d, date, end, _results;
+        date = moment();
+        $scope.current_date = date;
+        $scope.companies = $scope.bb.company.companies;
+        if (!$scope.companies || $scope.companies.length === 0) {
+          $scope.companies = [$scope.bb.company];
+        }
+        $scope.dates = [];
+        end = moment(date).add('days', 21);
+        $scope.end_date = end;
+        d = moment(date);
+        _results = [];
+        while (d.isBefore(end)) {
+          $scope.dates.push(d.clone());
+          _results.push(d.add('days', 1));
+        }
+        return _results;
+      };
+    })(this));
+    $scope.selectCompany = function(item) {
+      return window.location = "/view/dashboard/pick_company/" + item.id;
+    };
+    $scope.advance_date = function(num) {
+      var d, date, _results;
+      date = $scope.current_date.add('days', num);
+      $scope.end_date = moment(date).add('days', 21);
+      $scope.current_date = moment(date);
+      $scope.dates = [];
+      d = date.clone();
+      _results = [];
+      while (d.isBefore($scope.end_date)) {
+        $scope.dates.push(d.clone());
+        _results.push(d.add('days', 1));
+      }
+      return _results;
+    };
+    return $scope.$on("Refresh_Comp", function(event, message) {
+      return $scope.$apply();
+    });
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdmin.Controllers').controller('DashboardContainer', function($scope, $rootScope, $location, $modal) {
+    var ModalInstanceCtrl;
+    $scope.selectedBooking = null;
+    $scope.poppedBooking = null;
+    $scope.selectBooking = function(booking) {
+      return $scope.selectedBooking = booking;
+    };
+    $scope.popupBooking = function(booking) {
+      var modalInstance;
+      $scope.poppedBooking = booking;
+      modalInstance = $modal.open({
+        templateUrl: 'full_booking_details',
+        controller: ModalInstanceCtrl,
+        scope: $scope,
+        backdrop: true,
+        resolve: {
+          items: (function(_this) {
+            return function() {
+              return {
+                booking: booking
+              };
+            };
+          })(this)
+        }
+      });
+      return modalInstance.result.then((function(_this) {
+        return function(selectedItem) {
+          return $scope.selected = selectedItem;
+        };
+      })(this), (function(_this) {
+        return function() {
+          return console.log('Modal dismissed at: ' + new Date());
+        };
+      })(this));
+    };
+    ModalInstanceCtrl = function($scope, $modalInstance, items) {
+      angular.extend($scope, items);
+      $scope.ok = function() {
+        console.log("closeing", items, items.booking && items.booking.self ? items.booking.$update() : void 0);
+        return $modalInstance.close();
+      };
+      return $scope.cancel = function() {
+        return $modalInstance.dismiss('cancel');
+      };
+    };
+    return $scope.popupTimeAction = function(prms) {
+      var modalInstance;
+      console.log(prms);
+      return modalInstance = $modal.open({
+        templateUrl: $scope.partial_url + 'time_popup',
+        controller: ModalInstanceCtrl,
+        scope: $scope,
+        backdrop: false,
+        resolve: {
+          items: (function(_this) {
+            return function() {
+              return prms;
+            };
+          })(this)
+        }
+      });
+    };
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  angular.module('BBAdmin.Controllers').controller('DashDayList', function($scope, $rootScope, $q, AdminDayService) {
+    $scope.init = (function(_this) {
+      return function(company_id) {
+        var date, dayListDef, prms, weekListDef;
+        $scope.inline_items = "";
+        if (company_id) {
+          $scope.bb.company_id = company_id;
+        }
+        if (!$scope.current_date) {
+          $scope.current_date = moment().startOf('month');
+        }
+        date = $scope.current_date;
+        prms = {
+          date: date.format('DD-MM-YYYY'),
+          company_id: $scope.bb.company_id
+        };
+        if ($scope.service_id) {
+          prms.service_id = $scope.service_id;
+        }
+        if ($scope.end_date) {
+          prms.edate = $scope.end_date.format('DD-MM-YYYY');
+        }
+        dayListDef = $q.defer();
+        weekListDef = $q.defer();
+        $scope.dayList = dayListDef.promise;
+        $scope.weeks = weekListDef.promise;
+        prms.url = $scope.bb.api_url;
+        return AdminDayService.query(prms).then(function(days) {
+          $scope.sdays = days;
+          dayListDef.resolve();
+          if ($scope.category) {
+            return $scope.update_days();
+          }
+        });
+      };
+    })(this);
+    $scope.format_date = (function(_this) {
+      return function(fmt) {
+        return $scope.current_date.format(fmt);
+      };
+    })(this);
+    $scope.selectDay = (function(_this) {
+      return function(day, dayBlock, e) {
+        var elm, seldate, xelm;
+        if (day.spaces === 0) {
+          return false;
+        }
+        seldate = moment($scope.current_date);
+        seldate.date(day.day);
+        $scope.selected_date = seldate;
+        elm = angular.element(e.toElement);
+        elm.parent().children().removeClass("selected");
+        elm.addClass("selected");
+        xelm = $('#tl_' + $scope.bb.company_id);
+        $scope.service_id = dayBlock.service_id;
+        $scope.service = {
+          id: dayBlock.service_id,
+          name: dayBlock.name
+        };
+        $scope.selected_day = day;
+        if (xelm.length === 0) {
+          return $scope.inline_items = "/view/dash/time_small";
+        } else {
+          return xelm.scope().init(day);
+        }
+      };
+    })(this);
+    $scope.$watch('current_date', (function(_this) {
+      return function(newValue, oldValue) {
+        if (newValue && $scope.bb.company_id) {
+          return $scope.init();
+        }
+      };
+    })(this));
+    $scope.update_days = (function(_this) {
+      return function() {
+        var day, _i, _len, _ref, _results;
+        $scope.dayList = [];
+        $scope.service_id = null;
+        _ref = $scope.sdays;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          day = _ref[_i];
+          if (day.category_id === $scope.category.id) {
+            $scope.dayList.push(day);
+            _results.push($scope.service_id = day.id);
+          } else {
+            _results.push(void 0);
+          }
+        }
+        return _results;
+      };
+    })(this);
+    return $rootScope.$watch('category', (function(_this) {
+      return function(newValue, oldValue) {
+        if (newValue && $scope.sdays) {
+          return $scope.update_days();
+        }
+      };
+    })(this));
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdmin.Controllers').controller('EditBookingDetails', function($scope, $location, $rootScope) {});
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdmin').directive('bbAdminLogin', function() {
+    return {
+      restrict: 'AE',
+      replace: true,
+      scope: true,
+      controller: 'AdminLogin',
+      templateUrl: 'login.html'
+    };
+  });
+
+  angular.module('BBAdmin').controller('AdminLogin', function($scope, $rootScope, AdminLoginService, $q) {
+    $scope.login_sso = (function(_this) {
+      return function(token, route) {
+        return $rootScope.connection_started.then(function() {
+          return AdminLoginService.ssoLogin({
+            company_id: $scope.bb.company.id,
+            root: $scope.bb.api_url
+          }, {
+            token: token
+          }).then(function(user) {
+            return $scope.loggedInDef.resolve(user);
+          });
+        });
+      };
+    })(this);
+    $scope.login_with_password = (function(_this) {
+      return function(email, password) {
+        return $rootScope.connection_started.then(function() {
+          return AdminLoginService.login({
+            email: email,
+            password: password,
+            company_id: $scope.bb.company.id
+          }, {}).then(function(user) {
+            $scope.loggedInDef.resolve(user);
+            return $scope.user = user;
+          });
+        });
+      };
+    })(this);
+    return $scope.login = (function(_this) {
+      return function() {
+        $rootScope.bb || ($rootScope.bb = {});
+        if ($scope.host) {
+          $rootScope.bb.api_url = $scope.host;
+        }
+        return AdminLoginService.login({
+          email: $scope.email,
+          password: $scope.password
+        }, {}).then(function(user) {
+          console.log(user);
+          $scope.loggedInDef.resolve(user);
+          return $scope.user = user;
+        });
+      };
+    })(this);
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdmin.Controllers').controller('SelectedBookingDetails', function($scope, $location, AdminBookingService, $rootScope) {
+    return $scope.$watch('selectedBooking', (function(_this) {
+      return function(newValue, oldValue) {
+        if (newValue) {
+          $scope.booking = newValue;
+          return $scope.showItemView = "/view/dash/booking_details";
+        }
+      };
+    })(this));
+  });
+
+}).call(this);
+
+'use strict';
+
+
+function SpaceMonitorCtrl($scope,  $location) {
+  
+
+
+  $scope.$on("Add_Space", function(event, message){
+     console.log("got new space", message)
+     $scope.$apply();
+   });
+
+
+
+
+}
+
+SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
+
+(function() {
+  'use strict';
+  angular.module('BBAdmin.Controllers').controller('DashTimeList', function($scope, $rootScope, $location, $q, $element, AdminTimeService) {
+    var $loaded;
+    $loaded = null;
+    $scope.init = (function(_this) {
+      return function(day) {
+        var elem, prms, timeListDef;
+        $scope.selected_day = day;
+        elem = angular.element($element);
+        elem.attr('id', "tl_" + $scope.bb.company_id);
+        angular.element($element).show();
+        prms = {
+          company_id: $scope.bb.company_id,
+          day: day
+        };
+        if ($scope.service_id) {
+          prms.service_id = $scope.service_id;
+        }
+        timeListDef = $q.defer();
+        $scope.slots = timeListDef.promise;
+        prms.url = $scope.bb.api_url;
+        $scope.aslots = AdminTimeService.query(prms);
+        return $scope.aslots.then(function(res) {
+          var k, slot, slots, x, xres, _i, _len;
+          $scope.loaded = true;
+          slots = {};
+          for (_i = 0, _len = res.length; _i < _len; _i++) {
+            x = res[_i];
+            if (!slots[x.time]) {
+              slots[x.time] = x;
+            }
+          }
+          xres = [];
+          for (k in slots) {
+            slot = slots[k];
+            xres.push(slot);
+          }
+          return timeListDef.resolve(xres);
+        });
+      };
+    })(this);
+    if ($scope.selected_day) {
+      $scope.init($scope.selected_day);
+    }
+    $scope.format_date = (function(_this) {
+      return function(fmt) {
+        return $scope.selected_date.format(fmt);
+      };
+    })(this);
+    $scope.selectSlot = (function(_this) {
+      return function(slot, route) {
+        $scope.pickTime(slot.time);
+        $scope.pickDate($scope.selected_date);
+        return $location.path(route);
+      };
+    })(this);
+    $scope.highlighSlot = (function(_this) {
+      return function(slot) {
+        $scope.pickTime(slot.time);
+        $scope.pickDate($scope.selected_date);
+        return $scope.setCheckout(true);
+      };
+    })(this);
+    $scope.clear = (function(_this) {
+      return function() {
+        $scope.loaded = false;
+        $scope.slots = null;
+        return angular.element($element).hide();
+      };
+    })(this);
+    return $scope.popupCheckout = (function(_this) {
+      return function(slot) {
+        var dHeight, dWidth, dlg, item, k, src, url, v, wHeight, wWidth;
+        item = {
+          time: slot.time,
+          date: $scope.selected_day.date,
+          company_id: $scope.bb.company_id,
+          duration: 30,
+          service_id: $scope.service_id,
+          event_id: slot.id
+        };
+        url = "/booking/new_checkout?";
+        for (k in item) {
+          v = item[k];
+          url += k + "=" + v + "&";
+        }
+        wWidth = $(window).width();
+        dWidth = wWidth * 0.8;
+        wHeight = $(window).height();
+        dHeight = wHeight * 0.8;
+        dlg = $("#dialog-modal");
+        src = dlg.html("<iframe frameborder=0 id='mod_dlg' onload='nowait();setTimeout(set_iframe_focus, 100);' width=100% height=99% src='" + url + "'></iframe>");
+        dlg.attr("title", "Checkout");
+        return dlg.dialog({
+          my: "top",
+          at: "top",
+          height: dHeight,
+          width: dWidth,
+          modal: true,
+          overlay: {
+            opacity: 0.1,
+            background: "black"
+          }
+        });
+      };
+    })(this);
+  });
+
+
+  /*
+    var sprice = "&price=" + price;
+    var slen = "&len=" + len
+    var sid = "&event_id=" + id
+    var str = pop_click_str + sid + slen + sprice + "&width=800"; // + "&style=wide";
+  = "/booking/new_checkout?" + siarray + sjd + sitime ;
+  
+  function show_IFrame(myUrl, options, width, height){
+    if (!height) height = 500;
+    if (!width) width = 790;
+    opts = Object.extend({className: "white", pctHeight:1, width:width+20,top:'5%', height:'90%',closable:true, recenterAuto:false}, options || {});
+    x = Dialog.info("", opts);
+      x.setHTMLContent("<iframe frameborder=0 id='mod_dlg' onload='nowait();setTimeout(set_iframe_focus, 100);' width=" + width + " height=96%" + " src='" + myUrl + "'></iframe>");
+    x.element.setStyle({top:'5%'});
+    x.element.setStyle({height:'90%'});
+  }
+   */
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdmin.Controllers').controller('TimeOptions', function($scope, $location, $rootScope, AdminResourceService, AdminPersonService) {
+    AdminResourceService.query({
+      company: $scope.bb.company
+    }).then(function(resources) {
+      return $scope.resources = resources;
+    });
+    AdminPersonService.query({
+      company: $scope.bb.company
+    }).then(function(people) {
+      return $scope.people = people;
+    });
+    return $scope.block = function() {
+      if ($scope.person) {
+        AdminPersonService.block($scope.bb.company, $scope.person, {
+          start_time: $scope.start_time,
+          end_time: $scope.end_time
+        });
+      }
+      return $scope.ok();
+    };
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var bbAdminFilters;
+
+  bbAdminFilters = angular.module('BBAdmin.Filters', []);
+
+  bbAdminFilters.filter('rag', function() {
+    return function(value, v1, v2) {
+      if (value <= v1) {
+        return "red";
+      } else if (value <= v2) {
+        return "amber";
+      } else {
+        return "green";
+      }
+    };
+  });
+
+  bbAdminFilters.filter('time', function($window) {
+    return function(v) {
+      return $window.sprintf("%02d:%02d", Math.floor(v / 60), v % 60);
+    };
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  angular.module('BB.Models').factory("Admin.BookingModel", function($q, BBModel, BaseModel) {
+    var Admin_Booking;
+    return Admin_Booking = (function(_super) {
+      __extends(Admin_Booking, _super);
+
+      function Admin_Booking(data) {
+        Admin_Booking.__super__.constructor.apply(this, arguments);
+        this.datetime = moment(this.datetime);
+        this.start = this.datetime;
+        this.end = this.datetime.clone().add('minutes', this.duration);
+        this.title = this.full_describe;
+        this.allDay = false;
+        if (this.status === 3) {
+          this.className = "status_blocked";
+        } else if (this.status === 4) {
+          this.className = "status_booked";
+        }
+      }
+
+      Admin_Booking.prototype.getPostData = function() {
+        var data;
+        data = {};
+        data.date = this.start.format("YYYY-MM-DD");
+        data.time = this.start.hour() * 60 + this.start.minute();
+        data.duration = this.duration;
+        data.id = this.id;
+        return data;
+      };
+
+      Admin_Booking.prototype.$update = function() {
+        var data;
+        data = this.getPostData();
+        return this.$put('self', {}, data).then((function(_this) {
+          return function(res) {
+            _this.constructor(res);
+            return console.log(_this);
+          };
+        })(this));
+      };
+
+      return Admin_Booking;
+
+    })(BaseModel);
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  angular.module('BB.Models').factory("Admin.SlotModel", function($q, BBModel, BaseModel, TimeSlotModel) {
+    var Admin_Slot;
+    return Admin_Slot = (function(_super) {
+      __extends(Admin_Slot, _super);
+
+      function Admin_Slot(data) {
+        Admin_Slot.__super__.constructor.call(this, data);
+        this.title = this.full_describe;
+        if (this.status === 0) {
+          this.title = "Available";
+        }
+        this.datetime = moment(this.datetime);
+        this.start = this.datetime;
+        this.end = this.datetime.clone().add('minutes', this.duration);
+        this.allDay = false;
+        if (this.status === 3) {
+          this.className = "status_blocked";
+        } else if (this.status === 4) {
+          this.className = "status_booked";
+        } else if (this.status === 0) {
+          this.className = "status_available";
+        }
+      }
+
+      return Admin_Slot;
+
+    })(TimeSlotModel);
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdmin.Services').factory('AdminBookingService', function($q, $window, halClient, BookingCollections, BBModel) {
+    return {
+      query: function(prms) {
+        var deferred, href, uri, url;
+        if (prms.slot) {
+          prms.slot_id = prms.slot.id;
+        }
+        url = "";
+        if (prms.url) {
+          url = prms.url;
+        }
+        href = url + "/api/v1/admin/{company_id}/bookings{?slot_id,start_date,end_date,service_id,resource_id,person_id,page,per_page,include_cancelled}";
+        uri = new $window.UriTemplate.parse(href).expand(prms || {});
+        deferred = $q.defer();
+        halClient.$get(uri, {}).then((function(_this) {
+          return function(found) {
+            return found.$get('bookings').then(function(items) {
+              var item, sitems, spaces, _i, _len;
+              sitems = [];
+              for (_i = 0, _len = items.length; _i < _len; _i++) {
+                item = items[_i];
+                sitems.push(new BBModel.Admin.Booking(item));
+              }
+              spaces = new $window.Collection.Booking(found, sitems, prms);
+              BookingCollections.add(spaces);
+              return deferred.resolve(spaces);
+            });
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            return deferred.reject(err);
+          };
+        })(this));
+        return deferred.promise;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdmin.Services').factory('AdminCompanyService', function($q, BBModel, AdminLoginService, $rootScope) {
+    return {
+      query: function(params) {
+        var defer, login_form, options, _base, _base1;
+        defer = $q.defer();
+        $rootScope.bb || ($rootScope.bb = {});
+        (_base = $rootScope.bb).api_url || (_base.api_url = params.apiUrl);
+        (_base1 = $rootScope.bb).api_url || (_base1.api_url = "http://www.bookingbug.com");
+        login_form = {
+          email: params.adminEmail,
+          password: params.adminPassword
+        };
+        options = {
+          company_id: params.companyId
+        };
+        AdminLoginService.login(login_form, options).then(function(user) {
+          return user.$get('company').then(function(company) {
+            return defer.resolve(company);
+          }, function(err) {
+            return defer.reject(err);
+          });
+        }, function(err) {
+          return defer.reject(err);
+        });
+        return defer.promise;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdmin.Services').factory('AdminDayService', function($q, $window, halClient, BBModel) {
+    return {
+      query: function(prms) {
+        var deferred, href, uri, url;
+        url = "";
+        if (prms.url) {
+          url = prms.url;
+        }
+        href = url + "/api/v1/{company_id}/day_data{?month,week,date,edate,event_id,service_id}";
+        uri = new $window.UriTemplate.parse(href).expand(prms || {});
+        deferred = $q.defer();
+        halClient.$get(uri, {}).then((function(_this) {
+          return function(found) {
+            var item, mdays, _i, _len, _ref;
+            if (found.items) {
+              mdays = [];
+              _ref = found.items;
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                item = _ref[_i];
+                halClient.$get(item.uri).then(function(data) {
+                  var days, dcol, i, _j, _len1, _ref1;
+                  days = [];
+                  _ref1 = data.days;
+                  for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+                    i = _ref1[_j];
+                    if (i.type === prms.item) {
+                      days.push(new BBModel.Day(i));
+                    }
+                  }
+                  dcol = new $window.Collection.Day(data, days, {});
+                  return mdays.push(dcol);
+                });
+              }
+              return deferred.resolve(mdays);
+            }
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            return deferred.reject(err);
+          };
+        })(this));
+        return deferred.promise;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdmin.Services').factory("AdminLoginService", function($q, halClient, $rootScope, BBModel) {
+    return {
+      login: function(form, options) {
+        var deferred, url;
+        deferred = $q.defer();
+        url = "" + $rootScope.bb.api_url + "/api/v1/login/admin";
+        if (options.company_id) {
+          url = "" + $rootScope.bb.api_url + "/api/v1/login/admin/" + options.company_id;
+        }
+        halClient.$post(url, options, form).then((function(_this) {
+          return function(login) {
+            var login_model;
+            if (login.$has('administrator')) {
+              return login.$get('administrator').then(function(user) {
+                user = _this.setLogin(user);
+                return deferred.resolve(user);
+              });
+            } else if (login.$has('administrators')) {
+              login_model = new BBModel.Admin.Login(login);
+              return deferred.resolve(login_model);
+            } else {
+              return deferred.reject("No admin account for login");
+            }
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            var login, login_model;
+            if (err.status === 400) {
+              login = halClient.$parse(err.data);
+              if (login.$has('administrators')) {
+                login_model = new BBModel.Admin.Login(login);
+                return deferred.resolve(login_model);
+              } else {
+                return deferred.reject(err);
+              }
+            } else {
+              return deferred.reject(err);
+            }
+          };
+        })(this));
+        return deferred.promise;
+      },
+      ssoLogin: function(options, data) {
+        var deferred, url;
+        deferred = $q.defer();
+        url = $rootScope.bb.api_url + "/api/v1/login/sso/" + options['company_id'];
+        halClient.$post(url, {}, data).then((function(_this) {
+          return function(login) {
+            var login_model;
+            if (login.$has('administrator')) {
+              return login.$get('administrator').then(function(user) {
+                user = _this.setLogin(user);
+                return deferred.resolve(user);
+              });
+            } else if (login.$has('administrators')) {
+              login_model = new BBModel.Admin.Login(login);
+              return deferred.resolve(login_model);
+            } else {
+              return deferred.reject("No admin account for login");
+            }
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            var login, login_model;
+            if (err.status === 400) {
+              login = halClient.$parse(err.data);
+              if (login.$has('administrators')) {
+                login_model = new BBModel.Admin.Login(login);
+                return deferred.resolve(login_model);
+              } else {
+                return deferred.reject(err);
+              }
+            } else {
+              return deferred.reject(err);
+            }
+          };
+        })(this));
+        return deferred.promise;
+      },
+      isLoggedIn: function() {
+        this.checkLogin();
+        if ($rootScope.user) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      setLogin: function(user) {
+        var auth_token;
+        auth_token = user.getOption('auth_token');
+        user = new BBModel.Admin.User(user);
+        sessionStorage.setItem("user", user.$toStore());
+        sessionStorage.setItem("auth_token", auth_token);
+        $rootScope.user = user;
+        return user;
+      },
+      user: function() {
+        this.checkLogin();
+        return $rootScope.user;
+      },
+      checkLogin: function() {
+        var user;
+        if ($rootScope.user) {
+          return;
+        }
+        user = sessionStorage.getItem("user");
+        if (user) {
+          return $rootScope.user = halClient.createResource(user);
+        }
+      },
+      logout: function() {
+        $rootScope.user = null;
+        sessionStorage.removeItem("user");
+        return sessionStorage.removeItem("auth_token");
+      },
+      getLogin: function(options) {
+        var defer, url;
+        defer = $q.defer();
+        url = "" + $rootScope.bb.api_url + "/api/v1/login/admin/" + options.company_id;
+        halClient.$get(url, options).then((function(_this) {
+          return function(login) {
+            if (login.$has('administrator')) {
+              return login.$get('administrator').then(function(user) {
+                user = _this.setLogin(user);
+                return defer.resolve(user);
+              }, function(err) {
+                return defer.reject(err);
+              });
+            } else {
+              return defer.reject();
+            }
+          };
+        })(this), function(err) {
+          return defer.reject(err);
+        });
+        return defer.promise;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdmin.Services').factory('AdminSlotService', function($q, $window, halClient, SlotCollections, BBModel) {
+    return {
+      query: function(prms) {
+        var deferred, existing, href, uri, url;
+        deferred = $q.defer();
+        existing = SlotCollections.find(prms);
+        if (existing) {
+          deferred.resolve(existing);
+        } else {
+          url = "";
+          if (prms.url) {
+            url = prms.url;
+          }
+          href = url + "/api/v1/admin/{company_id}/slots{?start_date,end_date,service_id,resource_id,person_id,page,per_page}";
+          uri = new $window.UriTemplate.parse(href).expand(prms || {});
+          halClient.$get(uri, {}).then((function(_this) {
+            return function(found) {
+              return found.$get('slots').then(function(items) {
+                var item, sitems, slots, _i, _len;
+                sitems = [];
+                for (_i = 0, _len = items.length; _i < _len; _i++) {
+                  item = items[_i];
+                  sitems.push(new BBModel.Admin.Slot(item));
+                }
+                slots = new $window.Collection.Slot(found, sitems, prms);
+                SlotCollections.add(slots);
+                return deferred.resolve(slots);
+              });
+            };
+          })(this), (function(_this) {
+            return function(err) {
+              return deferred.reject(err);
+            };
+          })(this));
+        }
+        return deferred.promise;
+      },
+      create: function(prms, data) {
+        var deferred, href, uri, url;
+        url = "";
+        if (prms.url) {
+          url = prms.url;
+        }
+        href = url + "/api/v1/admin/{company_id}/slots";
+        uri = new $window.UriTemplate.parse(href).expand(prms || {});
+        deferred = $q.defer();
+        halClient.$post(uri, {}, data).then((function(_this) {
+          return function(slot) {
+            slot = new BBModel.Admin.Slot(slot);
+            SlotCollections.checkItems(slot);
+            return deferred.resolve(slot);
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            return deferred.reject(err);
+          };
+        })(this));
+        return deferred.promise;
+      },
+      "delete": function(item) {
+        var deferred;
+        deferred = $q.defer();
+        item.$del('self').then((function(_this) {
+          return function(slot) {
+            slot = new BBModel.Admin.Slot(slot);
+            SlotCollections.deleteItems(slot);
+            return deferred.resolve(slot);
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            return deferred.reject(err);
+          };
+        })(this));
+        return deferred.promise;
+      },
+      update: function(item, data) {
+        var deferred;
+        deferred = $q.defer();
+        item.$put('self', {}, data).then((function(_this) {
+          return function(slot) {
+            slot = new BBModel.Admin.Slot(slot);
+            SlotCollections.checkItems(slot);
+            return deferred.resolve(slot);
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            return deferred.reject(err);
+          };
+        })(this));
+        return deferred.promise;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdmin.Services').factory('AdminTimeService', function($q, $window, halClient, BBModel) {
+    return {
+      query: function(prms) {
+        var deferred, href, uri, url;
+        if (prms.day) {
+          prms.date = prms.day.date;
+        }
+        url = "";
+        if (prms.url) {
+          url = prms.url;
+        }
+        href = url + "/api/v1/{company_id}/time_data{?date,event_id,service_id}";
+        uri = new $window.UriTemplate.parse(href).expand(prms || {});
+        deferred = $q.defer();
+        halClient.$get(uri, {}).then((function(_this) {
+          return function(found) {
+            var afound, i, times, ts, _i, _j, _len, _len1, _ref, _ref1;
+            times = [];
+            _ref = found.times;
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              afound = _ref[_i];
+              _ref1 = afound.data;
+              for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+                i = _ref1[_j];
+                ts = new BBModel.TimeSlot(i);
+                ts.id = afound.id;
+                times.push(ts);
+              }
+            }
+            return deferred.resolve(times);
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            return deferred.reject(err);
+          };
+        })(this));
         return deferred.promise;
       }
     };
@@ -109022,11 +109342,7 @@ SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
 
 }).call(this);
 
-angular.module("BB").run(["$templateCache", function($templateCache) {$templateCache.put("admin_form.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"administrator_form\" ng-submit=\"submit(administrator_form)\">\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\"\n    sf-model=\"admin\">\n  </div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\n  </div>\n</form>\n");
-$templateCache.put("admin_table_main.html","<button class=\"btn btn-default\" ng-click=\"newAdministrator()\">New Administrator</button>\n<table tr-ng-grid=\"\" items=\"administrators\">\n   <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"edit(gridDisplayItem.id)\">\n            Edit\n        </button>\n      </td>\n    </tr>\n  </tbody>\n</table>\n");
-$templateCache.put("main.html","<button class=\"btn btn-default\" ng-click=\"newPerson()\">New Person</button>\n<table tr-ng-grid=\"\" items=\"people\">\n   <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"delete(gridDisplayItem.id)\">\n            Delete\n        </button>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"edit(gridDisplayItem.id)\">\n            Edit\n        </button>\n      </td>\n    </tr>\n  </tbody>\n</table>\n");
-$templateCache.put("person_form.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"person_form\" ng-submit=\"submit(person_form)\">\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"person\">\n  </div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\n  </div>\n</form>\n");
-$templateCache.put("person_table_main.html","<button class=\"btn btn-default\" ng-click=\"newPerson()\">New Person</button>\n<table tr-ng-grid=\"\" items=\"people\">\n   <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"delete(gridDisplayItem.id)\">\n            Delete\n        </button>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"edit(gridDisplayItem.id)\">\n            Edit\n        </button>\n      </td>\n    </tr>\n  </tbody>\n</table>\n");
+angular.module("BB").run(["$templateCache", function($templateCache) {$templateCache.put("modal_form.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"modal_form\" ng-submit=\"submit(modal_form)\">\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\"\n    sf-model=\"form_model\">\n  </div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\n  </div>\n</form>\n");
 $templateCache.put("edit_booking_modal_form.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"booking_form\" ng-submit=\"submit(booking)\">\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"booking\">\n    <ul>\n      <li>{{model.full_describe}}</li>\n      <li>{{model.person_name}}</li>\n      <li>{{model.describe}}</li>\n    </ul>\n  </div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Dismiss</button>\n  </div>\n</form>\n");
 $templateCache.put("login.html","<form name=\"login_form\" ng-submit=\"submit()\" class=\"form-horizontal\"\n  role=\"form\">\n  <div class=\"alert alert-danger\" role=\"alert\" ng-if=\"alert && alert.length > 0\">{{alert}}</div>\n  <div ng-class=\"{\'form-group\': true, \'has-error\': emailIsInvalid()}\">\n    <label for=\"email\" class=\"col-sm-2 control-label\">Email</label>\n    <div class=\"col-sm-10\">\n      <input type=\"email\" ng-model=\"email\" name=\"email\" class=\"form-control\"\n        id=\"email\" placeholder=\"Email\" required autofocus>\n    </div>\n  </div>\n  <div ng-class=\"{\'form-group\': true, \'has-error\': passwordIsInvalid()}\">\n    <label for=\"password\" class=\"col-sm-2 control-label\">Password</label>\n    <div class=\"col-sm-10\">\n      <input type=\"password\" ng-model=\"password\" name=\"password\"\n        class=\"form-control\" id=\"password\" placeholder=\"Password\" required>\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <div class=\"col-sm-offset-2 col-sm-10\">\n      <button type=\"submit\" class=\"btn btn-primary\">Log In</button>\n    </div>\n  </div>\n</form>\n");
 $templateCache.put("login_modal_form.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"login_form\" ng-submit=\"submit(login_form)\">\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\"\n    sf-model=\"login_form\">\n  </div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Dismiss</button>\n  </div>\n</form>\n");
@@ -109045,4 +109361,15 @@ $templateCache.put("day.html","<div bb-month-availability ng-init=\"checkStepTit
 $templateCache.put("loader.html","<div class=\'bb-loader\' ng-hide=\'scopeLoaded\'>\n  <div id=\'loading_icon\'>\n    <div id=\'wait_graphic\'>&nbsp;</div>\n  </div>\n</div>");
 $templateCache.put("main.html","<div bb-breadcrumb></div>\n<div ng-show=\"loading\"><img src=\'/BB_wait.gif\' class=\"loader\"></div>\n<div ng-hide=\"loading\"><div bb-content-new></div></div>\n");
 $templateCache.put("service_list.html","<div bb-services ng-init=\"checkStepTitle(\'Select a service\')\"\n  id=\"service_list_page\" class=\"bb_wrap\">\n\n  <div class=\"bb-services bb-list\">\n    <div class=\"bb-list-item container\">\n      <div class=\"bb-item\" ng-click=\"selectItem(item)\" ng-repeat=\"item in items\">\n        <div class=\"bb-desc form-control\">\n          <div class=\"bb-txt col-sm-10\">\n            <h5>{{item.name}}</h5>\n            <small>{{item.description}}</small>\n          </div> \n          <div class=\"bb-price col-sm-2 btn-default\">\n            <span ng-show=\"item.price > 0\">{{item.price | currency:\"GBP\"}}</span>\n            <span ng-show=\"item.price == 0\">Free</span>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n  \n</div>\n");
-$templateCache.put("time.html","<div bb-times ng-init=\"checkStepTitle(\'Select a time\')\" id=\"time_page\">\n\n  <div class=\"bb-navigation container\">\n    <div class=\"bb-nav text-center\">\n      <button type=\"button\" class=\"bb-btn-prev btn btn-primary pull-left\" ng-click=\"subtract(\'days\',1)\">Previous Day</button>\n      <span class=\"bb-date\">{{format_date(\'Do MMM YYYY\')}}</span>\n      <button type=\"button\" class=\"bb-btn-next btn btn-primary pull-right\" ng-click=\"add(\'days\',1)\">Next Day</button>\n    </div>\n  </div>\n\n  <div>\n    <div ng-hide=\"slots\">\n      <span class=\"no_value\">No available times</span>\n    </div>\n    <div class=\"bb-times container\">\n      <div class=\"bb-time panel panel-default\">\n        <div class=\"clearfix\">\n          <div class=\"time-slot col-sm-2\" ng-repeat=\"slot in slots\">\n            <button type=\"button\" class=\"btn btn-default btn-block\" ng-click=\"selectSlot(slot)\">{{slot.print_time()}}</button>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n\n</div>\n");}]);
+$templateCache.put("time.html","<div bb-times ng-init=\"checkStepTitle(\'Select a time\')\" id=\"time_page\">\n\n  <div class=\"bb-navigation container\">\n    <div class=\"bb-nav text-center\">\n      <button type=\"button\" class=\"bb-btn-prev btn btn-primary pull-left\" ng-click=\"subtract(\'days\',1)\">Previous Day</button>\n      <span class=\"bb-date\">{{format_date(\'Do MMM YYYY\')}}</span>\n      <button type=\"button\" class=\"bb-btn-next btn btn-primary pull-right\" ng-click=\"add(\'days\',1)\">Next Day</button>\n    </div>\n  </div>\n\n  <div>\n    <div ng-hide=\"slots\">\n      <span class=\"no_value\">No available times</span>\n    </div>\n    <div class=\"bb-times container\">\n      <div class=\"bb-time panel panel-default\">\n        <div class=\"clearfix\">\n          <div class=\"time-slot col-sm-2\" ng-repeat=\"slot in slots\">\n            <button type=\"button\" class=\"btn btn-default btn-block\" ng-click=\"selectSlot(slot)\">{{slot.print_time()}}</button>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n\n</div>\n");
+$templateCache.put("login.html","<form name=\"login_form\" ng-submit=\"login()\" class=\"form-horizontal\"\n  role=\"form\">\n  <div class=\"alert alert-danger\" role=\"alert\" ng-if=\"alert && alert.length > 0\">{{alert}}</div>\n\n  <div ng-class=\"{\'form-group\': true}\">\n    <label for=\"host\" class=\"col-sm-2 control-label\">Host</label>\n    <div class=\"col-sm-10\">\n      <input type=\"host\" ng-model=\"host\" name=\"host\" class=\"form-control\"\n        id=\"host\" placeholder=\"Host\" required autofocus>\n    </div>\n  </div>\n\n\n  <div ng-class=\"{\'form-group\': true, \'has-error\': emailIsInvalid()}\">\n    <label for=\"email\" class=\"col-sm-2 control-label\">Email</label>\n    <div class=\"col-sm-10\">\n      <input type=\"email\" ng-model=\"email\" name=\"email\" class=\"form-control\"\n        id=\"email\" placeholder=\"Email\" required autofocus>\n    </div>\n  </div>\n\n  <div ng-class=\"{\'form-group\': true, \'has-error\': passwordIsInvalid()}\">\n    <label for=\"password\" class=\"col-sm-2 control-label\">Password</label>\n    <div class=\"col-sm-10\">\n      <input type=\"password\" ng-model=\"password\" name=\"password\"\n        class=\"form-control\" id=\"password\" placeholder=\"Password\" required>\n    </div>\n  </div>\n\n  <div class=\"form-group\">\n    <div class=\"col-sm-offset-2 col-sm-10\">\n      <button type=\"submit\" class=\"btn btn-primary\">Log In</button>\n    </div>\n  </div>\n</form>\n");
+$templateCache.put("main.html","<button class=\"btn btn-default\" ng-click=\"newPerson()\">New Person</button>\n<table tr-ng-grid=\"\" items=\"people\">\n   <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"delete(gridDisplayItem.id)\">\n            Delete\n        </button>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"edit(gridDisplayItem.id)\">\n            Edit\n        </button>\n      </td>\n    </tr>\n  </tbody>\n</table>\n");
+$templateCache.put("person_form.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"person_form\" ng-submit=\"submit(person_form)\">\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"person\">\n  </div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\n  </div>\n</form>\n");
+$templateCache.put("person_table_main.html","<button class=\"btn btn-default\" ng-click=\"newPerson()\">New Person</button>\n<table tr-ng-grid=\"\" items=\"people\">\n   <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"delete(gridDisplayItem.id)\">\n            Delete\n        </button>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"edit(gridDisplayItem.id)\">\n            Edit\n        </button>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"schedule(gridDisplayItem.id)\">\n            Schedule\n        </button>\n      </td>\n    </tr>\n  </tbody>\n</table>\n");
+$templateCache.put("main.html","<button class=\"btn btn-default\" ng-click=\"newResource()\">New Resource</button>\n<table tr-ng-grid=\"\" items=\"resources\">\n   <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"delete(gridDisplayItem.id)\">\n            Delete\n        </button>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"edit(gridDisplayItem.id)\">\n            Edit\n        </button>\n      </td>\n    </tr>\n  </tbody>\n</table>");
+$templateCache.put("resource_form.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"resource_form\" ng-submit=\"submit(resource_form)\">\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"resource\">\n  </div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\n  </div>\n</form>\n");
+$templateCache.put("resource_table_main.html","<button class=\"btn btn-default\" ng-click=\"newResource()\">New Resource</button>\n<table tr-ng-grid=\"\" items=\"resources\">\n   <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"delete(gridDisplayItem.id)\">\n            Delete\n        </button>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"edit(gridDisplayItem.id)\">\n            Edit\n        </button>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"schedule(gridDisplayItem.id)\">\n            Schedule\n        </button>\n      </td>\n    </tr>\n  </tbody>\n</table>");
+$templateCache.put("main.html","<button class=\"btn btn-default\" ng-click=\"newPerson()\">New Schedule</button>\n<table tr-ng-grid=\"\" items=\"people\">\n   <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"delete(gridDisplayItem.id)\">\n            Delete\n        </button>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"edit(gridDisplayItem.id)\">\n            Edit\n        </button>\n      </td>\n    </tr>\n  </tbody>\n</table>\n");
+$templateCache.put("schedule_table_main.html","<button class=\"btn btn-default\" ng-click=\"newSchedule()\">New Schedule</button>\n<table tr-ng-grid=\"\" items=\"schedules\">\n   <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"delete(gridDisplayItem.id)\">\n            Delete\n        </button>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"edit(gridDisplayItem.id)\">\n            Edit\n        </button>\n      </td>\n    </tr>\n  </tbody>\n</table>\n");
+$templateCache.put("admin_form.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"administrator_form\" ng-submit=\"submit(administrator_form)\">\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\"\n    sf-model=\"admin\">\n  </div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\n  </div>\n</form>\n");
+$templateCache.put("admin_table_main.html","<button class=\"btn btn-default\" ng-click=\"newAdministrator()\">New Administrator</button>\n<table tr-ng-grid=\"\" items=\"administrators\">\n   <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"edit(gridDisplayItem.id)\">\n            Edit\n        </button>\n      </td>\n    </tr>\n  </tbody>\n</table>\n");}]);

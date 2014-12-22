@@ -1,6 +1,6 @@
 
 
-angular.module('BBAdmin.Services').factory 'AdminResourceService',
+angular.module('BBAdminServices').factory 'AdminResourceService',
 ($q, $window, halClient, SlotCollections, BBModel) ->
 
   query: (prms) ->

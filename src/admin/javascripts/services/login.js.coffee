@@ -3,7 +3,9 @@ angular.module('BBAdmin.Services').factory "AdminLoginService", ($q, halClient, 
  
   login: (form, options) ->
     deferred = $q.defer()
-    url = "#{$rootScope.bb.api_url}/api/v1/login/admin/#{options.company_id}"
+    url = "#{$rootScope.bb.api_url}/api/v1/login/admin"
+    if options.company_id
+      url = "#{$rootScope.bb.api_url}/api/v1/login/admin/#{options.company_id}"
     halClient.$post(url, options, form).then (login) =>
       if login.$has('administrator')
         login.$get('administrator').then (user) =>
