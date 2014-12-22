@@ -25,6 +25,10 @@ angular.module('BBAdmin').controller 'AdminLogin', ($scope,  $rootScope, AdminLo
     if $scope.host
       $rootScope.bb.api_url = $scope.host
     AdminLoginService.login({email: $scope.email, password: $scope.password}, {}).then (user) =>
-      console.log user
-      $scope.loggedInDef.resolve(user)
       $scope.user = user
+      if user.$has('administrators')
+        user.$get('administrators').then (admins) =>
+          $scope.administrators = admins
+
+  $scope.pickAdmin = (admin) =>
+    LoginService.setLogin(admin)
