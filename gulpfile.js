@@ -14,6 +14,7 @@ var gulp = require('gulp');
     merge = require('merge-stream');
     mainBowerFiles = require('main-bower-files');
     streamqueue = require('streamqueue');
+    uglify = require('gulp-uglify');
 
 gulp.task('clean', function(cb) {
   del(['release'], cb);
@@ -49,6 +50,7 @@ gulp.task('javascripts', function() {
     .pipe(templateCache({module: 'BB'}))
   streamqueue({objectMode: true}, javascripts, templates)
     .pipe(concat('bookingbug-angular.js'))
+    .pipe(uglify({mangle: false}))
     .pipe(gulp.dest('release'));
 });
 
