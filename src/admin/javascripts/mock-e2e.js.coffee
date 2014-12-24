@@ -50,6 +50,10 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
          href: 'http://www.bookingbug.com/api/v1/admin/123/administrators'
        new_administrator:
          href: 'http://www.bookingbug.com/api/v1/admin/123/administrators/new'
+       services:
+         href: 'http://www.bookingbug.com/api/v1/admin/123/services'
+       new_service:
+         href: 'http://www.bookingbug.com/api/v1/admin/123/services/new'
    $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/company').respond(company)
 
    people =
@@ -142,6 +146,105 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
      console.log url
      console.log data
      [200, people.concat([data]), {}]
+
+# Services
+
+    services =
+     total_entries: 3
+     _embedded:
+       services: [
+         {
+           id: 1
+           name: "Data analysis"
+           type: "service"
+           deleted: false
+           disabled: false
+           company_id: 123
+           _links:
+             self:
+               href: "http://www.bookingbug.com/api/v1/admin/123/services/1"
+             edit:
+               href: 'http://www.bookingbug.com/api/v1/admin/123/services/1/edit'
+               templated: true
+             items:
+               href: "http://www.bookingbug.com/api/v1/123/items?service_id=1"
+           _embedded: {}
+         }
+         {
+           id: 2
+           name: "Personal consultation"
+           type: "service"
+           deleted: false
+           disabled: false
+           company_id: 123
+           _links:
+             self:
+               href: "http://www.bookingbug.com/api/v1/admin/123/services/2"
+             edit:
+               href: 'http://www.bookingbug.com/api/v1/admin/123/services/2/edit'
+               templated: true
+             items:
+               href: "http://www.bookingbug.com/api/v1/123/items?service_id=2"
+           _embedded: {}
+         }
+         {
+           id: 3
+           name: "Marketing strategy"
+           type: "service"
+           deleted: false
+           disabled: false
+           company_id: 123
+           _links:
+             self:
+               href: "http://www.bookingbug.com/api/v1/admin/123/services/3"
+             edit:
+               href: 'http://www.bookingbug.com/api/v1/admin/123/services/3/edit'
+               templated: true
+             items:
+               href: "http://www.bookingbug.com/api/v1/123/items?service_id=3"
+           _embedded: {}
+         }
+       ]
+     _links:
+       self:
+         href: "http://www.bookingbug.com/api/v1/admin/123/services"
+       new:
+         href: "http://www.bookingbug.com/api/v1/admin/123/services/new{?signup}"
+         templated: true
+   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/services').respond(services)
+
+   service_schema =
+     form: [
+       {'key':'name', type:'text', feedback:false},
+       {type:'submit', title:'Save'}
+     ]
+     schema:
+       properties:
+         name:
+           title: 'Name *'
+           type: 'String'
+       required: ['name']
+       title: 'Service'
+       type: 'object'
+   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/services/new').respond () ->
+     [200, service_schema, {}]
+
+
+   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/services/1/edit').respond () ->
+     [200, service_schema, {}]
+   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/services/2/edit').respond () ->
+     [200, service_schema, {}]
+   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/services/3/edit').respond () ->
+     [200, service_schema, {}]
+
+   $httpBackend.whenPOST('http://www.bookingbug.com/api/v1/admin/123/services').respond (method, url, data) ->
+     console.log 'post service'
+     console.log method
+     console.log url
+     console.log data
+     [200, services.concat([data]), {}]
+
+# Administrators
 
    administrators =
      _embedded:
