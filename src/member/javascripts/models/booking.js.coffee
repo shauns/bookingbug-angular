@@ -37,7 +37,7 @@ angular.module('BB.Models').factory "Member.BookingModel", ($q, $window, BBModel
 
 
     getAnswers: () ->
-      defer = new $bbug.Deferred()
+      defer = $q.defer()
       defer.resolve(@answers) if @answers
       if @_data.$has('answers')
         @_data.$get('answers').then (answers) =>
@@ -45,7 +45,7 @@ angular.module('BB.Models').factory "Member.BookingModel", ($q, $window, BBModel
           defer.resolve(@answers)
       else
         defer.resolve([])
-      defer.promise()
+      defer.promise
 
 
     printed_price: () ->
