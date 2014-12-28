@@ -7,7 +7,7 @@ angular.module('BB.Models').factory "AnswerModel", ($q, BBModel, BaseModel, $bbu
       super(data)
 
     getQuestion: () ->
-      defer = new $bbug.Deferred()
+      defer = $q.defer()
       defer.resolve(@question) if @question
       if @_data.$has('question')
         @_data.$get('question').then (question) =>
@@ -15,5 +15,5 @@ angular.module('BB.Models').factory "AnswerModel", ($q, BBModel, BaseModel, $bbu
           defer.resolve(@question)
       else
         defer.resolve([])
-      defer.promise()
+      defer.promise
 

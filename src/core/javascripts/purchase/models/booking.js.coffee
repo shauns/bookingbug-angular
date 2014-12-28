@@ -40,7 +40,7 @@ angular.module('BB.Models').factory "Purchase.BookingModel", ($q, $window, BBMod
 
 
     getAnswersPromise: () =>
-      defer = $bbug.Deferred()
+      defer = $q.defer()
       defer.resolve(@answers) if @answers
       if @_data.$has('answers')
         @_data.$get('answers').then (answers) =>
@@ -48,10 +48,10 @@ angular.module('BB.Models').factory "Purchase.BookingModel", ($q, $window, BBMod
           defer.resolve(@answers)
       else
         defer.resolve([])
-      defer.promise()
+      defer.promise
 
     getSurveyAnswersPromise: () =>
-      defer = $bbug.Deferred()
+      defer = $q.defer()
       defer.resolve(@survey_answers) if @survey_answers
       if @_data.$has('survey_answers')
         @_data.$get('survey_answers').then (survey_answers) =>
@@ -59,7 +59,7 @@ angular.module('BB.Models').factory "Purchase.BookingModel", ($q, $window, BBMod
           defer.resolve(@survey_answers)
       else
         defer.resolve([])
-      defer.promise()
+      defer.promise
 
 
     getPostData: () ->

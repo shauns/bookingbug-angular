@@ -1,7 +1,6 @@
 'use strict';
 
-angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window,
-    BBModel, BaseModel, $sce) ->
+angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window, BBModel, BaseModel, $sce) ->
 
 
   class Purchase_Total extends BaseModel
@@ -109,7 +108,7 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window,
       else
         defer.reject('no messages')
       defer.promise
-
+      
     printed_total_price: () ->
       return "£" + parseInt(@total_price) if parseFloat(@total_price) % 1 == 0
       return $window.sprintf("£%.2f", parseFloat(@total_price))
@@ -117,3 +116,10 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window,
     newPaymentUrl: () ->
       if @_data.$has('new_payment')
         $sce.trustAsResourceUrl(@_data.$href('new_payment'))
+
+    totalDuration: () ->
+      duration = 0
+      for item in @items
+        duration =+ item.duration if item.duration
+      duration /= 60
+      return duration

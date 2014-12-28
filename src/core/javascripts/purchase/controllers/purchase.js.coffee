@@ -13,7 +13,7 @@ angular.module('BB.Directives').directive 'bbPurchase', () ->
 angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope,
     CompanyService, PurchaseService, ClientService, $modal, $location, $timeout,
     BBWidget, BBModel, $q, QueryStringService, SSOService, AlertService,
-    LoginService, $window, $upload, ServiceService) ->
+    LoginService, $window, $upload, ServiceService, $sessionStorage) ->
 
   $scope.controller = "Purchase"
 
@@ -65,7 +65,7 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope,
             CompanyService.query(company_id, {}).then (company) ->
               setPurchaseCompany(company)
           params = {purchase_id: id, url_root: $scope.bb.api_url}
-          auth_token = sessionStorage.getItem('auth_token')
+          auth_token = $sessionStorage.getItem('auth_token')
           params.auth_token = auth_token if auth_token
           PurchaseService.query(params).then (purchase) ->
             unless $scope.bb.company?
@@ -294,6 +294,9 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope,
     item.setSrcBooking(booking)
     return item
 
+
+  $scope.checkAnswer = (answer) ->
+    typeof answer.value == 'boolean' || typeof answer.value == 'string' || typeof answer.value == "number"
 
 # Simple Modal Controller For Handling the Delete Modal
 ModalDelete = ($scope,  $rootScope, $modalInstance, booking) ->
