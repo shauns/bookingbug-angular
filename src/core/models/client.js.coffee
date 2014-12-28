@@ -10,11 +10,14 @@ angular.module('BB.Models').factory "ClientModel", ($q, BBModel, BaseModel, Loca
       @name = @getName()
       if data
         if data.answers && data.$has('questions')
+          @waitingQuestions = $q.defer()
+          @gotQuestions = @waitingQuestions.promise
           data.$get('questions').then (details) =>
             @client_details = new BBModel.ClientDetails(details)
             @client_details.setAnswers(data.answers)
             @questions = @client_details.questions
             @setAskedQuestions()  # make sure the item knows the questions were all answered
+            @waitingQuestions.resolve()
         @raw_mobile = @mobile
         @mobile = "0" + @mobile if @mobile && @mobile[0] != "0"
         @phone  = "0" + @phone if @phone && @phone[0] != "0"
@@ -106,11 +109,13 @@ angular.module('BB.Models').factory "ClientModel", ($q, BBModel, BaseModel, Loca
       x.address2 = @address2
       x.address3 = @address3
       x.address4 = @address4
+      x.address5 = @address5
       x.postcode = @postcode
       x.country = @country
       x.phone = @phone
       x.email = @email
       x.id = @id
+      x.parent_client_id = @parent_client_id
 
       if @mobile
         @remove_prefix()

@@ -10,6 +10,7 @@ angular.module('BB.Models').factory "EventModel", ($q, BBModel, BaseModel) ->
       @getDate()
       @time = new BBModel.TimeSlot
         time: parseInt(@date.format('h'))*60 + parseInt(@date.format('mm'))
+      @end_datetime = @date.clone().add(@duration, 'minutes') if @duration
 
     getGroup: () ->
       defer = $q.defer()
@@ -92,9 +93,12 @@ angular.module('BB.Models').factory "EventModel", ($q, BBModel, BaseModel) ->
         (@getPrice() % 1).toFixed(2)[-2..-1]
 
     getNumBooked: () ->
-      @spaces_blocked + @spaces_booked + @spaces_reserved
+      @spaces_blocked + @spaces_booked + @spaces_reserved + @spaces_held
 
-    getSpacesLeft: () ->
+    # get the number of spaces left (possibly limited by a specific ticket pool)
+    getSpacesLeft: (pool = null) ->
+      if pool && @ticket_spaces && @ticket_spaces[pool]
+        return @ticket_spaces[pool].left
       return @num_spaces - @getNumBooked()
 
     hasSpace: () ->
@@ -110,6 +114,12 @@ angular.module('BB.Models').factory "EventModel", ($q, BBModel, BaseModel) ->
       if @hasWaitlistSpace()
         return "Join Waitlist"
       return ""
+
+    select: ->
+      @selected = true
+
+    unselect: ->
+      delete @selected if @selected
 
 
     prepEvent: () ->

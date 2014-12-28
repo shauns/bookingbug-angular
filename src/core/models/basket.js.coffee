@@ -8,6 +8,8 @@ angular.module('BB.Models').factory "BasketModel", ($q, BBModel, BaseModel) ->
         @is_admin = scope.isAdmin
       else
         @is_admin = false
+      if scope? && scope.parent_client
+        @parent_client_id = scope.parent_client.id
       @items = []
       super(data)
 
@@ -33,6 +35,12 @@ angular.module('BB.Models').factory "BasketModel", ($q, BBModel, BaseModel) ->
         return false
 
 
+    timeItems: ->
+      titems = []
+      for i in @items
+        titems.push(i) if !i.is_coupon
+      titems
+
     setSettings: (set) ->
       return if !set
       @settings ||= {}
@@ -51,6 +59,7 @@ angular.module('BB.Models').factory "BasketModel", ($q, BBModel, BaseModel) ->
         settings: @settings
         reference: @reference
       post.is_admin = @is_admin
+      post.parent_client_id = @parent_client_id
       post.items = []
       for item in @items
         post.items.push(item.getPostData())
@@ -67,3 +76,35 @@ angular.module('BB.Models').factory "BasketModel", ($q, BBModel, BaseModel) ->
 
     length: ->
       @items.length
+
+
+    questionPrice: ->
+      price = 0
+      for item in @items
+        price += item.questionPrice()
+      return price
+
+    totalPrice: ->
+      price = 0
+      for item in @items
+        price += item.totalPrice()
+      return price
+
+
+    fullPrice: ->
+      price = 0
+      for item in @items
+        price += item.fullPrice()
+      return price
+
+    hasCoupon: ->
+      for item in @items
+        return true if item.is_coupon
+      return false
+    
+
+    totalDuration: ->
+      duration = 0
+      for item in @items
+        duration =+ item.service.listed_duration if item.service and item.service.duration
+      return duration

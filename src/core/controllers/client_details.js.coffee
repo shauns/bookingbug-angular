@@ -18,6 +18,12 @@ angular.module('BB.Controllers').controller 'ClientDetails', ($scope,  $rootScop
       # we should also jsut check the logged in member is  a member of the company they are currently booking with
       $scope.setClient(new BBModel.Client(LoginService.member()._data))
 
+    if LoginService.isLoggedIn() && LoginService.member().$has("child_clients") && LoginService.member()
+      LoginService.member().getChildClientsPromise().then (children) =>
+        $scope.bb.parent_client = new BBModel.Client(LoginService.member()._data)
+        $scope.bb.child_clients = children
+        $scope.bb.basket.parent_client_id = $scope.bb.parent_client.id
+
     if $scope.client.client_details
       $scope.client_details = $scope.client.client_details
       $scope.setLoaded $scope
@@ -39,23 +45,28 @@ angular.module('BB.Controllers').controller 'ClientDetails', ($scope,  $rootScop
     $scope.notLoaded $scope
 
     # we need to validate teh client information has been correctly entered here
+    if $scope.bb && $scope.bb.parent_client
+      $scope.client.parent_client_id = $scope.bb.parent_client.id
     $scope.client.setClientDetails($scope.client_details)
 
     ClientService.create_or_update($scope.bb.company, $scope.client).then (client) =>
       $scope.setLoaded $scope
       $scope.setClient(client)
+      $scope.client.setValid(true) if $scope.bb.isAdmin
       $scope.decideNextPage(route)
     , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
 
   $scope.setReady = () =>
     $scope.client.setClientDetails($scope.client_details)
-    $scope.client.setValid(true)  
 
     ClientService.create_or_update($scope.bb.company, $scope.client).then (client) =>
       $scope.setLoaded $scope
+
       $scope.setClient(client)
-      $scope.client_details = client.client_details
+      if client.waitingQuestions
+        client.gotQuestions.then () ->
+          $scope.client_details = client.client_details
      
     , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
@@ -92,4 +103,7 @@ angular.module('BB.Controllers').controller 'ClientDetails', ($scope,  $rootScop
       return question if question.id == id
 
     return null
+
+  $scope.useClient = (client) ->
+    $scope.setClient(client)
     

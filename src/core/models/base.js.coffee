@@ -8,9 +8,9 @@
 angular.module('BB.Models').service "BBModel", ($q, $injector) ->
 
   # the top level models
-  models = ['Address', 'Answer', 'Basket', 'BasketItem', 'BookableItem', 'Category', 'Client', 'ClientDetails', 'Company', 'CompanySettings',
+  models = ['Address', 'Answer', 'Affiliate', 'Basket', 'BasketItem', 'BookableItem', 'Category', 'Client', 'ClientDetails', 'Company', 'CompanySettings',
   'Day', 'Event', 'EventChain', 'EventGroup', 'EventTicket', 'EventSequence', 'ItemDetails', 'Person', 'PurchaseItem', 'PurchaseTotal', 
-  'Question', 'Resource', 'Service', 'Space', 'SurveyQuestion','TimeSlot']
+  'Question', 'Resource', 'Service', 'Slot', 'Space', 'SurveyQuestion','TimeSlot']
 
   funcs = {}
   for model in models
@@ -38,7 +38,7 @@ angular.module('BB.Models').service "BBModel", ($q, $injector) ->
   funcs['Member'] = mfuncs
 
   # admin models
-  admin_models = ['Booking', 'Slot', 'User']
+  admin_models = ['Booking', 'Slot', 'User', 'Login']
   afuncs = {}
   for model in admin_models
     do (model) =>  
@@ -57,7 +57,7 @@ angular.module('BB.Models').service "BBModel", ($q, $injector) ->
 
 # this provides some helpful functions to the models, that map various undelrying HAL resource functions
 
-angular.module('BB.Models').service "BaseModel", ($q, $injector) ->
+angular.module('BB.Models').service "BaseModel", ($q, $injector, $rootScope, $timeout) ->
 
   class Base
 
@@ -96,6 +96,10 @@ angular.module('BB.Models').service "BaseModel", ($q, $injector) ->
       return @__linkedData[link] if @__linkedData[link]
       @$buildOjectPromise(link).then (ans) =>
         @__linkedData[link] = ans
+        # re-set it again with a digest loop - jsut to be sure!
+        $timeout () =>
+          @__linkedData[link] = ans
+      return null
 
     # build a promise for a linked object
     $buildOjectPromise: (link) ->
@@ -110,12 +114,14 @@ angular.module('BB.Models').service "BaseModel", ($q, $injector) ->
             # unwrap involving another promise
             inj.unwrap(res).then (ans) ->
               prom.resolve(ans)
+            , (err) -> prom.reject(err)
           else
             # unwrap without a promise
             prom.resolve(inj.unwrap(res))
         else
           # no service found - just return the resources as I found it
           prom.resolve(res)
+      , (err) -> prom.reject(err)
 
       @__linkedPromises[link]
     

@@ -66,7 +66,6 @@ app.directive 'bbInclude', ($compile) ->
   link: (scope, element, attr) ->
     scope.$watch 'bb.path_setup', (newval, oldval) =>
       if newval
-        console.log 'bb include ', newval
         element.attr('ng-include', "'" + scope.getPartial(attr.bbInclude) + "'")
         element.attr('bb-include',null)
         $compile(element)(scope)
@@ -196,6 +195,26 @@ app.directive 'bbLocalNumber', () ->
     ctrl.$formatters.push(prettyifyNumber)
 
 
+# bbPadWithZeros
+# Adds a formatter that prepends the model value with the specified number of zeros
+app.directive 'bbPadWithZeros', () ->
+  restrict: 'A',
+  require: 'ngModel',
+  link: (scope, element, attrs, ctrl) ->
+
+    options  = scope.$eval(attrs.bbPadWithZeros) or {}
+    how_many = options.how_many or 2
+
+    padNumber = (value) ->
+      if value and value.length < how_many
+        padding = ""
+        for index in [1..how_many-value.length]
+          padding += "0"
+         value = padding.concat(value)
+      return value
+
+    ctrl.$formatters.push(padNumber)
+
 
 # bbFormResettable
 # Adds field clearing behaviour to forms.  
@@ -236,15 +255,17 @@ app.directive 'bbDateSplit', ($parse) ->
 
     ngModel = ctrls[0]
 
-    scope[ngModel.$name + '_date_split'] = {
+    question = scope.$eval attrs.bbDateSplit
+
+    question.date = {
       day:   null
       month: null
       year:  null
       date:  null
 
-      joinDate: (day, month, year) ->
-        if day && month && year
-          date_string = day + '/' + month + '/' + year 
+      joinDate:  ->
+        if @day && @month && @year
+          date_string = @day + '/' + @month + '/' + @year 
           @date = moment(date_string, "DD/MM/YYYY")
           date_string = @date.format('YYYY-MM-DD')
 
@@ -259,39 +280,15 @@ app.directive 'bbDateSplit', ($parse) ->
           @date  = date
     }
 
-    split_date = scope[ngModel.$name + '_date_split'] 
-
     # split the date if it's already set
-    split_date.splitDate(moment(ngModel.$viewValue)) if ngModel.$viewValue
-
-    # setup watches for day/month/year inputs
-    scope.$watch ngModel.$name + '_date_split.day', (newval, oldval) ->
-      if newval != oldval && (!split_date.date || (split_date && split_date.date.date() != newval))
-        day   = newval
-        month = scope.$eval ngModel.$name + '_date_split.month'
-        year  = scope.$eval ngModel.$name + '_date_split.year'
-        split_date.joinDate(day, month, year)
-
-    scope.$watch ngModel.$name + '_date_split.month', (newval, oldval) ->
-      if newval != oldval && (!split_date.date || (split_date && split_date.date.month() + 1 != newval))
-        day   = scope.$eval ngModel.$name + '_date_split.day'
-        month = newval
-        year  = scope.$eval ngModel.$name + '_date_split.year'
-        split_date.joinDate(day, month, year)
-
-    scope.$watch ngModel.$name + '_date_split.year', (newval, oldval) ->
-      if newval != oldval && (!split_date.date || (split_date && split_date.date.year() != newval))
-        day   = scope.$eval ngModel.$name + '_date_split.day'
-        month = scope.$eval ngModel.$name + '_date_split.month'
-        year  = newval
-        split_date.joinDate(day, month, year)
-  
+    question.date.splitDate(moment(ngModel.$viewValue)) if ngModel.$viewValue
+ 
     # watch self to split date when it changes  
-    scope.$watch attrs.ngModel, (newval) ->
-      if newval
-        new_date = moment(newval)
-        if !new_date.isSame(split_date.date)
-          split_date.splitDate(new_date)
+    # scope.$watch attrs.ngModel, (newval) ->
+    #   if newval
+    #     new_date = moment(newval)
+    #     if !new_date.isSame(question.date)
+    #        question.date.splitDate(new_date)
 
 
 # bbCommPref

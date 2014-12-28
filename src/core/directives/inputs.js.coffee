@@ -15,12 +15,14 @@ app.directive 'bbQuestionLine', ($compile) ->
       if scope.question.help_text && scope.question.help_text.length > 0
         elm += "<div class='bb-question-help-text'>" + scope.question.help_text + "</div>"
       element.html(elm)
-    if scope.$parent.idmaps && scope.$parent.idmaps[scope.question.id] && scope.$parent.idmaps[scope.question.id].block
-      # are we using a completely custom question
-      html = scope.$parent.idmaps[scope.question.id].html
-      e = $compile(html) scope, (cloned, scope) =>
-        element.replaceWith(cloned)
 
+    # are we using a completely custom question
+    if scope.idmaps and ((scope.idmaps[scope.question.detail_type] and scope.idmaps[scope.question.detail_type].block) or 
+      (scope.idmaps[scope.question.id] && scope.idmaps[scope.question.id].block))
+        index = if scope.idmaps[scope.question.id] then scope.question.id else scope.question.detail_type
+        html = scope.$parent.idmaps[index].html
+        e = $compile(html) scope, (cloned, scope) =>
+          element.replaceWith(cloned)
 
 
 app.directive 'bbQuestion', ($compile, $timeout) ->
@@ -41,10 +43,10 @@ app.directive 'bbQuestion', ($compile, $timeout) ->
               if angular.isDefined(scope.recalc_price)
                 scope.recalc_price() if !question.outcome
 
-
-            if scope.$parent.idmaps && scope.$parent.idmaps[question.id]
-              # are we using a completely custom question
-              html = scope.$parent.idmaps[question.id].html
+            # are we using a completely custom question
+            if scope.idmaps and (scope.idmaps[question.detail_type] or scope.idmaps[question.id])
+              index = if scope.idmaps[scope.question.id] then scope.question.id else scope.question.detail_type
+              html = scope.idmaps[index].html
 
             else if question.detail_type is "select" || question.detail_type is "select-price"
               html = "<select ng-model='question.answer' name='q#{question.id}' id='#{question.id}' ng-change='recalc()' ng-required='question.currentlyShown && (#{adminRequired} || (question.required && !bb.isAdmin))' class='form-question form-control'>"
@@ -53,12 +55,12 @@ app.directive 'bbQuestion', ($compile, $timeout) ->
               html += "</select>"
 
             else if question.detail_type is "text_area"
-              html = "<textarea ng-model='question.answer' name='q#{question.id}' id='#{question.id}' ng-required='question.currentlyShown && (#{adminRequired} || (question.required && !bb.isAdmin))' rows=3 class='form-question form-control'>#{question['default']}</textarea>"
+              html = "<textarea ng-model='question.answer' name='q#{question.id}' id='#{question.id}' ng-required='question.currentlyShown && (#{adminRequired} || (question.required && !bb.isAdmin))' rows=3 class='form-question form-control'>#{question['answer']}</textarea>"
 
             else if question.detail_type is "radio"
               html = '<div class="radio-group">'
               for itemx in question.options
-                html += "<div class='radio'><label class='radio-label'><input ng-model='question.answer' name='q#{question.id}' id='#{question.id}' ng-change='recalc()' ng-required='question.currentlyShown && (#{adminRequired} || (question.required && !bb.isAdmin))' type='radio' value='#{itemx.name}' />#{itemx.name}</label></div>"
+                html += "<div class='radio'><label class='radio-label'><input ng-model='question.answer' name='q#{question.id}' id='#{question.id}' ng-change='recalc()' ng-required='question.currentlyShown && (#{adminRequired} || (question.required && !bb.isAdmin))' type='radio' value=\"#{itemx.name}\"/>#{itemx.name}</label></div>"
               html += "</div>"
 
             else if question.detail_type is "check"
@@ -68,10 +70,10 @@ app.directive 'bbQuestion', ($compile, $timeout) ->
               if name is lastName
                 name = ""
               lastName = question.name
-              html = "<div class='checkbox' ng-class='{\"selected\": question.answer}'><label><input name='q#{question.id}' id='#{question.id}' ng-model='question.answer' ng-checked='question.default == \"1\"' ng-change='recalc()' ng-required='question.currentlyShown && (#{adminRequired} || (question.required && !bb.isAdmin))' type='checkbox' value=1>#{name}</label></div>"
+              html = "<div class='checkbox' ng-class='{\"selected\": question.answer}'><label><input name='q#{question.id}' id='#{question.id}' ng-model='question.answer' ng-checked='question.answer == \"1\"' ng-change='recalc()' ng-required='question.currentlyShown && (#{adminRequired} || (question.required && !bb.isAdmin))' type='checkbox' value=1>#{name}</label></div>"
 
             else if question.detail_type is "check-price"
-              html = "<div class='checkbox'><label><input name='q#{question.id}' id='#{question.id}' ng-model='question.answer' ng-change='recalc()' ng-required='question.currentlyShown && (#{adminRequired} || (question.required && !bb.isAdmin))' type='checkbox' value=1> ({{question.price | currency:'GBP'}})</label></div>"
+              html = "<div class='checkbox'><label><input name='q#{question.id}' id='#{question.id}' ng-model='question.answer' ng-checked='question.answer == \"1\"' ng-change='recalc()' ng-required='question.currentlyShown && (#{adminRequired} || (question.required && !bb.isAdmin))' type='checkbox' value=1> ({{question.price | currency:'GBP'}})</label></div>"
 
             else if question.detail_type is "date"
               html = "<input type='text' class='form-question form-control' name='q#{question.id}' id='#{question.id}' bb-datepicker-popup='DD/MM/YYYY' datepicker-popup='dd/MM/yyyy' ng-model='question.answer' ng-required='question.currentlyShown && (#{adminRequired} || (question.required && !bb.isAdmin))' datepicker-options='{\"starting-day\": 1}' show-weeks='false' show-button-bar='false' />"
@@ -95,11 +97,14 @@ app.directive 'bbQuestionSetup', ->
   link: (scope, element, attrs) ->
     idmaps = {}
     def = null
-    for child in element.children()
+    for child, index in element.children()
       id = $(child).attr("bb-question-id")
       block = false
       if $(child).attr("bb-replace-block")
         block = true
+      # replace form name with something unique to ensure custom questions get registered
+      # with the form controller and subjected to validation
+      child.innerHTML = child.innerHTML.replace(/question_form/g, "question_form_#{index}")
       idmaps[id] = {id: id, html: child.innerHTML, block: block}
     scope.idmaps = idmaps
     element.replaceWith("")

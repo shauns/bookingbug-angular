@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('BB.Models').factory "ItemDetailsModel", ($q, BBModel, BaseModel) ->
 
   class ItemDetails extends BaseModel
@@ -19,22 +21,23 @@ angular.module('BB.Models').factory "ItemDetailsModel", ($q, BBModel, BaseModel)
       @hasSurveyQuestions = (@survey_questions.length > 0)
 
 
-    questionPrice: () ->
+    questionPrice: (qty) ->
+      qty ||= 1
       @checkConditionalQuestions()
       price = 0
       for q in @questions
-        price += q.selectedPrice()
+        price += q.selectedPriceQty(qty)
       price
 
     checkConditionalQuestions: () ->
       for q in @questions
         if q.settings && q.settings.conditional_question
-          cond = @findByQuestionId(parseInt(q.settings.conditional_question))
+          cond = @findByQuestionId(parseInt(q.settings.conditional_question)) 
           if cond
             # check if the question has an answer which means "show"
             ans = cond.getAnswerId()
             found = false
-            if _.isEmpty(q.settings.conditional_answers) && cond.detail_type == "check" && !cond.answer
+            if $bbug.isEmptyObject(q.settings.conditional_answers) && cond.detail_type == "check" && !cond.answer
               # this is messy - we're showing the question when we ahve a checkbox conditional, based on it being unticked
               found = true
 
@@ -70,7 +73,7 @@ angular.module('BB.Models').factory "ItemDetailsModel", ($q, BBModel, BaseModel)
       for q in @questions
         if ahash[q.id]  # if we have answer for it
           q.answer = ahash[q.id].answer
-      @checkConditionalQuestions()
+      @checkConditionalQuestions()    
 
     getQuestion: (id) ->
       _.findWhere(@questions, {id: id})

@@ -36,3 +36,9 @@ angular.module('BB.Services').factory 'AlertService', ($rootScope, ErrorService)
 
     danger: (alert) ->
       @add('danger', {title: alert.title, msg: alert.msg})
+
+    info: (alert) ->
+      @add('info', {title: alert.title, msg: alert.msg})
+
+    warning: (alert) ->
+      @add('warning', {title: alert.title, msg: alert.msg})

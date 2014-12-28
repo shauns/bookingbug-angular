@@ -4,6 +4,7 @@ angular.module('BB.Directives').directive 'bbTimeRanges', () ->
   restrict: 'AE'
   replace: true
   scope : true
+  priority: 1
   controller : 'TimeRangeList',
 
 
@@ -17,10 +18,10 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
   currentPostcode = $scope.bb.postcode
 
   FormDataStoreService.init 'TimeRangeList', $scope, [
-    'selected_date'
-    'selected_day'
     'selected_slot'
     'postcode'
+    'original_start_date'
+    'start_at_week_start'
   ]
 
   # check to see if the user has changed the postcode and remove data if they have
@@ -31,7 +32,7 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
   # store the postocde
   $scope.postcode = $scope.bb.postcode
 
-  # show loading icon
+  # show the loading icon
   $scope.notLoaded $scope
 
   # if the data source isn't set, set it as the current item
@@ -42,26 +43,43 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
   $rootScope.connection_started.then ->
 
     # read initialisation attributes
-    $scope.time_range_length = $scope.$eval($attrs.bbTimeRangeLength) or 7
-    $scope.day_of_week       = $scope.$eval($attrs.bbDayOfWeek) if $attrs.bbDayOfWeek?
+    $scope.options = $scope.$eval($attrs.bbTimeRanges) or {}
 
-    if $attrs.bbSelectedDay?
-      selected_day        = moment($scope.$eval($attrs.bbSelectedDay))
-      $scope.selected_day = moment(selected_day) if moment.isMoment(selected_day)
+    if $attrs.bbTimeRangeLength?
+      $scope.time_range_length = $scope.$eval($attrs.bbTimeRangeLength)
+    else if $scope.options and $scope.options.time_range_length
+      $scope.time_range_length = $scope.options.time_range_length
+    else
+      $scope.time_range_length = 7
 
+    if $attrs.bbDayOfWeek? or ($scope.options and $scope.options.day_of_week)
+      $scope.day_of_week = if $attrs.bbDayOfWeek? then $scope.$eval($attrs.bbDayOfWeek) else $scope.options.day_of_week
+ 
+    if $attrs.bbSelectedDay? or ($scope.options and $scope.options.selected_day)
+      selected_day        = if $attrs.bbSelectedDay? then moment($scope.$eval($attrs.bbSelectedDay)) else moment($scope.options.selected_day)
+      $scope.selected_day = selected_day if moment.isMoment(selected_day)
 
-    # selected day has been stored, use this to set the time
-    if $scope.selected_day
-      $scope.dont_move_to_week_start = true
-      setTimeRange($scope.selected_day)
+    # initialise the time range
     # last selected day is set (i.e, a user has already selected a date)
-    else if !$scope.current_date && $scope.last_selected_date
-      setTimeRange($scope.last_selected_date)
-    # the current item already has date
+    if !$scope.start_date && $scope.last_selected_date
+      if $scope.original_start_date 
+        diff = $scope.last_selected_date.diff($scope.original_start_date, 'days')
+        diff = diff % $scope.time_range_length
+        diff = if diff is 0 then diff else diff + 1 
+        start_date = $scope.last_selected_date.clone().subtract(diff, 'days')
+        setTimeRange($scope.last_selected_date, start_date)
+      else
+        setTimeRange($scope.last_selected_date)
+    # the current item already has a date
     else if $scope.bb.current_item.date
       setTimeRange($scope.bb.current_item.date.date)
+    # selected day has been provided, use this to set the time
+    else if $scope.selected_day
+      $scope.original_start_date = $scope.original_start_date or moment($scope.selected_day)
+      setTimeRange($scope.selected_day)
     # set the time range as today
     else
+      $scope.start_at_week_start = true
       setTimeRange(moment())
 
     $scope.loadData()
@@ -69,14 +87,17 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
   , (err) -> $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
 
-  setTimeRange = (start_date) ->
-    $scope.selected_day = start_date
-    if $scope.day_of_week
-      $scope.current_date = start_date.clone().day($scope.day_of_week)
-    else if $scope.dont_move_to_week_start
-      $scope.current_date = start_date.clone()
+  setTimeRange = (selected_date, start_date) ->
+    if start_date
+      $scope.start_date = start_date
+    else if $scope.day_of_week
+      $scope.start_date = selected_date.clone().day($scope.day_of_week)
+    else if $scope.start_at_week_start
+      $scope.start_date = selected_date.clone().startOf('week')
     else
-      $scope.current_date = start_date.clone().startOf('week')
+      $scope.start_date = selected_date.clone()
+
+    $scope.selected_day = selected_date
     # convert selected day to JS date object for date picker, it needs
     # to be saved as a variable as functions cannot be passed into the
     # AngluarUI date picker
@@ -105,23 +126,28 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
 
 
   $scope.add = (type, amount) ->
+    if amount > 0
+      $element.removeClass('subtract')
+      $element.addClass('add')
     $scope.selected_day = moment($scope.selected_date)
     switch type
       when 'days'
         setTimeRange($scope.selected_day.add(amount, 'days'))
       when 'weeks'
-        $scope.current_date.add(amount, 'weeks')
-        setTimeRange($scope.current_date)
+        $scope.start_date.add(amount, 'weeks')
+        setTimeRange($scope.start_date)
     $scope.loadData()
 
 
   $scope.subtract = (type, amount) ->
+    $element.removeClass('add')  
+    $element.addClass('subtract')
     $scope.add(type, -amount)
 
 
   $scope.isSubtractValid = (type, amount) ->
-    return true if !$scope.current_date
-    date = $scope.current_date.clone().subtract(amount, type)
+    return true if !$scope.start_date
+    date = $scope.start_date.clone().subtract(amount, type)
     return !date.isBefore(moment(), 'day')
  
 
@@ -132,7 +158,7 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
     $scope.loadData()
 
 
-  updateHideStatus = () ->
+  $scope.updateHideStatus = () ->
     for day in $scope.days
       day.hide = !day.date.isSame($scope.selected_day,'day')
 
@@ -140,13 +166,13 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
   # calculate if the current earliest date is in the past - in which case we
   # might want to disable going backwards
   $scope.isPast = () ->
-    return true if !$scope.current_date
-    return moment().isAfter($scope.current_date)
-
-
+    return true if !$scope.start_date
+    return moment().isAfter($scope.start_date)
 
 
   # check the status of the slot to see if it has been selected
+  # NOTE: This is very costly to call from a view, please consider using ng-class
+  # to access the status
   $scope.status = (day, slot) ->
     return if !slot
 
@@ -193,13 +219,16 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
       curItem.setTime(slot)
       curItem.setDate(day)
       $scope.selected_slot = slot
-      $scope.selected_day = day.date
+      $scope.selected_day  = day.date
       $scope.selected_date = day.date.toDate()
-      updateHideStatus()
+
+      if $scope.bb.current_item.earliest_time_slot and $scope.bb.current_item.earliest_time_slot.selected and (!$scope.bb.current_item.earliest_time_slot.date.isSame(day.date, 'day') or $scope.bb.current_item.earliest_time_slot.time != slot.time)
+        $scope.bb.current_item.earliest_time_slot.selected = false
+
+      $scope.updateHideStatus()
       $rootScope.$emit "time:selected"
       # broadcast message to the accordian range groups
-      $scope.$broadcast 'slotChanged'
-      
+      $scope.$broadcast 'slotChanged', day, slot
 
 
   # load the time data
@@ -214,7 +243,7 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
       setTimeRange(curItem.service.min_advance_datetime) if $scope.selected_day && $scope.selected_day.isBefore(curItem.service.min_advance_datetime, 'day')
 
 
-    date = $scope.current_date
+    date = $scope.start_date
     edate = moment(date).add($scope.time_range_length, 'days')
     $scope.end_date = moment(edate).add(-1, 'days')
 
@@ -242,6 +271,7 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
         duration: duration
         location: loc
         num_resources: $scope.bb.current_item.num_resources
+        available: 1
       )
 
       promise.finally ->
@@ -266,6 +296,12 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
           timeSlotsArr = pair[1]
           day = {date: moment(d), slots: timeSlotsArr}
           $scope.days.push(day)
+
+          if timeSlotsArr.length > 0
+            if !curItem.earliest_time || curItem.earliest_time.isAfter(d)
+              curItem.earliest_time = moment(d).add(timeSlotsArr[0].time, 'minutes')
+            if !curItem.earliest_time_slot || curItem.earliest_time_slot.date.isAfter(d)
+              curItem.earliest_time_slot = {date: moment(d).add(timeSlotsArr[0].time, 'minutes'), time: timeSlotsArr[0].time}
 
           # restores data when using the back/forward buttons
           # add the date and time to the cuurent item if was selected before.
@@ -310,7 +346,7 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
               # if we didn't find the time - give up and do force it's selecttion
               curItem.requestedTimeUnavailable()
               AlertService.add("danger", { msg: "Sorry, your requested time slot is not available. Please choose a different time." })
-        updateHideStatus()
+        $scope.updateHideStatus()
       , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
     else
       $scope.setLoaded $scope
@@ -335,8 +371,8 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
 
 
   $scope.format_date = (fmt) ->
-    if $scope.current_date
-      $scope.current_date.format(fmt)
+    if $scope.start_date
+      $scope.start_date.format(fmt)
 
 
   $scope.format_start_date = (fmt) ->
@@ -350,10 +386,19 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
 
   $scope.pretty_month_title = (month_format, year_format, seperator = '-') ->
     month_year_format = month_format + ' ' + year_format
-    if $scope.current_date && $scope.end_date && $scope.end_date.isAfter($scope.current_date, 'month')
+    if $scope.start_date && $scope.end_date && $scope.end_date.isAfter($scope.start_date, 'month')
       start_date = $scope.format_start_date(month_format)
-      start_date = $scope.format_start_date(month_year_format) if $scope.current_date.month() == 11
+      start_date = $scope.format_start_date(month_year_format) if $scope.start_date.month() == 11
       return start_date + ' ' + seperator + ' ' + $scope.format_end_date(month_year_format)
     else
       return $scope.format_start_date(month_year_format)
+
+
+  $scope.selectEarliestTimeSlot = () ->
+    day  = _.find($scope.days, (day) -> day.date.isSame($scope.bb.current_item.earliest_time_slot.date, 'day'))
+    slot = _.find(day.slots, (slot) -> slot.time is $scope.bb.current_item.earliest_time_slot.time)
+
+    if day and slot
+      $scope.bb.current_item.earliest_time_slot.selected = true
+      $scope.highlightSlot(day, slot)
 

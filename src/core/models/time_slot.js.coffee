@@ -7,6 +7,8 @@ angular.module('BB.Models').factory "TimeSlotModel", ($q, $window, BBModel, Base
     constructor: (data, service) ->
       super(data)
       @service = service
+      @time_12 = @print_time12()
+      @time_24 = @print_time()
 
 
     # 24 hour time
@@ -44,7 +46,7 @@ angular.module('BB.Models').factory "TimeSlotModel", ($q, $window, BBModel, Base
       suffix = 'am'
       suffix = 'pm' if h >=12
       h -=12 if (h > 12)
-      time = $window.sprintf("%d:%02d", h, m)
+      time = $window.sprintf("%d.%02d", h, m)
       time += suffix if show_suffix
       return time
 
@@ -62,7 +64,7 @@ angular.module('BB.Models').factory "TimeSlotModel", ($q, $window, BBModel, Base
       suffix = 'am'
       suffix = 'pm' if h >=12
       h -=12 if (h > 12)
-      end_time = $window.sprintf("%d:%02d", h, m)
+      end_time = $window.sprintf("%d.%02d", h, m)
       end_time += suffix if show_suffix
       return end_time
 

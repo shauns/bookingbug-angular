@@ -10,7 +10,7 @@ angular.module('BB.Directives').directive 'bbSurveyQuestions', () ->
 angular.module('BB.Controllers').controller 'SurveyQuestions', ($scope,  $rootScope,
     CompanyService, PurchaseService, ClientService, $modal, $location, $timeout,
     BBWidget, BBModel, $q, QueryStringService, SSOService, AlertService,
-    LoginService, $window, $upload, ServiceService, ValidatorService, PurchaseBookingService) ->
+    LoginService, $window, $upload, ServiceService, ValidatorService, PurchaseBookingService, $sessionStorage) ->
 
   $scope.controller = "SurveyQuestions"
 
@@ -96,7 +96,7 @@ angular.module('BB.Controllers').controller 'SurveyQuestions', ($scope,  $rootSc
     split = purchase_id.split("=")
     id = split.pop()
     params = {purchase_id: id, url_root: $scope.bb.api_url}
-    auth_token = sessionStorage.getItem('auth_token')
+    auth_token = $sessionStorage.getItem('auth_token')
     params.auth_token = auth_token if auth_token
     PurchaseService.query(params).then (purchase) =>
       $scope.purchase = purchase
@@ -147,7 +147,7 @@ angular.module('BB.Controllers').controller 'SurveyQuestions', ($scope,  $rootSc
    $scope.submitBookingRef = (form) =>
     return if !ValidatorService.validateForm(form)
     params = {booking_ref: $scope.booking_ref, url_root: $scope.bb.api_url, raw: true}
-    auth_token = sessionStorage.getItem('auth_token')
+    auth_token = $sessionStorage.getItem('auth_token')
     params.auth_token = auth_token if auth_token
     PurchaseService.bookingRefQuery(params).then (purchase) =>
       $scope.purchase = purchase

@@ -7,7 +7,7 @@ app.directive 'bbDisplayMode', [ '$compile', '$window', ($compile, $window) ->
     template: '<span class="visible-xs"></span><span class="visible-sm"></span><span class="visible-md"></span><span class="visible-lg"></span>',
     link: (scope, elem, attrs) ->
       markers = elem.find('span')
-      elem.addClass("bb-display-mode")
+      $bbug(elem).addClass("bb-display-mode")
       scope.display = {}
 
       isVisible = (element) ->

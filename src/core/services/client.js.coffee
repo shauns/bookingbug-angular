@@ -18,11 +18,14 @@ angular.module('BB.Services').factory "ClientService",  ($q, BBModel, MutexServi
 
   update: (company, client) ->
     deferred = $q.defer()
-    
-    client.$put('self', {}, client.getPostData()).then (cl) =>
-      deferred.resolve(new BBModel.Client(cl))
-    , (err) =>
-      deferred.reject(err)
+
+    MutexService.getLock().then (mutex) ->
+      client.$put('self', {}, client.getPostData()).then (cl) =>
+        deferred.resolve(new BBModel.Client(cl))
+        MutexService.unlock(mutex)
+      , (err) =>
+        deferred.reject(err)
+        MutexService.unlock(mutex)
 
     deferred.promise
 

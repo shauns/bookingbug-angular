@@ -9,18 +9,21 @@ angular.module('BB.Directives').directive 'bbResources', () ->
 
 
 angular.module('BB.Controllers').controller 'ResourceList',
-($scope,  $rootScope, PageControllerService, ResourceService, ItemService, $q, BBModel, ResourceModel) ->
+($scope,  $rootScope, $attrs, PageControllerService, ResourceService, ItemService, $q, BBModel, ResourceModel) ->
   $scope.controller = "public.controllers.ResourceList"
   $scope.notLoaded $scope
 
   angular.extend(this, new PageControllerService($scope, $q))
+
+
+  $scope.options = $scope.$eval($attrs.bbResources) or {}
 
   $rootScope.connection_started.then () =>
     loadData()
 
   loadData = () =>
     # do nothing if nothing has changed
-    unless $scope.bb.steps && $scope.bb.steps[0].page == "resource_list"
+    unless ($scope.bb.steps && $scope.bb.steps[0].page == "resource_list") or $scope.options.resource_first
       if !$scope.bb.current_item.service || $scope.bb.current_item.service == $scope.change_watch_item
         # if there's no service - we have to wait for one to be set - so we're kind of done loadig for now!
         if !$scope.bb.current_item.service
@@ -67,7 +70,7 @@ angular.module('BB.Controllers').controller 'ResourceList',
       , (err) ->
         $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
     , (err) ->
-      unless err == "No service link found" && $scope.bb.steps && $scope.bb.steps[0].page == 'resource_list'
+      unless err == "No service link found" and (($scope.bb.steps and $scope.bb.steps[0].page == 'resource_list') or $scope.options.resource_first)
         $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
       else
         $scope.setLoaded $scope

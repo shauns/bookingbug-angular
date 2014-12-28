@@ -95,7 +95,13 @@ app.filter 'address_multi_line', ->
     str += address.postcode if address.postcode
     return str
 
+app.filter 'map_lat_long', ->
+  (address) =>
+    return if !address
+    return if !address.map_url
 
+    cord = /([-+]*\d{1,3}[\.]\d*)[, ]([-+]*\d{1,3}[\.]\d*)/.exec(address.map_url)
+    return cord[0]
 
 app.filter 'currency', ($window, $rootScope) ->
 
@@ -150,7 +156,7 @@ app.filter 'icurrency', ($window, $rootScope) ->
 
 app.filter 'pretty_price', ($window) ->
   (price, symbol) ->
-    return symbol + price if parseFloat(price) % 1 == 0
+    return symbol + parseFloat(price) if parseFloat(price) % 1 == 0
     return symbol + $window.sprintf("%.2f", parseFloat(price))
 
 

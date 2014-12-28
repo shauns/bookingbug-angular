@@ -13,3 +13,16 @@ angular.module('BB.Services').factory "SSOService", ($q, $rootScope, halClient, 
     , (err) =>
       deferred.reject(err)
     deferred.promise
+
+  adminLogin: (options) ->
+    deferred = $q.defer()
+    options.root ||= ""
+    url = options.root + "/api/v1/login/admin_sso/" + options.company_id
+    data = {token: options.admin_sso}
+    halClient.$post(url, {}, data).then (login) =>
+      params = {auth_token: login.auth_token}
+      login.$get('administrator').then (admin) =>
+        deferred.resolve(admin)
+    , (err) =>
+      deferred.reject(err)
+    deferred.promise

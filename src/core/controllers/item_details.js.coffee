@@ -14,7 +14,7 @@ angular.module('BB.Directives').directive 'bbItemDetails', () ->
 
 angular.module('BB.Controllers').controller 'ItemDetails',
 ($scope, $rootScope, ItemDetailsService, PurchaseBookingService, AlertService,
- BBModel, FormDataStoreService, ValidatorService, QuestionService, $modal, $location) ->
+ BBModel, FormDataStoreService, ValidatorService, QuestionService, $modal, $location, $upload) ->
 
   $scope.controller = "public.controllers.ItemDetails"
   # stores data when navigating back/forward through the form
@@ -70,6 +70,12 @@ angular.module('BB.Controllers').controller 'ItemDetails',
   # the amount of questions can change based on selections made earlier in the
   # journey, so we can't just store the questions.
   setItemDetails = (details) ->
+    if $scope.item && $scope.item.defaults
+      _.each details.questions, (item) ->
+        n = "q_" + item.name
+        if $scope.item.defaults[n]
+          item.answer = $scope.item.defaults[n]
+
     if $scope.hasOwnProperty 'item_details'
       oldQuestions = $scope.item_details.questions
 
@@ -83,7 +89,7 @@ angular.module('BB.Controllers').controller 'ItemDetails',
 
 
   $scope.recalc_price = ->
-    qprice = $scope.item_details.questionPrice()
+    qprice = $scope.item_details.questionPrice($scope.item.getQty())
     bprice = $scope.item.base_price
     $scope.item.setPrice(qprice + bprice)
 
@@ -187,3 +193,26 @@ angular.module('BB.Controllers').controller 'ItemDetails',
   setCommunicationPreferences: (value)->
     $scope.bb.current_item.settings.send_email_followup = value
     $scope.bb.current_item.settings.send_sms_followup   = value
+  
+
+  $scope.onFileSelect = (item, $file, existing) ->
+    $scope.upload_progress = 0
+    file = $file
+    att_id = null
+    att_id = existing if existing
+    method = "POST"
+    method = "PUT" if att_id
+    url = item.$href('add_attachment') 
+    $scope.upload = $upload.upload({
+      url: url,
+      method: method,
+      data: {attachment_id: att_id},
+      file: file, 
+    }).progress (evt) -> 
+      if $scope.upload_progress < 100
+        $scope.upload_progress = parseInt(99.0 * evt.loaded / evt.total)
+    .success (data, status, headers, config) ->
+      $scope.upload_progress = 100
+      if data && item
+        item.attachment = data
+        item.attachment_id = data.id

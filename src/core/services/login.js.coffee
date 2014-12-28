@@ -1,5 +1,5 @@
 
-angular.module('BB.Services').factory "LoginService", ($q, halClient, $rootScope, BBModel) ->
+angular.module('BB.Services').factory "LoginService", ($q, halClient, $rootScope, BBModel, $sessionStorage) ->
   companyLogin: (company, params, form) ->
     deferred = $q.defer()
     company.$post('login', params, form).then (login) =>
@@ -65,8 +65,8 @@ angular.module('BB.Services').factory "LoginService", ($q, halClient, $rootScope
   setLogin: (member) ->
     auth_token = member.getOption('auth_token')
     member = new BBModel.Member.Member(member)
-    sessionStorage.setItem("login", member.$toStore())
-    sessionStorage.setItem("auth_token", auth_token)
+    $sessionStorage.setItem("login", member.$toStore())
+    $sessionStorage.setItem("auth_token", auth_token)
     $rootScope.member = member
     member
 
@@ -77,16 +77,16 @@ angular.module('BB.Services').factory "LoginService", ($q, halClient, $rootScope
   checkLogin: () ->
     return if $rootScope.member
 
-    member = sessionStorage.getItem("login")
+    member = $sessionStorage.getItem("login")
     if member
       $rootScope.member = halClient.createResource(member)
 
   logout: (options) ->
 
     $rootScope.member = null
-    sessionStorage.removeItem("login")
-    sessionStorage.removeItem('auth_token')
-    sessionStorage.clear()
+    $sessionStorage.removeItem("login")
+    $sessionStorage.removeItem('auth_token')
+    $sessionStorage.clear()
     deferred = $q.defer()
 
     options ||= {}

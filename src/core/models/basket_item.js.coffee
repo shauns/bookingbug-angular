@@ -1,5 +1,8 @@
-angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
-    BookableItemModel, BaseModel, $bbug) ->
+
+'use strict';
+
+angular.module('BB.Models').factory "BasketItemModel",
+($q, $window, BBModel, BookableItemModel, BaseModel) ->
 
   # A class that defines an item in a shopping basket
   # This could represent a time based service, a ticket for an event or class, or any other purchasable item
@@ -16,11 +19,9 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
       @has_questions = false
 
       if bb
-        @reserve_without_questions = bb.reserve_without_questions
+        @reserve_without_questions = bb.reserve_without_questions        
 
       # if we were given an id then the item is ready - we need to fake a few items
-      if @id
-        @ready = true
       if @time
         @time = new BBModel.TimeSlot({time: @time, event_id: @event_id, selected: true, avail: 1, price: @price })
       if @date
@@ -30,9 +31,30 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
         t =  @datetime.hour() * 60 +  @datetime.minute()
         @time = new BBModel.TimeSlot({time: t, event_id: @event_id, selected: true, avail: 1, price: @price })
 
+      if @id 
+        @ready = true
+        # keep a note of a possibly held item - we might change this item - but we should know waht was possibly already selected
+        @held = {time: @time, date: @date, event_id: @event_id }
+
+
       @promises = []
 
       if data
+
+        if data.$has("answers")
+          data.$get("answers").then (answers) =>
+            data.questions = []
+            for a in answers
+              data.questions.push({id: a.question_id, answer: a.value})
+
+        if data.$has('company')
+          comp = data.$get('company')
+          @promises.push(comp)
+          comp.then (comp) =>
+            c = new BBModel.Company(comp)
+            @promises.push(c.getSettings())
+            @setCompany(c)
+
         if data.$has('service')
           serv = data.$get('service')
           @promises.push(serv)
@@ -72,28 +94,21 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
           res = data.$get('resource')
           @promises.push(res)
           res.then (res) =>
-            @setResource(new BBModel.Resource(res))
-        else
-          @setResource()
+            @setResource(new BBModel.Resource(res), false)
         if data.$has('person')
           per = data.$get('person')
           @promises.push(per)
           per.then (per) =>
-            @setPerson(new BBModel.Person(per))
-        if data.$has('company')
-          comp = data.$get('company')
-          @promises.push(comp)
-          comp.then (comp) =>
-            c = new BBModel.Company(comp)
-            @promises.push(c.getSettings())
-            @setCompany(c)
-
+            @setPerson(new BBModel.Person(per), false)
         if data.$has('event')
           data.$get('event').then (event) =>
             @setEvent(new BBModel.Event(event))
 
         if data.settings
           @settings = $bbug.extend(true, {}, data.settings)
+
+        if data.attachment_id
+          @attachment_id = data.attachment_id
 
         if data.$has('product')
           data.$get('product').then (product) =>
@@ -124,12 +139,18 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
         @service_ref = defaults.service_ref
       if defaults.group
         @group = defaults.group
+      if defaults.private_note
+        @private_note = defaults.private_note
       if defaults.event_group
         @setEventGroup(defaults.event_group)
       if defaults.event
         @setEvent(defaults.event)
 
       @defaults = defaults
+
+    storeDefaults: (defaults) ->
+      @defaults = defaults
+
 
     defaultService: () ->
       return null if !@defaults
@@ -140,12 +161,19 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
     requestedTimeUnavailable: ->
       delete @requested_time
 
+    setSlot: (slot) ->
+
+      @date = new BBModel.Day({date: slot.datetime.format("YYYY-MM-DD"), spaces: 1})
+      t =  slot.datetime.hour() * 60 +  slot.datetime.minute()
+      @time = new BBModel.TimeSlot({time: t, avail: 1, price: @price })
+      @available_slot = slot.id
 
 
     setCompany: (company) ->
       @company = company
       @parts_links.company = @company.$href('self')
-
+      @item_details.currency_code = @company.currency_code if @item_details
+  
 
     clearExistingItem: () ->
       if @$has('self') &&  @event_id
@@ -153,6 +181,7 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
         @promises.push(prom)
         prom.then () ->
 
+      delete @earliest_time
       delete @event_id  # when changing the service - we ahve to clear any pre-set event
 
 
@@ -202,7 +231,7 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
         prom = @service.$get('questions')
         @promises.push(prom)
         prom.then (details) =>
-          details.currency_code = @company.currency_code
+          details.currency_code = @company.currency_code if @company
           @item_details = new BBModel.ItemDetails(details)
           @has_questions = @item_details.hasQuestions
           if default_questions
@@ -235,6 +264,7 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
           return
 
       @event_group = event_group
+      @parts_links.event_group =  @event_group.$href('self').replace('event_group','service')
 
       if @event_group.$has('category')
         # we have a category?
@@ -251,7 +281,8 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
       @setPrice(@base_price)
       if @event_chain.isSingleBooking()
         # if you can only book one ticket - just use that
-        @tickets = {name: "Admittance", max: 1, type: "normal", price: @base_price }
+        @tickets = {name: "Admittance", max: 1, type: "normal", price: @base_price}
+        @tickets.qty = @num_book if @num_book
 
 
       if @event_chain.$has('questions')
@@ -272,7 +303,10 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
         @has_questions = false
 
     setEvent: (event) ->
+
+      @event.unselect() if @event
       @event = event
+      @event.select()
       @event_chain_id = event.event_chain_id
       @setDate({date: event.date})
       @setTime(event.time)
@@ -286,19 +320,28 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
       @promises.push(prom)
       prom.then (group) =>
         @setEventGroup(group)
+      @num_book = event.qty
 
     # if someone sets a category - we may then later restrict the service list by category
     setCategory: (cat) ->
       @category = cat
 
-    setPerson: (per) ->
+    setPerson: (per, set_selected = true) ->
+      if set_selected && @earliest_time
+        delete @earliest_time
+
       if !per
         @person = true
+        @settings.person = -1 if set_selected
         @parts_links.person = null
         @setService(@service) if @service
-        @setResource(@resource) if @resource && !@anyResource()
+        @setResource(@resource, false) if @resource && !@anyResource()
+        if @event_id
+          delete @event_id  # when changing the person - we ahve to clear any pre-set event
+          @setResource(null) if @resource && @defaults && @defaults.merge_resources  # if a resources has been automatically set - clear it     
       else
         @person = per
+        @settings.person = @person.id if set_selected
         @parts_links.person = @person.$href('self')
         if per.$has('days')
           @days_link = per
@@ -306,15 +349,24 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
           @book_link = per
         if @event_id && @$has('person') && @$href('person') != @person.self
           delete @event_id  # when changing the person - we ahve to clear any pre-set event
+          @setResource(null) if @resource && @defaults && @defaults.merge_resources  # if a resources has been automatically set - clear it     
 
-    setResource: (res) ->
+    setResource: (res, set_selected = true) ->
+      if set_selected && @earliest_time
+        delete @earliest_time
+
       if !res
         @resource = true
+        @settings.resource = -1 if set_selected
         @parts_links.resource = null
         @setService(@service) if @service
-        @setPerson(@person) if @person && !@anyPerson()
+        @setPerson(@person, false) if @person && !@anyPerson()
+        if @event_id
+          delete @event_id  # when changing the resource - we ahve to clear any pre-set event
+          @setPerson(null) if @person && @defaults && @defaults.merge_people # if a person has been automatically set - clear it
       else
         @resource = res
+        @settings.resource = @resource.id if set_selected
         @parts_links.resource = @resource.$href('self')
         if res.$has('days')
           @days_link = res
@@ -322,6 +374,7 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
           @book_link = res
         if @event_id && @$has('resource') && @$href('resource') != @resource.self
           delete @event_id  # when changing the resource - we ahve to clear any pre-set event
+          @setPerson(null) if @person && @defaults && @defaults.merge_people # if a person has been automatically set - clear it
 
     setDuration: (dur) ->
       @duration = dur
@@ -378,6 +431,11 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
 
       @checkReady()
 
+
+    setGroup: (group) ->
+      @group = group
+
+
     setAskedQuestions: ->
       @asked_questions = true
       @checkReady()
@@ -390,7 +448,6 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
         @ready = true
       if ((@date && @time && @service) || @event || @product || (@date && @service && @service.duration_unit == 'day'))  && (@asked_questions || !@has_questions || @reserve_without_questions)
         @reserve_ready = true
-
 
     getPostData: ->
 
@@ -416,6 +473,8 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
       data.id = @id
       data.duration = @duration
       data.settings = @settings
+      data.settings ||= {}
+      data.settings.earliest_time = @earliest_time if @earliest_time
       data.questions = @item_details.getPostData() if @item_details
       data.move_item_id = @move_item_id if @move_item_id
       data.move_item_id = @srcBooking.id if @srcBooking
@@ -430,17 +489,20 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
         data.tickets = @tickets
       data.event_chain_id = @event_chain_id
       data.event_group_id = @event_group_id
-      data.qty = @qty
+      data.qty = @qty   
       data.num_resources = parseInt(@num_resources) if @num_resources?
       data.product = @product
+      data.coupon_id = @coupon_id
+      data.is_coupon = @is_coupon
+      data.attachment_id = @attachment_id if @attachment_id
 
       if @email?
         data.email = @email
       if @email_admin?
         data.email_admin = @email_admin
+      data.private_note = @private_note if @private_note
       if @available_slot
         data.available_slot = @available_slot
-
       return data
 
     setPrice: (nprice) ->
@@ -507,7 +569,7 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
 
     booking_time: (seperator = '-') ->
       return null if !@time
-      duration = if @listed_duration then @listed_duration else @duration
+      duration = if @listed_duration then @listed_duration else @duration 
       @time.print_time() + " " + seperator + " " +  @time.print_end_time(duration)
 
     # prints the amount due - which might be different if it's a waitlist
@@ -541,7 +603,7 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
 
     anyPerson: () ->
       @person && (typeof @person == 'boolean')
-
+ 
     anyResource: () ->
       @resource && (typeof @resource == 'boolean')
 
@@ -550,6 +612,33 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
 
     setCloneAnswers: (otherItem) ->
       @cloneAnswersItem = otherItem
+
+    questionPrice: =>
+
+      return 0 if !@item_details
+      return @item_details.questionPrice(@getQty())
+
+
+    getQty: =>
+      return @qty if @qty
+      return @tickets.qty if @tickets
+      return 1
+
+    # price including discounts
+    totalPrice: =>
+      if @discount_price?
+        return @discount_price
+      pr = @total_price 
+      pr ||= @price
+      pr ||= 0
+      return pr + @questionPrice()
+
+    # price not including discounts
+    fullPrice: =>
+      pr = @total_price
+      pr ||= @price
+      pr ||= 0
+      return pr + @questionPrice()
 
     setProduct: (product) ->
       @product = product
@@ -563,3 +652,10 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
         true
       else
         false
+
+    getAttachment: () ->
+      return @attachment if @attachment
+      if @$has('attachment') && @attachment_id
+        @_data.$get('attachment').then (att) =>
+          @attachment = att
+          @attachment

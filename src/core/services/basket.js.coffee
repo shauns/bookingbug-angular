@@ -32,6 +32,37 @@ angular.module('BB.Services').factory "BasketService", ($q, $rootScope, BBModel,
     deferred.promise
 
 
+  applyCoupon: (company, params) ->
+    deferred = $q.defer()
+
+    MutexService.getLock().then (mutex) ->
+      company.$post('coupon', {}, {coupon: params.coupon}).then (basket) ->
+        MutexService.unlock(mutex)
+        company.$flush('basket')
+        mbasket = new BBModel.Basket(basket, params.bb)
+        basket.$get('items').then (items) ->
+          promises = []
+          for i in items
+            item = new BBModel.BasketItem(i, params.bb)
+            mbasket.addItem(item)
+            # keep an eye on if this item needs any promises resolved to be valid
+            promises = promises.concat item.promises
+          if promises.length > 0
+            $q.all(promises).then () ->
+              deferred.resolve(mbasket)
+          else
+            deferred.resolve(mbasket)
+        , (err) ->
+          deferred.reject(err)
+      , (err) ->
+        MutexService.unlock(mutex)
+        deferred.reject(err)
+    deferred.promise
+
+
+  
+
+
   # add several items at onece - params should have an array of items:
   updateBasket: (company, params) ->
     deferred = $q.defer()
@@ -39,16 +70,18 @@ angular.module('BB.Services').factory "BasketService", ($q, $rootScope, BBModel,
     data = {entire_basket: true, items:[]}
 
     for item in params.items
-      lnk = item.book_link
+      lnk = item.book_link if item.book_link 
       xdata = item.getPostData() 
-      if !lnk
-        deferred.reject("rel book not found for event")
-        return deferred.promise
       # force the date into utc
 #      d = item.date.date._a
 #      date = new Date(Date.UTC(d[0], d[1], d[2]))
 #      xdata.date = date
       data.items.push(xdata)  
+
+    if !lnk
+      deferred.reject("rel book not found for event")
+      return deferred.promise
+
    
     MutexService.getLock().then (mutex) ->
       lnk.$post('book', params, data).then (basket) ->
@@ -124,7 +157,9 @@ angular.module('BB.Services').factory "BasketService", ($q, $rootScope, BBModel,
       data.affiliate_id = $rootScope.affiliate_id
       basket.$post('checkout', params, data).then (total) ->
         $rootScope.$broadcast('updateBookings')
-        deferred.resolve(new BBModel.Purchase.Total(total))
+        tot = new BBModel.Purchase.Total(total)
+        $rootScope.$broadcast('newCheckout', tot)
+        deferred.resolve(tot)
       , (err) ->
         deferred.reject(err)
     deferred.promise
