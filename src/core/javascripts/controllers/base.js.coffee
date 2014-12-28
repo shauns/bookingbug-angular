@@ -2,7 +2,7 @@
 
 
 angular.module('BB.Directives').directive 'bbWidget', (PathSvc, $http,
-    $templateCache, $compile, $q, AppConfig, $timeout) ->
+    $templateCache, $compile, $q, AppConfig, $timeout, $bbug) ->
 
   getTemplate = () ->
     src = PathSvc.directivePartial('main').$$unwrapTrustedValue()

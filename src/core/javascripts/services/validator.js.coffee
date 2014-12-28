@@ -1,4 +1,4 @@
-angular.module('BB.Services').factory 'ValidatorService', ($rootScope, AlertService, ErrorService, BBModel, $q) ->
+angular.module('BB.Services').factory 'ValidatorService', ($rootScope, AlertService, ErrorService, BBModel, $q, $bbug) ->
 
   # Use http://regex101.com/ to test patterns
 

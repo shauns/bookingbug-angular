@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module('BBMember.Models').factory "Member.BookingModel", ($q, $window,
-    BBModel, BaseModel) ->
+    BBModel, BaseModel, $bbug) ->
 
   class Member_Booking extends BaseModel
     constructor: (data) ->

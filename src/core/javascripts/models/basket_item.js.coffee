@@ -2,7 +2,7 @@
 'use strict';
 
 angular.module('BB.Models').factory "BasketItemModel",
-($q, $window, BBModel, BookableItemModel, BaseModel) ->
+($q, $window, BBModel, BookableItemModel, BaseModel, $bbug) ->
 
   # A class that defines an item in a shopping basket
   # This could represent a time based service, a ticket for an event or class, or any other purchasable item

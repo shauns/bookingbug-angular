@@ -1,6 +1,6 @@
 app = angular.module 'BB.Directives'
 
-app.directive 'bbDisplayMode', [ '$compile', '$window', ($compile, $window) ->
+app.directive 'bbDisplayMode', [ '$compile', '$window', ($compile, $window, $bbug) ->
   {
     transclude: false,
     restrict: 'A',

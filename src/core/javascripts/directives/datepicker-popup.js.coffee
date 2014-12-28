@@ -4,7 +4,7 @@
 # replaces the date parse method for the angular-ui datepicker popup. the picker
 # defaults to US style dates when typing a date into the picker input, so
 # 05/09/2014 is translated as 9th May rather than the 5th September
-angular.module('BB.Directives').directive 'bbDatepickerPopup', ($parse, $document, $timeout)->
+angular.module('BB.Directives').directive 'bbDatepickerPopup', ($parse, $document, $timeout, $bbug)->
   ie8orLess = false
   # stop user typing in input field if using ie8 or less as the date gets a
   # little delyaed and outputs wrong date

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('BB.Models').factory "AnswerModel", ($q, BBModel, BaseModel) ->
+angular.module('BB.Models').factory "AnswerModel", ($q, BBModel, BaseModel, $bbug) ->
 
   class Answer extends BaseModel
     constructor: (data) ->

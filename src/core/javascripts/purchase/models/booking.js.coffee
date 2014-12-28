@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('BB.Models').factory "Purchase.BookingModel", ($q, $window, BBModel, BaseModel) ->
+angular.module('BB.Models').factory "Purchase.BookingModel", ($q, $window, BBModel, BaseModel, $bbug) ->
 
 
   class Purchase_Booking extends BaseModel

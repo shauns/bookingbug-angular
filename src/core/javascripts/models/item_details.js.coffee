@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('BB.Models').factory "ItemDetailsModel", ($q, BBModel, BaseModel) ->
+angular.module('BB.Models').factory "ItemDetailsModel", ($q, BBModel, BaseModel, $bbug) ->
 
   class ItemDetails extends BaseModel
 
