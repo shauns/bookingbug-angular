@@ -1,5 +1,4 @@
-angular.module('BBMember.Services').factory "MemberService", ($q, halClient,
-    $rootScope, BBModel) ->
+angular.module('BB.Services').factory "MemberService", ($q, halClient, $rootScope, BBModel) ->
 
   refresh: (member) ->
     deferred = $q.defer()
@@ -16,4 +15,7 @@ angular.module('BBMember.Services').factory "MemberService", ($q, halClient,
     callback = ->
       deferred.resolve($rootScope.member)
     setTimeout callback, 200
+    # member = () ->
+    #   console.log "resolve member promise"
+      # deferred.resolve($rootScope.member)
     deferred.promise

@@ -1,4 +1,4 @@
-angular.module('BBMember.Controllers').controller 'MembersBookings', ($scope, $rootScope, $location,
+angular.module('BB.Controllers').controller 'MembersBookings', ($scope, $rootScope, $location,
     $filter, $q, $timeout, $modal, MemberBookingService, LoginService, BBModel) ->
 
   $scope.init = (options) =>
@@ -32,7 +32,11 @@ angular.module('BBMember.Controllers').controller 'MembersBookings', ($scope, $r
 
   doCancel = (member, booking) ->
     MemberBookingService.cancel(member, booking).then () ->
-      _.without($scope.bookings, booking)
+      if $scope.bookings
+        $scope.bookings = $scope.bookings.filter (b) -> b.id != booking.id
+      if $scope.removeBooking
+        $scope.removeBooking(booking)
+
     , (err) ->
       console.log 'cancel error'
 
@@ -53,8 +57,11 @@ angular.module('BBMember.Controllers').controller 'MembersBookings', ($scope, $r
         booking: ->
           booking
     modalInstance.result.then (booking) ->
+      console.log "close booking", booking, $scope.member,$scope.members 
       if $scope.member
         doCancel($scope.member, booking)
+      if $scope.client
+        doCancel($scope.client, booking)
       else if $scope.members
         booking.$get('member').then (member) ->
           doCancel(member, booking)
@@ -79,7 +86,7 @@ angular.module('BBMember.Controllers').controller 'MembersBookings', ($scope, $r
 
   $scope.historical = (type, num) =>
     $scope.notLoaded $scope
-    date = moment().add(type, num)
+    date = moment().add(num, type)
     params =
       start_date: date.format('YYYY-MM-DD')
       end_date: moment().format('YYYY-MM-DD')

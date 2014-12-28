@@ -1,15 +1,17 @@
-'use strict'
+'use strict';
 
-angular.module('BBMember.Models').factory "Member.BookingModel", ($q, $window,
-    BBModel, BaseModel, $bbug) ->
+angular.module('BB.Models').factory "Member.BookingModel", ($q, $window, BBModel, BaseModel, $bbug) ->
 
   class Member_Booking extends BaseModel
     constructor: (data) ->
       super(data)
+
       @datetime = moment.parseZone(@datetime)
       @datetime.tz(@time_zone) if @time_zone
+
       @end_datetime = moment.parseZone(@end_datetime)
       @end_datetime.tz(@time_zone) if @time_zone
+
 
     getGroup: () ->
       return @group if @group
@@ -18,11 +20,13 @@ angular.module('BBMember.Models').factory "Member.BookingModel", ($q, $window,
           @group = group
           @group
 
+
     getColour: () ->
       if @getGroup()
         return @getGroup().colour
       else
         return "#FFFFFF"
+
 
     getCompany: () ->
       return @company if @company
@@ -30,6 +34,7 @@ angular.module('BBMember.Models').factory "Member.BookingModel", ($q, $window,
         @_data.$get('company').then (company) =>
           @company = new BBModel.Company(company)
           @company
+
 
     getAnswers: () ->
       defer = new $bbug.Deferred()
@@ -42,9 +47,11 @@ angular.module('BBMember.Models').factory "Member.BookingModel", ($q, $window,
         defer.resolve([])
       defer.promise()
 
+
     printed_price: () ->
       return "£" + @price if parseFloat(@price) % 1 == 0
       return $window.sprintf("£%.2f", parseFloat(@price))
+
 
     getMemberPromise: () =>
       defer = $q.defer()
