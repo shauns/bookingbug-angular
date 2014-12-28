@@ -56,6 +56,11 @@ angular.module('BB.Controllers').controller 'ClientDetails', ($scope,  $rootScop
       $scope.decideNextPage(route)
     , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
+  $scope.clientLogin = () =>
+    if $scope.login
+      LoginService.companyLogin($scope.bb.company, {}, {email: $scope.login.email, password: $scope.login.password}).then (client) =>
+        $scope.setClient(new BBModel.Client(client))
+      , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
   $scope.setReady = () =>
     $scope.client.setClientDetails($scope.client_details)

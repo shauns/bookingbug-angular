@@ -116,6 +116,7 @@ angular.module('BB.Models').factory "ClientModel", ($q, BBModel, BaseModel, Loca
       x.email = @email
       x.id = @id
       x.parent_client_id = @parent_client_id
+      x.password = @password
 
       if @mobile
         @remove_prefix()
