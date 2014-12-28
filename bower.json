@@ -19,6 +19,7 @@
     "jquery-visible": "~1.1.0",
     "jquery-ui": "~1.11.2",
     "moment": "~2.8.4",
+    "moment-timezone": "~0.2.5",
     "accounting": "~0.3.2",
     "angular": "~1.2.25",
     "angular-mocks": "~1.2.25",
