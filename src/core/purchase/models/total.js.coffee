@@ -25,7 +25,7 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window,
       @_data.$href('gcal')
 
     getItems: =>
-      defer = $q.defer()
+      defer = new $bbug.Deferred()
       defer.resolve(@items) if @items
       items = []
       @getBookingsPromise().then (bookings) =>
@@ -39,10 +39,10 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window,
         @getPackages().then (packages) ->
           items = items.concat(packages) if packages? && packages.length > 0
           defer.resolve(items)
-      defer.promise
+      defer.promise()
 
     getBookingsPromise: =>
-      defer = $q.defer()
+      defer = new $bbug.Deferred()
       defer.resolve(@bookings) if @bookings
       if @_data.$has('bookings')
         @_data.$get('bookings').then (bookings) =>
@@ -51,20 +51,20 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window,
           defer.resolve(@bookings)
       else
         defer.reject("No bookings")
-      defer.promise
+      defer.promise()
 
     getPackages: =>
-      defer = $q.defer()
+      defer = new $bbug.Deferred()
       defer.resolve(@packages) if @packages
       if @_data.$has('packages')
         @_data.$get('packages').then (packages) =>
           defer.resolve(@packages)
       else
         defer.reject('No packages')
-      defer.promise
+      defer.promise()
 
     getProducts: =>
-      defer = $q.defer()
+      defer = $q.defer
       defer.resolve(@products) if @products
       if @_data.$has('products')
         @_data.$get('products').then (products) =>
@@ -74,7 +74,7 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window,
       defer.promise
 
     getMessages: (booking_texts, msg_type) =>
-      defer = $q.defer()
+      defer = new $bbug.Deferred()
       booking_texts = (bt for bt in booking_texts when bt.message_type == msg_type)
       if booking_texts.length == 0
         defer.resolve([])
@@ -88,27 +88,27 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window,
                   if msgs.indexOf(booking_text.message) == -1
                     msgs.push(booking_text.message)
           defer.resolve(msgs)
-      defer.promise
+      defer.promise()
 
     getClient: =>
-      defer = $q.defer()
+      defer = new $bbug.Deferred()
       if @_data.$has('client')
         @_data.$get('client').then (client) =>
           @client = new BBModel.Client(client)
           defer.resolve(@client)
       else
         defer.reject('No client')
-      defer.promise
+      defer.promise()
 
     getConfirmMessages: () =>
-      defer = $q.defer()
+      defer = new $bbug.Deferred()
       if @_data.$has('confirm_messages')
         @_data.$get('confirm_messages').then (msgs) =>
           @getMessages(msgs, 'Confirm').then (filtered_msgs) =>
             defer.resolve(filtered_msgs)
       else
         defer.reject('no messages')
-      defer.promise
+      defer.promise()
 
     printed_total_price: () ->
       return "£" + parseInt(@total_price) if parseFloat(@total_price) % 1 == 0
@@ -117,3 +117,10 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window,
     newPaymentUrl: () ->
       if @_data.$has('new_payment')
         $sce.trustAsResourceUrl(@_data.$href('new_payment'))
+
+    totalDuration: () ->
+      duration = 0
+      for item in @items
+        duration =+ item.duration if item.duration
+      duration /= 60
+      return duration
