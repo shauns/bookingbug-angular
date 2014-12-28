@@ -47,6 +47,7 @@
   "resolutions": {
     "angular": "~1.2.25",
     "jquery": "~1.10.2",
-    "fullcalendar": "~2.2.3"
+    "fullcalendar": "~2.2.3",
+    "jquery-ui": "~1.11.2"
   }
 }
