@@ -16,7 +16,9 @@ app = angular.module('BB', [
   'ui.router',
   'ngAnimate',
   'angular-data.DSCacheFactory', # newer version of jmdobry angular cache
-  'schemaForm'
+  'schemaForm',
+  'ngStorage',
+  'angularFileUpload'
 ])
 
 # use this to inject application wide settings around the app

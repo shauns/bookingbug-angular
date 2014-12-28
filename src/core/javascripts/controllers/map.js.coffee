@@ -8,7 +8,7 @@ angular.module('BB.Directives').directive 'bbMap', () ->
   controller : 'MapCtrl'
 
 angular.module('BB.Controllers').controller 'MapCtrl',
-($scope, $element, $attrs, $rootScope, AlertService, ErrorService, FormDataStoreService, $q, $window) ->
+($scope, $element, $attrs, $rootScope, AlertService, ErrorService, FormDataStoreService, $q, $window, $timeout) ->
 
   $scope.controller = "public.controllers.MapCtrl"
 
@@ -89,8 +89,9 @@ angular.module('BB.Controllers').controller 'MapCtrl',
         marker.company = comp
         $scope.mapMarkers.push(marker) unless $scope.hide_not_live_stores && !comp.live
 
-    $scope.myMap.fitBounds($scope.mapBounds)
-    $scope.myMap.setZoom(15);
+    $timeout ->
+      $scope.myMap.fitBounds($scope.mapBounds)
+      $scope.myMap.setZoom(15);
     checkDataStore()
 
 

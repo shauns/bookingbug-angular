@@ -86,7 +86,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     $rootScope, halClient, $window, $http, $localCache, $q, $timeout, BasketService,
     LoginService, AlertService, $sce, $element, $compile, $sniffer, $modal,
     BBModel, BBWidget, SSOService, ErrorService, AppConfig, QueryStringService,
-    QuestionService, LocaleService, PurchaseService, $sessionStorage) ->
+    QuestionService, LocaleService, PurchaseService, $sessionStorage, $bbug) ->
   # dont change the cid as we use it in the app to identify this as the widget
   # root scope
   $scope.cid = "BBCtrl"
@@ -102,16 +102,17 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
   if $rootScope.bb && $rootScope.bb.api_url
     $scope.bb.api_url = $rootScope.bb.api_url
     unless $rootScope.bb.partial_url
-      $scope.bb.partial_url = "#{$scope.bb.api_url}/angular/"
+#      $scope.bb.partial_url = "#{$scope.bb.api_url}/angular/"
+      $scope.bb.partial_url = ""
     else
       $scope.bb.partial_url = $rootScope.bb.partial_url
   # if a custom port was used add that to the url
   if $location.port() isnt 80 and $location.port() isnt 443
     $scope.bb.api_url ||= $location.protocol() + "://" + $location.host() + ":" + $location.port()
-    $scope.bb.partial_url ||= $location.protocol() + "://" + $location.host() + ":" + $location.port() + '/angular/'
+    #$scope.bb.partial_url ||= $location.protocol() + "://" + $location.host() + ":" + $location.port() + '/angular/'
   else
     $scope.bb.api_url ||= $location.protocol() + "://" + $location.host()
-    $scope.bb.partial_url ||= $location.protocol() + "://" + $location.host() + '/angular/'
+    #$scope.bb.partial_url ||= $location.protocol() + "://" + $location.host() + '/angular/'
 
 
   $scope.bb.stacked_items = []
