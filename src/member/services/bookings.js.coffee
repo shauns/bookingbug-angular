@@ -1,5 +1,6 @@
-angular.module('BBMember.Services').factory "MemberBookingService", ($q,
-    SpaceCollections, $rootScope, MemberService, BBModel) ->
+'use strict';
+
+angular.module('BB.Services').factory "MemberBookingService", ($q, $window, SpaceCollections, $rootScope, MemberService, BBModel) ->
 
   query: (member, params) ->
     deferred = $q.defer()
@@ -7,7 +8,8 @@ angular.module('BBMember.Services').factory "MemberBookingService", ($q,
       deferred.reject("member does not have bookings")
     else
       member.$get('bookings', params).then (bookings) =>
-        if angular.isArray bookings
+        if $window.typeIsArray bookings
+          # bookings were embedded in member
           bookings = for booking in bookings
             new BBModel.Member.Booking(booking)
           deferred.resolve(bookings)
