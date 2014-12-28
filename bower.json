@@ -15,7 +15,7 @@
     "tests"
   ],
   "dependencies": {
-    "jquery": "~2.1.1",
+    "jquery": "~1.11.2",
     "jquery-visible": "~1.1.0",
     "jquery-ui": "~1.11.2",
     "moment": "~2.8.4",
@@ -46,7 +46,7 @@
   },
   "resolutions": {
     "angular": "~1.2.25",
-    "jquery": "~1.10.2",
+    "jquery": "~1.11.2",
     "fullcalendar": "~2.2.3"
   }
 }
