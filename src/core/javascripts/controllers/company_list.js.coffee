@@ -1,6 +1,6 @@
 'use strict';
 
-CompanyListBase = ($attrs, $scope, $rootScope, $q) ->
+CompanyListBase = ($scope, $rootScope, $q, $attrs) ->
 
   $scope.controller = "public.controllers.CompanyList"
   $scope.notLoaded $scope
@@ -38,6 +38,11 @@ CompanyListBase = ($attrs, $scope, $rootScope, $q) ->
     prms = {company_id: item.id}
     $scope.initWidget(prms)
 
+  # TODO move this into a mothercare js file
+  $scope.splitString = (company) ->
+    arr    = company.name.split(' ')
+    result = if arr[2] then arr[2] else ""
+
 
 angular.module('BB.Directives').directive 'bbCompanies', () ->
   restrict: 'AE'
@@ -54,9 +59,9 @@ angular.module('BB.Directives').directive 'bbPostcodeLookup', () ->
   controller : 'PostcodeLookup'
 
 
-angular.module('BB.Controllers').controller 'PostcodeLookup', ($scope,  $rootScope, $q, ValidatorService, AlertService) ->
+angular.module('BB.Controllers').controller 'PostcodeLookup', ($scope,  $rootScope, $q, ValidatorService, AlertService, $attrs) ->
   $scope.controller = "PostcodeLookup"
-  angular.extend(this, new CompanyListBase($scope, $rootScope, $q))
+  angular.extend(this, new CompanyListBase($scope, $rootScope, $q, $attrs))
 
 
   $scope.validator = ValidatorService

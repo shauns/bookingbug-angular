@@ -33,10 +33,15 @@ angular.module('BB.Directives').directive 'bbPayment', ($window, $location, $sce
       sendLoadEvent(element, origin, scope)
 
     $window.addEventListener 'message', (event) =>
-      switch event.data.type
-        when "error" then error(scope, event.data.message)
-        when "payment_complete"
-          scope.$apply =>
+      scope.$apply =>
+        switch event.data.type
+          when "submitting"
+            scope.callNotLoaded()
+          when "error"
+            scope.callSetLoaded()
+            error(scope, event.data.message)
+          when "payment_complete"
+            scope.callSetLoaded()
             scope.paymentDone()
     , false
 
@@ -63,6 +68,13 @@ angular.module('BB.Controllers').controller 'Payment', ($scope,  $rootScope,
 
     
     $scope.url = $sce.trustAsResourceUrl($scope.bb.total.$href('new_payment'))
+
+  
+  $scope.callNotLoaded = () =>
+    $scope.notLoaded $scope
+
+  $scope.callSetLoaded = () =>
+    $scope.setLoaded $scope
 
   $scope.paymentDone = () ->
     $scope.bb.payment_status = "complete"

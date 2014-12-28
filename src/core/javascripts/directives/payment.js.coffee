@@ -1,5 +1,5 @@
 angular.module('BB.Directives').directive 'paymentButton', ($compile, $sce,
-    $http, $templateCache, $q) ->
+    $http, $templateCache, $q, $log) ->
 
   getTemplate = (type, scope) ->
     switch type
@@ -40,6 +40,9 @@ angular.module('BB.Directives').directive 'paymentButton', ($compile, $sce,
       element.html(template).show()
       $compile(element.contents())(scope)
       setClassAndValue(scope, element, attributes)
+    , (err) ->
+      $log.warn err.data
+      element.remove()
 
   return {
     restrict: 'EA'
@@ -51,3 +54,32 @@ angular.module('BB.Directives').directive 'paymentButton', ($compile, $sce,
     }
     link: linker
   }
+
+angular.module('BB.Directives').directive 'bbPaypalExpressButton', ($compile, $sce,
+    $http, $templateCache, $q, $log, $window) ->
+
+  linker = (scope, element, attributes) ->
+    total = scope.total
+    paypalOptions = scope.paypalOptions
+    scope.href = $window.UriTemplate.parse(total.$link('paypal_express').href)
+                                    .expand(paypalOptions)
+
+    scope.showLoader = () ->
+      scope.notLoaded scope if scope.notLoaded
+
+  return {
+    restrict: 'EA'
+    replace: true
+    template: """
+      <a ng-href="{{href}}" ng-click="showLoader()">Pay</a>
+    """
+    scope: {
+      total: '='
+      bb: '='
+      decideNextPage: '='
+      paypalOptions: '=bbPaypalExpressButton'
+      notLoaded: '='
+    }
+    link: linker
+  }
+

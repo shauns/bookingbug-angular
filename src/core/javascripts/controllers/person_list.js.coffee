@@ -18,10 +18,6 @@ angular.module('BB.Controllers').controller 'PersonList',
 
   $scope.controller = "public.controllers.PersonList"
 
-  FormDataStoreService.init 'PersonList', $scope, [
-    'person'
-  ]
-
   $scope.notLoaded $scope
   angular.extend(this, new PageControllerService($scope, $q))
 

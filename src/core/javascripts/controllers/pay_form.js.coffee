@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module('BB.Directives').directive 'bbPayForm', ($window, $timeout,
-    $sce, $http, $compile, $document) ->
+    $sce, $http, $compile, $document, $location) ->
 
   applyCustomPartials = (custom_partial_url, scope, element) ->
     if custom_partial_url?
@@ -37,7 +37,7 @@ angular.module('BB.Directives').directive 'bbPayForm', ($window, $timeout,
     link: linker
   }
 
-angular.module('BB.Controllers').controller 'PayForm', ($scope) ->
+angular.module('BB.Controllers').controller 'PayForm', ($scope, $location) ->
 
   $scope.controller = "public.controllers.PayForm"
 
@@ -46,3 +46,25 @@ angular.module('BB.Controllers').controller 'PayForm', ($scope) ->
 
   $scope.setCard = (card) ->
     $scope.card = card
+
+
+  sendSubmittingEvent = () =>
+    origin = $location.protocol() + "://" + $location.host() + ":" + $location.port()
+    referrer = $location.protocol() + "://" + $location.host()
+    if $location.port()
+      referrer += ":" + $location.port()
+    payload = {
+      'type': 'submitting',
+      'message': referrer
+    }
+    parent.postMessage(payload, origin)
+ 
+  submitPaymentForm = () =>
+    payment_form = angular.element.find('form')
+    payment_form[0].submit()
+
+  $scope.submitAndSendMessage = (event) =>
+    event.preventDefault()
+    event.stopPropagation()
+    sendSubmittingEvent()
+    submitPaymentForm()

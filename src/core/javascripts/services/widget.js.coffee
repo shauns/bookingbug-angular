@@ -3,7 +3,7 @@
 
 # This class contrains handy functions and variables used in building and displaying a booking widget
 
-angular.module('BB.Models').factory "BBWidget", ($q, BBModel, BasketService, $urlMatcherFactory, $location, BreadcrumbService) ->
+angular.module('BB.Models').factory "BBWidget", ($q, BBModel, BasketService, $urlMatcherFactory, $location, BreadcrumbService, $window, $rootScope) ->
 
 
   class Widget
@@ -30,36 +30,74 @@ angular.module('BB.Models').factory "BBWidget", ($q, BBModel, BasketService, $ur
     updateRoute: (page) ->
       return if !@routeFormat
 
+      page ||= @current_page
       pattern = $urlMatcherFactory.compile(@routeFormat)
-      console.log pattern
-      service_name = ""
-      service_name = @current_item.service.name if @current_item.service
-      date = @current_item.date.date.format("YYYY-MM-DD") if @current_item.date
-      time = @current_item.time.time if @current_item.time
+      service_name = "-"
+      event_group = "-"
+      if @current_item
+        service_name = @convertToDashSnakeCase(@current_item.service.name) if @current_item.service
+        event_group = @convertToDashSnakeCase(@current_item.event_group.name) if @current_item.event_group
+        date = @current_item.date.date.format("YYYY-MM-DD") if @current_item.date
+        time = @current_item.time.time if @current_item.time
+        company = @convertToDashSnakeCase(@current_item.company.name) if @current_item.company
 
-      url = pattern.format({page: page, service: service_name, date: date, time: time})
+      prms = angular.copy(@route_values) if @route_values
+      prms ||= {}
+      angular.extend(prms,{page: page, company: company, service: service_name, event_group: event_group, date: date, time: time})
+
+      url = pattern.format(prms)
       url = url.replace(/\/+$/, "")
-      console.log url
       $location.path(url)
+      @routing = true
+      return url
+
 
     setRouteFormat: (route) ->
       @routeFormat = route
       return if !@routeFormat
 
-      console.log $location.path()
+      @routing = true
+
       path = $location.path()
+
       if path
         parts = @routeFormat.split("/")
         while parts.length > 0 && !match
           match_test = parts.join("/")
           pattern = $urlMatcherFactory.compile(match_test)
           match = pattern.exec(path)
-          console.log pattern
           parts.pop()
 
         if match
-          console.log "found paramsL", match
+          @item_defaults.company = decodeURIComponent(match.company) if match.company
+          @item_defaults.service = decodeURIComponent(match.service) if match.service && match.service != "-"
+          @item_defaults.event_group = match.event_group if match.event_group && match.event_group != "-"
+          @item_defaults.person = decodeURIComponent(match.person) if match.person
+          @item_defaults.resource = decodeURIComponent(match.resource) if match.resource
+          @item_defaults.date = match.date if match.date
+          @item_defaults.time = match.time if match.time
+          @route_matches = match
 
+
+    matchURLToStep: () ->
+      return null if !@routeFormat
+      path = $location.path()
+
+      for step,_i in @steps
+        return step.number if step.url && step.url == path
+
+      return null
+
+    convertToDashSnakeCase: (str) ->
+        str = str.toLowerCase();
+        str = $.trim(str)
+        # replace all punctuation and special chars
+        str = str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|'’!<>;:,.~`=+-@£&%"]/g, '')
+        # replace any double or more spaces
+        str = str.replace(/\s{2,}/g, ' ')
+        # convert to sanke case
+        str = str.replace(/\s/g, '-')
+        return str
 
     recordCurrentPage: () =>
       if !@current_step
@@ -95,6 +133,7 @@ angular.module('BB.Models').factory "BBWidget", ($q, BBModel, BasketService, $ur
 
     recordStep: (step, title) =>
       @steps[step-1] = {
+        url: @updateRoute(@current_page),
         current_item: @current_item.getStep(), 
         page: @current_page, 
         number: step, 

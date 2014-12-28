@@ -3,15 +3,22 @@
 angular.module('BB.Directives').directive 'bbAccordianRangeGroup', () ->
   restrict: 'AE'
   replace: true
-  scope : true
-  controller : 'AccordianRangeGroup',
+  scope: true
+  require: '^?bbTimeRangeStacked'
+  controller: 'AccordianRangeGroup'
+  link: (scope, element, attrs, ctrl) ->
+    scope.options = scope.$eval(attrs.bbAccordianRangeGroup) or {}
+    scope.options.using_stacked_items = ctrl?
 
 
 angular.module('BB.Controllers').controller 'AccordianRangeGroup',
-($scope,  $rootScope, $q, FormDataStoreService) ->
+($scope, $attrs, $rootScope, $q, FormDataStoreService) ->
 
   $scope.controller = "public.controllers.AccordianRangeGroup"
   $scope.collaspe_when_time_selected = true
+
+  $rootScope.connection_started.then ->
+    $scope.init($scope.options.range[0], $scope.options.range[1], $scope.options) if $scope.options and $scope.options.range
 
 
   # store the form data for the following scope properties
@@ -25,9 +32,10 @@ angular.module('BB.Controllers').controller 'AccordianRangeGroup',
 
 
   $scope.setRange = (start_time, end_time) ->
+    if !$scope.options
+      $scope.options = $scope.$eval($attrs.bbAccordianRangeGroup) or {}
     $scope.start_time = start_time
     $scope.end_time   = end_time
-
     setData()
 
 
@@ -37,55 +45,60 @@ angular.module('BB.Controllers').controller 'AccordianRangeGroup',
     $scope.has_availability = $scope.has_availability or false
     $scope.is_selected = $scope.is_selected or false
 
-    if $scope.day && $scope.day.slots
-      $scope.slots = $scope.day.slots
+    if $scope.options and $scope.options.slots
+      $scope.source_slots = $scope.options.slots
+    else if ($scope.day and $scope.day.slots)
+      $scope.source_slots = $scope.day.slots
+    else
+      $scope.source_slots = null
 
-    for slot in $scope.slots
-      $scope.accordian_slots.push(slot) if slot.time >= $scope.start_time && slot.time < $scope.end_time
+    if $scope.source_slots
 
-    updateAvailability()
-
-
-  updateAvailability = () ->
-    $scope.has_availability = false
-
-    if $scope.accordian_slots
-      $scope.has_availability = hasAvailability()
-      # does the BasketItem's selected time reside in the accordian group?
-      item = $scope.bb.current_item
-      if item.time && item.time.time && item.time.time >= $scope.start_time && item.time.time < $scope.end_time && (item.date && item.date.date.isSame($scope.day.date))
-        # lets just double check that time is still valid?
-        found = false
-        for slot in $scope.accordian_slots
-          if slot.time == item.time.time
-            item.setTime(slot)  # reset it - just in case this is really a new slot!
-            found = true
-
-        if !found
-          # we failed to find this - possibly beceause we changed dates for
-          # people - so unselect it!
-          item.setTime(null)
-        else
-          # this will hide the accoridan heading and show selected time
-          $scope.hideHeading = true
-          $scope.is_selected = true
-          $scope.is_open = false if $scope.collaspe_when_time_selected
+      if angular.isArray($scope.source_slots)
+        for slot in $scope.source_slots
+          $scope.accordian_slots.push(slot) if slot.time >= $scope.start_time and slot.time < $scope.end_time
       else
-        $scope.is_selected = false
-        $scope.is_open = false if $scope.collaspe_when_time_selected
+        for key, slot of $scope.source_slots
+          $scope.accordian_slots.push(slot) if slot.time >= $scope.start_time and slot.time < $scope.end_time
+
+      updateAvailability()
+
+
+  updateAvailability = (day, slot) ->   
+    $scope.selected_slot = null
+    $scope.has_availability = hasAvailability() if $scope.accordian_slots
+
+    # if a day and slot has been provided, check if the slot is in range
+    if day and slot and day.date.isSame($scope.day.date) and slot.time >= $scope.start_time and slot.time < $scope.end_time
+      $scope.selected_slot = slot
+    else 
+      for slot in $scope.accordian_slots
+        if slot.selected
+          $scope.selected_slot = slot
+          break
+
+    if $scope.selected_slot
+      $scope.hideHeading = true
+      $scope.is_selected = true
+      $scope.is_open = false if $scope.collaspe_when_time_selected
+    else
+      $scope.is_selected = false
+      $scope.is_open = false if $scope.collaspe_when_time_selected      
 
 
   hasAvailability = ->
     return false if !$scope.accordian_slots
-
     for slot in $scope.accordian_slots
       return true if slot.availability() > 0
-
     return false
 
 
-  $scope.$on 'slotChanged', (event) ->
-    updateAvailability()
+  $scope.$on 'slotChanged', (event, day, slot) ->  
+    if day and slot
+      updateAvailability(day, slot)
+    else
+      updateAvailability()
+
 
   $scope.$on 'dataReloaded', (event, earliest_slot) ->
     setData()

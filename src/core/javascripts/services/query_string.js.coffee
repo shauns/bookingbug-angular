@@ -7,28 +7,50 @@ angular.module('BB.Services').factory 'QueryStringService', ($window) ->
     href = $window.location.href
 
     if href.indexOf('?') < 0
-      return false
+      return
 
-    hashes = href.slice(href.indexOf('?') + 1).split('&')
+    hashes = href.slice(href.indexOf('?') + 1).split(/[#&]/)
+
+    #  check query string value is a number
+    isNum = (num) ->
+      # if num is not defined
+      if !num?
+        return
+      # starts with 0
+      if num.substr(0,1) is '0'
+        return
+       # contains chars
+      if /[a-zA-Z\-\_\+\.\#\%\*\,]/.test(num)
+        return
+      # is not a number
+      if window.isNaN(window.parseInt(num, 10))
+        return
+      return true
+
 
     for hash in hashes
       hash = hash.split('=');
       # convert to number
-      val = window.parseInt(hash[1], 10)
+      val = hash[1]
 
       # if it's not a number - or that the number length is different!
-      if window.isNaN(val) || val.toString().length != hash[1].length
+      if isNum(val)
+        val = window.parseInt(val, 10)
+      else
         # is boolean true
-        if hash[1] is 'true'
+        if val is 'true'
           val = true
           # is boolean false
-        else if hash[1] is 'false'
+        else if val is 'false'
           val = false
         else
-          val = window.decodeURIComponent(hash[1])
+          val = window.decodeURIComponent(val)
+          # Removed date check as it attempts to convert strings like '0027' to a date
+          # It should be on the onus of the user of the QueryStringService to attempt to instantinate
+          # as a moment object
           # check if date
-          if window.moment(val).isValid()
-            val = moment(val)._d
+          #if window.moment(val).isValid()
+          #  val = moment(val)._d
 
 
       varObj[hash[0]] = val

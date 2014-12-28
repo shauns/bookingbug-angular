@@ -1,5 +1,8 @@
-angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
-    BookableItemModel, BaseModel, $bbug) ->
+
+'use strict';
+
+angular.module('BB.Models').factory "BasketItemModel",
+($q, $window, BBModel, BookableItemModel, BaseModel) ->
 
   # A class that defines an item in a shopping basket
   # This could represent a time based service, a ticket for an event or class, or any other purchasable item
@@ -16,7 +19,7 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
       @has_questions = false
 
       if bb
-        @reserve_without_questions = bb.reserve_without_questions
+        @reserve_without_questions = bb.reserve_without_questions        
 
       # if we were given an id then the item is ready - we need to fake a few items
       if @time
@@ -104,6 +107,9 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
         if data.settings
           @settings = $bbug.extend(true, {}, data.settings)
 
+        if data.attachment_id
+          @attachment_id = data.attachment_id
+
         if data.$has('product')
           data.$get('product').then (product) =>
             @setProduct(product)
@@ -155,13 +161,18 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
     requestedTimeUnavailable: ->
       delete @requested_time
 
+    setSlot: (slot) ->
+
+      @date = new BBModel.Day({date: slot.datetime.format("YYYY-MM-DD"), spaces: 1})
+      t =  slot.datetime.hour() * 60 +  slot.datetime.minute()
+      @time = new BBModel.TimeSlot({time: t, avail: 1, price: @price })
+      @available_slot = slot.id
 
 
     setCompany: (company) ->
       @company = company
       @parts_links.company = @company.$href('self')
       @item_details.currency_code = @company.currency_code if @item_details
-
 
     clearExistingItem: () ->
       if @$has('self') &&  @event_id
@@ -477,11 +488,12 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
         data.tickets = @tickets
       data.event_chain_id = @event_chain_id
       data.event_group_id = @event_group_id
-      data.qty = @qty
+      data.qty = @qty   
       data.num_resources = parseInt(@num_resources) if @num_resources?
       data.product = @product
       data.coupon_id = @coupon_id
       data.is_coupon = @is_coupon
+      data.attachment_id = @attachment_id if @attachment_id
 
       if @email?
         data.email = @email
@@ -556,7 +568,7 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
 
     booking_time: (seperator = '-') ->
       return null if !@time
-      duration = if @listed_duration then @listed_duration else @duration
+      duration = if @listed_duration then @listed_duration else @duration 
       @time.print_time() + " " + seperator + " " +  @time.print_end_time(duration)
 
     # prints the amount due - which might be different if it's a waitlist
@@ -590,7 +602,7 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
 
     anyPerson: () ->
       @person && (typeof @person == 'boolean')
-
+ 
     anyResource: () ->
       @resource && (typeof @resource == 'boolean')
 
@@ -639,3 +651,10 @@ angular.module('BB.Models').factory "BasketItemModel", ($q, $window, BBModel,
         true
       else
         false
+
+    getAttachment: () ->
+      return @attachment if @attachment
+      if @$has('attachment') && @attachment_id
+        @_data.$get('attachment').then (att) =>
+          @attachment = att
+          @attachment

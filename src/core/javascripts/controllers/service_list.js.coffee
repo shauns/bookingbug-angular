@@ -6,10 +6,15 @@ angular.module('BB.Directives').directive 'bbServices', () ->
   scope : true
   controller : 'ServiceList'
   link : (scope, element, attrs) ->
+
+    scope.options = scope.$eval(attrs.bbServices) or {}
+
     if attrs.bbItem
       scope.booking_item = scope.$eval( attrs.bbItem )
-    if attrs.bbShowAll
+    if attrs.bbShowAll or scope.options.show_all 
       scope.show_all = true
+    if scope.options.allow_single_pick
+      scope.allowSinglePick = true
     return
 
 
@@ -93,9 +98,7 @@ angular.module('BB.Controllers').controller 'ServiceList',
           items = items.filter (x) -> x.api_ref == $scope.booking_item.service_ref
         if $scope.booking_item.group
           items = items.filter (x) -> !x.group_id || x.group_id == $scope.booking_item.group
-        services = []
-        for i in items
-          services.push(i.item)
+        services = (i.item for i in items when i.item?)
         
         $scope.bookable_services = services
         $scope.bookable_items = items
@@ -104,7 +107,10 @@ angular.module('BB.Controllers').controller 'ServiceList',
             setServiceItem services
           else if !@skipped
             $scope.skipThisStep()
-            @skipped = true
+            @skipped = true  
+        else
+          setServiceItem items
+        
         $scope.setLoaded($scope)
       , (err) ->  
         $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
@@ -120,23 +126,28 @@ angular.module('BB.Controllers').controller 'ServiceList',
 
 
   $scope.selectItem = (item, route) =>
+    if $scope.routed
+      return true
+
     if $scope.$parent.$has_page_control
       $scope.service = item
       return false
     else if item.is_event_group
       $scope.booking_item.setEventGroup(item)
       $scope.decideNextPage(route)
+      $scope.routed = true
     else
       $scope.booking_item.setService(item)
       $scope.decideNextPage(route)
+      $scope.routed = true
       return true
 
-  # $scope.$watch 'service', (newval, oldval) =>
-  #   if $scope.service
-  #     if !$scope.booking_item.service or $scope.booking_item.service.self isnt $scope.service.self
-  #       # only set and broadcast if it's changed
-  #       $scope.booking_item.setService($scope.service)
-  #       $scope.broadcastItemUpdate()
+  $scope.$watch 'service', (newval, oldval) =>
+    if $scope.service
+      if !$scope.booking_item.service or $scope.booking_item.service.self isnt $scope.service.self
+        # only set and broadcast if it's changed
+        $scope.booking_item.setService($scope.service)
+        $scope.broadcastItemUpdate()
 
 
   $scope.setReady = () =>

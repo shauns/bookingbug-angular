@@ -100,51 +100,85 @@ angular.module('BB.Controllers').controller 'AddressList',
           house_number = ''
           if typeof address.buildingNumber is 'string'
             house_number = address.buildingNumber
-          else if address.buildingNumber is null
+          else if !address.buildingNumber?
             house_number = address.buildingName
 
           if typeof address.streetName is 'string'
-            $scope.bb.address1 = house_number + ' ' + address.streetName
+            streetName = if address.streetName then address.streetName else ''
+            $scope.bb.address1 = house_number + ' ' + streetName
           else
-            $scope.bb.address1 = house_number + ' ' + address.addressLine2
-          if address.buildingName and address.buildingNumber is null
+            addressLine2 = if address.addressLine2 then address.addressLine2 else ''
+            $scope.bb.address1 = house_number + ' ' + addressLine2
+
+          if address.buildingName and !address.buildingNumber?
             $scope.bb.address1 = house_number
             $scope.bb.address2 = address.streetName
-            $scope.bb.address4 = address.county
+            $scope.bb.address4 = address.county if address.county?
 
           if typeof address.buildingNumber is 'string' && typeof address.buildingName is 'string' && typeof address.streetName is 'string'
-            $scope.bb.address2 = address.buildingNumber + " " + address.streetName
+            streetName = if address.streetName then address.streetName else ''
             $scope.bb.address1 = address.buildingName
+            $scope.bb.address2 = address.buildingNumber + " " + streetName
 
-          if address.buildingName isnt null and address.buildingName.match(/(^[^0-9]+$)/)
-            $scope.bb.address1 = address.buildingName + " " + address.buildingNumber
+          if address.buildingName? and address.buildingName.match(/(^[^0-9]+$)/)
+            building_number = if address.buildingNumber then address.buildingNumber else ''
+            $scope.bb.address1 = address.buildingName + " " + building_number
             $scope.bb.address2 = address.streetName
 
-          if address.buildingNumber is null and address.streetName is null
+          if !address.buildingNumber? and !address.streetName?
             $scope.bb.address1 = address.buildingName
             $scope.bb.address2 = address.addressLine3
             $scope.bb.address4 = address.town
 
 
           #The below conditional logic is VERY specific to different company address layouts
-          if address.companyName isnt null
+          if address.companyName?
             $scope.bb.address1 = address.companyName
 
-            if address.buildingNumber is null and address.streetName is null
+            if !address.buildingNumber? and !address.streetName?
               $scope.bb.address2 = address.addressLine3
-            else if address.buildingNumber is null
-              $scope.bb.address2 = address.buildingName
+            else if !address.buildingNumber?
+              address2 = if address.buildingName then address.buildingName + ', ' + address.streetName else address.streetName
+              $scope.bb.address2 = address2
+            else if !address.buildingName? and !address.addressLine2?
+              $scope.bb.address2 = address.buildingNumber + ", " + address.streetName
             else
-              $scope.bb.address2 = address.buildingNumber + " " + address.streetName
+              $scope.bb.address2 = address.buildingName
             $scope.bb.address3 = address.buildingName
-            $scope.bb.address3 = address.streetName   if address.buildingNumber is null
+
+            if address.addressLine3 && address.buildingNumber?
+              address3 = address.addressLine3
+            else if !address.addressLine2? and address.buildingNumber?
+              address3 = address.buildingNumber + " " + address.streetName
+            else if !address.addressLine2? and !address.buildingNumber? and address.buildingName?
+              address3 = address.addressLine3
+            else
+              address3 = ''
+            $scope.bb.address3 = address3
             $scope.bb.address4 = address.town
             $scope.bb.address5 = ""
             $scope.bb.postcode = address.postCode
 
-          $scope.bb.address2 = address.addressLine3 if address.buildingName is null and address.companyName is null
+          if !address.buildingName? and !address.companyName? and !address.county?
+            if !address.addressLine2? and !address.companyName?
+              address2 = address.addressLine3
+            else
+              address2 = address.addressLine2
+            $scope.bb.address2 = address2
+          else if !address.buildingName? and !address.companyName?
+            $scope.bb.address2 = address.addressLine3
+
+          if address.buildingName? and address.streetName? and !address.companyName? and address.addressLine3?
+            if !address.addressLine3?
+              $scope.bb.address3 = address.buildingName
+            else
+              $scope.bb.address3 = address.addressLine3
+          else if !address.buildingName? and !address.companyName? and address.addressLine2?
+            $scope.bb.address3 = address.addressLine3
+          else if !address.buildingName? and address.streetName? and !address.addressLine3?
+            $scope.bb.address3 = address.addressLine3
           $scope.bb.address4 = address.town
-          $scope.bb.address5 = address.county if address.county isnt null
+          $scope.bb.address5 = address.county if address.county?
           $scope.setLoaded($scope)
           return
         ,(err) ->
@@ -164,5 +198,6 @@ angular.module('BB.Controllers').controller 'AddressList',
     $scope.bb.address4 = null
     $scope.bb.address5 = null
     $scope.show_complete_address = false
+    $scope.postcode_submitted = false
     $scope.bb.address = $scope.addresses[0]
     

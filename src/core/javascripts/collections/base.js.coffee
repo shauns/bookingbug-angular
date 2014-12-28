@@ -16,22 +16,27 @@ class window.Collection.Base
         @[n] = m
 
   checkItem: (item) ->
-    return if !@matchesParams(item)
-    for i in @items
-      if item.self == i.self
-        @items[_i] = item
-        for call in @callbacks
-          call[1](item, "update")
-        return true
+    if !@matchesParams(item)
+      @deleteItem(item)  #delete if it is in the collection at the moment
+      return true    
+    else
+      for i in @items
+        if item.self == i.self
+          @items[_i] = item
+          for call in @callbacks
+            call[1](item, "update")
+          return true
 
     @items.push(item)    
     for call in @callbacks
       call[1](item, "add") 
 
   deleteItem: (item) ->
+    len = @items.length
     @items = @items.filter (x) -> x.self != item.self
-    for call in @callbacks
-      call[1](item, "delete")
+    if @items.length != len
+      for call in @callbacks
+        call[1](item, "delete")
 
   getItems: ->
     @items
@@ -47,7 +52,12 @@ class window.Collection.Base
 
 
 class window.BaseCollections
-  collections: []
+
+  constructor: () ->
+    @collections = []
+
+  count: () ->
+    @collections.length
 
   add: (col) ->
     @collections.push(col)

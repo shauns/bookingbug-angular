@@ -12,7 +12,7 @@ angular.module('BB.Models').factory "QuestionModel", ($q, $filter, BBModel, Base
         @price = parseFloat(@price)
       if @_data.default
         @answer=@_data.default
-      else if @_data.options
+      if @_data.options
         for option in @_data.options
           if option.is_default
             @answer=option.name
@@ -22,7 +22,7 @@ angular.module('BB.Models').factory "QuestionModel", ($q, $filter, BBModel, Base
             option.display_name = "#{option.name} (#{$filter('currency')(option.price, currency)})"
           else
             option.display_name = option.name
-      if @_data.detail_type == "check"
+      if @_data.detail_type == "check" || @_data.detail_type == "check-price"
         @answer =(@_data.default && @_data.default == "1")
 
       @currentlyShown = true
@@ -33,10 +33,17 @@ angular.module('BB.Models').factory "QuestionModel", ($q, $filter, BBModel, Base
     selectedPrice: ->
       return 0 if !@hasPrice()
       if @detail_type == "check-price"
-        return (@answer ? @price ? 0)
+        return (if @answer then @price else 0)
       for option in @_data.options
         return option.price if @answer == option.name
       return 0
+
+    selectedPriceQty: (qty) ->
+      qty ||= 1
+      p = @selectedPrice()  
+      if @price_per_booking
+        p = p * qty
+      p
 
     getAnswerId: ->
       return null if !@answer || !@options || @options.length == 0

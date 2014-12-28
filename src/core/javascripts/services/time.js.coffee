@@ -49,10 +49,12 @@ angular.module('BB.Services').factory "TimeService", ($q, BBModel, halClient) ->
                 if day.$has('event_links')
                   day.$get('event_links').then (all_events) =>
                     times = @merge_times(all_events, prms.cItem.service, prms.cItem)
+                    times = _.filter(times, (t) -> t.avail >= prms.available) if prms.available
                     date_times[day.date] = times
                     day.elink.resolve()
                 else if day.times
                   times = @merge_times([day], prms.cItem.service, prms.cItem)
+                  times = _.filter(times, (t) -> t.avail >= prms.available) if prms.available
                   date_times[day.date] = times
                   day.elink.resolve()
 
@@ -63,10 +65,12 @@ angular.module('BB.Services').factory "TimeService", ($q, BBModel, halClient) ->
           # single day - but a list of bookable events
           results.$get('event_links').then (all_events) =>
             times = @merge_times(all_events, prms.cItem.service, prms.cItem)
+            times = _.filter(times, (t) -> t.avail >= prms.available) if prms.available
             deferred.resolve(times)
 
         else if results.times
           times = @merge_times([results], prms.cItem.service, prms.cItem)
+          times = _.filter(times, (t) -> t.avail >= prms.available) if prms.available
           deferred.resolve(times)
       , (err) ->
         deferred.reject(err)
@@ -81,17 +85,25 @@ angular.module('BB.Services').factory "TimeService", ($q, BBModel, halClient) ->
 
     sorted_times = []
     for ev in all_events
-      for i in ev.times
-        i.event_id = ev.event_id
-        sorted_times[i.time] = i
-      # if we have an item - which an already booked item - make sure that's int he l;ist of time slots we can select - iee. that we can select the current slot
-      if item && item.id && item.event_id == ev.event_id && item.time && !sorted_times[item.time.time] && item.date && item.date.date.format("YYYY-MM-DD") == ev.date
-        sorted_times[item.time.time] = item.time
+      if ev.times
+        for i in ev.times
+          i.event_id = ev.event_id
+          sorted_times[i.time] = i
+        # if we have an item - which an already booked item - make sure that's int he l;ist of time slots we can select - iee. that we can select the current slot
+        if item && item.id && item.held && item.held.event_id == ev.event_id && item.held.time && !sorted_times[item.held.time.time] && item.held.date && item.held.date.date.format("YYYY-MM-DD") == ev.date
+          sorted_times[item.held.time.time] = item.held.time
+          # remote this entry from the cache - just in case - we know it has a held item in it so lets just not keep it in case that goes later!
+          halClient.clearCache(ev.$href("self"))
+        else if item && item.id && item.event_id == ev.event_id && item.time && !sorted_times[item.time.time] && item.date && item.date.date.format("YYYY-MM-DD") == ev.date
+          sorted_times[item.time.time] = item.time
+          # remote this entry from the cache - just in case - we know it has a held item in it so lets just not keep it in case that goes later!
+          halClient.clearCache(ev.$href("self"))
+
 
     times = []
     date_times = {}
     for i in sorted_times
       if i
-        times.push(new BBModel.TimeSlot(i, service))  
-     times   
+        times.push(new BBModel.TimeSlot(i, service))
+    times
 
