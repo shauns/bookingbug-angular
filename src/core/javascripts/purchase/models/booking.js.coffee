@@ -14,7 +14,8 @@ angular.module('BB.Models').factory "Purchase.BookingModel", ($q, $window, BBMod
 
       @end_datetime = moment.parseZone(@end_datetime)
       @end_datetime.tz(@time_zone) if @time_zone
-
+ 
+ 
 
     getGroup: () ->
       return @group if @group
