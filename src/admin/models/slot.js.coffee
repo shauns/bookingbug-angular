@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 angular.module('BB.Models').factory "Admin.SlotModel", ($q, BBModel, BaseModel, TimeSlotModel) ->
 
@@ -11,7 +11,8 @@ angular.module('BB.Models').factory "Admin.SlotModel", ($q, BBModel, BaseModel, 
         @title = "Available"
       @datetime = moment(@datetime)
       @start = @datetime
-      @end = @datetime.clone().add('minutes', @duration)
+      @end = @datetime.clone().add(@duration, 'minutes')
+      @time = @start.hour()* 60 + @start.minute()
       @allDay = false
       if @status == 3
         @className = "status_blocked"

@@ -1,8 +1,6 @@
 
 
-bbAdminDirectives = angular.module('BBAdmin.Directives', []);
-
-bbAdminDirectives.controller('CalController', function($scope) {
+angular.module('BBAdmin.Directives').controller('CalController', function($scope) {
     /* config object */
     $scope.calendarConfig = {
         height: 450,
