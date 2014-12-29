@@ -9,26 +9,26 @@ angular.module('BBAdmin.Controllers').controller 'CompanyList', ($scope,  $rootS
     if !$scope.companies || $scope.companies.length == 0
       $scope.companies = [$scope.bb.company]
     $scope.dates = []
-    end = moment(date).add('days',21)
+    end = moment(date).add(21, 'days')
     $scope.end_date = end
     d = moment(date)
     while d.isBefore(end) 
       $scope.dates.push(d.clone())
-      d.add('days',1)
+      d.add(1, 'days')
 
   $scope.selectCompany = (item) ->
     window.location = "/view/dashboard/pick_company/" + item.id;
 #    $location.path(route) 
 
   $scope.advance_date = (num) ->
-    date = $scope.current_date.add('days',num)
-    $scope.end_date =  moment(date).add('days',21)
+    date = $scope.current_date.add(num, 'days')
+    $scope.end_date =  moment(date).add(21, 'days')
     $scope.current_date = moment(date)
     $scope.dates = []
     d = date.clone()
     while d.isBefore($scope.end_date)
       $scope.dates.push(d.clone())
-      d.add('days',1)
+      d.add(1, 'days')
 
   $scope.$on "Refresh_Comp", (event, message)->
       $scope.$apply()
