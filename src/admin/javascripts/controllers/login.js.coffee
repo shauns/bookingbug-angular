@@ -7,7 +7,9 @@ angular.module('BBAdmin').directive 'bbAdminLogin', () ->
   templateUrl: 'login.html'
 
 
-angular.module('BBAdmin').controller 'AdminLogin', ($scope,  $rootScope, AdminLoginService, $q) ->
+angular.module('BBAdmin').controller 'AdminLogin', ($scope,  $rootScope, AdminLoginService, $q, $sessionStorage) ->
+
+  $scope.host = $sessionStorage.getItem("host")
 
   $scope.login_sso = (token, route) =>
     $rootScope.connection_started.then =>
@@ -24,6 +26,7 @@ angular.module('BBAdmin').controller 'AdminLogin', ($scope,  $rootScope, AdminLo
     $rootScope.bb ||= {}
     if $scope.host
       $rootScope.bb.api_url = $scope.host
+      $sessionStorage.setItem("host", $scope.host)
     AdminLoginService.login({email: $scope.email, password: $scope.password}, {}).then (user) =>
       $scope.user = user
       if user.$has('administrators')
