@@ -12,9 +12,9 @@ angular.module('BBAdminServices').factory 'AdminScheduleService',  ($q, $window,
     deferred = $q.defer()
     halClient.$get(uri, {}).then  (resource) =>
       resource.$get('schedules').then (items) =>
-        scheduless = []
+        schedules = []
         for i in items
-          scheduless.push(new BBModel.Schedule(i))
+          schedules.push(new BBModel.Admin.Schedule(i))
         deferred.resolve(schedules)
     , (err) =>
       deferred.reject(err)

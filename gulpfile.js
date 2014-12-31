@@ -17,8 +17,10 @@ var gulp = require('gulp');
     uglify = require('gulp-uglify');
 
 gulp.task('clean', function(cb) {
-  del(['release'], cb);
+  del.sync(['release']);
+  cb()
 });
+
 
 gulp.task('list', function() {
   gulp.src(mainBowerFiles({filter: new RegExp('.js$')}))

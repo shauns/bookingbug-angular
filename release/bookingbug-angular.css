@@ -6421,7 +6421,6 @@ be a descendant of the grid when it is being dragged.
     margin-left: 0; }
 @media screen and (min-width: 768px) {
   #bb .modal-dialog {
-    left: 50%;
     right: auto;
     width: 600px;
     padding-top: 30px;
@@ -7491,7 +7490,6 @@ body.modal-open {
 
 @media screen and (min-width: 768px) {
   .modal-dialog {
-    left: 50%;
     right: auto;
     width: 600px;
     padding-top: 30px;
@@ -10714,7 +10712,6 @@ body.modal-open {
     margin-left: 0; }
 @media screen and (min-width: 768px) {
   #bb .modal-dialog {
-    left: 50%;
     right: auto;
     width: 600px;
     padding-top: 30px;

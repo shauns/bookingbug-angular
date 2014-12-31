@@ -21,6 +21,7 @@ app = angular.module('BB', [
   'angularFileUpload'
 ])
 
+
 # use this to inject application wide settings around the app
 app.value('AppConfig', {})
 
@@ -30,7 +31,7 @@ if (window.use_no_conflict)
 else
   app.value '$bbug', jQuery
 
-app.config ($locationProvider, $httpProvider) ->
+app.config ($locationProvider, $httpProvider, $provide) ->
   $httpProvider.defaults.headers.common =
     'App-Id': 'f6b16c23',
     'App-Key': 'f0bc4f65f4fbfe7b4b3b7264b655f5eb'
@@ -38,10 +39,13 @@ app.config ($locationProvider, $httpProvider) ->
   $locationProvider.html5Mode(false).hashPrefix('!')
 
 
-app.run ($rootScope, $log, DebugUtilsService, FormDataStoreService, $bbug, $document) ->
+app.run ($rootScope, $log, DebugUtilsService, FormDataStoreService, $bbug, $document, $sessionStorage, AppConfig) ->
   # add methods to the rootscope if they are applicable to whole app
   $rootScope.$log = $log
   $rootScope.$setIfUndefined = FormDataStoreService.setIfUndefined
+
+  $rootScope.bb ||= {}
+  $rootScope.bb.api_url = $sessionStorage.getItem("host")
 
   # add bits of IE8 support
   if ($bbug.support.opacity == false)

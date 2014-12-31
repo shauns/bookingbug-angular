@@ -1,13 +1,23 @@
 <!DOCTYPE HTML>
-<html>
+<html ng-app="BBAdmin">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
 
     <link rel="stylesheet"
     href="//maxcdn.bootstrapcdn.com/bootswatch/3.0.3/flatly/bootstrap.min.css" media="screen" />
+
+    <link rel="stylesheet" href="/bookingbug-angular.css" media="screen" />
+    <script src="/bookingbug-angular.js"></script>
     <title>BookingBug</title>
   </head>
   <body>
+    <div bb-login>
+      <div class="pull-right col-sm-4">
+        <div ng-if="bb.api_url">Host: {{bb.api_url}}</div>
+        <div ng-if="user">User: {{user.name}}</div>
+        <div ng-if="bb.company_id">Company: {{bb.company_id}}</div>
+      </div>
+    </div>
     <p>Examples of the BookingBug AngularJS modules:</p>
     <ul>
       <li><a href="/member.html">BBMember</a></li>

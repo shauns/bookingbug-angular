@@ -6,7 +6,7 @@ angular.module('BBAdminServices').directive 'scheduleTable', (AdminCompanyServic
     $scope.getSchedules = () ->
       params =
         company: $scope.company
-      AdminScheduleService.query(params).then (schedule) ->
+      AdminScheduleService.query(params).then (schedules) ->
         $scope.schedules_models = schedules
         $scope.schedules = _.map schedules, (schedule) ->
           _.pick schedule, 'id', 'name', 'mobile'
@@ -29,6 +29,7 @@ angular.module('BBAdminServices').directive 'scheduleTable', (AdminCompanyServic
 
     $scope.edit = (id) ->
       schedule = _.find $scope.schedules_models, (p) -> p.id == id
+      console.log id, schedule
       ModalForm.edit
         model: schedule
         title: 'Edit Schedule'
