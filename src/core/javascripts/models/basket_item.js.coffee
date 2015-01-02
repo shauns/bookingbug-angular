@@ -117,6 +117,8 @@ angular.module('BB.Models').factory "BasketItemModel",
 
     # bookable slot based functions
     setDefaults: (defaults) ->
+      if defaults.settings
+        @settings = defaults.settings
       if defaults.company
         @setCompany(defaults.company)
       if defaults.merge_resources
@@ -145,7 +147,6 @@ angular.module('BB.Models').factory "BasketItemModel",
         @setEventGroup(defaults.event_group)
       if defaults.event
         @setEvent(defaults.event)
-
       @defaults = defaults
 
     storeDefaults: (defaults) ->
