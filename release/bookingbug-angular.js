@@ -1,5 +1,5 @@
 /*!
- * jQuery JavaScript Library v2.1.3
+ * jQuery JavaScript Library v1.11.2
  * http://jquery.com/
  *
  * Includes Sizzle.js
@@ -9,19 +9,19 @@
  * Released under the MIT license
  * http://jquery.org/license
  *
- * Date: 2014-12-18T15:11Z
+ * Date: 2014-12-17T15:27Z
  */
 
 (function( global, factory ) {
 
 	if ( typeof module === "object" && typeof module.exports === "object" ) {
-		// For CommonJS and CommonJS-like environments where a proper `window`
-		// is present, execute the factory and get jQuery.
-		// For environments that do not have a `window` with a `document`
-		// (such as Node.js), expose a factory as module.exports.
-		// This accentuates the need for the creation of a real `window`.
+		// For CommonJS and CommonJS-like environments where a proper window is present,
+		// execute the factory and get jQuery
+		// For environments that do not inherently posses a window with a document
+		// (such as Node.js), expose a jQuery-making factory as module.exports
+		// This accentuates the need for the creation of a real window
 		// e.g. var jQuery = require("jquery")(window);
-		// See ticket #14549 for more info.
+		// See ticket #14549 for more info
 		module.exports = global.document ?
 			factory( global, true ) :
 			function( w ) {
@@ -37,21 +37,21 @@
 // Pass this if window is not defined yet
 }(typeof window !== "undefined" ? window : this, function( window, noGlobal ) {
 
-// Support: Firefox 18+
-// Can't be in strict mode, several libs including ASP.NET trace
+// Can't do this because several apps including ASP.NET trace
 // the stack via arguments.caller.callee and Firefox dies if
 // you try to trace through "use strict" call chains. (#13335)
+// Support: Firefox 18+
 //
 
-var arr = [];
+var deletedIds = [];
 
-var slice = arr.slice;
+var slice = deletedIds.slice;
 
-var concat = arr.concat;
+var concat = deletedIds.concat;
 
-var push = arr.push;
+var push = deletedIds.push;
 
-var indexOf = arr.indexOf;
+var indexOf = deletedIds.indexOf;
 
 var class2type = {};
 
@@ -64,10 +64,7 @@ var support = {};
 
 
 var
-	// Use the correct document accordingly with window argument (sandbox)
-	document = window.document,
-
-	version = "2.1.3",
+	version = "1.11.2",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -76,7 +73,7 @@ var
 		return new jQuery.fn.init( selector, context );
 	},
 
-	// Support: Android<4.1
+	// Support: Android<4.1, IE<9
 	// Make sure we trim BOM and NBSP
 	rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,
 
@@ -170,12 +167,12 @@ jQuery.fn = jQuery.prototype = {
 	// For internal use only.
 	// Behaves like an Array's method, not like a jQuery method.
 	push: push,
-	sort: arr.sort,
-	splice: arr.splice
+	sort: deletedIds.sort,
+	splice: deletedIds.splice
 };
 
 jQuery.extend = jQuery.fn.extend = function() {
-	var options, name, src, copy, copyIsArray, clone,
+	var src, copyIsArray, copy, name, options, clone,
 		target = arguments[0] || {},
 		i = 1,
 		length = arguments.length,
@@ -185,7 +182,7 @@ jQuery.extend = jQuery.fn.extend = function() {
 	if ( typeof target === "boolean" ) {
 		deep = target;
 
-		// Skip the boolean and the target
+		// skip the boolean and the target
 		target = arguments[ i ] || {};
 		i++;
 	}
@@ -195,7 +192,7 @@ jQuery.extend = jQuery.fn.extend = function() {
 		target = {};
 	}
 
-	// Extend jQuery itself if only one argument is passed
+	// extend jQuery itself if only one argument is passed
 	if ( i === length ) {
 		target = this;
 		i--;
@@ -252,14 +249,20 @@ jQuery.extend({
 
 	noop: function() {},
 
+	// See test/unit/core.js for details concerning isFunction.
+	// Since version 1.3, DOM methods and functions like alert
+	// aren't supported. They return false on IE (#2968).
 	isFunction: function( obj ) {
 		return jQuery.type(obj) === "function";
 	},
 
-	isArray: Array.isArray,
+	isArray: Array.isArray || function( obj ) {
+		return jQuery.type(obj) === "array";
+	},
 
 	isWindow: function( obj ) {
-		return obj != null && obj === obj.window;
+		/* jshint eqeqeq: false */
+		return obj != null && obj == obj.window;
 	},
 
 	isNumeric: function( obj ) {
@@ -270,25 +273,6 @@ jQuery.extend({
 		return !jQuery.isArray( obj ) && (obj - parseFloat( obj ) + 1) >= 0;
 	},
 
-	isPlainObject: function( obj ) {
-		// Not plain objects:
-		// - Any object or value whose internal [[Class]] property is not "[object Object]"
-		// - DOM nodes
-		// - window
-		if ( jQuery.type( obj ) !== "object" || obj.nodeType || jQuery.isWindow( obj ) ) {
-			return false;
-		}
-
-		if ( obj.constructor &&
-				!hasOwn.call( obj.constructor.prototype, "isPrototypeOf" ) ) {
-			return false;
-		}
-
-		// If the function hasn't returned already, we're confident that
-		// |obj| is a plain object, created by {} or constructed with new Object
-		return true;
-	},
-
 	isEmptyObject: function( obj ) {
 		var name;
 		for ( name in obj ) {
@@ -297,41 +281,67 @@ jQuery.extend({
 		return true;
 	},
 
+	isPlainObject: function( obj ) {
+		var key;
+
+		// Must be an Object.
+		// Because of IE, we also have to check the presence of the constructor property.
+		// Make sure that DOM nodes and window objects don't pass through, as well
+		if ( !obj || jQuery.type(obj) !== "object" || obj.nodeType || jQuery.isWindow( obj ) ) {
+			return false;
+		}
+
+		try {
+			// Not own constructor property must be Object
+			if ( obj.constructor &&
+				!hasOwn.call(obj, "constructor") &&
+				!hasOwn.call(obj.constructor.prototype, "isPrototypeOf") ) {
+				return false;
+			}
+		} catch ( e ) {
+			// IE8,9 Will throw exceptions on certain host objects #9897
+			return false;
+		}
+
+		// Support: IE<9
+		// Handle iteration over inherited properties before own properties.
+		if ( support.ownLast ) {
+			for ( key in obj ) {
+				return hasOwn.call( obj, key );
+			}
+		}
+
+		// Own properties are enumerated firstly, so to speed up,
+		// if last one is own, then all properties are own.
+		for ( key in obj ) {}
+
+		return key === undefined || hasOwn.call( obj, key );
+	},
+
 	type: function( obj ) {
 		if ( obj == null ) {
 			return obj + "";
 		}
-		// Support: Android<4.0, iOS<6 (functionish RegExp)
 		return typeof obj === "object" || typeof obj === "function" ?
 			class2type[ toString.call(obj) ] || "object" :
 			typeof obj;
 	},
 
 	// Evaluates a script in a global context
-	globalEval: function( code ) {
-		var script,
-			indirect = eval;
-
-		code = jQuery.trim( code );
-
-		if ( code ) {
-			// If the code includes a valid, prologue position
-			// strict mode pragma, execute code by injecting a
-			// script tag into the document.
-			if ( code.indexOf("use strict") === 1 ) {
-				script = document.createElement("script");
-				script.text = code;
-				document.head.appendChild( script ).parentNode.removeChild( script );
-			} else {
-			// Otherwise, avoid the DOM node creation, insertion
-			// and removal by using an indirect global eval
-				indirect( code );
-			}
+	// Workarounds based on findings by Jim Driscoll
+	// http://weblogs.java.net/blog/driscoll/archive/2009/09/08/eval-javascript-global-context
+	globalEval: function( data ) {
+		if ( data && jQuery.trim( data ) ) {
+			// We use execScript on Internet Explorer
+			// We use an anonymous function so that context is window
+			// rather than jQuery in Firefox
+			( window.execScript || function( data ) {
+				window[ "eval" ].call( window, data );
+			} )( data );
 		}
 	},
 
 	// Convert dashed to camelCase; used by the css and data modules
-	// Support: IE9-11+
 	// Microsoft forgot to hump their vendor prefix (#9572)
 	camelCase: function( string ) {
 		return string.replace( rmsPrefix, "ms-" ).replace( rdashAlpha, fcamelCase );
@@ -391,7 +401,7 @@ jQuery.extend({
 		return obj;
 	},
 
-	// Support: Android<4.1
+	// Support: Android<4.1, IE<9
 	trim: function( text ) {
 		return text == null ?
 			"" :
@@ -417,7 +427,25 @@ jQuery.extend({
 	},
 
 	inArray: function( elem, arr, i ) {
-		return arr == null ? -1 : indexOf.call( arr, elem, i );
+		var len;
+
+		if ( arr ) {
+			if ( indexOf ) {
+				return indexOf.call( arr, elem, i );
+			}
+
+			len = arr.length;
+			i = i ? i < 0 ? Math.max( 0, len + i ) : i : 0;
+
+			for ( ; i < len; i++ ) {
+				// Skip accessing in sparse arrays
+				if ( i in arr && arr[ i ] === elem ) {
+					return i;
+				}
+			}
+		}
+
+		return -1;
 	},
 
 	merge: function( first, second ) {
@@ -425,8 +453,16 @@ jQuery.extend({
 			j = 0,
 			i = first.length;
 
-		for ( ; j < len; j++ ) {
-			first[ i++ ] = second[ j ];
+		while ( j < len ) {
+			first[ i++ ] = second[ j++ ];
+		}
+
+		// Support: IE<9
+		// Workaround casting of .length to NaN on otherwise arraylike objects (e.g., NodeLists)
+		if ( len !== len ) {
+			while ( second[j] !== undefined ) {
+				first[ i++ ] = second[ j++ ];
+			}
 		}
 
 		first.length = i;
@@ -492,7 +528,7 @@ jQuery.extend({
 	// Bind a function to a context, optionally partially applying any
 	// arguments.
 	proxy: function( fn, context ) {
-		var tmp, args, proxy;
+		var args, proxy, tmp;
 
 		if ( typeof context === "string" ) {
 			tmp = fn[ context ];
@@ -518,7 +554,9 @@ jQuery.extend({
 		return proxy;
 	},
 
-	now: Date.now,
+	now: function() {
+		return +( new Date() );
+	},
 
 	// jQuery.support is not used in Core but other projects attach their
 	// properties to it so it needs to exist.
@@ -2651,7 +2689,7 @@ function winnow( elements, qualifier, not ) {
 	}
 
 	return jQuery.grep( elements, function( elem ) {
-		return ( indexOf.call( qualifier, elem ) >= 0 ) !== not;
+		return ( jQuery.inArray( elem, qualifier ) >= 0 ) !== not;
 	});
 }
 
@@ -2672,9 +2710,9 @@ jQuery.filter = function( expr, elems, not ) {
 jQuery.fn.extend({
 	find: function( selector ) {
 		var i,
-			len = this.length,
 			ret = [],
-			self = this;
+			self = this,
+			len = self.length;
 
 		if ( typeof selector !== "string" ) {
 			return this.pushStack( jQuery( selector ).filter(function() {
@@ -2722,6 +2760,9 @@ jQuery.fn.extend({
 // A central reference to the root jQuery(document)
 var rootjQuery,
 
+	// Use the correct document accordingly with window argument (sandbox)
+	document = window.document,
+
 	// A simple way to check for HTML strings
 	// Prioritize #id over <tag> to avoid XSS via location.hash (#9521)
 	// Strict HTML recognition (#11290: must start with <)
@@ -2737,7 +2778,7 @@ var rootjQuery,
 
 		// Handle HTML strings
 		if ( typeof selector === "string" ) {
-			if ( selector[0] === "<" && selector[ selector.length - 1 ] === ">" && selector.length >= 3 ) {
+			if ( selector.charAt(0) === "<" && selector.charAt( selector.length - 1 ) === ">" && selector.length >= 3 ) {
 				// Assume that strings that start and end with <> are HTML and skip the regex check
 				match = [ null, selector, null ];
 
@@ -2752,7 +2793,7 @@ var rootjQuery,
 				if ( match[1] ) {
 					context = context instanceof jQuery ? context[0] : context;
 
-					// Option to run scripts is true for back-compat
+					// scripts is true for back-compat
 					// Intentionally let the error be thrown if parseHTML is not present
 					jQuery.merge( this, jQuery.parseHTML(
 						match[1],
@@ -2780,10 +2821,16 @@ var rootjQuery,
 				} else {
 					elem = document.getElementById( match[2] );
 
-					// Support: Blackberry 4.6
-					// gEBID returns nodes no longer in the document (#6963)
+					// Check parentNode to catch when Blackberry 4.6 returns
+					// nodes that are no longer in the document #6963
 					if ( elem && elem.parentNode ) {
-						// Inject the element directly into the jQuery object
+						// Handle the case where IE and Opera return items
+						// by name instead of ID
+						if ( elem.id !== match[2] ) {
+							return rootjQuery.find( selector );
+						}
+
+						// Otherwise, we inject the element directly into the jQuery object
 						this.length = 1;
 						this[0] = elem;
 					}
@@ -2834,7 +2881,7 @@ rootjQuery = jQuery( document );
 
 
 var rparentsprev = /^(?:parents|prev(?:Until|All))/,
-	// Methods guaranteed to produce a unique set when starting from a unique set
+	// methods guaranteed to produce a unique set when starting from a unique set
 	guaranteedUnique = {
 		children: true,
 		contents: true,
@@ -2845,40 +2892,38 @@ var rparentsprev = /^(?:parents|prev(?:Until|All))/,
 jQuery.extend({
 	dir: function( elem, dir, until ) {
 		var matched = [],
-			truncate = until !== undefined;
+			cur = elem[ dir ];
 
-		while ( (elem = elem[ dir ]) && elem.nodeType !== 9 ) {
-			if ( elem.nodeType === 1 ) {
-				if ( truncate && jQuery( elem ).is( until ) ) {
-					break;
-				}
-				matched.push( elem );
+		while ( cur && cur.nodeType !== 9 && (until === undefined || cur.nodeType !== 1 || !jQuery( cur ).is( until )) ) {
+			if ( cur.nodeType === 1 ) {
+				matched.push( cur );
 			}
+			cur = cur[dir];
 		}
 		return matched;
 	},
 
 	sibling: function( n, elem ) {
-		var matched = [];
+		var r = [];
 
 		for ( ; n; n = n.nextSibling ) {
 			if ( n.nodeType === 1 && n !== elem ) {
-				matched.push( n );
+				r.push( n );
 			}
 		}
 
-		return matched;
+		return r;
 	}
 });
 
 jQuery.fn.extend({
 	has: function( target ) {
-		var targets = jQuery( target, this ),
-			l = targets.length;
+		var i,
+			targets = jQuery( target, this ),
+			len = targets.length;
 
 		return this.filter(function() {
-			var i = 0;
-			for ( ; i < l; i++ ) {
+			for ( i = 0; i < len; i++ ) {
 				if ( jQuery.contains( this, targets[i] ) ) {
 					return true;
 				}
@@ -2914,25 +2959,24 @@ jQuery.fn.extend({
 		return this.pushStack( matched.length > 1 ? jQuery.unique( matched ) : matched );
 	},
 
-	// Determine the position of an element within the set
+	// Determine the position of an element within
+	// the matched set of elements
 	index: function( elem ) {
 
 		// No argument, return index in parent
 		if ( !elem ) {
-			return ( this[ 0 ] && this[ 0 ].parentNode ) ? this.first().prevAll().length : -1;
+			return ( this[0] && this[0].parentNode ) ? this.first().prevAll().length : -1;
 		}
 
-		// Index in selector
+		// index in selector
 		if ( typeof elem === "string" ) {
-			return indexOf.call( jQuery( elem ), this[ 0 ] );
+			return jQuery.inArray( this[0], jQuery( elem ) );
 		}
 
 		// Locate the position of the desired element
-		return indexOf.call( this,
-
+		return jQuery.inArray(
 			// If it receives a jQuery object, the first element is used
-			elem.jquery ? elem[ 0 ] : elem
-		);
+			elem.jquery ? elem[0] : elem, this );
 	},
 
 	add: function( selector, context ) {
@@ -2951,7 +2995,10 @@ jQuery.fn.extend({
 });
 
 function sibling( cur, dir ) {
-	while ( (cur = cur[dir]) && cur.nodeType !== 1 ) {}
+	do {
+		cur = cur[ dir ];
+	} while ( cur && cur.nodeType !== 1 );
+
 	return cur;
 }
 
@@ -2991,33 +3038,35 @@ jQuery.each({
 		return jQuery.sibling( elem.firstChild );
 	},
 	contents: function( elem ) {
-		return elem.contentDocument || jQuery.merge( [], elem.childNodes );
+		return jQuery.nodeName( elem, "iframe" ) ?
+			elem.contentDocument || elem.contentWindow.document :
+			jQuery.merge( [], elem.childNodes );
 	}
 }, function( name, fn ) {
 	jQuery.fn[ name ] = function( until, selector ) {
-		var matched = jQuery.map( this, fn, until );
+		var ret = jQuery.map( this, fn, until );
 
 		if ( name.slice( -5 ) !== "Until" ) {
 			selector = until;
 		}
 
 		if ( selector && typeof selector === "string" ) {
-			matched = jQuery.filter( selector, matched );
+			ret = jQuery.filter( selector, ret );
 		}
 
 		if ( this.length > 1 ) {
 			// Remove duplicates
 			if ( !guaranteedUnique[ name ] ) {
-				jQuery.unique( matched );
+				ret = jQuery.unique( ret );
 			}
 
 			// Reverse order for parents* and prev-derivatives
 			if ( rparentsprev.test( name ) ) {
-				matched.reverse();
+				ret = ret.reverse();
 			}
 		}
 
-		return this.pushStack( matched );
+		return this.pushStack( ret );
 	};
 });
 var rnotwhite = (/\S+/g);
@@ -3066,18 +3115,18 @@ jQuery.Callbacks = function( options ) {
 		( optionsCache[ options ] || createOptions( options ) ) :
 		jQuery.extend( {}, options );
 
-	var // Last fire value (for non-forgettable lists)
+	var // Flag to know if list is currently firing
+		firing,
+		// Last fire value (for non-forgettable lists)
 		memory,
 		// Flag to know if list was already fired
 		fired,
-		// Flag to know if list is currently firing
-		firing,
-		// First callback to fire (used internally by add and fireWith)
-		firingStart,
 		// End of the loop when firing
 		firingLength,
 		// Index of currently firing callback (modified by remove if needed)
 		firingIndex,
+		// First callback to fire (used internally by add and fireWith)
+		firingStart,
 		// Actual callback list
 		list = [],
 		// Stack of fire calls for repeatable lists
@@ -3330,7 +3379,8 @@ jQuery.extend({
 					values[ i ] = arguments.length > 1 ? slice.call( arguments ) : value;
 					if ( values === progressValues ) {
 						deferred.notifyWith( contexts, values );
-					} else if ( !( --remaining ) ) {
+
+					} else if ( !(--remaining) ) {
 						deferred.resolveWith( contexts, values );
 					}
 				};
@@ -3338,7 +3388,7 @@ jQuery.extend({
 
 			progressValues, progressContexts, resolveContexts;
 
-		// Add listeners to Deferred subordinates; treat others as resolved
+		// add listeners to Deferred subordinates; treat others as resolved
 		if ( length > 1 ) {
 			progressValues = new Array( length );
 			progressContexts = new Array( length );
@@ -3355,7 +3405,7 @@ jQuery.extend({
 			}
 		}
 
-		// If we're not waiting on anything, resolve the master
+		// if we're not waiting on anything, resolve the master
 		if ( !remaining ) {
 			deferred.resolveWith( resolveContexts, resolveValues );
 		}
@@ -3400,6 +3450,11 @@ jQuery.extend({
 			return;
 		}
 
+		// Make sure body exists, at least, in case IE gets a little overzealous (ticket #5443).
+		if ( !document.body ) {
+			return setTimeout( jQuery.ready );
+		}
+
 		// Remember that the DOM is ready
 		jQuery.isReady = true;
 
@@ -3420,12 +3475,28 @@ jQuery.extend({
 });
 
 /**
+ * Clean-up method for dom ready events
+ */
+function detach() {
+	if ( document.addEventListener ) {
+		document.removeEventListener( "DOMContentLoaded", completed, false );
+		window.removeEventListener( "load", completed, false );
+
+	} else {
+		document.detachEvent( "onreadystatechange", completed );
+		window.detachEvent( "onload", completed );
+	}
+}
+
+/**
  * The ready event handler and self cleanup method
  */
 function completed() {
-	document.removeEventListener( "DOMContentLoaded", completed, false );
-	window.removeEventListener( "load", completed, false );
-	jQuery.ready();
+	// readyState === "complete" is good enough for us to call the dom ready in oldIE
+	if ( document.addEventListener || event.type === "load" || document.readyState === "complete" ) {
+		detach();
+		jQuery.ready();
+	}
 }
 
 jQuery.ready.promise = function( obj ) {
@@ -3434,297 +3505,162 @@ jQuery.ready.promise = function( obj ) {
 		readyList = jQuery.Deferred();
 
 		// Catch cases where $(document).ready() is called after the browser event has already occurred.
-		// We once tried to use readyState "interactive" here, but it caused issues like the one
+		// we once tried to use readyState "interactive" here, but it caused issues like the one
 		// discovered by ChrisS here: http://bugs.jquery.com/ticket/12282#comment:15
 		if ( document.readyState === "complete" ) {
 			// Handle it asynchronously to allow scripts the opportunity to delay ready
 			setTimeout( jQuery.ready );
 
-		} else {
-
+		// Standards-based browsers support DOMContentLoaded
+		} else if ( document.addEventListener ) {
 			// Use the handy event callback
 			document.addEventListener( "DOMContentLoaded", completed, false );
 
 			// A fallback to window.onload, that will always work
 			window.addEventListener( "load", completed, false );
+
+		// If IE event model is used
+		} else {
+			// Ensure firing before onload, maybe late but safe also for iframes
+			document.attachEvent( "onreadystatechange", completed );
+
+			// A fallback to window.onload, that will always work
+			window.attachEvent( "onload", completed );
+
+			// If IE and not a frame
+			// continually check to see if the document is ready
+			var top = false;
+
+			try {
+				top = window.frameElement == null && document.documentElement;
+			} catch(e) {}
+
+			if ( top && top.doScroll ) {
+				(function doScrollCheck() {
+					if ( !jQuery.isReady ) {
+
+						try {
+							// Use the trick by Diego Perini
+							// http://javascript.nwbox.com/IEContentLoaded/
+							top.doScroll("left");
+						} catch(e) {
+							return setTimeout( doScrollCheck, 50 );
+						}
+
+						// detach all dom ready events
+						detach();
+
+						// and execute any waiting functions
+						jQuery.ready();
+					}
+				})();
+			}
 		}
 	}
 	return readyList.promise( obj );
 };
 
-// Kick off the DOM ready check even if the user does not
-jQuery.ready.promise();
+
+var strundefined = typeof undefined;
 
 
 
+// Support: IE<9
+// Iteration over object's inherited properties before its own
+var i;
+for ( i in jQuery( support ) ) {
+	break;
+}
+support.ownLast = i !== "0";
 
-// Multifunctional method to get and set values of a collection
-// The value/s can optionally be executed if it's a function
-var access = jQuery.access = function( elems, fn, key, value, chainable, emptyGet, raw ) {
-	var i = 0,
-		len = elems.length,
-		bulk = key == null;
+// Note: most support tests are defined in their respective modules.
+// false until the test is run
+support.inlineBlockNeedsLayout = false;
 
-	// Sets many values
-	if ( jQuery.type( key ) === "object" ) {
-		chainable = true;
-		for ( i in key ) {
-			jQuery.access( elems, fn, i, key[i], true, emptyGet, raw );
-		}
+// Execute ASAP in case we need to set body.style.zoom
+jQuery(function() {
+	// Minified: var a,b,c,d
+	var val, div, body, container;
 
-	// Sets one value
-	} else if ( value !== undefined ) {
-		chainable = true;
+	body = document.getElementsByTagName( "body" )[ 0 ];
+	if ( !body || !body.style ) {
+		// Return for frameset docs that don't have a body
+		return;
+	}
 
-		if ( !jQuery.isFunction( value ) ) {
-			raw = true;
-		}
+	// Setup
+	div = document.createElement( "div" );
+	container = document.createElement( "div" );
+	container.style.cssText = "position:absolute;border:0;width:0;height:0;top:0;left:-9999px";
+	body.appendChild( container ).appendChild( div );
 
-		if ( bulk ) {
-			// Bulk operations run against the entire set
-			if ( raw ) {
-				fn.call( elems, value );
-				fn = null;
+	if ( typeof div.style.zoom !== strundefined ) {
+		// Support: IE<8
+		// Check if natively block-level elements act like inline-block
+		// elements when setting their display to 'inline' and giving
+		// them layout
+		div.style.cssText = "display:inline;margin:0;border:0;padding:1px;width:1px;zoom:1";
 
-			// ...except when executing function values
-			} else {
-				bulk = fn;
-				fn = function( elem, key, value ) {
-					return bulk.call( jQuery( elem ), value );
-				};
-			}
-		}
-
-		if ( fn ) {
-			for ( ; i < len; i++ ) {
-				fn( elems[i], key, raw ? value : value.call( elems[i], i, fn( elems[i], key ) ) );
-			}
+		support.inlineBlockNeedsLayout = val = div.offsetWidth === 3;
+		if ( val ) {
+			// Prevent IE 6 from affecting layout for positioned elements #11048
+			// Prevent IE from shrinking the body in IE 7 mode #12869
+			// Support: IE<8
+			body.style.zoom = 1;
 		}
 	}
 
-	return chainable ?
-		elems :
+	body.removeChild( container );
+});
 
-		// Gets
-		bulk ?
-			fn.call( elems ) :
-			len ? fn( elems[0], key ) : emptyGet;
-};
+
+
+
+(function() {
+	var div = document.createElement( "div" );
+
+	// Execute the test only if not already executed in another module.
+	if (support.deleteExpando == null) {
+		// Support: IE<9
+		support.deleteExpando = true;
+		try {
+			delete div.test;
+		} catch( e ) {
+			support.deleteExpando = false;
+		}
+	}
+
+	// Null elements to avoid leaks in IE.
+	div = null;
+})();
 
 
 /**
  * Determines whether an object can have data
  */
-jQuery.acceptData = function( owner ) {
-	// Accepts only:
-	//  - Node
-	//    - Node.ELEMENT_NODE
-	//    - Node.DOCUMENT_NODE
-	//  - Object
-	//    - Any
-	/* jshint -W018 */
-	return owner.nodeType === 1 || owner.nodeType === 9 || !( +owner.nodeType );
+jQuery.acceptData = function( elem ) {
+	var noData = jQuery.noData[ (elem.nodeName + " ").toLowerCase() ],
+		nodeType = +elem.nodeType || 1;
+
+	// Do not set data on non-element DOM nodes because it will not be cleared (#8335).
+	return nodeType !== 1 && nodeType !== 9 ?
+		false :
+
+		// Nodes accept data unless otherwise specified; rejection can be conditional
+		!noData || noData !== true && elem.getAttribute("classid") === noData;
 };
 
-
-function Data() {
-	// Support: Android<4,
-	// Old WebKit does not have Object.preventExtensions/freeze method,
-	// return new empty object instead with no [[set]] accessor
-	Object.defineProperty( this.cache = {}, 0, {
-		get: function() {
-			return {};
-		}
-	});
-
-	this.expando = jQuery.expando + Data.uid++;
-}
-
-Data.uid = 1;
-Data.accepts = jQuery.acceptData;
-
-Data.prototype = {
-	key: function( owner ) {
-		// We can accept data for non-element nodes in modern browsers,
-		// but we should not, see #8335.
-		// Always return the key for a frozen object.
-		if ( !Data.accepts( owner ) ) {
-			return 0;
-		}
-
-		var descriptor = {},
-			// Check if the owner object already has a cache key
-			unlock = owner[ this.expando ];
-
-		// If not, create one
-		if ( !unlock ) {
-			unlock = Data.uid++;
-
-			// Secure it in a non-enumerable, non-writable property
-			try {
-				descriptor[ this.expando ] = { value: unlock };
-				Object.defineProperties( owner, descriptor );
-
-			// Support: Android<4
-			// Fallback to a less secure definition
-			} catch ( e ) {
-				descriptor[ this.expando ] = unlock;
-				jQuery.extend( owner, descriptor );
-			}
-		}
-
-		// Ensure the cache object
-		if ( !this.cache[ unlock ] ) {
-			this.cache[ unlock ] = {};
-		}
-
-		return unlock;
-	},
-	set: function( owner, data, value ) {
-		var prop,
-			// There may be an unlock assigned to this node,
-			// if there is no entry for this "owner", create one inline
-			// and set the unlock as though an owner entry had always existed
-			unlock = this.key( owner ),
-			cache = this.cache[ unlock ];
-
-		// Handle: [ owner, key, value ] args
-		if ( typeof data === "string" ) {
-			cache[ data ] = value;
-
-		// Handle: [ owner, { properties } ] args
-		} else {
-			// Fresh assignments by object are shallow copied
-			if ( jQuery.isEmptyObject( cache ) ) {
-				jQuery.extend( this.cache[ unlock ], data );
-			// Otherwise, copy the properties one-by-one to the cache object
-			} else {
-				for ( prop in data ) {
-					cache[ prop ] = data[ prop ];
-				}
-			}
-		}
-		return cache;
-	},
-	get: function( owner, key ) {
-		// Either a valid cache is found, or will be created.
-		// New caches will be created and the unlock returned,
-		// allowing direct access to the newly created
-		// empty data object. A valid owner object must be provided.
-		var cache = this.cache[ this.key( owner ) ];
-
-		return key === undefined ?
-			cache : cache[ key ];
-	},
-	access: function( owner, key, value ) {
-		var stored;
-		// In cases where either:
-		//
-		//   1. No key was specified
-		//   2. A string key was specified, but no value provided
-		//
-		// Take the "read" path and allow the get method to determine
-		// which value to return, respectively either:
-		//
-		//   1. The entire cache object
-		//   2. The data stored at the key
-		//
-		if ( key === undefined ||
-				((key && typeof key === "string") && value === undefined) ) {
-
-			stored = this.get( owner, key );
-
-			return stored !== undefined ?
-				stored : this.get( owner, jQuery.camelCase(key) );
-		}
-
-		// [*]When the key is not a string, or both a key and value
-		// are specified, set or extend (existing objects) with either:
-		//
-		//   1. An object of properties
-		//   2. A key and value
-		//
-		this.set( owner, key, value );
-
-		// Since the "set" path can have two possible entry points
-		// return the expected data based on which path was taken[*]
-		return value !== undefined ? value : key;
-	},
-	remove: function( owner, key ) {
-		var i, name, camel,
-			unlock = this.key( owner ),
-			cache = this.cache[ unlock ];
-
-		if ( key === undefined ) {
-			this.cache[ unlock ] = {};
-
-		} else {
-			// Support array or space separated string of keys
-			if ( jQuery.isArray( key ) ) {
-				// If "name" is an array of keys...
-				// When data is initially created, via ("key", "val") signature,
-				// keys will be converted to camelCase.
-				// Since there is no way to tell _how_ a key was added, remove
-				// both plain key and camelCase key. #12786
-				// This will only penalize the array argument path.
-				name = key.concat( key.map( jQuery.camelCase ) );
-			} else {
-				camel = jQuery.camelCase( key );
-				// Try the string as a key before any manipulation
-				if ( key in cache ) {
-					name = [ key, camel ];
-				} else {
-					// If a key with the spaces exists, use it.
-					// Otherwise, create an array by matching non-whitespace
-					name = camel;
-					name = name in cache ?
-						[ name ] : ( name.match( rnotwhite ) || [] );
-				}
-			}
-
-			i = name.length;
-			while ( i-- ) {
-				delete cache[ name[ i ] ];
-			}
-		}
-	},
-	hasData: function( owner ) {
-		return !jQuery.isEmptyObject(
-			this.cache[ owner[ this.expando ] ] || {}
-		);
-	},
-	discard: function( owner ) {
-		if ( owner[ this.expando ] ) {
-			delete this.cache[ owner[ this.expando ] ];
-		}
-	}
-};
-var data_priv = new Data();
-
-var data_user = new Data();
-
-
-
-//	Implementation Summary
-//
-//	1. Enforce API surface and semantic compatibility with 1.9.x branch
-//	2. Improve the module's maintainability by reducing the storage
-//		paths to a single mechanism.
-//	3. Use the same single mechanism to support "private" and "user" data.
-//	4. _Never_ expose "private" data to user code (TODO: Drop _data, _removeData)
-//	5. Avoid exposing implementation details on user objects (eg. expando properties)
-//	6. Provide a clear path for implementation upgrade to WeakMap in 2014
 
 var rbrace = /^(?:\{[\w\W]*\}|\[[\w\W]*\])$/,
 	rmultiDash = /([A-Z])/g;
 
 function dataAttr( elem, key, data ) {
-	var name;
-
 	// If nothing was found internally, try to fetch any
 	// data from the HTML5 data-* attribute
 	if ( data === undefined && elem.nodeType === 1 ) {
-		name = "data-" + key.replace( rmultiDash, "-$1" ).toLowerCase();
+
+		var name = "data-" + key.replace( rmultiDash, "-$1" ).toLowerCase();
+
 		data = elem.getAttribute( name );
 
 		if ( typeof data === "string" ) {
@@ -3739,50 +3675,262 @@ function dataAttr( elem, key, data ) {
 			} catch( e ) {}
 
 			// Make sure we set the data so it isn't changed later
-			data_user.set( elem, key, data );
+			jQuery.data( elem, key, data );
+
 		} else {
 			data = undefined;
 		}
 	}
+
 	return data;
 }
 
+// checks a cache object for emptiness
+function isEmptyDataObject( obj ) {
+	var name;
+	for ( name in obj ) {
+
+		// if the public data object is empty, the private is still empty
+		if ( name === "data" && jQuery.isEmptyObject( obj[name] ) ) {
+			continue;
+		}
+		if ( name !== "toJSON" ) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+function internalData( elem, name, data, pvt /* Internal Use Only */ ) {
+	if ( !jQuery.acceptData( elem ) ) {
+		return;
+	}
+
+	var ret, thisCache,
+		internalKey = jQuery.expando,
+
+		// We have to handle DOM nodes and JS objects differently because IE6-7
+		// can't GC object references properly across the DOM-JS boundary
+		isNode = elem.nodeType,
+
+		// Only DOM nodes need the global jQuery cache; JS object data is
+		// attached directly to the object so GC can occur automatically
+		cache = isNode ? jQuery.cache : elem,
+
+		// Only defining an ID for JS objects if its cache already exists allows
+		// the code to shortcut on the same path as a DOM node with no cache
+		id = isNode ? elem[ internalKey ] : elem[ internalKey ] && internalKey;
+
+	// Avoid doing any more work than we need to when trying to get data on an
+	// object that has no data at all
+	if ( (!id || !cache[id] || (!pvt && !cache[id].data)) && data === undefined && typeof name === "string" ) {
+		return;
+	}
+
+	if ( !id ) {
+		// Only DOM nodes need a new unique ID for each element since their data
+		// ends up in the global cache
+		if ( isNode ) {
+			id = elem[ internalKey ] = deletedIds.pop() || jQuery.guid++;
+		} else {
+			id = internalKey;
+		}
+	}
+
+	if ( !cache[ id ] ) {
+		// Avoid exposing jQuery metadata on plain JS objects when the object
+		// is serialized using JSON.stringify
+		cache[ id ] = isNode ? {} : { toJSON: jQuery.noop };
+	}
+
+	// An object can be passed to jQuery.data instead of a key/value pair; this gets
+	// shallow copied over onto the existing cache
+	if ( typeof name === "object" || typeof name === "function" ) {
+		if ( pvt ) {
+			cache[ id ] = jQuery.extend( cache[ id ], name );
+		} else {
+			cache[ id ].data = jQuery.extend( cache[ id ].data, name );
+		}
+	}
+
+	thisCache = cache[ id ];
+
+	// jQuery data() is stored in a separate object inside the object's internal data
+	// cache in order to avoid key collisions between internal data and user-defined
+	// data.
+	if ( !pvt ) {
+		if ( !thisCache.data ) {
+			thisCache.data = {};
+		}
+
+		thisCache = thisCache.data;
+	}
+
+	if ( data !== undefined ) {
+		thisCache[ jQuery.camelCase( name ) ] = data;
+	}
+
+	// Check for both converted-to-camel and non-converted data property names
+	// If a data property was specified
+	if ( typeof name === "string" ) {
+
+		// First Try to find as-is property data
+		ret = thisCache[ name ];
+
+		// Test for null|undefined property data
+		if ( ret == null ) {
+
+			// Try to find the camelCased property
+			ret = thisCache[ jQuery.camelCase( name ) ];
+		}
+	} else {
+		ret = thisCache;
+	}
+
+	return ret;
+}
+
+function internalRemoveData( elem, name, pvt ) {
+	if ( !jQuery.acceptData( elem ) ) {
+		return;
+	}
+
+	var thisCache, i,
+		isNode = elem.nodeType,
+
+		// See jQuery.data for more information
+		cache = isNode ? jQuery.cache : elem,
+		id = isNode ? elem[ jQuery.expando ] : jQuery.expando;
+
+	// If there is already no cache entry for this object, there is no
+	// purpose in continuing
+	if ( !cache[ id ] ) {
+		return;
+	}
+
+	if ( name ) {
+
+		thisCache = pvt ? cache[ id ] : cache[ id ].data;
+
+		if ( thisCache ) {
+
+			// Support array or space separated string names for data keys
+			if ( !jQuery.isArray( name ) ) {
+
+				// try the string as a key before any manipulation
+				if ( name in thisCache ) {
+					name = [ name ];
+				} else {
+
+					// split the camel cased version by spaces unless a key with the spaces exists
+					name = jQuery.camelCase( name );
+					if ( name in thisCache ) {
+						name = [ name ];
+					} else {
+						name = name.split(" ");
+					}
+				}
+			} else {
+				// If "name" is an array of keys...
+				// When data is initially created, via ("key", "val") signature,
+				// keys will be converted to camelCase.
+				// Since there is no way to tell _how_ a key was added, remove
+				// both plain key and camelCase key. #12786
+				// This will only penalize the array argument path.
+				name = name.concat( jQuery.map( name, jQuery.camelCase ) );
+			}
+
+			i = name.length;
+			while ( i-- ) {
+				delete thisCache[ name[i] ];
+			}
+
+			// If there is no data left in the cache, we want to continue
+			// and let the cache object itself get destroyed
+			if ( pvt ? !isEmptyDataObject(thisCache) : !jQuery.isEmptyObject(thisCache) ) {
+				return;
+			}
+		}
+	}
+
+	// See jQuery.data for more information
+	if ( !pvt ) {
+		delete cache[ id ].data;
+
+		// Don't destroy the parent cache unless the internal data object
+		// had been the only thing left in it
+		if ( !isEmptyDataObject( cache[ id ] ) ) {
+			return;
+		}
+	}
+
+	// Destroy the cache
+	if ( isNode ) {
+		jQuery.cleanData( [ elem ], true );
+
+	// Use delete when supported for expandos or `cache` is not a window per isWindow (#10080)
+	/* jshint eqeqeq: false */
+	} else if ( support.deleteExpando || cache != cache.window ) {
+		/* jshint eqeqeq: true */
+		delete cache[ id ];
+
+	// When all else fails, null
+	} else {
+		cache[ id ] = null;
+	}
+}
+
 jQuery.extend({
+	cache: {},
+
+	// The following elements (space-suffixed to avoid Object.prototype collisions)
+	// throw uncatchable exceptions if you attempt to set expando properties
+	noData: {
+		"applet ": true,
+		"embed ": true,
+		// ...but Flash objects (which have this classid) *can* handle expandos
+		"object ": "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
+	},
+
 	hasData: function( elem ) {
-		return data_user.hasData( elem ) || data_priv.hasData( elem );
+		elem = elem.nodeType ? jQuery.cache[ elem[jQuery.expando] ] : elem[ jQuery.expando ];
+		return !!elem && !isEmptyDataObject( elem );
 	},
 
 	data: function( elem, name, data ) {
-		return data_user.access( elem, name, data );
+		return internalData( elem, name, data );
 	},
 
 	removeData: function( elem, name ) {
-		data_user.remove( elem, name );
+		return internalRemoveData( elem, name );
 	},
 
-	// TODO: Now that all calls to _data and _removeData have been replaced
-	// with direct calls to data_priv methods, these can be deprecated.
+	// For internal use only.
 	_data: function( elem, name, data ) {
-		return data_priv.access( elem, name, data );
+		return internalData( elem, name, data, true );
 	},
 
 	_removeData: function( elem, name ) {
-		data_priv.remove( elem, name );
+		return internalRemoveData( elem, name, true );
 	}
 });
 
 jQuery.fn.extend({
 	data: function( key, value ) {
 		var i, name, data,
-			elem = this[ 0 ],
+			elem = this[0],
 			attrs = elem && elem.attributes;
+
+		// Special expections of .data basically thwart jQuery.access,
+		// so implement the relevant behavior ourselves
 
 		// Gets all values
 		if ( key === undefined ) {
 			if ( this.length ) {
-				data = data_user.get( elem );
+				data = jQuery.data( elem );
 
-				if ( elem.nodeType === 1 && !data_priv.get( elem, "hasDataAttrs" ) ) {
+				if ( elem.nodeType === 1 && !jQuery._data( elem, "parsedAttrs" ) ) {
 					i = attrs.length;
 					while ( i-- ) {
 
@@ -3796,7 +3944,7 @@ jQuery.fn.extend({
 							}
 						}
 					}
-					data_priv.set( elem, "hasDataAttrs", true );
+					jQuery._data( elem, "parsedAttrs", true );
 				}
 			}
 
@@ -3806,69 +3954,25 @@ jQuery.fn.extend({
 		// Sets multiple values
 		if ( typeof key === "object" ) {
 			return this.each(function() {
-				data_user.set( this, key );
+				jQuery.data( this, key );
 			});
 		}
 
-		return access( this, function( value ) {
-			var data,
-				camelKey = jQuery.camelCase( key );
+		return arguments.length > 1 ?
 
-			// The calling jQuery object (element matches) is not empty
-			// (and therefore has an element appears at this[ 0 ]) and the
-			// `value` parameter was not undefined. An empty jQuery object
-			// will result in `undefined` for elem = this[ 0 ] which will
-			// throw an exception if an attempt to read a data cache is made.
-			if ( elem && value === undefined ) {
-				// Attempt to get data from the cache
-				// with the key as-is
-				data = data_user.get( elem, key );
-				if ( data !== undefined ) {
-					return data;
-				}
-
-				// Attempt to get data from the cache
-				// with the key camelized
-				data = data_user.get( elem, camelKey );
-				if ( data !== undefined ) {
-					return data;
-				}
-
-				// Attempt to "discover" the data in
-				// HTML5 custom data-* attrs
-				data = dataAttr( elem, camelKey, undefined );
-				if ( data !== undefined ) {
-					return data;
-				}
-
-				// We tried really hard, but the data doesn't exist.
-				return;
-			}
-
-			// Set the data...
+			// Sets one value
 			this.each(function() {
-				// First, attempt to store a copy or reference of any
-				// data that might've been store with a camelCased key.
-				var data = data_user.get( this, camelKey );
+				jQuery.data( this, key, value );
+			}) :
 
-				// For HTML5 data-* attribute interop, we have to
-				// store property names with dashes in a camelCase form.
-				// This might not apply to all properties...*
-				data_user.set( this, camelKey, value );
-
-				// *... In the case of properties that might _actually_
-				// have dashes, we need to also store a copy of that
-				// unchanged property.
-				if ( key.indexOf("-") !== -1 && data !== undefined ) {
-					data_user.set( this, key, value );
-				}
-			});
-		}, null, value, arguments.length > 1, null, true );
+			// Gets one value
+			// Try to fetch any internally stored data first
+			elem ? dataAttr( elem, key, jQuery.data( elem, key ) ) : undefined;
 	},
 
 	removeData: function( key ) {
 		return this.each(function() {
-			data_user.remove( this, key );
+			jQuery.removeData( this, key );
 		});
 	}
 });
@@ -3880,12 +3984,12 @@ jQuery.extend({
 
 		if ( elem ) {
 			type = ( type || "fx" ) + "queue";
-			queue = data_priv.get( elem, type );
+			queue = jQuery._data( elem, type );
 
 			// Speed up dequeue by getting out quickly if this is just a lookup
 			if ( data ) {
-				if ( !queue || jQuery.isArray( data ) ) {
-					queue = data_priv.access( elem, type, jQuery.makeArray(data) );
+				if ( !queue || jQuery.isArray(data) ) {
+					queue = jQuery._data( elem, type, jQuery.makeArray(data) );
 				} else {
 					queue.push( data );
 				}
@@ -3919,7 +4023,7 @@ jQuery.extend({
 				queue.unshift( "inprogress" );
 			}
 
-			// Clear up the last queue stop function
+			// clear up the last queue stop function
 			delete hooks.stop;
 			fn.call( elem, next, hooks );
 		}
@@ -3929,12 +4033,13 @@ jQuery.extend({
 		}
 	},
 
-	// Not public - generate a queueHooks object, or return the current one
+	// not intended for public consumption - generates a queueHooks object, or returns the current one
 	_queueHooks: function( elem, type ) {
 		var key = type + "queueHooks";
-		return data_priv.get( elem, key ) || data_priv.access( elem, key, {
+		return jQuery._data( elem, key ) || jQuery._data( elem, key, {
 			empty: jQuery.Callbacks("once memory").add(function() {
-				data_priv.remove( elem, [ type + "queue", key ] );
+				jQuery._removeData( elem, type + "queue" );
+				jQuery._removeData( elem, key );
 			})
 		});
 	}
@@ -3959,7 +4064,7 @@ jQuery.fn.extend({
 			this.each(function() {
 				var queue = jQuery.queue( this, type, data );
 
-				// Ensure a hooks for this queue
+				// ensure a hooks for this queue
 				jQuery._queueHooks( this, type );
 
 				if ( type === "fx" && queue[0] !== "inprogress" ) {
@@ -3996,7 +4101,7 @@ jQuery.fn.extend({
 		type = type || "fx";
 
 		while ( i-- ) {
-			tmp = data_priv.get( elements[ i ], type + "queueHooks" );
+			tmp = jQuery._data( elements[ i ], type + "queueHooks" );
 			if ( tmp && tmp.empty ) {
 				count++;
 				tmp.empty.add( resolve );
@@ -4017,42 +4122,155 @@ var isHidden = function( elem, el ) {
 		return jQuery.css( elem, "display" ) === "none" || !jQuery.contains( elem.ownerDocument, elem );
 	};
 
+
+
+// Multifunctional method to get and set values of a collection
+// The value/s can optionally be executed if it's a function
+var access = jQuery.access = function( elems, fn, key, value, chainable, emptyGet, raw ) {
+	var i = 0,
+		length = elems.length,
+		bulk = key == null;
+
+	// Sets many values
+	if ( jQuery.type( key ) === "object" ) {
+		chainable = true;
+		for ( i in key ) {
+			jQuery.access( elems, fn, i, key[i], true, emptyGet, raw );
+		}
+
+	// Sets one value
+	} else if ( value !== undefined ) {
+		chainable = true;
+
+		if ( !jQuery.isFunction( value ) ) {
+			raw = true;
+		}
+
+		if ( bulk ) {
+			// Bulk operations run against the entire set
+			if ( raw ) {
+				fn.call( elems, value );
+				fn = null;
+
+			// ...except when executing function values
+			} else {
+				bulk = fn;
+				fn = function( elem, key, value ) {
+					return bulk.call( jQuery( elem ), value );
+				};
+			}
+		}
+
+		if ( fn ) {
+			for ( ; i < length; i++ ) {
+				fn( elems[i], key, raw ? value : value.call( elems[i], i, fn( elems[i], key ) ) );
+			}
+		}
+	}
+
+	return chainable ?
+		elems :
+
+		// Gets
+		bulk ?
+			fn.call( elems ) :
+			length ? fn( elems[0], key ) : emptyGet;
+};
 var rcheckableType = (/^(?:checkbox|radio)$/i);
 
 
 
 (function() {
-	var fragment = document.createDocumentFragment(),
-		div = fragment.appendChild( document.createElement( "div" ) ),
-		input = document.createElement( "input" );
+	// Minified: var a,b,c
+	var input = document.createElement( "input" ),
+		div = document.createElement( "div" ),
+		fragment = document.createDocumentFragment();
 
-	// Support: Safari<=5.1
-	// Check state lost if the name is set (#11217)
-	// Support: Windows Web Apps (WWA)
-	// `name` and `type` must use .setAttribute for WWA (#14901)
-	input.setAttribute( "type", "radio" );
-	input.setAttribute( "checked", "checked" );
-	input.setAttribute( "name", "t" );
+	// Setup
+	div.innerHTML = "  <link/><table></table><a href='/a'>a</a><input type='checkbox'/>";
 
-	div.appendChild( input );
+	// IE strips leading whitespace when .innerHTML is used
+	support.leadingWhitespace = div.firstChild.nodeType === 3;
 
-	// Support: Safari<=5.1, Android<4.2
-	// Older WebKit doesn't clone checked state correctly in fragments
-	support.checkClone = div.cloneNode( true ).cloneNode( true ).lastChild.checked;
+	// Make sure that tbody elements aren't automatically inserted
+	// IE will insert them into empty tables
+	support.tbody = !div.getElementsByTagName( "tbody" ).length;
 
-	// Support: IE<=11+
+	// Make sure that link elements get serialized correctly by innerHTML
+	// This requires a wrapper element in IE
+	support.htmlSerialize = !!div.getElementsByTagName( "link" ).length;
+
+	// Makes sure cloning an html5 element does not cause problems
+	// Where outerHTML is undefined, this still works
+	support.html5Clone =
+		document.createElement( "nav" ).cloneNode( true ).outerHTML !== "<:nav></:nav>";
+
+	// Check if a disconnected checkbox will retain its checked
+	// value of true after appended to the DOM (IE6/7)
+	input.type = "checkbox";
+	input.checked = true;
+	fragment.appendChild( input );
+	support.appendChecked = input.checked;
+
 	// Make sure textarea (and checkbox) defaultValue is properly cloned
+	// Support: IE6-IE11+
 	div.innerHTML = "<textarea>x</textarea>";
 	support.noCloneChecked = !!div.cloneNode( true ).lastChild.defaultValue;
+
+	// #11217 - WebKit loses check when the name is after the checked attribute
+	fragment.appendChild( div );
+	div.innerHTML = "<input type='radio' checked='checked' name='t'/>";
+
+	// Support: Safari 5.1, iOS 5.1, Android 4.x, Android 2.3
+	// old WebKit doesn't clone checked state correctly in fragments
+	support.checkClone = div.cloneNode( true ).cloneNode( true ).lastChild.checked;
+
+	// Support: IE<9
+	// Opera does not clone events (and typeof div.attachEvent === undefined).
+	// IE9-10 clones events bound via attachEvent, but they don't trigger with .click()
+	support.noCloneEvent = true;
+	if ( div.attachEvent ) {
+		div.attachEvent( "onclick", function() {
+			support.noCloneEvent = false;
+		});
+
+		div.cloneNode( true ).click();
+	}
+
+	// Execute the test only if not already executed in another module.
+	if (support.deleteExpando == null) {
+		// Support: IE<9
+		support.deleteExpando = true;
+		try {
+			delete div.test;
+		} catch( e ) {
+			support.deleteExpando = false;
+		}
+	}
 })();
-var strundefined = typeof undefined;
 
 
+(function() {
+	var i, eventName,
+		div = document.createElement( "div" );
 
-support.focusinBubbles = "onfocusin" in window;
+	// Support: IE<9 (lack submit/change bubble), Firefox 23+ (lack focusin event)
+	for ( i in { submit: true, change: true, focusin: true }) {
+		eventName = "on" + i;
+
+		if ( !(support[ i + "Bubbles" ] = eventName in window) ) {
+			// Beware of CSP restrictions (https://developer.mozilla.org/en/Security/CSP)
+			div.setAttribute( eventName, "t" );
+			support[ i + "Bubbles" ] = div.attributes[ eventName ].expando === false;
+		}
+	}
+
+	// Null elements to avoid leaks in IE.
+	div = null;
+})();
 
 
-var
+var rformElems = /^(?:input|select|textarea)$/i,
 	rkeyEvent = /^key/,
 	rmouseEvent = /^(?:mouse|pointer|contextmenu)|click/,
 	rfocusMorph = /^(?:focusinfocus|focusoutblur)$/,
@@ -4081,11 +4299,10 @@ jQuery.event = {
 	global: {},
 
 	add: function( elem, types, handler, data, selector ) {
-
-		var handleObjIn, eventHandle, tmp,
-			events, t, handleObj,
-			special, handlers, type, namespaces, origType,
-			elemData = data_priv.get( elem );
+		var tmp, events, t, handleObjIn,
+			special, eventHandle, handleObj,
+			handlers, type, namespaces, origType,
+			elemData = jQuery._data( elem );
 
 		// Don't attach events to noData or text/comment nodes (but allow plain objects)
 		if ( !elemData ) {
@@ -4112,9 +4329,12 @@ jQuery.event = {
 			eventHandle = elemData.handle = function( e ) {
 				// Discard the second event of a jQuery.event.trigger() and
 				// when an event is called after a page has unloaded
-				return typeof jQuery !== strundefined && jQuery.event.triggered !== e.type ?
-					jQuery.event.dispatch.apply( elem, arguments ) : undefined;
+				return typeof jQuery !== strundefined && (!e || jQuery.event.triggered !== e.type) ?
+					jQuery.event.dispatch.apply( eventHandle.elem, arguments ) :
+					undefined;
 			};
+			// Add elem as a property of the handle fn to prevent a memory leak with IE non-native events
+			eventHandle.elem = elem;
 		}
 
 		// Handle multiple events separated by a space
@@ -4156,10 +4376,14 @@ jQuery.event = {
 				handlers = events[ type ] = [];
 				handlers.delegateCount = 0;
 
-				// Only use addEventListener if the special events handler returns false
+				// Only use addEventListener/attachEvent if the special events handler returns false
 				if ( !special.setup || special.setup.call( elem, data, namespaces, eventHandle ) === false ) {
+					// Bind the global event handler to the element
 					if ( elem.addEventListener ) {
 						elem.addEventListener( type, eventHandle, false );
+
+					} else if ( elem.attachEvent ) {
+						elem.attachEvent( "on" + type, eventHandle );
 					}
 				}
 			}
@@ -4183,15 +4407,17 @@ jQuery.event = {
 			jQuery.event.global[ type ] = true;
 		}
 
+		// Nullify elem to prevent memory leaks in IE
+		elem = null;
 	},
 
 	// Detach an event or set of events from an element
 	remove: function( elem, types, handler, selector, mappedTypes ) {
-
-		var j, origCount, tmp,
-			events, t, handleObj,
-			special, handlers, type, namespaces, origType,
-			elemData = data_priv.hasData( elem ) && data_priv.get( elem );
+		var j, handleObj, tmp,
+			origCount, t, events,
+			special, handlers, type,
+			namespaces, origType,
+			elemData = jQuery.hasData( elem ) && jQuery._data( elem );
 
 		if ( !elemData || !(events = elemData.events) ) {
 			return;
@@ -4252,13 +4478,16 @@ jQuery.event = {
 		// Remove the expando if it's no longer used
 		if ( jQuery.isEmptyObject( events ) ) {
 			delete elemData.handle;
-			data_priv.remove( elem, "events" );
+
+			// removeData also checks for emptiness and clears the expando if empty
+			// so use it instead of delete
+			jQuery._removeData( elem, "events" );
 		}
 	},
 
 	trigger: function( event, data, elem, onlyHandlers ) {
-
-		var i, cur, tmp, bubbleType, ontype, handle, special,
+		var handle, ontype, cur,
+			bubbleType, special, tmp, i,
 			eventPath = [ elem || document ],
 			type = hasOwn.call( event, "type" ) ? event.type : event,
 			namespaces = hasOwn.call( event, "namespace" ) ? event.namespace.split(".") : [];
@@ -4340,7 +4569,7 @@ jQuery.event = {
 				special.bindType || type;
 
 			// jQuery handler
-			handle = ( data_priv.get( cur, "events" ) || {} )[ event.type ] && data_priv.get( cur, "handle" );
+			handle = ( jQuery._data( cur, "events" ) || {} )[ event.type ] && jQuery._data( cur, "handle" );
 			if ( handle ) {
 				handle.apply( cur, data );
 			}
@@ -4363,8 +4592,9 @@ jQuery.event = {
 				jQuery.acceptData( elem ) ) {
 
 				// Call a native DOM method on the target with the same name name as the event.
+				// Can't use an .isFunction() check here because IE6/7 fails that test.
 				// Don't do default actions on window, that's where global variables be (#6170)
-				if ( ontype && jQuery.isFunction( elem[ type ] ) && !jQuery.isWindow( elem ) ) {
+				if ( ontype && elem[ type ] && !jQuery.isWindow( elem ) ) {
 
 					// Don't re-trigger an onFOO event when we call its FOO() method
 					tmp = elem[ ontype ];
@@ -4375,7 +4605,12 @@ jQuery.event = {
 
 					// Prevent re-triggering of the same event, since we already bubbled it above
 					jQuery.event.triggered = type;
-					elem[ type ]();
+					try {
+						elem[ type ]();
+					} catch ( e ) {
+						// IE<9 dies on focus/blur to hidden element (#1486,#12518)
+						// only reproducible on winXP IE8 native, not IE9 in IE8 mode
+					}
 					jQuery.event.triggered = undefined;
 
 					if ( tmp ) {
@@ -4393,10 +4628,10 @@ jQuery.event = {
 		// Make a writable jQuery.Event from the native event object
 		event = jQuery.event.fix( event );
 
-		var i, j, ret, matched, handleObj,
+		var i, ret, handleObj, matched, j,
 			handlerQueue = [],
 			args = slice.call( arguments ),
-			handlers = ( data_priv.get( this, "events" ) || {} )[ event.type ] || [],
+			handlers = ( jQuery._data( this, "events" ) || {} )[ event.type ] || [],
 			special = jQuery.event.special[ event.type ] || {};
 
 		// Use the fix-ed jQuery.Event rather than the (read-only) native event
@@ -4419,8 +4654,8 @@ jQuery.event = {
 			j = 0;
 			while ( (handleObj = matched.handlers[ j++ ]) && !event.isImmediatePropagationStopped() ) {
 
-				// Triggered event must either 1) have no namespace, or 2) have namespace(s)
-				// a subset or equal to those in the bound event (both can have no namespace).
+				// Triggered event must either 1) have no namespace, or
+				// 2) have namespace(s) a subset or equal to those in the bound event (both can have no namespace).
 				if ( !event.namespace_re || event.namespace_re.test( handleObj.namespace ) ) {
 
 					event.handleObj = handleObj;
@@ -4448,7 +4683,7 @@ jQuery.event = {
 	},
 
 	handlers: function( event, handlers ) {
-		var i, matches, sel, handleObj,
+		var sel, handleObj, matches, i,
 			handlerQueue = [],
 			delegateCount = handlers.delegateCount,
 			cur = event.target;
@@ -4458,10 +4693,13 @@ jQuery.event = {
 		// Avoid non-left-click bubbling in Firefox (#3861)
 		if ( delegateCount && cur.nodeType && (!event.button || event.type !== "click") ) {
 
-			for ( ; cur !== this; cur = cur.parentNode || this ) {
+			/* jshint eqeqeq: false */
+			for ( ; cur != this; cur = cur.parentNode || this ) {
+				/* jshint eqeqeq: true */
 
+				// Don't check non-elements (#13208)
 				// Don't process clicks on disabled elements (#6911, #8165, #11382, #11764)
-				if ( cur.disabled !== true || event.type !== "click" ) {
+				if ( cur.nodeType === 1 && (cur.disabled !== true || event.type !== "click") ) {
 					matches = [];
 					for ( i = 0; i < delegateCount; i++ ) {
 						handleObj = handlers[ i ];
@@ -4493,50 +4731,6 @@ jQuery.event = {
 		return handlerQueue;
 	},
 
-	// Includes some event props shared by KeyEvent and MouseEvent
-	props: "altKey bubbles cancelable ctrlKey currentTarget eventPhase metaKey relatedTarget shiftKey target timeStamp view which".split(" "),
-
-	fixHooks: {},
-
-	keyHooks: {
-		props: "char charCode key keyCode".split(" "),
-		filter: function( event, original ) {
-
-			// Add which for key events
-			if ( event.which == null ) {
-				event.which = original.charCode != null ? original.charCode : original.keyCode;
-			}
-
-			return event;
-		}
-	},
-
-	mouseHooks: {
-		props: "button buttons clientX clientY offsetX offsetY pageX pageY screenX screenY toElement".split(" "),
-		filter: function( event, original ) {
-			var eventDoc, doc, body,
-				button = original.button;
-
-			// Calculate pageX/Y if missing and clientX/Y available
-			if ( event.pageX == null && original.clientX != null ) {
-				eventDoc = event.target.ownerDocument || document;
-				doc = eventDoc.documentElement;
-				body = eventDoc.body;
-
-				event.pageX = original.clientX + ( doc && doc.scrollLeft || body && body.scrollLeft || 0 ) - ( doc && doc.clientLeft || body && body.clientLeft || 0 );
-				event.pageY = original.clientY + ( doc && doc.scrollTop  || body && body.scrollTop  || 0 ) - ( doc && doc.clientTop  || body && body.clientTop  || 0 );
-			}
-
-			// Add which for click: 1 === left; 2 === middle; 3 === right
-			// Note: button is not normalized, so don't use it
-			if ( !event.which && button !== undefined ) {
-				event.which = ( button & 1 ? 1 : ( button & 2 ? 3 : ( button & 4 ? 2 : 0 ) ) );
-			}
-
-			return event;
-		}
-	},
-
 	fix: function( event ) {
 		if ( event[ jQuery.expando ] ) {
 			return event;
@@ -4564,19 +4758,73 @@ jQuery.event = {
 			event[ prop ] = originalEvent[ prop ];
 		}
 
-		// Support: Cordova 2.5 (WebKit) (#13255)
-		// All events should have a target; Cordova deviceready doesn't
+		// Support: IE<9
+		// Fix target property (#1925)
 		if ( !event.target ) {
-			event.target = document;
+			event.target = originalEvent.srcElement || document;
 		}
 
-		// Support: Safari 6.0+, Chrome<28
+		// Support: Chrome 23+, Safari?
 		// Target should not be a text node (#504, #13143)
 		if ( event.target.nodeType === 3 ) {
 			event.target = event.target.parentNode;
 		}
 
+		// Support: IE<9
+		// For mouse/key events, metaKey==false if it's undefined (#3368, #11328)
+		event.metaKey = !!event.metaKey;
+
 		return fixHook.filter ? fixHook.filter( event, originalEvent ) : event;
+	},
+
+	// Includes some event props shared by KeyEvent and MouseEvent
+	props: "altKey bubbles cancelable ctrlKey currentTarget eventPhase metaKey relatedTarget shiftKey target timeStamp view which".split(" "),
+
+	fixHooks: {},
+
+	keyHooks: {
+		props: "char charCode key keyCode".split(" "),
+		filter: function( event, original ) {
+
+			// Add which for key events
+			if ( event.which == null ) {
+				event.which = original.charCode != null ? original.charCode : original.keyCode;
+			}
+
+			return event;
+		}
+	},
+
+	mouseHooks: {
+		props: "button buttons clientX clientY fromElement offsetX offsetY pageX pageY screenX screenY toElement".split(" "),
+		filter: function( event, original ) {
+			var body, eventDoc, doc,
+				button = original.button,
+				fromElement = original.fromElement;
+
+			// Calculate pageX/Y if missing and clientX/Y available
+			if ( event.pageX == null && original.clientX != null ) {
+				eventDoc = event.target.ownerDocument || document;
+				doc = eventDoc.documentElement;
+				body = eventDoc.body;
+
+				event.pageX = original.clientX + ( doc && doc.scrollLeft || body && body.scrollLeft || 0 ) - ( doc && doc.clientLeft || body && body.clientLeft || 0 );
+				event.pageY = original.clientY + ( doc && doc.scrollTop  || body && body.scrollTop  || 0 ) - ( doc && doc.clientTop  || body && body.clientTop  || 0 );
+			}
+
+			// Add relatedTarget, if necessary
+			if ( !event.relatedTarget && fromElement ) {
+				event.relatedTarget = fromElement === event.target ? original.toElement : fromElement;
+			}
+
+			// Add which for click: 1 === left; 2 === middle; 3 === right
+			// Note: button is not normalized, so don't use it
+			if ( !event.which && button !== undefined ) {
+				event.which = ( button & 1 ? 1 : ( button & 2 ? 3 : ( button & 4 ? 2 : 0 ) ) );
+			}
+
+			return event;
+		}
 	},
 
 	special: {
@@ -4588,8 +4836,14 @@ jQuery.event = {
 			// Fire native event if possible so blur/focus sequence is correct
 			trigger: function() {
 				if ( this !== safeActiveElement() && this.focus ) {
-					this.focus();
-					return false;
+					try {
+						this.focus();
+						return false;
+					} catch ( e ) {
+						// Support: IE<9
+						// If we error on focus to hidden element (#1486, #12518),
+						// let .trigger() run the handlers
+					}
 				}
 			},
 			delegateType: "focusin"
@@ -4606,7 +4860,7 @@ jQuery.event = {
 		click: {
 			// For checkbox, fire native event so checked state will be right
 			trigger: function() {
-				if ( this.type === "checkbox" && this.click && jQuery.nodeName( this, "input" ) ) {
+				if ( jQuery.nodeName( this, "input" ) && this.type === "checkbox" && this.click ) {
 					this.click();
 					return false;
 				}
@@ -4654,11 +4908,26 @@ jQuery.event = {
 	}
 };
 
-jQuery.removeEvent = function( elem, type, handle ) {
-	if ( elem.removeEventListener ) {
-		elem.removeEventListener( type, handle, false );
-	}
-};
+jQuery.removeEvent = document.removeEventListener ?
+	function( elem, type, handle ) {
+		if ( elem.removeEventListener ) {
+			elem.removeEventListener( type, handle, false );
+		}
+	} :
+	function( elem, type, handle ) {
+		var name = "on" + type;
+
+		if ( elem.detachEvent ) {
+
+			// #8545, #7054, preventing memory leaks for custom events in IE6-8
+			// detachEvent needed property on element, by name of that event, to properly expose it to GC
+			if ( typeof elem[ name ] === strundefined ) {
+				elem[ name ] = null;
+			}
+
+			elem.detachEvent( name, handle );
+		}
+	};
 
 jQuery.Event = function( src, props ) {
 	// Allow instantiation without the 'new' keyword
@@ -4675,7 +4944,7 @@ jQuery.Event = function( src, props ) {
 		// by a handler lower down the tree; reflect the correct value.
 		this.isDefaultPrevented = src.defaultPrevented ||
 				src.defaultPrevented === undefined &&
-				// Support: Android<4.0
+				// Support: IE < 9, Android < 4.0
 				src.returnValue === false ?
 			returnTrue :
 			returnFalse;
@@ -4708,19 +4977,35 @@ jQuery.Event.prototype = {
 		var e = this.originalEvent;
 
 		this.isDefaultPrevented = returnTrue;
+		if ( !e ) {
+			return;
+		}
 
-		if ( e && e.preventDefault ) {
+		// If preventDefault exists, run it on the original event
+		if ( e.preventDefault ) {
 			e.preventDefault();
+
+		// Support: IE
+		// Otherwise set the returnValue property of the original event to false
+		} else {
+			e.returnValue = false;
 		}
 	},
 	stopPropagation: function() {
 		var e = this.originalEvent;
 
 		this.isPropagationStopped = returnTrue;
-
-		if ( e && e.stopPropagation ) {
+		if ( !e ) {
+			return;
+		}
+		// If stopPropagation exists, run it on the original event
+		if ( e.stopPropagation ) {
 			e.stopPropagation();
 		}
+
+		// Support: IE
+		// Set the cancelBubble property of the original event to true
+		e.cancelBubble = true;
 	},
 	stopImmediatePropagation: function() {
 		var e = this.originalEvent;
@@ -4736,7 +5021,6 @@ jQuery.Event.prototype = {
 };
 
 // Create mouseenter/leave events using mouseover/out and event-time checks
-// Support: Chrome 15+
 jQuery.each({
 	mouseenter: "mouseover",
 	mouseleave: "mouseout",
@@ -4765,7 +5049,112 @@ jQuery.each({
 	};
 });
 
-// Support: Firefox, Chrome, Safari
+// IE submit delegation
+if ( !support.submitBubbles ) {
+
+	jQuery.event.special.submit = {
+		setup: function() {
+			// Only need this for delegated form submit events
+			if ( jQuery.nodeName( this, "form" ) ) {
+				return false;
+			}
+
+			// Lazy-add a submit handler when a descendant form may potentially be submitted
+			jQuery.event.add( this, "click._submit keypress._submit", function( e ) {
+				// Node name check avoids a VML-related crash in IE (#9807)
+				var elem = e.target,
+					form = jQuery.nodeName( elem, "input" ) || jQuery.nodeName( elem, "button" ) ? elem.form : undefined;
+				if ( form && !jQuery._data( form, "submitBubbles" ) ) {
+					jQuery.event.add( form, "submit._submit", function( event ) {
+						event._submit_bubble = true;
+					});
+					jQuery._data( form, "submitBubbles", true );
+				}
+			});
+			// return undefined since we don't need an event listener
+		},
+
+		postDispatch: function( event ) {
+			// If form was submitted by the user, bubble the event up the tree
+			if ( event._submit_bubble ) {
+				delete event._submit_bubble;
+				if ( this.parentNode && !event.isTrigger ) {
+					jQuery.event.simulate( "submit", this.parentNode, event, true );
+				}
+			}
+		},
+
+		teardown: function() {
+			// Only need this for delegated form submit events
+			if ( jQuery.nodeName( this, "form" ) ) {
+				return false;
+			}
+
+			// Remove delegated handlers; cleanData eventually reaps submit handlers attached above
+			jQuery.event.remove( this, "._submit" );
+		}
+	};
+}
+
+// IE change delegation and checkbox/radio fix
+if ( !support.changeBubbles ) {
+
+	jQuery.event.special.change = {
+
+		setup: function() {
+
+			if ( rformElems.test( this.nodeName ) ) {
+				// IE doesn't fire change on a check/radio until blur; trigger it on click
+				// after a propertychange. Eat the blur-change in special.change.handle.
+				// This still fires onchange a second time for check/radio after blur.
+				if ( this.type === "checkbox" || this.type === "radio" ) {
+					jQuery.event.add( this, "propertychange._change", function( event ) {
+						if ( event.originalEvent.propertyName === "checked" ) {
+							this._just_changed = true;
+						}
+					});
+					jQuery.event.add( this, "click._change", function( event ) {
+						if ( this._just_changed && !event.isTrigger ) {
+							this._just_changed = false;
+						}
+						// Allow triggered, simulated change events (#11500)
+						jQuery.event.simulate( "change", this, event, true );
+					});
+				}
+				return false;
+			}
+			// Delegated event; lazy-add a change handler on descendant inputs
+			jQuery.event.add( this, "beforeactivate._change", function( e ) {
+				var elem = e.target;
+
+				if ( rformElems.test( elem.nodeName ) && !jQuery._data( elem, "changeBubbles" ) ) {
+					jQuery.event.add( elem, "change._change", function( event ) {
+						if ( this.parentNode && !event.isSimulated && !event.isTrigger ) {
+							jQuery.event.simulate( "change", this.parentNode, event, true );
+						}
+					});
+					jQuery._data( elem, "changeBubbles", true );
+				}
+			});
+		},
+
+		handle: function( event ) {
+			var elem = event.target;
+
+			// Swallow native change events from checkbox/radio, we already triggered them above
+			if ( this !== elem || event.isSimulated || event.isTrigger || (elem.type !== "radio" && elem.type !== "checkbox") ) {
+				return event.handleObj.handler.apply( this, arguments );
+			}
+		},
+
+		teardown: function() {
+			jQuery.event.remove( this, "._change" );
+
+			return !rformElems.test( this.nodeName );
+		}
+	};
+}
+
 // Create "bubbling" focus and blur events
 if ( !support.focusinBubbles ) {
 	jQuery.each({ focus: "focusin", blur: "focusout" }, function( orig, fix ) {
@@ -4778,23 +5167,22 @@ if ( !support.focusinBubbles ) {
 		jQuery.event.special[ fix ] = {
 			setup: function() {
 				var doc = this.ownerDocument || this,
-					attaches = data_priv.access( doc, fix );
+					attaches = jQuery._data( doc, fix );
 
 				if ( !attaches ) {
 					doc.addEventListener( orig, handler, true );
 				}
-				data_priv.access( doc, fix, ( attaches || 0 ) + 1 );
+				jQuery._data( doc, fix, ( attaches || 0 ) + 1 );
 			},
 			teardown: function() {
 				var doc = this.ownerDocument || this,
-					attaches = data_priv.access( doc, fix ) - 1;
+					attaches = jQuery._data( doc, fix ) - 1;
 
 				if ( !attaches ) {
 					doc.removeEventListener( orig, handler, true );
-					data_priv.remove( doc, fix );
-
+					jQuery._removeData( doc, fix );
 				} else {
-					data_priv.access( doc, fix, attaches );
+					jQuery._data( doc, fix, attaches );
 				}
 			}
 		};
@@ -4804,7 +5192,7 @@ if ( !support.focusinBubbles ) {
 jQuery.fn.extend({
 
 	on: function( types, selector, data, fn, /*INTERNAL*/ one ) {
-		var origFn, type;
+		var type, origFn;
 
 		// Types can be a map of types/handlers
 		if ( typeof types === "object" ) {
@@ -4905,9 +5293,28 @@ jQuery.fn.extend({
 });
 
 
-var
+function createSafeFragment( document ) {
+	var list = nodeNames.split( "|" ),
+		safeFrag = document.createDocumentFragment();
+
+	if ( safeFrag.createElement ) {
+		while ( list.length ) {
+			safeFrag.createElement(
+				list.pop()
+			);
+		}
+	}
+	return safeFrag;
+}
+
+var nodeNames = "abbr|article|aside|audio|bdi|canvas|data|datalist|details|figcaption|figure|footer|" +
+		"header|hgroup|mark|meter|nav|output|progress|section|summary|time|video",
+	rinlinejQuery = / jQuery\d+="(?:null|\d+)"/g,
+	rnoshimcache = new RegExp("<(?:" + nodeNames + ")[\\s/>]", "i"),
+	rleadingWhitespace = /^\s+/,
 	rxhtmlTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/gi,
 	rtagName = /<([\w:]+)/,
+	rtbody = /<tbody/i,
 	rhtml = /<|&#?\w+;/,
 	rnoInnerhtml = /<(?:script|style|link)/i,
 	// checked="checked" or checked
@@ -4918,25 +5325,56 @@ var
 
 	// We have to close these tags to support XHTML (#13200)
 	wrapMap = {
-
-		// Support: IE9
 		option: [ 1, "<select multiple='multiple'>", "</select>" ],
-
+		legend: [ 1, "<fieldset>", "</fieldset>" ],
+		area: [ 1, "<map>", "</map>" ],
+		param: [ 1, "<object>", "</object>" ],
 		thead: [ 1, "<table>", "</table>" ],
-		col: [ 2, "<table><colgroup>", "</colgroup></table>" ],
 		tr: [ 2, "<table><tbody>", "</tbody></table>" ],
+		col: [ 2, "<table><tbody></tbody><colgroup>", "</colgroup></table>" ],
 		td: [ 3, "<table><tbody><tr>", "</tr></tbody></table>" ],
 
-		_default: [ 0, "", "" ]
-	};
+		// IE6-8 can't serialize link, script, style, or any html5 (NoScope) tags,
+		// unless wrapped in a div with non-breaking characters in front of it.
+		_default: support.htmlSerialize ? [ 0, "", "" ] : [ 1, "X<div>", "</div>"  ]
+	},
+	safeFragment = createSafeFragment( document ),
+	fragmentDiv = safeFragment.appendChild( document.createElement("div") );
 
-// Support: IE9
 wrapMap.optgroup = wrapMap.option;
-
 wrapMap.tbody = wrapMap.tfoot = wrapMap.colgroup = wrapMap.caption = wrapMap.thead;
 wrapMap.th = wrapMap.td;
 
-// Support: 1.x compatibility
+function getAll( context, tag ) {
+	var elems, elem,
+		i = 0,
+		found = typeof context.getElementsByTagName !== strundefined ? context.getElementsByTagName( tag || "*" ) :
+			typeof context.querySelectorAll !== strundefined ? context.querySelectorAll( tag || "*" ) :
+			undefined;
+
+	if ( !found ) {
+		for ( found = [], elems = context.childNodes || context; (elem = elems[i]) != null; i++ ) {
+			if ( !tag || jQuery.nodeName( elem, tag ) ) {
+				found.push( elem );
+			} else {
+				jQuery.merge( found, getAll( elem, tag ) );
+			}
+		}
+	}
+
+	return tag === undefined || tag && jQuery.nodeName( context, tag ) ?
+		jQuery.merge( [ context ], found ) :
+		found;
+}
+
+// Used in buildFragment, fixes the defaultChecked property
+function fixDefaultChecked( elem ) {
+	if ( rcheckableType.test( elem.type ) ) {
+		elem.defaultChecked = elem.checked;
+	}
+}
+
+// Support: IE<8
 // Manipulating tables requires a tbody
 function manipulationTarget( elem, content ) {
 	return jQuery.nodeName( elem, "table" ) &&
@@ -4949,86 +5387,118 @@ function manipulationTarget( elem, content ) {
 
 // Replace/restore the type attribute of script elements for safe DOM manipulation
 function disableScript( elem ) {
-	elem.type = (elem.getAttribute("type") !== null) + "/" + elem.type;
+	elem.type = (jQuery.find.attr( elem, "type" ) !== null) + "/" + elem.type;
 	return elem;
 }
 function restoreScript( elem ) {
 	var match = rscriptTypeMasked.exec( elem.type );
-
 	if ( match ) {
-		elem.type = match[ 1 ];
+		elem.type = match[1];
 	} else {
 		elem.removeAttribute("type");
 	}
-
 	return elem;
 }
 
 // Mark scripts as having already been evaluated
 function setGlobalEval( elems, refElements ) {
-	var i = 0,
-		l = elems.length;
-
-	for ( ; i < l; i++ ) {
-		data_priv.set(
-			elems[ i ], "globalEval", !refElements || data_priv.get( refElements[ i ], "globalEval" )
-		);
+	var elem,
+		i = 0;
+	for ( ; (elem = elems[i]) != null; i++ ) {
+		jQuery._data( elem, "globalEval", !refElements || jQuery._data( refElements[i], "globalEval" ) );
 	}
 }
 
 function cloneCopyEvent( src, dest ) {
-	var i, l, type, pdataOld, pdataCur, udataOld, udataCur, events;
 
-	if ( dest.nodeType !== 1 ) {
+	if ( dest.nodeType !== 1 || !jQuery.hasData( src ) ) {
 		return;
 	}
 
-	// 1. Copy private data: events, handlers, etc.
-	if ( data_priv.hasData( src ) ) {
-		pdataOld = data_priv.access( src );
-		pdataCur = data_priv.set( dest, pdataOld );
-		events = pdataOld.events;
+	var type, i, l,
+		oldData = jQuery._data( src ),
+		curData = jQuery._data( dest, oldData ),
+		events = oldData.events;
 
-		if ( events ) {
-			delete pdataCur.handle;
-			pdataCur.events = {};
+	if ( events ) {
+		delete curData.handle;
+		curData.events = {};
 
-			for ( type in events ) {
-				for ( i = 0, l = events[ type ].length; i < l; i++ ) {
-					jQuery.event.add( dest, type, events[ type ][ i ] );
-				}
+		for ( type in events ) {
+			for ( i = 0, l = events[ type ].length; i < l; i++ ) {
+				jQuery.event.add( dest, type, events[ type ][ i ] );
 			}
 		}
 	}
 
-	// 2. Copy user data
-	if ( data_user.hasData( src ) ) {
-		udataOld = data_user.access( src );
-		udataCur = jQuery.extend( {}, udataOld );
-
-		data_user.set( dest, udataCur );
+	// make the cloned public data object a copy from the original
+	if ( curData.data ) {
+		curData.data = jQuery.extend( {}, curData.data );
 	}
 }
 
-function getAll( context, tag ) {
-	var ret = context.getElementsByTagName ? context.getElementsByTagName( tag || "*" ) :
-			context.querySelectorAll ? context.querySelectorAll( tag || "*" ) :
-			[];
+function fixCloneNodeIssues( src, dest ) {
+	var nodeName, e, data;
 
-	return tag === undefined || tag && jQuery.nodeName( context, tag ) ?
-		jQuery.merge( [ context ], ret ) :
-		ret;
-}
+	// We do not need to do anything for non-Elements
+	if ( dest.nodeType !== 1 ) {
+		return;
+	}
 
-// Fix IE bugs, see support tests
-function fixInput( src, dest ) {
-	var nodeName = dest.nodeName.toLowerCase();
+	nodeName = dest.nodeName.toLowerCase();
 
-	// Fails to persist the checked state of a cloned checkbox or radio button.
-	if ( nodeName === "input" && rcheckableType.test( src.type ) ) {
-		dest.checked = src.checked;
+	// IE6-8 copies events bound via attachEvent when using cloneNode.
+	if ( !support.noCloneEvent && dest[ jQuery.expando ] ) {
+		data = jQuery._data( dest );
 
-	// Fails to return the selected option to the default selected state when cloning options
+		for ( e in data.events ) {
+			jQuery.removeEvent( dest, e, data.handle );
+		}
+
+		// Event data gets referenced instead of copied if the expando gets copied too
+		dest.removeAttribute( jQuery.expando );
+	}
+
+	// IE blanks contents when cloning scripts, and tries to evaluate newly-set text
+	if ( nodeName === "script" && dest.text !== src.text ) {
+		disableScript( dest ).text = src.text;
+		restoreScript( dest );
+
+	// IE6-10 improperly clones children of object elements using classid.
+	// IE10 throws NoModificationAllowedError if parent is null, #12132.
+	} else if ( nodeName === "object" ) {
+		if ( dest.parentNode ) {
+			dest.outerHTML = src.outerHTML;
+		}
+
+		// This path appears unavoidable for IE9. When cloning an object
+		// element in IE9, the outerHTML strategy above is not sufficient.
+		// If the src has innerHTML and the destination does not,
+		// copy the src.innerHTML into the dest.innerHTML. #10324
+		if ( support.html5Clone && ( src.innerHTML && !jQuery.trim(dest.innerHTML) ) ) {
+			dest.innerHTML = src.innerHTML;
+		}
+
+	} else if ( nodeName === "input" && rcheckableType.test( src.type ) ) {
+		// IE6-8 fails to persist the checked state of a cloned checkbox
+		// or radio button. Worse, IE6-7 fail to give the cloned element
+		// a checked appearance if the defaultChecked value isn't also set
+
+		dest.defaultChecked = dest.checked = src.checked;
+
+		// IE6-7 get confused and end up setting the value of a cloned
+		// checkbox/radio button to an empty string instead of "on"
+		if ( dest.value !== src.value ) {
+			dest.value = src.value;
+		}
+
+	// IE6-8 fails to return the selected option to the default selected
+	// state when cloning options
+	} else if ( nodeName === "option" ) {
+		dest.defaultSelected = dest.selected = src.defaultSelected;
+
+	// IE6-8 fails to set the defaultValue to the correct value when
+	// cloning other types of input fields
 	} else if ( nodeName === "input" || nodeName === "textarea" ) {
 		dest.defaultValue = src.defaultValue;
 	}
@@ -5036,20 +5506,31 @@ function fixInput( src, dest ) {
 
 jQuery.extend({
 	clone: function( elem, dataAndEvents, deepDataAndEvents ) {
-		var i, l, srcElements, destElements,
-			clone = elem.cloneNode( true ),
+		var destElements, node, clone, i, srcElements,
 			inPage = jQuery.contains( elem.ownerDocument, elem );
 
-		// Fix IE cloning issues
-		if ( !support.noCloneChecked && ( elem.nodeType === 1 || elem.nodeType === 11 ) &&
-				!jQuery.isXMLDoc( elem ) ) {
+		if ( support.html5Clone || jQuery.isXMLDoc(elem) || !rnoshimcache.test( "<" + elem.nodeName + ">" ) ) {
+			clone = elem.cloneNode( true );
+
+		// IE<=8 does not properly clone detached, unknown element nodes
+		} else {
+			fragmentDiv.innerHTML = elem.outerHTML;
+			fragmentDiv.removeChild( clone = fragmentDiv.firstChild );
+		}
+
+		if ( (!support.noCloneEvent || !support.noCloneChecked) &&
+				(elem.nodeType === 1 || elem.nodeType === 11) && !jQuery.isXMLDoc(elem) ) {
 
 			// We eschew Sizzle here for performance reasons: http://jsperf.com/getall-vs-sizzle/2
 			destElements = getAll( clone );
 			srcElements = getAll( elem );
 
-			for ( i = 0, l = srcElements.length; i < l; i++ ) {
-				fixInput( srcElements[ i ], destElements[ i ] );
+			// Fix all IE cloning issues
+			for ( i = 0; (node = srcElements[i]) != null; ++i ) {
+				// Ensure that the destination node is not null; Fixes #9587
+				if ( destElements[i] ) {
+					fixCloneNodeIssues( node, destElements[i] );
+				}
 			}
 		}
 
@@ -5059,8 +5540,8 @@ jQuery.extend({
 				srcElements = srcElements || getAll( elem );
 				destElements = destElements || getAll( clone );
 
-				for ( i = 0, l = srcElements.length; i < l; i++ ) {
-					cloneCopyEvent( srcElements[ i ], destElements[ i ] );
+				for ( i = 0; (node = srcElements[i]) != null; i++ ) {
+					cloneCopyEvent( node, destElements[i] );
 				}
 			} else {
 				cloneCopyEvent( elem, clone );
@@ -5073,16 +5554,22 @@ jQuery.extend({
 			setGlobalEval( destElements, !inPage && getAll( elem, "script" ) );
 		}
 
+		destElements = srcElements = node = null;
+
 		// Return the cloned set
 		return clone;
 	},
 
 	buildFragment: function( elems, context, scripts, selection ) {
-		var elem, tmp, tag, wrap, contains, j,
-			fragment = context.createDocumentFragment(),
+		var j, elem, contains,
+			tmp, tag, tbody, wrap,
+			l = elems.length,
+
+			// Ensure a safe fragment
+			safe = createSafeFragment( context ),
+
 			nodes = [],
-			i = 0,
-			l = elems.length;
+			i = 0;
 
 		for ( ; i < l; i++ ) {
 			elem = elems[ i ];
@@ -5091,8 +5578,6 @@ jQuery.extend({
 
 				// Add nodes directly
 				if ( jQuery.type( elem ) === "object" ) {
-					// Support: QtWebKit, PhantomJS
-					// push.apply(_, arraylike) throws on ancient WebKit
 					jQuery.merge( nodes, elem.nodeType ? [ elem ] : elem );
 
 				// Convert non-html into a text node
@@ -5101,34 +5586,71 @@ jQuery.extend({
 
 				// Convert html into DOM nodes
 				} else {
-					tmp = tmp || fragment.appendChild( context.createElement("div") );
+					tmp = tmp || safe.appendChild( context.createElement("div") );
 
 					// Deserialize a standard representation
-					tag = ( rtagName.exec( elem ) || [ "", "" ] )[ 1 ].toLowerCase();
+					tag = (rtagName.exec( elem ) || [ "", "" ])[ 1 ].toLowerCase();
 					wrap = wrapMap[ tag ] || wrapMap._default;
-					tmp.innerHTML = wrap[ 1 ] + elem.replace( rxhtmlTag, "<$1></$2>" ) + wrap[ 2 ];
+
+					tmp.innerHTML = wrap[1] + elem.replace( rxhtmlTag, "<$1></$2>" ) + wrap[2];
 
 					// Descend through wrappers to the right content
-					j = wrap[ 0 ];
+					j = wrap[0];
 					while ( j-- ) {
 						tmp = tmp.lastChild;
 					}
 
-					// Support: QtWebKit, PhantomJS
-					// push.apply(_, arraylike) throws on ancient WebKit
+					// Manually add leading whitespace removed by IE
+					if ( !support.leadingWhitespace && rleadingWhitespace.test( elem ) ) {
+						nodes.push( context.createTextNode( rleadingWhitespace.exec( elem )[0] ) );
+					}
+
+					// Remove IE's autoinserted <tbody> from table fragments
+					if ( !support.tbody ) {
+
+						// String was a <table>, *may* have spurious <tbody>
+						elem = tag === "table" && !rtbody.test( elem ) ?
+							tmp.firstChild :
+
+							// String was a bare <thead> or <tfoot>
+							wrap[1] === "<table>" && !rtbody.test( elem ) ?
+								tmp :
+								0;
+
+						j = elem && elem.childNodes.length;
+						while ( j-- ) {
+							if ( jQuery.nodeName( (tbody = elem.childNodes[j]), "tbody" ) && !tbody.childNodes.length ) {
+								elem.removeChild( tbody );
+							}
+						}
+					}
+
 					jQuery.merge( nodes, tmp.childNodes );
 
-					// Remember the top-level container
-					tmp = fragment.firstChild;
-
-					// Ensure the created nodes are orphaned (#12392)
+					// Fix #12392 for WebKit and IE > 9
 					tmp.textContent = "";
+
+					// Fix #12392 for oldIE
+					while ( tmp.firstChild ) {
+						tmp.removeChild( tmp.firstChild );
+					}
+
+					// Remember the top-level container for proper cleanup
+					tmp = safe.lastChild;
 				}
 			}
 		}
 
-		// Remove wrapper from fragment
-		fragment.textContent = "";
+		// Fix #11356: Clear elements from fragment
+		if ( tmp ) {
+			safe.removeChild( tmp );
+		}
+
+		// Reset defaultChecked for any radios and checkboxes
+		// about to be appended to the DOM in IE 6/7 (#8060)
+		if ( !support.appendChecked ) {
+			jQuery.grep( getAll( nodes, "input" ), fixDefaultChecked );
+		}
 
 		i = 0;
 		while ( (elem = nodes[ i++ ]) ) {
@@ -5142,7 +5664,7 @@ jQuery.extend({
 			contains = jQuery.contains( elem.ownerDocument, elem );
 
 			// Append to fragment
-			tmp = getAll( fragment.appendChild( elem ), "script" );
+			tmp = getAll( safe.appendChild( elem ), "script" );
 
 			// Preserve script evaluation history
 			if ( contains ) {
@@ -5160,19 +5682,26 @@ jQuery.extend({
 			}
 		}
 
-		return fragment;
+		tmp = null;
+
+		return safe;
 	},
 
-	cleanData: function( elems ) {
-		var data, elem, type, key,
-			special = jQuery.event.special,
-			i = 0;
+	cleanData: function( elems, /* internal */ acceptData ) {
+		var elem, type, id, data,
+			i = 0,
+			internalKey = jQuery.expando,
+			cache = jQuery.cache,
+			deleteExpando = support.deleteExpando,
+			special = jQuery.event.special;
 
-		for ( ; (elem = elems[ i ]) !== undefined; i++ ) {
-			if ( jQuery.acceptData( elem ) ) {
-				key = elem[ data_priv.expando ];
+		for ( ; (elem = elems[i]) != null; i++ ) {
+			if ( acceptData || jQuery.acceptData( elem ) ) {
 
-				if ( key && (data = data_priv.cache[ key ]) ) {
+				id = elem[ internalKey ];
+				data = id && cache[ id ];
+
+				if ( data ) {
 					if ( data.events ) {
 						for ( type in data.events ) {
 							if ( special[ type ] ) {
@@ -5184,14 +5713,29 @@ jQuery.extend({
 							}
 						}
 					}
-					if ( data_priv.cache[ key ] ) {
-						// Discard any remaining `private` data
-						delete data_priv.cache[ key ];
+
+					// Remove cache only if it was not already removed by jQuery.event.remove
+					if ( cache[ id ] ) {
+
+						delete cache[ id ];
+
+						// IE does not allow us to delete expando properties from nodes,
+						// nor does it have a removeAttribute function on Document nodes;
+						// we must handle all of these cases
+						if ( deleteExpando ) {
+							delete elem[ internalKey ];
+
+						} else if ( typeof elem.removeAttribute !== strundefined ) {
+							elem.removeAttribute( internalKey );
+
+						} else {
+							elem[ internalKey ] = null;
+						}
+
+						deletedIds.push( id );
 					}
 				}
 			}
-			// Discard any remaining `user` data
-			delete data_user.cache[ elem[ data_user.expando ] ];
 		}
 	}
 });
@@ -5201,11 +5745,7 @@ jQuery.fn.extend({
 		return access( this, function( value ) {
 			return value === undefined ?
 				jQuery.text( this ) :
-				this.empty().each(function() {
-					if ( this.nodeType === 1 || this.nodeType === 11 || this.nodeType === 9 ) {
-						this.textContent = value;
-					}
-				});
+				this.empty().append( ( this[0] && this[0].ownerDocument || document ).createTextNode( value ) );
 		}, null, value, arguments.length );
 	},
 
@@ -5249,6 +5789,7 @@ jQuery.fn.extend({
 			i = 0;
 
 		for ( ; (elem = elems[i]) != null; i++ ) {
+
 			if ( !keepData && elem.nodeType === 1 ) {
 				jQuery.cleanData( getAll( elem ) );
 			}
@@ -5269,13 +5810,20 @@ jQuery.fn.extend({
 			i = 0;
 
 		for ( ; (elem = this[i]) != null; i++ ) {
+			// Remove element nodes and prevent memory leaks
 			if ( elem.nodeType === 1 ) {
-
-				// Prevent memory leaks
 				jQuery.cleanData( getAll( elem, false ) );
+			}
 
-				// Remove any remaining nodes
-				elem.textContent = "";
+			// Remove any remaining nodes
+			while ( elem.firstChild ) {
+				elem.removeChild( elem.firstChild );
+			}
+
+			// If this is a select, ensure that it displays empty (#12336)
+			// Support: IE<9
+			if ( elem.options && jQuery.nodeName( elem, "select" ) ) {
+				elem.options.length = 0;
 			}
 		}
 
@@ -5297,21 +5845,24 @@ jQuery.fn.extend({
 				i = 0,
 				l = this.length;
 
-			if ( value === undefined && elem.nodeType === 1 ) {
-				return elem.innerHTML;
+			if ( value === undefined ) {
+				return elem.nodeType === 1 ?
+					elem.innerHTML.replace( rinlinejQuery, "" ) :
+					undefined;
 			}
 
 			// See if we can take a shortcut and just use innerHTML
 			if ( typeof value === "string" && !rnoInnerhtml.test( value ) &&
-				!wrapMap[ ( rtagName.exec( value ) || [ "", "" ] )[ 1 ].toLowerCase() ] ) {
+				( support.htmlSerialize || !rnoshimcache.test( value )  ) &&
+				( support.leadingWhitespace || !rleadingWhitespace.test( value ) ) &&
+				!wrapMap[ (rtagName.exec( value ) || [ "", "" ])[ 1 ].toLowerCase() ] ) {
 
 				value = value.replace( rxhtmlTag, "<$1></$2>" );
 
 				try {
-					for ( ; i < l; i++ ) {
-						elem = this[ i ] || {};
-
+					for (; i < l; i++ ) {
 						// Remove element nodes and prevent memory leaks
+						elem = this[i] || {};
 						if ( elem.nodeType === 1 ) {
 							jQuery.cleanData( getAll( elem, false ) );
 							elem.innerHTML = value;
@@ -5321,7 +5872,7 @@ jQuery.fn.extend({
 					elem = 0;
 
 				// If using innerHTML throws an exception, use the fallback method
-				} catch( e ) {}
+				} catch(e) {}
 			}
 
 			if ( elem ) {
@@ -5357,12 +5908,13 @@ jQuery.fn.extend({
 		// Flatten any nested arrays
 		args = concat.apply( [], args );
 
-		var fragment, first, scripts, hasScripts, node, doc,
+		var first, node, hasScripts,
+			scripts, doc, fragment,
 			i = 0,
 			l = this.length,
 			set = this,
 			iNoClone = l - 1,
-			value = args[ 0 ],
+			value = args[0],
 			isFunction = jQuery.isFunction( value );
 
 		// We can't cloneNode fragments that contain checked, in WebKit
@@ -5372,7 +5924,7 @@ jQuery.fn.extend({
 			return this.each(function( index ) {
 				var self = set.eq( index );
 				if ( isFunction ) {
-					args[ 0 ] = value.call( this, index, self.html() );
+					args[0] = value.call( this, index, self.html() );
 				}
 				self.domManip( args, callback );
 			});
@@ -5400,13 +5952,11 @@ jQuery.fn.extend({
 
 						// Keep references to cloned scripts for later restoration
 						if ( hasScripts ) {
-							// Support: QtWebKit
-							// jQuery.merge because push.apply(_, arraylike) throws
 							jQuery.merge( scripts, getAll( node, "script" ) );
 						}
 					}
 
-					callback.call( this[ i ], node, i );
+					callback.call( this[i], node, i );
 				}
 
 				if ( hasScripts ) {
@@ -5419,7 +5969,7 @@ jQuery.fn.extend({
 					for ( i = 0; i < hasScripts; i++ ) {
 						node = scripts[ i ];
 						if ( rscriptType.test( node.type || "" ) &&
-							!data_priv.access( node, "globalEval" ) && jQuery.contains( doc, node ) ) {
+							!jQuery._data( node, "globalEval" ) && jQuery.contains( doc, node ) ) {
 
 							if ( node.src ) {
 								// Optional AJAX dependency, but won't run scripts if not present
@@ -5427,11 +5977,14 @@ jQuery.fn.extend({
 									jQuery._evalUrl( node.src );
 								}
 							} else {
-								jQuery.globalEval( node.textContent.replace( rcleanScript, "" ) );
+								jQuery.globalEval( ( node.text || node.textContent || node.innerHTML || "" ).replace( rcleanScript, "" ) );
 							}
 						}
 					}
 				}
+
+				// Fix #11809: Avoid leaking memory
+				fragment = first = null;
 			}
 		}
 
@@ -5448,17 +6001,16 @@ jQuery.each({
 }, function( name, original ) {
 	jQuery.fn[ name ] = function( selector ) {
 		var elems,
+			i = 0,
 			ret = [],
 			insert = jQuery( selector ),
-			last = insert.length - 1,
-			i = 0;
+			last = insert.length - 1;
 
 		for ( ; i <= last; i++ ) {
-			elems = i === last ? this : this.clone( true );
-			jQuery( insert[ i ] )[ original ]( elems );
+			elems = i === last ? this : this.clone(true);
+			jQuery( insert[i] )[ original ]( elems );
 
-			// Support: QtWebKit
-			// .get() because push.apply(_, arraylike) throws
+			// Modern browsers can apply jQuery collections as arrays, but oldIE needs a .get()
 			push.apply( ret, elems.get() );
 		}
 
@@ -5483,7 +6035,7 @@ function actualDisplay( name, doc ) {
 		// getDefaultComputedStyle might be reliably used only on attached element
 		display = window.getDefaultComputedStyle && ( style = window.getDefaultComputedStyle( elem[ 0 ] ) ) ?
 
-			// Use of this method is a temporary fix (more like optimization) until something better comes along,
+			// Use of this method is a temporary fix (more like optmization) until something better comes along,
 			// since it was removed from specification and supported only in FF
 			style.display : jQuery.css( elem[ 0 ], "display" );
 
@@ -5512,7 +6064,7 @@ function defaultDisplay( nodeName ) {
 			iframe = (iframe || jQuery( "<iframe frameborder='0' width='0' height='0'/>" )).appendTo( doc.documentElement );
 
 			// Always write a new HTML skeleton so Webkit and Firefox don't choke on reuse
-			doc = iframe[ 0 ].contentDocument;
+			doc = ( iframe[ 0 ].contentWindow || iframe[ 0 ].contentDocument ).document;
 
 			// Support: IE
 			doc.write();
@@ -5528,11 +6080,65 @@ function defaultDisplay( nodeName ) {
 
 	return display;
 }
+
+
+(function() {
+	var shrinkWrapBlocksVal;
+
+	support.shrinkWrapBlocks = function() {
+		if ( shrinkWrapBlocksVal != null ) {
+			return shrinkWrapBlocksVal;
+		}
+
+		// Will be changed later if needed.
+		shrinkWrapBlocksVal = false;
+
+		// Minified: var b,c,d
+		var div, body, container;
+
+		body = document.getElementsByTagName( "body" )[ 0 ];
+		if ( !body || !body.style ) {
+			// Test fired too early or in an unsupported environment, exit.
+			return;
+		}
+
+		// Setup
+		div = document.createElement( "div" );
+		container = document.createElement( "div" );
+		container.style.cssText = "position:absolute;border:0;width:0;height:0;top:0;left:-9999px";
+		body.appendChild( container ).appendChild( div );
+
+		// Support: IE6
+		// Check if elements with layout shrink-wrap their children
+		if ( typeof div.style.zoom !== strundefined ) {
+			// Reset CSS: box-sizing; display; margin; border
+			div.style.cssText =
+				// Support: Firefox<29, Android 2.3
+				// Vendor-prefix box-sizing
+				"-webkit-box-sizing:content-box;-moz-box-sizing:content-box;" +
+				"box-sizing:content-box;display:block;margin:0;border:0;" +
+				"padding:1px;width:1px;zoom:1";
+			div.appendChild( document.createElement( "div" ) ).style.width = "5px";
+			shrinkWrapBlocksVal = div.offsetWidth !== 3;
+		}
+
+		body.removeChild( container );
+
+		return shrinkWrapBlocksVal;
+	};
+
+})();
 var rmargin = (/^margin/);
 
 var rnumnonpx = new RegExp( "^(" + pnum + ")(?!px)[a-z%]+$", "i" );
 
-var getStyles = function( elem ) {
+
+
+var getStyles, curCSS,
+	rposition = /^(top|right|bottom|left)$/;
+
+if ( window.getComputedStyle ) {
+	getStyles = function( elem ) {
 		// Support: IE<=11+, Firefox<=30+ (#15098, #14150)
 		// IE throws on elements created in popups
 		// FF meanwhile throws on frame elements through "defaultView.getComputedStyle"
@@ -5543,68 +6149,128 @@ var getStyles = function( elem ) {
 		return window.getComputedStyle( elem, null );
 	};
 
+	curCSS = function( elem, name, computed ) {
+		var width, minWidth, maxWidth, ret,
+			style = elem.style;
 
+		computed = computed || getStyles( elem );
 
-function curCSS( elem, name, computed ) {
-	var width, minWidth, maxWidth, ret,
-		style = elem.style;
+		// getPropertyValue is only needed for .css('filter') in IE9, see #12537
+		ret = computed ? computed.getPropertyValue( name ) || computed[ name ] : undefined;
 
-	computed = computed || getStyles( elem );
+		if ( computed ) {
 
-	// Support: IE9
-	// getPropertyValue is only needed for .css('filter') (#12537)
-	if ( computed ) {
-		ret = computed.getPropertyValue( name ) || computed[ name ];
-	}
+			if ( ret === "" && !jQuery.contains( elem.ownerDocument, elem ) ) {
+				ret = jQuery.style( elem, name );
+			}
 
-	if ( computed ) {
+			// A tribute to the "awesome hack by Dean Edwards"
+			// Chrome < 17 and Safari 5.0 uses "computed value" instead of "used value" for margin-right
+			// Safari 5.1.7 (at least) returns percentage for a larger set of values, but width seems to be reliably pixels
+			// this is against the CSSOM draft spec: http://dev.w3.org/csswg/cssom/#resolved-values
+			if ( rnumnonpx.test( ret ) && rmargin.test( name ) ) {
 
-		if ( ret === "" && !jQuery.contains( elem.ownerDocument, elem ) ) {
-			ret = jQuery.style( elem, name );
+				// Remember the original values
+				width = style.width;
+				minWidth = style.minWidth;
+				maxWidth = style.maxWidth;
+
+				// Put in the new values to get a computed value out
+				style.minWidth = style.maxWidth = style.width = ret;
+				ret = computed.width;
+
+				// Revert the changed values
+				style.width = width;
+				style.minWidth = minWidth;
+				style.maxWidth = maxWidth;
+			}
 		}
 
-		// Support: iOS < 6
-		// A tribute to the "awesome hack by Dean Edwards"
-		// iOS < 6 (at least) returns percentage for a larger set of values, but width seems to be reliably pixels
-		// this is against the CSSOM draft spec: http://dev.w3.org/csswg/cssom/#resolved-values
-		if ( rnumnonpx.test( ret ) && rmargin.test( name ) ) {
-
-			// Remember the original values
-			width = style.width;
-			minWidth = style.minWidth;
-			maxWidth = style.maxWidth;
-
-			// Put in the new values to get a computed value out
-			style.minWidth = style.maxWidth = style.width = ret;
-			ret = computed.width;
-
-			// Revert the changed values
-			style.width = width;
-			style.minWidth = minWidth;
-			style.maxWidth = maxWidth;
-		}
-	}
-
-	return ret !== undefined ?
 		// Support: IE
 		// IE returns zIndex value as an integer.
-		ret + "" :
-		ret;
+		return ret === undefined ?
+			ret :
+			ret + "";
+	};
+} else if ( document.documentElement.currentStyle ) {
+	getStyles = function( elem ) {
+		return elem.currentStyle;
+	};
+
+	curCSS = function( elem, name, computed ) {
+		var left, rs, rsLeft, ret,
+			style = elem.style;
+
+		computed = computed || getStyles( elem );
+		ret = computed ? computed[ name ] : undefined;
+
+		// Avoid setting ret to empty string here
+		// so we don't default to auto
+		if ( ret == null && style && style[ name ] ) {
+			ret = style[ name ];
+		}
+
+		// From the awesome hack by Dean Edwards
+		// http://erik.eae.net/archives/2007/07/27/18.54.15/#comment-102291
+
+		// If we're not dealing with a regular pixel number
+		// but a number that has a weird ending, we need to convert it to pixels
+		// but not position css attributes, as those are proportional to the parent element instead
+		// and we can't measure the parent instead because it might trigger a "stacking dolls" problem
+		if ( rnumnonpx.test( ret ) && !rposition.test( name ) ) {
+
+			// Remember the original values
+			left = style.left;
+			rs = elem.runtimeStyle;
+			rsLeft = rs && rs.left;
+
+			// Put in the new values to get a computed value out
+			if ( rsLeft ) {
+				rs.left = elem.currentStyle.left;
+			}
+			style.left = name === "fontSize" ? "1em" : ret;
+			ret = style.pixelLeft + "px";
+
+			// Revert the changed values
+			style.left = left;
+			if ( rsLeft ) {
+				rs.left = rsLeft;
+			}
+		}
+
+		// Support: IE
+		// IE returns zIndex value as an integer.
+		return ret === undefined ?
+			ret :
+			ret + "" || "auto";
+	};
 }
+
+
 
 
 function addGetHookIf( conditionFn, hookFn ) {
 	// Define the hook, we'll check on the first run if it's really needed.
 	return {
 		get: function() {
-			if ( conditionFn() ) {
-				// Hook not needed (or it's not possible to use it due
-				// to missing dependency), remove it.
+			var condition = conditionFn();
+
+			if ( condition == null ) {
+				// The test was not ready at this point; screw the hook this time
+				// but check again when needed next time.
+				return;
+			}
+
+			if ( condition ) {
+				// Hook not needed (or it's not possible to use it due to missing dependency),
+				// remove it.
+				// Since there are no other hooks for marginRight, remove the whole object.
 				delete this.get;
 				return;
 			}
 
 			// Hook needed; redefine it so that the support test is not executed again.
+
 			return (this.get = hookFn).apply( this, arguments );
 		}
 	};
@@ -5612,91 +6278,146 @@ function addGetHookIf( conditionFn, hookFn ) {
 
 
 (function() {
-	var pixelPositionVal, boxSizingReliableVal,
-		docElem = document.documentElement,
-		container = document.createElement( "div" ),
-		div = document.createElement( "div" );
+	// Minified: var b,c,d,e,f,g, h,i
+	var div, style, a, pixelPositionVal, boxSizingReliableVal,
+		reliableHiddenOffsetsVal, reliableMarginRightVal;
 
-	if ( !div.style ) {
+	// Setup
+	div = document.createElement( "div" );
+	div.innerHTML = "  <link/><table></table><a href='/a'>a</a><input type='checkbox'/>";
+	a = div.getElementsByTagName( "a" )[ 0 ];
+	style = a && a.style;
+
+	// Finish early in limited (non-browser) environments
+	if ( !style ) {
 		return;
 	}
 
-	// Support: IE9-11+
-	// Style of cloned element affects source element cloned (#8908)
+	style.cssText = "float:left;opacity:.5";
+
+	// Support: IE<9
+	// Make sure that element opacity exists (as opposed to filter)
+	support.opacity = style.opacity === "0.5";
+
+	// Verify style float existence
+	// (IE uses styleFloat instead of cssFloat)
+	support.cssFloat = !!style.cssFloat;
+
 	div.style.backgroundClip = "content-box";
 	div.cloneNode( true ).style.backgroundClip = "";
 	support.clearCloneStyle = div.style.backgroundClip === "content-box";
 
-	container.style.cssText = "border:0;width:0;height:0;top:0;left:-9999px;margin-top:1px;" +
-		"position:absolute";
-	container.appendChild( div );
+	// Support: Firefox<29, Android 2.3
+	// Vendor-prefix box-sizing
+	support.boxSizing = style.boxSizing === "" || style.MozBoxSizing === "" ||
+		style.WebkitBoxSizing === "";
 
-	// Executing both pixelPosition & boxSizingReliable tests require only one layout
-	// so they're executed at the same time to save the second computation.
-	function computePixelPositionAndBoxSizingReliable() {
+	jQuery.extend(support, {
+		reliableHiddenOffsets: function() {
+			if ( reliableHiddenOffsetsVal == null ) {
+				computeStyleTests();
+			}
+			return reliableHiddenOffsetsVal;
+		},
+
+		boxSizingReliable: function() {
+			if ( boxSizingReliableVal == null ) {
+				computeStyleTests();
+			}
+			return boxSizingReliableVal;
+		},
+
+		pixelPosition: function() {
+			if ( pixelPositionVal == null ) {
+				computeStyleTests();
+			}
+			return pixelPositionVal;
+		},
+
+		// Support: Android 2.3
+		reliableMarginRight: function() {
+			if ( reliableMarginRightVal == null ) {
+				computeStyleTests();
+			}
+			return reliableMarginRightVal;
+		}
+	});
+
+	function computeStyleTests() {
+		// Minified: var b,c,d,j
+		var div, body, container, contents;
+
+		body = document.getElementsByTagName( "body" )[ 0 ];
+		if ( !body || !body.style ) {
+			// Test fired too early or in an unsupported environment, exit.
+			return;
+		}
+
+		// Setup
+		div = document.createElement( "div" );
+		container = document.createElement( "div" );
+		container.style.cssText = "position:absolute;border:0;width:0;height:0;top:0;left:-9999px";
+		body.appendChild( container ).appendChild( div );
+
 		div.style.cssText =
 			// Support: Firefox<29, Android 2.3
 			// Vendor-prefix box-sizing
 			"-webkit-box-sizing:border-box;-moz-box-sizing:border-box;" +
 			"box-sizing:border-box;display:block;margin-top:1%;top:1%;" +
 			"border:1px;padding:1px;width:4px;position:absolute";
-		div.innerHTML = "";
-		docElem.appendChild( container );
 
-		var divStyle = window.getComputedStyle( div, null );
-		pixelPositionVal = divStyle.top !== "1%";
-		boxSizingReliableVal = divStyle.width === "4px";
+		// Support: IE<9
+		// Assume reasonable values in the absence of getComputedStyle
+		pixelPositionVal = boxSizingReliableVal = false;
+		reliableMarginRightVal = true;
 
-		docElem.removeChild( container );
+		// Check for getComputedStyle so that this code is not run in IE<9.
+		if ( window.getComputedStyle ) {
+			pixelPositionVal = ( window.getComputedStyle( div, null ) || {} ).top !== "1%";
+			boxSizingReliableVal =
+				( window.getComputedStyle( div, null ) || { width: "4px" } ).width === "4px";
+
+			// Support: Android 2.3
+			// Div with explicit width and no margin-right incorrectly
+			// gets computed margin-right based on width of container (#3333)
+			// WebKit Bug 13343 - getComputedStyle returns wrong value for margin-right
+			contents = div.appendChild( document.createElement( "div" ) );
+
+			// Reset CSS: box-sizing; display; margin; border; padding
+			contents.style.cssText = div.style.cssText =
+				// Support: Firefox<29, Android 2.3
+				// Vendor-prefix box-sizing
+				"-webkit-box-sizing:content-box;-moz-box-sizing:content-box;" +
+				"box-sizing:content-box;display:block;margin:0;border:0;padding:0";
+			contents.style.marginRight = contents.style.width = "0";
+			div.style.width = "1px";
+
+			reliableMarginRightVal =
+				!parseFloat( ( window.getComputedStyle( contents, null ) || {} ).marginRight );
+
+			div.removeChild( contents );
+		}
+
+		// Support: IE8
+		// Check if table cells still have offsetWidth/Height when they are set
+		// to display:none and there are still other visible table cells in a
+		// table row; if so, offsetWidth/Height are not reliable for use when
+		// determining if an element has been hidden directly using
+		// display:none (it is still safe to use offsets if a parent element is
+		// hidden; don safety goggles and see bug #4512 for more information).
+		div.innerHTML = "<table><tr><td></td><td>t</td></tr></table>";
+		contents = div.getElementsByTagName( "td" );
+		contents[ 0 ].style.cssText = "margin:0;border:0;padding:0;display:none";
+		reliableHiddenOffsetsVal = contents[ 0 ].offsetHeight === 0;
+		if ( reliableHiddenOffsetsVal ) {
+			contents[ 0 ].style.display = "";
+			contents[ 1 ].style.display = "none";
+			reliableHiddenOffsetsVal = contents[ 0 ].offsetHeight === 0;
+		}
+
+		body.removeChild( container );
 	}
 
-	// Support: node.js jsdom
-	// Don't assume that getComputedStyle is a property of the global object
-	if ( window.getComputedStyle ) {
-		jQuery.extend( support, {
-			pixelPosition: function() {
-
-				// This test is executed only once but we still do memoizing
-				// since we can use the boxSizingReliable pre-computing.
-				// No need to check if the test was already performed, though.
-				computePixelPositionAndBoxSizingReliable();
-				return pixelPositionVal;
-			},
-			boxSizingReliable: function() {
-				if ( boxSizingReliableVal == null ) {
-					computePixelPositionAndBoxSizingReliable();
-				}
-				return boxSizingReliableVal;
-			},
-			reliableMarginRight: function() {
-
-				// Support: Android 2.3
-				// Check if div with explicit width and no margin-right incorrectly
-				// gets computed margin-right based on width of container. (#3333)
-				// WebKit Bug 13343 - getComputedStyle returns wrong value for margin-right
-				// This support function is only executed once so no memoizing is needed.
-				var ret,
-					marginDiv = div.appendChild( document.createElement( "div" ) );
-
-				// Reset CSS: box-sizing; display; margin; border; padding
-				marginDiv.style.cssText = div.style.cssText =
-					// Support: Firefox<29, Android 2.3
-					// Vendor-prefix box-sizing
-					"-webkit-box-sizing:content-box;-moz-box-sizing:content-box;" +
-					"box-sizing:content-box;display:block;margin:0;border:0;padding:0";
-				marginDiv.style.marginRight = marginDiv.style.width = "0";
-				div.style.width = "1px";
-				docElem.appendChild( container );
-
-				ret = !parseFloat( window.getComputedStyle( marginDiv, null ).marginRight );
-
-				docElem.removeChild( container );
-				div.removeChild( marginDiv );
-
-				return ret;
-			}
-		});
-	}
 })();
 
 
@@ -5723,8 +6444,11 @@ jQuery.swap = function( elem, options, callback, args ) {
 
 
 var
-	// Swappable if display is none or starts with table except "table", "table-cell", or "table-caption"
-	// See here for display values: https://developer.mozilla.org/en-US/docs/CSS/display
+		ralpha = /alpha\([^)]*\)/i,
+	ropacity = /opacity\s*=\s*([^)]*)/,
+
+	// swappable if display is none or starts with table except "table", "table-cell", or "table-caption"
+	// see here for display values: https://developer.mozilla.org/en-US/docs/CSS/display
 	rdisplayswap = /^(none|table(?!-c[ea]).+)/,
 	rnumsplit = new RegExp( "^(" + pnum + ")(.*)$", "i" ),
 	rrelNum = new RegExp( "^([+-])=(" + pnum + ")", "i" ),
@@ -5737,16 +6461,17 @@ var
 
 	cssPrefixes = [ "Webkit", "O", "Moz", "ms" ];
 
-// Return a css property mapped to a potentially vendor prefixed property
+
+// return a css property mapped to a potentially vendor prefixed property
 function vendorPropName( style, name ) {
 
-	// Shortcut for names that are not vendor prefixed
+	// shortcut for names that are not vendor prefixed
 	if ( name in style ) {
 		return name;
 	}
 
-	// Check for vendor prefixed names
-	var capName = name[0].toUpperCase() + name.slice(1),
+	// check for vendor prefixed names
+	var capName = name.charAt(0).toUpperCase() + name.slice(1),
 		origName = name,
 		i = cssPrefixes.length;
 
@@ -5758,6 +6483,57 @@ function vendorPropName( style, name ) {
 	}
 
 	return origName;
+}
+
+function showHide( elements, show ) {
+	var display, elem, hidden,
+		values = [],
+		index = 0,
+		length = elements.length;
+
+	for ( ; index < length; index++ ) {
+		elem = elements[ index ];
+		if ( !elem.style ) {
+			continue;
+		}
+
+		values[ index ] = jQuery._data( elem, "olddisplay" );
+		display = elem.style.display;
+		if ( show ) {
+			// Reset the inline display of this element to learn if it is
+			// being hidden by cascaded rules or not
+			if ( !values[ index ] && display === "none" ) {
+				elem.style.display = "";
+			}
+
+			// Set elements which have been overridden with display: none
+			// in a stylesheet to whatever the default browser style is
+			// for such an element
+			if ( elem.style.display === "" && isHidden( elem ) ) {
+				values[ index ] = jQuery._data( elem, "olddisplay", defaultDisplay(elem.nodeName) );
+			}
+		} else {
+			hidden = isHidden( elem );
+
+			if ( display && display !== "none" || !hidden ) {
+				jQuery._data( elem, "olddisplay", hidden ? display : jQuery.css( elem, "display" ) );
+			}
+		}
+	}
+
+	// Set the display of most of the elements in a second loop
+	// to avoid the constant reflow
+	for ( index = 0; index < length; index++ ) {
+		elem = elements[ index ];
+		if ( !elem.style ) {
+			continue;
+		}
+		if ( !show || elem.style.display === "none" || elem.style.display === "" ) {
+			elem.style.display = show ? values[ index ] || "" : "none";
+		}
+	}
+
+	return elements;
 }
 
 function setPositiveNumber( elem, value, subtract ) {
@@ -5778,7 +6554,7 @@ function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
 		val = 0;
 
 	for ( ; i < 4; i += 2 ) {
-		// Both box models exclude margin, so add it if we want it
+		// both box models exclude margin, so add it if we want it
 		if ( extra === "margin" ) {
 			val += jQuery.css( elem, extra + cssExpand[ i ], true, styles );
 		}
@@ -5789,15 +6565,15 @@ function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
 				val -= jQuery.css( elem, "padding" + cssExpand[ i ], true, styles );
 			}
 
-			// At this point, extra isn't border nor margin, so remove border
+			// at this point, extra isn't border nor margin, so remove border
 			if ( extra !== "margin" ) {
 				val -= jQuery.css( elem, "border" + cssExpand[ i ] + "Width", true, styles );
 			}
 		} else {
-			// At this point, extra isn't content, so add padding
+			// at this point, extra isn't content, so add padding
 			val += jQuery.css( elem, "padding" + cssExpand[ i ], true, styles );
 
-			// At this point, extra isn't content nor padding, so add border
+			// at this point, extra isn't content nor padding, so add border
 			if ( extra !== "padding" ) {
 				val += jQuery.css( elem, "border" + cssExpand[ i ] + "Width", true, styles );
 			}
@@ -5813,9 +6589,9 @@ function getWidthOrHeight( elem, name, extra ) {
 	var valueIsBorderBox = true,
 		val = name === "width" ? elem.offsetWidth : elem.offsetHeight,
 		styles = getStyles( elem ),
-		isBorderBox = jQuery.css( elem, "boxSizing", false, styles ) === "border-box";
+		isBorderBox = support.boxSizing && jQuery.css( elem, "boxSizing", false, styles ) === "border-box";
 
-	// Some non-html elements return undefined for offsetWidth, so check for null/undefined
+	// some non-html elements return undefined for offsetWidth, so check for null/undefined
 	// svg - https://bugzilla.mozilla.org/show_bug.cgi?id=649285
 	// MathML - https://bugzilla.mozilla.org/show_bug.cgi?id=491668
 	if ( val <= 0 || val == null ) {
@@ -5830,16 +6606,15 @@ function getWidthOrHeight( elem, name, extra ) {
 			return val;
 		}
 
-		// Check for style in case a browser which returns unreliable values
+		// we need the check for style in case a browser which returns unreliable values
 		// for getComputedStyle silently falls back to the reliable elem.style
-		valueIsBorderBox = isBorderBox &&
-			( support.boxSizingReliable() || val === elem.style[ name ] );
+		valueIsBorderBox = isBorderBox && ( support.boxSizingReliable() || val === elem.style[ name ] );
 
 		// Normalize "", auto, and prepare for extra
 		val = parseFloat( val ) || 0;
 	}
 
-	// Use the active box-sizing model to add/subtract irrelevant styles
+	// use the active box-sizing model to add/subtract irrelevant styles
 	return ( val +
 		augmentWidthOrHeight(
 			elem,
@@ -5851,66 +6626,13 @@ function getWidthOrHeight( elem, name, extra ) {
 	) + "px";
 }
 
-function showHide( elements, show ) {
-	var display, elem, hidden,
-		values = [],
-		index = 0,
-		length = elements.length;
-
-	for ( ; index < length; index++ ) {
-		elem = elements[ index ];
-		if ( !elem.style ) {
-			continue;
-		}
-
-		values[ index ] = data_priv.get( elem, "olddisplay" );
-		display = elem.style.display;
-		if ( show ) {
-			// Reset the inline display of this element to learn if it is
-			// being hidden by cascaded rules or not
-			if ( !values[ index ] && display === "none" ) {
-				elem.style.display = "";
-			}
-
-			// Set elements which have been overridden with display: none
-			// in a stylesheet to whatever the default browser style is
-			// for such an element
-			if ( elem.style.display === "" && isHidden( elem ) ) {
-				values[ index ] = data_priv.access( elem, "olddisplay", defaultDisplay(elem.nodeName) );
-			}
-		} else {
-			hidden = isHidden( elem );
-
-			if ( display !== "none" || !hidden ) {
-				data_priv.set( elem, "olddisplay", hidden ? display : jQuery.css( elem, "display" ) );
-			}
-		}
-	}
-
-	// Set the display of most of the elements in a second loop
-	// to avoid the constant reflow
-	for ( index = 0; index < length; index++ ) {
-		elem = elements[ index ];
-		if ( !elem.style ) {
-			continue;
-		}
-		if ( !show || elem.style.display === "none" || elem.style.display === "" ) {
-			elem.style.display = show ? values[ index ] || "" : "none";
-		}
-	}
-
-	return elements;
-}
-
 jQuery.extend({
-
 	// Add in style property hooks for overriding the default
 	// behavior of getting and setting a style property
 	cssHooks: {
 		opacity: {
 			get: function( elem, computed ) {
 				if ( computed ) {
-
 					// We should always get a number back from opacity
 					var ret = curCSS( elem, "opacity" );
 					return ret === "" ? "1" : ret;
@@ -5938,12 +6660,12 @@ jQuery.extend({
 	// Add in properties whose names you wish to fix before
 	// setting or getting the value
 	cssProps: {
-		"float": "cssFloat"
+		// normalize float css property
+		"float": support.cssFloat ? "cssFloat" : "styleFloat"
 	},
 
 	// Get and set the style property on a DOM Node
 	style: function( elem, name, value, extra ) {
-
 		// Don't set styles on text and comment nodes
 		if ( !elem || elem.nodeType === 3 || elem.nodeType === 8 || !elem.style ) {
 			return;
@@ -5956,39 +6678,45 @@ jQuery.extend({
 
 		name = jQuery.cssProps[ origName ] || ( jQuery.cssProps[ origName ] = vendorPropName( style, origName ) );
 
-		// Gets hook for the prefixed version, then unprefixed version
+		// gets hook for the prefixed version
+		// followed by the unprefixed version
 		hooks = jQuery.cssHooks[ name ] || jQuery.cssHooks[ origName ];
 
 		// Check if we're setting a value
 		if ( value !== undefined ) {
 			type = typeof value;
 
-			// Convert "+=" or "-=" to relative numbers (#7345)
+			// convert relative number strings (+= or -=) to relative numbers. #7345
 			if ( type === "string" && (ret = rrelNum.exec( value )) ) {
 				value = ( ret[1] + 1 ) * ret[2] + parseFloat( jQuery.css( elem, name ) );
 				// Fixes bug #9237
 				type = "number";
 			}
 
-			// Make sure that null and NaN values aren't set (#7116)
+			// Make sure that null and NaN values aren't set. See: #7116
 			if ( value == null || value !== value ) {
 				return;
 			}
 
-			// If a number, add 'px' to the (except for certain CSS properties)
+			// If a number was passed in, add 'px' to the (except for certain CSS properties)
 			if ( type === "number" && !jQuery.cssNumber[ origName ] ) {
 				value += "px";
 			}
 
-			// Support: IE9-11+
-			// background-* props affect original clone's values
-			if ( !support.clearCloneStyle && value === "" && name.indexOf( "background" ) === 0 ) {
+			// Fixes #8908, it can be done more correctly by specifing setters in cssHooks,
+			// but it would mean to define eight (for every problematic property) identical functions
+			if ( !support.clearCloneStyle && value === "" && name.indexOf("background") === 0 ) {
 				style[ name ] = "inherit";
 			}
 
 			// If a hook was provided, use that value, otherwise just set the specified value
 			if ( !hooks || !("set" in hooks) || (value = hooks.set( elem, value, extra )) !== undefined ) {
-				style[ name ] = value;
+
+				// Support: IE
+				// Swallow errors from 'invalid' CSS values (#5509)
+				try {
+					style[ name ] = value;
+				} catch(e) {}
 			}
 
 		} else {
@@ -6003,13 +6731,14 @@ jQuery.extend({
 	},
 
 	css: function( elem, name, extra, styles ) {
-		var val, num, hooks,
+		var num, val, hooks,
 			origName = jQuery.camelCase( name );
 
 		// Make sure that we're working with the right name
 		name = jQuery.cssProps[ origName ] || ( jQuery.cssProps[ origName ] = vendorPropName( elem.style, origName ) );
 
-		// Try prefixed name followed by the unprefixed name
+		// gets hook for the prefixed version
+		// followed by the unprefixed version
 		hooks = jQuery.cssHooks[ name ] || jQuery.cssHooks[ origName ];
 
 		// If a hook was provided get the computed value from there
@@ -6022,12 +6751,12 @@ jQuery.extend({
 			val = curCSS( elem, name, styles );
 		}
 
-		// Convert "normal" to computed value
+		//convert "normal" to computed value
 		if ( val === "normal" && name in cssNormalTransform ) {
 			val = cssNormalTransform[ name ];
 		}
 
-		// Make numeric if forced or a qualifier was provided and val looks numeric
+		// Return, converting to number if forced or a qualifier was provided and val looks numeric
 		if ( extra === "" || extra ) {
 			num = parseFloat( val );
 			return extra === true || jQuery.isNumeric( num ) ? num || 0 : val;
@@ -6040,9 +6769,8 @@ jQuery.each([ "height", "width" ], function( i, name ) {
 	jQuery.cssHooks[ name ] = {
 		get: function( elem, computed, extra ) {
 			if ( computed ) {
-
-				// Certain elements can have dimension info if we invisibly show them
-				// but it must have a current display style that would benefit
+				// certain elements can have dimension info if we invisibly show them
+				// however, it must have a current display style that would benefit from this
 				return rdisplayswap.test( jQuery.css( elem, "display" ) ) && elem.offsetWidth === 0 ?
 					jQuery.swap( elem, cssShow, function() {
 						return getWidthOrHeight( elem, name, extra );
@@ -6058,7 +6786,7 @@ jQuery.each([ "height", "width" ], function( i, name ) {
 					elem,
 					name,
 					extra,
-					jQuery.css( elem, "boxSizing", false, styles ) === "border-box",
+					support.boxSizing && jQuery.css( elem, "boxSizing", false, styles ) === "border-box",
 					styles
 				) : 0
 			);
@@ -6066,10 +6794,55 @@ jQuery.each([ "height", "width" ], function( i, name ) {
 	};
 });
 
-// Support: Android 2.3
+if ( !support.opacity ) {
+	jQuery.cssHooks.opacity = {
+		get: function( elem, computed ) {
+			// IE uses filters for opacity
+			return ropacity.test( (computed && elem.currentStyle ? elem.currentStyle.filter : elem.style.filter) || "" ) ?
+				( 0.01 * parseFloat( RegExp.$1 ) ) + "" :
+				computed ? "1" : "";
+		},
+
+		set: function( elem, value ) {
+			var style = elem.style,
+				currentStyle = elem.currentStyle,
+				opacity = jQuery.isNumeric( value ) ? "alpha(opacity=" + value * 100 + ")" : "",
+				filter = currentStyle && currentStyle.filter || style.filter || "";
+
+			// IE has trouble with opacity if it does not have layout
+			// Force it by setting the zoom level
+			style.zoom = 1;
+
+			// if setting opacity to 1, and no other filters exist - attempt to remove filter attribute #6652
+			// if value === "", then remove inline opacity #12685
+			if ( ( value >= 1 || value === "" ) &&
+					jQuery.trim( filter.replace( ralpha, "" ) ) === "" &&
+					style.removeAttribute ) {
+
+				// Setting style.filter to null, "" & " " still leave "filter:" in the cssText
+				// if "filter:" is present at all, clearType is disabled, we want to avoid this
+				// style.removeAttribute is IE Only, but so apparently is this code path...
+				style.removeAttribute( "filter" );
+
+				// if there is no filter style applied in a css rule or unset inline opacity, we are done
+				if ( value === "" || currentStyle && !currentStyle.filter ) {
+					return;
+				}
+			}
+
+			// otherwise, set new filter values
+			style.filter = ralpha.test( filter ) ?
+				filter.replace( ralpha, opacity ) :
+				filter + " " + opacity;
+		}
+	};
+}
+
 jQuery.cssHooks.marginRight = addGetHookIf( support.reliableMarginRight,
 	function( elem, computed ) {
 		if ( computed ) {
+			// WebKit Bug 13343 - getComputedStyle returns wrong value for margin-right
+			// Work around by temporarily setting element display to inline-block
 			return jQuery.swap( elem, { "display": "inline-block" },
 				curCSS, [ elem, "marginRight" ] );
 		}
@@ -6087,7 +6860,7 @@ jQuery.each({
 			var i = 0,
 				expanded = {},
 
-				// Assumes a single number if not a string
+				// assumes a single number if not a string
 				parts = typeof value === "string" ? value.split(" ") : [ value ];
 
 			for ( ; i < 4; i++ ) {
@@ -6210,18 +6983,17 @@ Tween.propHooks = {
 				return tween.elem[ tween.prop ];
 			}
 
-			// Passing an empty string as a 3rd parameter to .css will automatically
-			// attempt a parseFloat and fallback to a string if the parse fails.
-			// Simple values such as "10px" are parsed to Float;
-			// complex values such as "rotate(1rad)" are returned as-is.
+			// passing an empty string as a 3rd parameter to .css will automatically
+			// attempt a parseFloat and fallback to a string if the parse fails
+			// so, simple values such as "10px" are parsed to Float.
+			// complex values such as "rotate(1rad)" are returned as is.
 			result = jQuery.css( tween.elem, tween.prop, "" );
 			// Empty strings, null, undefined and "auto" are converted to 0.
 			return !result || result === "auto" ? 0 : result;
 		},
 		set: function( tween ) {
-			// Use step hook for back compat.
-			// Use cssHook if its there.
-			// Use .style if available and use plain properties where available.
+			// use step hook for back compat - use cssHook if its there - use .style if its
+			// available and use plain properties where available
 			if ( jQuery.fx.step[ tween.prop ] ) {
 				jQuery.fx.step[ tween.prop ]( tween );
 			} else if ( tween.elem.style && ( tween.elem.style[ jQuery.cssProps[ tween.prop ] ] != null || jQuery.cssHooks[ tween.prop ] ) ) {
@@ -6233,8 +7005,9 @@ Tween.propHooks = {
 	}
 };
 
-// Support: IE9
+// Support: IE <=9
 // Panic based approach to setting things on disconnected nodes
+
 Tween.propHooks.scrollTop = Tween.propHooks.scrollLeft = {
 	set: function( tween ) {
 		if ( tween.elem.nodeType && tween.elem.parentNode ) {
@@ -6290,16 +7063,16 @@ var
 				start = +target || 1;
 
 				do {
-					// If previous iteration zeroed out, double until we get *something*.
-					// Use string for doubling so we don't accidentally see scale as unchanged below
+					// If previous iteration zeroed out, double until we get *something*
+					// Use a string for doubling factor so we don't accidentally see scale as unchanged below
 					scale = scale || ".5";
 
 					// Adjust and apply
 					start = start / scale;
 					jQuery.style( tween.elem, prop, start + unit );
 
-				// Update scale, tolerating zero or NaN from tween.cur(),
-				// break the loop if scale is unchanged or perfect, or if we've just had enough
+				// Update scale, tolerating zero or NaN from tween.cur()
+				// And breaking the loop if scale is unchanged or perfect, or if we've just had enough
 				} while ( scale !== (scale = tween.cur() / target) && scale !== 1 && --maxIterations );
 			}
 
@@ -6328,11 +7101,11 @@ function createFxNow() {
 // Generate parameters to create a standard animation
 function genFx( type, includeWidth ) {
 	var which,
-		i = 0,
-		attrs = { height: type };
+		attrs = { height: type },
+		i = 0;
 
-	// If we include width, step value is 1 to do all cssExpand values,
-	// otherwise step value is 2 to skip over Left and Right
+	// if we include width, step value is 1 to do all cssExpand values,
+	// if we don't include width, step value is 2 to skip over Left and Right
 	includeWidth = includeWidth ? 1 : 0;
 	for ( ; i < 4 ; i += 2 - includeWidth ) {
 		which = cssExpand[ i ];
@@ -6354,7 +7127,7 @@ function createTween( value, prop, animation ) {
 	for ( ; index < length; index++ ) {
 		if ( (tween = collection[ index ].call( animation, prop, value )) ) {
 
-			// We're done with this property
+			// we're done with this property
 			return tween;
 		}
 	}
@@ -6367,9 +7140,9 @@ function defaultPrefilter( elem, props, opts ) {
 		orig = {},
 		style = elem.style,
 		hidden = elem.nodeType && isHidden( elem ),
-		dataShow = data_priv.get( elem, "fxshow" );
+		dataShow = jQuery._data( elem, "fxshow" );
 
-	// Handle queue: false promises
+	// handle queue: false promises
 	if ( !opts.queue ) {
 		hooks = jQuery._queueHooks( elem, "fx" );
 		if ( hooks.unqueued == null ) {
@@ -6384,7 +7157,8 @@ function defaultPrefilter( elem, props, opts ) {
 		hooks.unqueued++;
 
 		anim.always(function() {
-			// Ensure the complete handler is called before this completes
+			// doing this makes sure that the complete handler will be called
+			// before this completes
 			anim.always(function() {
 				hooks.unqueued--;
 				if ( !jQuery.queue( elem, "fx" ).length ) {
@@ -6394,10 +7168,10 @@ function defaultPrefilter( elem, props, opts ) {
 		});
 	}
 
-	// Height/width overflow pass
+	// height/width overflow pass
 	if ( elem.nodeType === 1 && ( "height" in props || "width" in props ) ) {
 		// Make sure that nothing sneaks out
-		// Record all 3 overflow attributes because IE9-10 do not
+		// Record all 3 overflow attributes because IE does not
 		// change the overflow attribute when overflowX and
 		// overflowY are set to the same value
 		opts.overflow = [ style.overflow, style.overflowX, style.overflowY ];
@@ -6408,20 +7182,29 @@ function defaultPrefilter( elem, props, opts ) {
 
 		// Test default display if display is currently "none"
 		checkDisplay = display === "none" ?
-			data_priv.get( elem, "olddisplay" ) || defaultDisplay( elem.nodeName ) : display;
+			jQuery._data( elem, "olddisplay" ) || defaultDisplay( elem.nodeName ) : display;
 
 		if ( checkDisplay === "inline" && jQuery.css( elem, "float" ) === "none" ) {
-			style.display = "inline-block";
+
+			// inline-level elements accept inline-block;
+			// block-level elements need to be inline with layout
+			if ( !support.inlineBlockNeedsLayout || defaultDisplay( elem.nodeName ) === "inline" ) {
+				style.display = "inline-block";
+			} else {
+				style.zoom = 1;
+			}
 		}
 	}
 
 	if ( opts.overflow ) {
 		style.overflow = "hidden";
-		anim.always(function() {
-			style.overflow = opts.overflow[ 0 ];
-			style.overflowX = opts.overflow[ 1 ];
-			style.overflowY = opts.overflow[ 2 ];
-		});
+		if ( !support.shrinkWrapBlocks() ) {
+			anim.always(function() {
+				style.overflow = opts.overflow[ 0 ];
+				style.overflowX = opts.overflow[ 1 ];
+				style.overflowY = opts.overflow[ 2 ];
+			});
+		}
 	}
 
 	// show/hide pass
@@ -6453,10 +7236,10 @@ function defaultPrefilter( elem, props, opts ) {
 				hidden = dataShow.hidden;
 			}
 		} else {
-			dataShow = data_priv.access( elem, "fxshow", {} );
+			dataShow = jQuery._data( elem, "fxshow", {} );
 		}
 
-		// Store state if its toggle - enables .stop().toggle() to "reverse"
+		// store state if its toggle - enables .stop().toggle() to "reverse"
 		if ( toggle ) {
 			dataShow.hidden = !hidden;
 		}
@@ -6469,8 +7252,7 @@ function defaultPrefilter( elem, props, opts ) {
 		}
 		anim.done(function() {
 			var prop;
-
-			data_priv.remove( elem, "fxshow" );
+			jQuery._removeData( elem, "fxshow" );
 			for ( prop in orig ) {
 				jQuery.style( elem, prop, orig[ prop ] );
 			}
@@ -6516,8 +7298,8 @@ function propFilter( props, specialEasing ) {
 			value = hooks.expand( value );
 			delete props[ name ];
 
-			// Not quite $.extend, this won't overwrite existing keys.
-			// Reusing 'index' because we have the correct "name"
+			// not quite $.extend, this wont overwrite keys already present.
+			// also - reusing 'index' from above because we have the correct "name"
 			for ( index in value ) {
 				if ( !( index in props ) ) {
 					props[ index ] = value[ index ];
@@ -6536,7 +7318,7 @@ function Animation( elem, properties, options ) {
 		index = 0,
 		length = animationPrefilters.length,
 		deferred = jQuery.Deferred().always( function() {
-			// Don't match elem in the :animated selector
+			// don't match elem in the :animated selector
 			delete tick.elem;
 		}),
 		tick = function() {
@@ -6545,8 +7327,7 @@ function Animation( elem, properties, options ) {
 			}
 			var currentTime = fxNow || createFxNow(),
 				remaining = Math.max( 0, animation.startTime + animation.duration - currentTime ),
-				// Support: Android 2.3
-				// Archaic crash bug won't allow us to use `1 - ( 0.5 || 0 )` (#12497)
+				// archaic crash bug won't allow us to use 1 - ( 0.5 || 0 ) (#12497)
 				temp = remaining / animation.duration || 0,
 				percent = 1 - temp,
 				index = 0,
@@ -6582,7 +7363,7 @@ function Animation( elem, properties, options ) {
 			},
 			stop: function( gotoEnd ) {
 				var index = 0,
-					// If we are going to the end, we want to run all the tweens
+					// if we are going to the end, we want to run all the tweens
 					// otherwise we skip this part
 					length = gotoEnd ? animation.tweens.length : 0;
 				if ( stopped ) {
@@ -6593,7 +7374,8 @@ function Animation( elem, properties, options ) {
 					animation.tweens[ index ].run( 1 );
 				}
 
-				// Resolve when we played the last frame; otherwise, reject
+				// resolve when we played the last frame
+				// otherwise, reject
 				if ( gotoEnd ) {
 					deferred.resolveWith( elem, [ animation, gotoEnd ] );
 				} else {
@@ -6635,7 +7417,6 @@ function Animation( elem, properties, options ) {
 }
 
 jQuery.Animation = jQuery.extend( Animation, {
-
 	tweener: function( props, callback ) {
 		if ( jQuery.isFunction( props ) ) {
 			callback = props;
@@ -6675,7 +7456,7 @@ jQuery.speed = function( speed, easing, fn ) {
 	opt.duration = jQuery.fx.off ? 0 : typeof opt.duration === "number" ? opt.duration :
 		opt.duration in jQuery.fx.speeds ? jQuery.fx.speeds[ opt.duration ] : jQuery.fx.speeds._default;
 
-	// Normalize opt.queue - true/undefined/null -> "fx"
+	// normalize opt.queue - true/undefined/null -> "fx"
 	if ( opt.queue == null || opt.queue === true ) {
 		opt.queue = "fx";
 	}
@@ -6699,10 +7480,10 @@ jQuery.speed = function( speed, easing, fn ) {
 jQuery.fn.extend({
 	fadeTo: function( speed, to, easing, callback ) {
 
-		// Show any hidden elements after setting opacity to 0
+		// show any hidden elements after setting opacity to 0
 		return this.filter( isHidden ).css( "opacity", 0 ).show()
 
-			// Animate to the value specified
+			// animate to the value specified
 			.end().animate({ opacity: to }, speed, easing, callback );
 	},
 	animate: function( prop, speed, easing, callback ) {
@@ -6713,7 +7494,7 @@ jQuery.fn.extend({
 				var anim = Animation( this, jQuery.extend( {}, prop ), optall );
 
 				// Empty animations, or finishing resolves immediately
-				if ( empty || data_priv.get( this, "finish" ) ) {
+				if ( empty || jQuery._data( this, "finish" ) ) {
 					anim.stop( true );
 				}
 			};
@@ -6743,7 +7524,7 @@ jQuery.fn.extend({
 			var dequeue = true,
 				index = type != null && type + "queueHooks",
 				timers = jQuery.timers,
-				data = data_priv.get( this );
+				data = jQuery._data( this );
 
 			if ( index ) {
 				if ( data[ index ] && data[ index ].stop ) {
@@ -6765,9 +7546,9 @@ jQuery.fn.extend({
 				}
 			}
 
-			// Start the next in the queue if the last step wasn't forced.
-			// Timers currently will call their complete callbacks, which
-			// will dequeue but only if they were gotoEnd.
+			// start the next in the queue if the last step wasn't forced
+			// timers currently will call their complete callbacks, which will dequeue
+			// but only if they were gotoEnd
 			if ( dequeue || !gotoEnd ) {
 				jQuery.dequeue( this, type );
 			}
@@ -6779,23 +7560,23 @@ jQuery.fn.extend({
 		}
 		return this.each(function() {
 			var index,
-				data = data_priv.get( this ),
+				data = jQuery._data( this ),
 				queue = data[ type + "queue" ],
 				hooks = data[ type + "queueHooks" ],
 				timers = jQuery.timers,
 				length = queue ? queue.length : 0;
 
-			// Enable finishing flag on private data
+			// enable finishing flag on private data
 			data.finish = true;
 
-			// Empty the queue first
+			// empty the queue first
 			jQuery.queue( this, type, [] );
 
 			if ( hooks && hooks.stop ) {
 				hooks.stop.call( this, true );
 			}
 
-			// Look for any active animations, and finish them
+			// look for any active animations, and finish them
 			for ( index = timers.length; index--; ) {
 				if ( timers[ index ].elem === this && timers[ index ].queue === type ) {
 					timers[ index ].anim.stop( true );
@@ -6803,14 +7584,14 @@ jQuery.fn.extend({
 				}
 			}
 
-			// Look for any animations in the old queue and finish them
+			// look for any animations in the old queue and finish them
 			for ( index = 0; index < length; index++ ) {
 				if ( queue[ index ] && queue[ index ].finish ) {
 					queue[ index ].finish.call( this );
 				}
 			}
 
-			// Turn off finishing flag
+			// turn off finishing flag
 			delete data.finish;
 		});
 	}
@@ -6842,8 +7623,8 @@ jQuery.each({
 jQuery.timers = [];
 jQuery.fx.tick = function() {
 	var timer,
-		i = 0,
-		timers = jQuery.timers;
+		timers = jQuery.timers,
+		i = 0;
 
 	fxNow = jQuery.now();
 
@@ -6907,36 +7688,240 @@ jQuery.fn.delay = function( time, type ) {
 
 
 (function() {
-	var input = document.createElement( "input" ),
-		select = document.createElement( "select" ),
-		opt = select.appendChild( document.createElement( "option" ) );
+	// Minified: var a,b,c,d,e
+	var input, div, select, a, opt;
 
-	input.type = "checkbox";
+	// Setup
+	div = document.createElement( "div" );
+	div.setAttribute( "className", "t" );
+	div.innerHTML = "  <link/><table></table><a href='/a'>a</a><input type='checkbox'/>";
+	a = div.getElementsByTagName("a")[ 0 ];
 
-	// Support: iOS<=5.1, Android<=4.2+
-	// Default value for a checkbox should be "on"
-	support.checkOn = input.value !== "";
+	// First batch of tests.
+	select = document.createElement("select");
+	opt = select.appendChild( document.createElement("option") );
+	input = div.getElementsByTagName("input")[ 0 ];
 
-	// Support: IE<=11+
-	// Must access selectedIndex to make default options select
+	a.style.cssText = "top:1px";
+
+	// Test setAttribute on camelCase class. If it works, we need attrFixes when doing get/setAttribute (ie6/7)
+	support.getSetAttribute = div.className !== "t";
+
+	// Get the style information from getAttribute
+	// (IE uses .cssText instead)
+	support.style = /top/.test( a.getAttribute("style") );
+
+	// Make sure that URLs aren't manipulated
+	// (IE normalizes it by default)
+	support.hrefNormalized = a.getAttribute("href") === "/a";
+
+	// Check the default checkbox/radio value ("" on WebKit; "on" elsewhere)
+	support.checkOn = !!input.value;
+
+	// Make sure that a selected-by-default option has a working selected property.
+	// (WebKit defaults to false instead of true, IE too, if it's in an optgroup)
 	support.optSelected = opt.selected;
 
-	// Support: Android<=2.3
-	// Options inside disabled selects are incorrectly marked as disabled
+	// Tests for enctype support on a form (#6743)
+	support.enctype = !!document.createElement("form").enctype;
+
+	// Make sure that the options inside disabled selects aren't marked as disabled
+	// (WebKit marks them as disabled)
 	select.disabled = true;
 	support.optDisabled = !opt.disabled;
 
-	// Support: IE<=11+
-	// An input loses its value after becoming a radio
+	// Support: IE8 only
+	// Check if we can trust getAttribute("value")
 	input = document.createElement( "input" );
+	input.setAttribute( "value", "" );
+	support.input = input.getAttribute( "value" ) === "";
+
+	// Check if an input maintains its value after becoming a radio
 	input.value = "t";
-	input.type = "radio";
+	input.setAttribute( "type", "radio" );
 	support.radioValue = input.value === "t";
 })();
 
 
+var rreturn = /\r/g;
+
+jQuery.fn.extend({
+	val: function( value ) {
+		var hooks, ret, isFunction,
+			elem = this[0];
+
+		if ( !arguments.length ) {
+			if ( elem ) {
+				hooks = jQuery.valHooks[ elem.type ] || jQuery.valHooks[ elem.nodeName.toLowerCase() ];
+
+				if ( hooks && "get" in hooks && (ret = hooks.get( elem, "value" )) !== undefined ) {
+					return ret;
+				}
+
+				ret = elem.value;
+
+				return typeof ret === "string" ?
+					// handle most common string cases
+					ret.replace(rreturn, "") :
+					// handle cases where value is null/undef or number
+					ret == null ? "" : ret;
+			}
+
+			return;
+		}
+
+		isFunction = jQuery.isFunction( value );
+
+		return this.each(function( i ) {
+			var val;
+
+			if ( this.nodeType !== 1 ) {
+				return;
+			}
+
+			if ( isFunction ) {
+				val = value.call( this, i, jQuery( this ).val() );
+			} else {
+				val = value;
+			}
+
+			// Treat null/undefined as ""; convert numbers to string
+			if ( val == null ) {
+				val = "";
+			} else if ( typeof val === "number" ) {
+				val += "";
+			} else if ( jQuery.isArray( val ) ) {
+				val = jQuery.map( val, function( value ) {
+					return value == null ? "" : value + "";
+				});
+			}
+
+			hooks = jQuery.valHooks[ this.type ] || jQuery.valHooks[ this.nodeName.toLowerCase() ];
+
+			// If set returns undefined, fall back to normal setting
+			if ( !hooks || !("set" in hooks) || hooks.set( this, val, "value" ) === undefined ) {
+				this.value = val;
+			}
+		});
+	}
+});
+
+jQuery.extend({
+	valHooks: {
+		option: {
+			get: function( elem ) {
+				var val = jQuery.find.attr( elem, "value" );
+				return val != null ?
+					val :
+					// Support: IE10-11+
+					// option.text throws exceptions (#14686, #14858)
+					jQuery.trim( jQuery.text( elem ) );
+			}
+		},
+		select: {
+			get: function( elem ) {
+				var value, option,
+					options = elem.options,
+					index = elem.selectedIndex,
+					one = elem.type === "select-one" || index < 0,
+					values = one ? null : [],
+					max = one ? index + 1 : options.length,
+					i = index < 0 ?
+						max :
+						one ? index : 0;
+
+				// Loop through all the selected options
+				for ( ; i < max; i++ ) {
+					option = options[ i ];
+
+					// oldIE doesn't update selected after form reset (#2551)
+					if ( ( option.selected || i === index ) &&
+							// Don't return options that are disabled or in a disabled optgroup
+							( support.optDisabled ? !option.disabled : option.getAttribute("disabled") === null ) &&
+							( !option.parentNode.disabled || !jQuery.nodeName( option.parentNode, "optgroup" ) ) ) {
+
+						// Get the specific value for the option
+						value = jQuery( option ).val();
+
+						// We don't need an array for one selects
+						if ( one ) {
+							return value;
+						}
+
+						// Multi-Selects return an array
+						values.push( value );
+					}
+				}
+
+				return values;
+			},
+
+			set: function( elem, value ) {
+				var optionSet, option,
+					options = elem.options,
+					values = jQuery.makeArray( value ),
+					i = options.length;
+
+				while ( i-- ) {
+					option = options[ i ];
+
+					if ( jQuery.inArray( jQuery.valHooks.option.get( option ), values ) >= 0 ) {
+
+						// Support: IE6
+						// When new option element is added to select box we need to
+						// force reflow of newly added node in order to workaround delay
+						// of initialization properties
+						try {
+							option.selected = optionSet = true;
+
+						} catch ( _ ) {
+
+							// Will be executed only in IE6
+							option.scrollHeight;
+						}
+
+					} else {
+						option.selected = false;
+					}
+				}
+
+				// Force browsers to behave consistently when non-matching value is set
+				if ( !optionSet ) {
+					elem.selectedIndex = -1;
+				}
+
+				return options;
+			}
+		}
+	}
+});
+
+// Radios and checkboxes getter/setter
+jQuery.each([ "radio", "checkbox" ], function() {
+	jQuery.valHooks[ this ] = {
+		set: function( elem, value ) {
+			if ( jQuery.isArray( value ) ) {
+				return ( elem.checked = jQuery.inArray( jQuery(elem).val(), value ) >= 0 );
+			}
+		}
+	};
+	if ( !support.checkOn ) {
+		jQuery.valHooks[ this ].get = function( elem ) {
+			// Support: Webkit
+			// "" is returned instead of "on" if a value isn't specified
+			return elem.getAttribute("value") === null ? "on" : elem.value;
+		};
+	}
+});
+
+
+
+
 var nodeHook, boolHook,
-	attrHandle = jQuery.expr.attrHandle;
+	attrHandle = jQuery.expr.attrHandle,
+	ruseDefault = /^(?:checked|selected)$/i,
+	getSetAttribute = support.getSetAttribute,
+	getSetInput = support.input;
 
 jQuery.fn.extend({
 	attr: function( name, value ) {
@@ -7011,10 +7996,21 @@ jQuery.extend({
 				// Boolean attributes get special treatment (#10870)
 				if ( jQuery.expr.match.bool.test( name ) ) {
 					// Set corresponding property to false
-					elem[ propName ] = false;
+					if ( getSetInput && getSetAttribute || !ruseDefault.test( name ) ) {
+						elem[ propName ] = false;
+					// Support: IE<9
+					// Also clear defaultChecked/defaultSelected (if appropriate)
+					} else {
+						elem[ jQuery.camelCase( "default-" + name ) ] =
+							elem[ propName ] = false;
+					}
+
+				// See #9699 for explanation of this approach (setting first, then removal)
+				} else {
+					jQuery.attr( elem, name, "" );
 				}
 
-				elem.removeAttribute( name );
+				elem.removeAttribute( getSetAttribute ? name : propName );
 			}
 		}
 	},
@@ -7022,8 +8018,9 @@ jQuery.extend({
 	attrHooks: {
 		type: {
 			set: function( elem, value ) {
-				if ( !support.radioValue && value === "radio" &&
-					jQuery.nodeName( elem, "input" ) ) {
+				if ( !support.radioValue && value === "radio" && jQuery.nodeName(elem, "input") ) {
+					// Setting the type on a radio button after the value resets the value in IE6-9
+					// Reset value to default in case type is set after value during creation
 					var val = elem.value;
 					elem.setAttribute( "type", value );
 					if ( val ) {
@@ -7036,40 +8033,155 @@ jQuery.extend({
 	}
 });
 
-// Hooks for boolean attributes
+// Hook for boolean attributes
 boolHook = {
 	set: function( elem, value, name ) {
 		if ( value === false ) {
 			// Remove boolean attributes when set to false
 			jQuery.removeAttr( elem, name );
+		} else if ( getSetInput && getSetAttribute || !ruseDefault.test( name ) ) {
+			// IE<8 needs the *property* name
+			elem.setAttribute( !getSetAttribute && jQuery.propFix[ name ] || name, name );
+
+		// Use defaultChecked and defaultSelected for oldIE
 		} else {
-			elem.setAttribute( name, name );
+			elem[ jQuery.camelCase( "default-" + name ) ] = elem[ name ] = true;
 		}
+
 		return name;
 	}
 };
+
+// Retrieve booleans specially
 jQuery.each( jQuery.expr.match.bool.source.match( /\w+/g ), function( i, name ) {
+
 	var getter = attrHandle[ name ] || jQuery.find.attr;
 
-	attrHandle[ name ] = function( elem, name, isXML ) {
-		var ret, handle;
-		if ( !isXML ) {
-			// Avoid an infinite loop by temporarily removing this function from the getter
-			handle = attrHandle[ name ];
-			attrHandle[ name ] = ret;
-			ret = getter( elem, name, isXML ) != null ?
-				name.toLowerCase() :
-				null;
-			attrHandle[ name ] = handle;
-		}
-		return ret;
-	};
+	attrHandle[ name ] = getSetInput && getSetAttribute || !ruseDefault.test( name ) ?
+		function( elem, name, isXML ) {
+			var ret, handle;
+			if ( !isXML ) {
+				// Avoid an infinite loop by temporarily removing this function from the getter
+				handle = attrHandle[ name ];
+				attrHandle[ name ] = ret;
+				ret = getter( elem, name, isXML ) != null ?
+					name.toLowerCase() :
+					null;
+				attrHandle[ name ] = handle;
+			}
+			return ret;
+		} :
+		function( elem, name, isXML ) {
+			if ( !isXML ) {
+				return elem[ jQuery.camelCase( "default-" + name ) ] ?
+					name.toLowerCase() :
+					null;
+			}
+		};
 });
 
+// fix oldIE attroperties
+if ( !getSetInput || !getSetAttribute ) {
+	jQuery.attrHooks.value = {
+		set: function( elem, value, name ) {
+			if ( jQuery.nodeName( elem, "input" ) ) {
+				// Does not return so that setAttribute is also used
+				elem.defaultValue = value;
+			} else {
+				// Use nodeHook if defined (#1954); otherwise setAttribute is fine
+				return nodeHook && nodeHook.set( elem, value, name );
+			}
+		}
+	};
+}
+
+// IE6/7 do not support getting/setting some attributes with get/setAttribute
+if ( !getSetAttribute ) {
+
+	// Use this for any attribute in IE6/7
+	// This fixes almost every IE6/7 issue
+	nodeHook = {
+		set: function( elem, value, name ) {
+			// Set the existing or create a new attribute node
+			var ret = elem.getAttributeNode( name );
+			if ( !ret ) {
+				elem.setAttributeNode(
+					(ret = elem.ownerDocument.createAttribute( name ))
+				);
+			}
+
+			ret.value = value += "";
+
+			// Break association with cloned elements by also using setAttribute (#9646)
+			if ( name === "value" || value === elem.getAttribute( name ) ) {
+				return value;
+			}
+		}
+	};
+
+	// Some attributes are constructed with empty-string values when not defined
+	attrHandle.id = attrHandle.name = attrHandle.coords =
+		function( elem, name, isXML ) {
+			var ret;
+			if ( !isXML ) {
+				return (ret = elem.getAttributeNode( name )) && ret.value !== "" ?
+					ret.value :
+					null;
+			}
+		};
+
+	// Fixing value retrieval on a button requires this module
+	jQuery.valHooks.button = {
+		get: function( elem, name ) {
+			var ret = elem.getAttributeNode( name );
+			if ( ret && ret.specified ) {
+				return ret.value;
+			}
+		},
+		set: nodeHook.set
+	};
+
+	// Set contenteditable to false on removals(#10429)
+	// Setting to empty string throws an error as an invalid value
+	jQuery.attrHooks.contenteditable = {
+		set: function( elem, value, name ) {
+			nodeHook.set( elem, value === "" ? false : value, name );
+		}
+	};
+
+	// Set width and height to auto instead of 0 on empty string( Bug #8150 )
+	// This is for removals
+	jQuery.each([ "width", "height" ], function( i, name ) {
+		jQuery.attrHooks[ name ] = {
+			set: function( elem, value ) {
+				if ( value === "" ) {
+					elem.setAttribute( name, "auto" );
+					return value;
+				}
+			}
+		};
+	});
+}
+
+if ( !support.style ) {
+	jQuery.attrHooks.style = {
+		get: function( elem ) {
+			// Return undefined in the case of empty string
+			// Note: IE uppercases css property names, but if we were to .toLowerCase()
+			// .cssText, that would destroy case senstitivity in URL's, like in "background"
+			return elem.style.cssText || undefined;
+		},
+		set: function( elem, value ) {
+			return ( elem.style.cssText = value + "" );
+		}
+	};
+}
 
 
 
-var rfocusable = /^(?:input|select|textarea|button)$/i;
+
+var rfocusable = /^(?:input|select|textarea|button|object)$/i,
+	rclickable = /^(?:a|area)$/i;
 
 jQuery.fn.extend({
 	prop: function( name, value ) {
@@ -7077,8 +8189,13 @@ jQuery.fn.extend({
 	},
 
 	removeProp: function( name ) {
+		name = jQuery.propFix[ name ] || name;
 		return this.each(function() {
-			delete this[ jQuery.propFix[ name ] || name ];
+			// try/catch handles cases where IE balks (such as removing a property on window)
+			try {
+				this[ name ] = undefined;
+				delete this[ name ];
+			} catch( e ) {}
 		});
 	}
 });
@@ -7093,7 +8210,7 @@ jQuery.extend({
 		var ret, hooks, notxml,
 			nType = elem.nodeType;
 
-		// Don't get/set properties on text, comment and attribute nodes
+		// don't get/set properties on text, comment and attribute nodes
 		if ( !elem || nType === 3 || nType === 8 || nType === 2 ) {
 			return;
 		}
@@ -7121,20 +8238,49 @@ jQuery.extend({
 	propHooks: {
 		tabIndex: {
 			get: function( elem ) {
-				return elem.hasAttribute( "tabindex" ) || rfocusable.test( elem.nodeName ) || elem.href ?
-					elem.tabIndex :
-					-1;
+				// elem.tabIndex doesn't always return the correct value when it hasn't been explicitly set
+				// http://fluidproject.org/blog/2008/01/09/getting-setting-and-removing-tabindex-values-with-javascript/
+				// Use proper attribute retrieval(#12072)
+				var tabindex = jQuery.find.attr( elem, "tabindex" );
+
+				return tabindex ?
+					parseInt( tabindex, 10 ) :
+					rfocusable.test( elem.nodeName ) || rclickable.test( elem.nodeName ) && elem.href ?
+						0 :
+						-1;
 			}
 		}
 	}
 });
 
+// Some attributes require a special call on IE
+// http://msdn.microsoft.com/en-us/library/ms536429%28VS.85%29.aspx
+if ( !support.hrefNormalized ) {
+	// href/src property should get the full normalized URL (#10299/#12915)
+	jQuery.each([ "href", "src" ], function( i, name ) {
+		jQuery.propHooks[ name ] = {
+			get: function( elem ) {
+				return elem.getAttribute( name, 4 );
+			}
+		};
+	});
+}
+
+// Support: Safari, IE9+
+// mis-reports the default selected property of an option
+// Accessing the parent's selectedIndex property fixes it
 if ( !support.optSelected ) {
 	jQuery.propHooks.selected = {
 		get: function( elem ) {
 			var parent = elem.parentNode;
-			if ( parent && parent.parentNode ) {
-				parent.parentNode.selectedIndex;
+
+			if ( parent ) {
+				parent.selectedIndex;
+
+				// Make sure that it also works with optgroups, see #5701
+				if ( parent.parentNode ) {
+					parent.parentNode.selectedIndex;
+				}
 			}
 			return null;
 		}
@@ -7156,6 +8302,11 @@ jQuery.each([
 	jQuery.propFix[ this.toLowerCase() ] = this;
 });
 
+// IE6/7 call enctype encoding
+if ( !support.enctype ) {
+	jQuery.propFix.enctype = "encoding";
+}
+
 
 
 
@@ -7164,9 +8315,9 @@ var rclass = /[\t\r\n\f]/g;
 jQuery.fn.extend({
 	addClass: function( value ) {
 		var classes, elem, cur, clazz, j, finalValue,
-			proceed = typeof value === "string" && value,
 			i = 0,
-			len = this.length;
+			len = this.length,
+			proceed = typeof value === "string" && value;
 
 		if ( jQuery.isFunction( value ) ) {
 			return this.each(function( j ) {
@@ -7207,9 +8358,9 @@ jQuery.fn.extend({
 
 	removeClass: function( value ) {
 		var classes, elem, cur, clazz, j, finalValue,
-			proceed = arguments.length === 0 || typeof value === "string" && value,
 			i = 0,
-			len = this.length;
+			len = this.length,
+			proceed = arguments.length === 0 || typeof value === "string" && value;
 
 		if ( jQuery.isFunction( value ) ) {
 			return this.each(function( j ) {
@@ -7236,7 +8387,7 @@ jQuery.fn.extend({
 						}
 					}
 
-					// Only assign if different to avoid unneeded rendering.
+					// only assign if different to avoid unneeded rendering.
 					finalValue = value ? jQuery.trim( cur ) : "";
 					if ( elem.className !== finalValue ) {
 						elem.className = finalValue;
@@ -7263,14 +8414,14 @@ jQuery.fn.extend({
 
 		return this.each(function() {
 			if ( type === "string" ) {
-				// Toggle individual class names
+				// toggle individual class names
 				var className,
 					i = 0,
 					self = jQuery( this ),
 					classNames = value.match( rnotwhite ) || [];
 
 				while ( (className = classNames[ i++ ]) ) {
-					// Check each className given, space separated list
+					// check each className given, space separated list
 					if ( self.hasClass( className ) ) {
 						self.removeClass( className );
 					} else {
@@ -7282,14 +8433,14 @@ jQuery.fn.extend({
 			} else if ( type === strundefined || type === "boolean" ) {
 				if ( this.className ) {
 					// store className if set
-					data_priv.set( this, "__className__", this.className );
+					jQuery._data( this, "__className__", this.className );
 				}
 
-				// If the element has a class name or if we're passed `false`,
+				// If the element has a class name or if we're passed "false",
 				// then remove the whole classname (if there was one, the above saved it).
 				// Otherwise bring back whatever was previously saved (if anything),
 				// falling back to the empty string if nothing was stored.
-				this.className = this.className || value === false ? "" : data_priv.get( this, "__className__" ) || "";
+				this.className = this.className || value === false ? "" : jQuery._data( this, "__className__" ) || "";
 			}
 		});
 	},
@@ -7305,163 +8456,6 @@ jQuery.fn.extend({
 		}
 
 		return false;
-	}
-});
-
-
-
-
-var rreturn = /\r/g;
-
-jQuery.fn.extend({
-	val: function( value ) {
-		var hooks, ret, isFunction,
-			elem = this[0];
-
-		if ( !arguments.length ) {
-			if ( elem ) {
-				hooks = jQuery.valHooks[ elem.type ] || jQuery.valHooks[ elem.nodeName.toLowerCase() ];
-
-				if ( hooks && "get" in hooks && (ret = hooks.get( elem, "value" )) !== undefined ) {
-					return ret;
-				}
-
-				ret = elem.value;
-
-				return typeof ret === "string" ?
-					// Handle most common string cases
-					ret.replace(rreturn, "") :
-					// Handle cases where value is null/undef or number
-					ret == null ? "" : ret;
-			}
-
-			return;
-		}
-
-		isFunction = jQuery.isFunction( value );
-
-		return this.each(function( i ) {
-			var val;
-
-			if ( this.nodeType !== 1 ) {
-				return;
-			}
-
-			if ( isFunction ) {
-				val = value.call( this, i, jQuery( this ).val() );
-			} else {
-				val = value;
-			}
-
-			// Treat null/undefined as ""; convert numbers to string
-			if ( val == null ) {
-				val = "";
-
-			} else if ( typeof val === "number" ) {
-				val += "";
-
-			} else if ( jQuery.isArray( val ) ) {
-				val = jQuery.map( val, function( value ) {
-					return value == null ? "" : value + "";
-				});
-			}
-
-			hooks = jQuery.valHooks[ this.type ] || jQuery.valHooks[ this.nodeName.toLowerCase() ];
-
-			// If set returns undefined, fall back to normal setting
-			if ( !hooks || !("set" in hooks) || hooks.set( this, val, "value" ) === undefined ) {
-				this.value = val;
-			}
-		});
-	}
-});
-
-jQuery.extend({
-	valHooks: {
-		option: {
-			get: function( elem ) {
-				var val = jQuery.find.attr( elem, "value" );
-				return val != null ?
-					val :
-					// Support: IE10-11+
-					// option.text throws exceptions (#14686, #14858)
-					jQuery.trim( jQuery.text( elem ) );
-			}
-		},
-		select: {
-			get: function( elem ) {
-				var value, option,
-					options = elem.options,
-					index = elem.selectedIndex,
-					one = elem.type === "select-one" || index < 0,
-					values = one ? null : [],
-					max = one ? index + 1 : options.length,
-					i = index < 0 ?
-						max :
-						one ? index : 0;
-
-				// Loop through all the selected options
-				for ( ; i < max; i++ ) {
-					option = options[ i ];
-
-					// IE6-9 doesn't update selected after form reset (#2551)
-					if ( ( option.selected || i === index ) &&
-							// Don't return options that are disabled or in a disabled optgroup
-							( support.optDisabled ? !option.disabled : option.getAttribute( "disabled" ) === null ) &&
-							( !option.parentNode.disabled || !jQuery.nodeName( option.parentNode, "optgroup" ) ) ) {
-
-						// Get the specific value for the option
-						value = jQuery( option ).val();
-
-						// We don't need an array for one selects
-						if ( one ) {
-							return value;
-						}
-
-						// Multi-Selects return an array
-						values.push( value );
-					}
-				}
-
-				return values;
-			},
-
-			set: function( elem, value ) {
-				var optionSet, option,
-					options = elem.options,
-					values = jQuery.makeArray( value ),
-					i = options.length;
-
-				while ( i-- ) {
-					option = options[ i ];
-					if ( (option.selected = jQuery.inArray( option.value, values ) >= 0) ) {
-						optionSet = true;
-					}
-				}
-
-				// Force browsers to behave consistently when non-matching value is set
-				if ( !optionSet ) {
-					elem.selectedIndex = -1;
-				}
-				return values;
-			}
-		}
-	}
-});
-
-// Radios and checkboxes getter/setter
-jQuery.each([ "radio", "checkbox" ], function() {
-	jQuery.valHooks[ this ] = {
-		set: function( elem, value ) {
-			if ( jQuery.isArray( value ) ) {
-				return ( elem.checked = jQuery.inArray( jQuery(elem).val(), value ) >= 0 );
-			}
-		}
-	};
-	if ( !support.checkOn ) {
-		jQuery.valHooks[ this ].get = function( elem ) {
-			return elem.getAttribute("value") === null ? "on" : elem.value;
-		};
 	}
 });
 
@@ -7511,10 +8505,48 @@ var rquery = (/\?/);
 
 
 
-// Support: Android 2.3
-// Workaround failure to string-cast null input
+var rvalidtokens = /(,)|(\[|{)|(}|])|"(?:[^"\\\r\n]|\\["\\\/bfnrt]|\\u[\da-fA-F]{4})*"\s*:?|true|false|null|-?(?!0\d)\d+(?:\.\d+|)(?:[eE][+-]?\d+|)/g;
+
 jQuery.parseJSON = function( data ) {
-	return JSON.parse( data + "" );
+	// Attempt to parse using the native JSON parser first
+	if ( window.JSON && window.JSON.parse ) {
+		// Support: Android 2.3
+		// Workaround failure to string-cast null input
+		return window.JSON.parse( data + "" );
+	}
+
+	var requireNonComma,
+		depth = null,
+		str = jQuery.trim( data + "" );
+
+	// Guard against invalid (and possibly dangerous) input by ensuring that nothing remains
+	// after removing valid tokens
+	return str && !jQuery.trim( str.replace( rvalidtokens, function( token, comma, open, close ) {
+
+		// Force termination if we see a misplaced comma
+		if ( requireNonComma && comma ) {
+			depth = 0;
+		}
+
+		// Perform no more replacements after returning to outermost depth
+		if ( depth === 0 ) {
+			return token;
+		}
+
+		// Commas must not follow "[", "{", or ","
+		requireNonComma = open || comma;
+
+		// Determine new depth
+		// array/object open ("[" or "{"): depth += true - false (increment)
+		// array/object close ("]" or "}"): depth += false - true (decrement)
+		// other cases ("," or primitive): depth += true - true (numeric cast)
+		depth += !close - !open;
+
+		// Remove this token
+		return "";
+	}) ) ?
+		( Function( "return " + str ) )() :
+		jQuery.error( "Invalid JSON: " + data );
 };
 
 
@@ -7524,16 +8556,19 @@ jQuery.parseXML = function( data ) {
 	if ( !data || typeof data !== "string" ) {
 		return null;
 	}
-
-	// Support: IE9
 	try {
-		tmp = new DOMParser();
-		xml = tmp.parseFromString( data, "text/xml" );
-	} catch ( e ) {
+		if ( window.DOMParser ) { // Standard
+			tmp = new DOMParser();
+			xml = tmp.parseFromString( data, "text/xml" );
+		} else { // IE
+			xml = new ActiveXObject( "Microsoft.XMLDOM" );
+			xml.async = "false";
+			xml.loadXML( data );
+		}
+	} catch( e ) {
 		xml = undefined;
 	}
-
-	if ( !xml || xml.getElementsByTagName( "parsererror" ).length ) {
+	if ( !xml || !xml.documentElement || xml.getElementsByTagName( "parsererror" ).length ) {
 		jQuery.error( "Invalid XML: " + data );
 	}
 	return xml;
@@ -7541,9 +8576,13 @@ jQuery.parseXML = function( data ) {
 
 
 var
+	// Document location
+	ajaxLocParts,
+	ajaxLocation,
+
 	rhash = /#.*$/,
 	rts = /([?&])_=[^&]*/,
-	rheaders = /^(.*?):[ \t]*([^\r\n]*)$/mg,
+	rheaders = /^(.*?):[ \t]*([^\r\n]*)\r?$/mg, // IE leaves an \r character at EOL
 	// #7653, #8125, #8152: local protocol detection
 	rlocalProtocol = /^(?:about|app|app-storage|.+-extension|file|res|widget):$/,
 	rnoContent = /^(?:GET|HEAD)$/,
@@ -7569,13 +8608,22 @@ var
 	transports = {},
 
 	// Avoid comment-prolog char sequence (#10098); must appease lint and evade compression
-	allTypes = "*/".concat( "*" ),
+	allTypes = "*/".concat("*");
 
-	// Document location
-	ajaxLocation = window.location.href,
+// #8138, IE may throw an exception when accessing
+// a field from window.location if document.domain has been set
+try {
+	ajaxLocation = location.href;
+} catch( e ) {
+	// Use the href attribute of an A element
+	// since IE will modify it given document.location
+	ajaxLocation = document.createElement( "a" );
+	ajaxLocation.href = "";
+	ajaxLocation = ajaxLocation.href;
+}
 
-	// Segment location into parts
-	ajaxLocParts = rurl.exec( ajaxLocation.toLowerCase() ) || [];
+// Segment location into parts
+ajaxLocParts = rurl.exec( ajaxLocation.toLowerCase() ) || [];
 
 // Base "constructor" for jQuery.ajaxPrefilter and jQuery.ajaxTransport
 function addToPrefiltersOrTransports( structure ) {
@@ -7596,7 +8644,7 @@ function addToPrefiltersOrTransports( structure ) {
 			// For each dataType in the dataTypeExpression
 			while ( (dataType = dataTypes[i++]) ) {
 				// Prepend if requested
-				if ( dataType[0] === "+" ) {
+				if ( dataType.charAt( 0 ) === "+" ) {
 					dataType = dataType.slice( 1 ) || "*";
 					(structure[ dataType ] = structure[ dataType ] || []).unshift( func );
 
@@ -7638,7 +8686,7 @@ function inspectPrefiltersOrTransports( structure, options, originalOptions, jqX
 // that takes "flat" options (not to be deep extended)
 // Fixes #9887
 function ajaxExtend( target, src ) {
-	var key, deep,
+	var deep, key,
 		flatOptions = jQuery.ajaxSettings.flatOptions || {};
 
 	for ( key in src ) {
@@ -7658,8 +8706,7 @@ function ajaxExtend( target, src ) {
  * - returns the corresponding response
  */
 function ajaxHandleResponses( s, jqXHR, responses ) {
-
-	var ct, type, finalDataType, firstDataType,
+	var firstDataType, ct, finalDataType, type,
 		contents = s.contents,
 		dataTypes = s.dataTypes;
 
@@ -7745,7 +8792,7 @@ function ajaxConvert( s, response, jqXHR, isSuccess ) {
 
 		if ( current ) {
 
-		// There's only work to do if current dataType is non-auto
+			// There's only work to do if current dataType is non-auto
 			if ( current === "*" ) {
 
 				current = prev;
@@ -7908,20 +8955,23 @@ jQuery.extend({
 		// Force options to be an object
 		options = options || {};
 
-		var transport,
-			// URL without anti-cache param
-			cacheURL,
-			// Response headers
-			responseHeadersString,
-			responseHeaders,
-			// timeout handle
-			timeoutTimer,
-			// Cross-domain detection vars
+		var // Cross-domain detection vars
 			parts,
-			// To know if global events are to be dispatched
-			fireGlobals,
 			// Loop variable
 			i,
+			// URL without anti-cache param
+			cacheURL,
+			// Response headers as string
+			responseHeadersString,
+			// timeout handle
+			timeoutTimer,
+
+			// To know if global events are to be dispatched
+			fireGlobals,
+
+			transport,
+			// Response headers
+			responseHeaders,
 			// Create the final options object
 			s = jQuery.ajaxSetup( {}, options ),
 			// Callbacks context
@@ -8018,11 +9068,10 @@ jQuery.extend({
 		jqXHR.error = jqXHR.fail;
 
 		// Remove hash character (#7531: and string promotion)
-		// Add protocol if not provided (prefilters might expect it)
+		// Add protocol if not provided (#5866: IE7 issue with protocol-less urls)
 		// Handle falsy url in the settings object (#10093: consistency with old signature)
 		// We also use the url parameter if available
-		s.url = ( ( url || s.url || ajaxLocation ) + "" ).replace( rhash, "" )
-			.replace( rprotocol, ajaxLocParts[ 1 ] + "//" );
+		s.url = ( ( url || s.url || ajaxLocation ) + "" ).replace( rhash, "" ).replace( rprotocol, ajaxLocParts[ 1 ] + "//" );
 
 		// Alias method option to type as per ticket #12004
 		s.type = options.method || options.type || s.method || s.type;
@@ -8128,7 +9177,7 @@ jQuery.extend({
 			return jqXHR.abort();
 		}
 
-		// Aborting is no longer a cancellation
+		// aborting is no longer a cancellation
 		strAbort = "abort";
 
 		// Install callbacks on deferreds
@@ -8240,7 +9289,8 @@ jQuery.extend({
 					isSuccess = !error;
 				}
 			} else {
-				// Extract error from statusText and normalize for non-aborts
+				// We extract error from statusText
+				// then normalize statusText and status for non-aborts
 				error = statusText;
 				if ( status || !statusText ) {
 					statusText = "error";
@@ -8296,7 +9346,7 @@ jQuery.extend({
 
 jQuery.each( [ "get", "post" ], function( i, method ) {
 	jQuery[ method ] = function( url, data, callback, type ) {
-		// Shift arguments if data argument was omitted
+		// shift arguments if data argument was omitted
 		if ( jQuery.isFunction( data ) ) {
 			type = type || callback;
 			callback = data;
@@ -8328,28 +9378,25 @@ jQuery._evalUrl = function( url ) {
 
 jQuery.fn.extend({
 	wrapAll: function( html ) {
-		var wrap;
-
 		if ( jQuery.isFunction( html ) ) {
-			return this.each(function( i ) {
-				jQuery( this ).wrapAll( html.call(this, i) );
+			return this.each(function(i) {
+				jQuery(this).wrapAll( html.call(this, i) );
 			});
 		}
 
-		if ( this[ 0 ] ) {
-
+		if ( this[0] ) {
 			// The elements to wrap the target around
-			wrap = jQuery( html, this[ 0 ].ownerDocument ).eq( 0 ).clone( true );
+			var wrap = jQuery( html, this[0].ownerDocument ).eq(0).clone(true);
 
-			if ( this[ 0 ].parentNode ) {
-				wrap.insertBefore( this[ 0 ] );
+			if ( this[0].parentNode ) {
+				wrap.insertBefore( this[0] );
 			}
 
 			wrap.map(function() {
 				var elem = this;
 
-				while ( elem.firstElementChild ) {
-					elem = elem.firstElementChild;
+				while ( elem.firstChild && elem.firstChild.nodeType === 1 ) {
+					elem = elem.firstChild;
 				}
 
 				return elem;
@@ -8361,8 +9408,8 @@ jQuery.fn.extend({
 
 	wrapInner: function( html ) {
 		if ( jQuery.isFunction( html ) ) {
-			return this.each(function( i ) {
-				jQuery( this ).wrapInner( html.call(this, i) );
+			return this.each(function(i) {
+				jQuery(this).wrapInner( html.call(this, i) );
 			});
 		}
 
@@ -8382,7 +9429,7 @@ jQuery.fn.extend({
 	wrap: function( html ) {
 		var isFunction = jQuery.isFunction( html );
 
-		return this.each(function( i ) {
+		return this.each(function(i) {
 			jQuery( this ).wrapAll( isFunction ? html.call(this, i) : html );
 		});
 	},
@@ -8400,8 +9447,11 @@ jQuery.fn.extend({
 jQuery.expr.filters.hidden = function( elem ) {
 	// Support: Opera <= 12.12
 	// Opera reports offsetWidths and offsetHeights less than zero on some elements
-	return elem.offsetWidth <= 0 && elem.offsetHeight <= 0;
+	return elem.offsetWidth <= 0 && elem.offsetHeight <= 0 ||
+		(!support.reliableHiddenOffsets() &&
+			((elem.style && elem.style.display) || jQuery.css( elem, "display" )) === "none");
 };
+
 jQuery.expr.filters.visible = function( elem ) {
 	return !jQuery.expr.filters.hidden( elem );
 };
@@ -8490,8 +9540,7 @@ jQuery.fn.extend({
 		})
 		.filter(function() {
 			var type = this.type;
-
-			// Use .is( ":disabled" ) so that fieldset[disabled] works
+			// Use .is(":disabled") so that fieldset[disabled] works
 			return this.name && !jQuery( this ).is( ":disabled" ) &&
 				rsubmittable.test( this.nodeName ) && !rsubmitterTypes.test( type ) &&
 				( this.checked || !rcheckableType.test( type ) );
@@ -8511,134 +9560,195 @@ jQuery.fn.extend({
 });
 
 
-jQuery.ajaxSettings.xhr = function() {
-	try {
-		return new XMLHttpRequest();
-	} catch( e ) {}
-};
+// Create the request object
+// (This is still attached to ajaxSettings for backward compatibility)
+jQuery.ajaxSettings.xhr = window.ActiveXObject !== undefined ?
+	// Support: IE6+
+	function() {
+
+		// XHR cannot access local files, always use ActiveX for that case
+		return !this.isLocal &&
+
+			// Support: IE7-8
+			// oldIE XHR does not support non-RFC2616 methods (#13240)
+			// See http://msdn.microsoft.com/en-us/library/ie/ms536648(v=vs.85).aspx
+			// and http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9
+			// Although this check for six methods instead of eight
+			// since IE also does not support "trace" and "connect"
+			/^(get|post|head|put|delete|options)$/i.test( this.type ) &&
+
+			createStandardXHR() || createActiveXHR();
+	} :
+	// For all other browsers, use the standard XMLHttpRequest object
+	createStandardXHR;
 
 var xhrId = 0,
 	xhrCallbacks = {},
-	xhrSuccessStatus = {
-		// file protocol always yields status code 0, assume 200
-		0: 200,
-		// Support: IE9
-		// #1450: sometimes IE returns 1223 when it should be 204
-		1223: 204
-	},
 	xhrSupported = jQuery.ajaxSettings.xhr();
 
-// Support: IE9
+// Support: IE<10
 // Open requests must be manually aborted on unload (#5280)
 // See https://support.microsoft.com/kb/2856746 for more info
 if ( window.attachEvent ) {
 	window.attachEvent( "onunload", function() {
 		for ( var key in xhrCallbacks ) {
-			xhrCallbacks[ key ]();
+			xhrCallbacks[ key ]( undefined, true );
 		}
 	});
 }
 
+// Determine support properties
 support.cors = !!xhrSupported && ( "withCredentials" in xhrSupported );
-support.ajax = xhrSupported = !!xhrSupported;
+xhrSupported = support.ajax = !!xhrSupported;
 
-jQuery.ajaxTransport(function( options ) {
-	var callback;
+// Create transport if the browser can provide an xhr
+if ( xhrSupported ) {
 
-	// Cross domain only allowed if supported through XMLHttpRequest
-	if ( support.cors || xhrSupported && !options.crossDomain ) {
-		return {
-			send: function( headers, complete ) {
-				var i,
-					xhr = options.xhr(),
-					id = ++xhrId;
+	jQuery.ajaxTransport(function( options ) {
+		// Cross domain only allowed if supported through XMLHttpRequest
+		if ( !options.crossDomain || support.cors ) {
 
-				xhr.open( options.type, options.url, options.async, options.username, options.password );
+			var callback;
 
-				// Apply custom fields if provided
-				if ( options.xhrFields ) {
-					for ( i in options.xhrFields ) {
-						xhr[ i ] = options.xhrFields[ i ];
+			return {
+				send: function( headers, complete ) {
+					var i,
+						xhr = options.xhr(),
+						id = ++xhrId;
+
+					// Open the socket
+					xhr.open( options.type, options.url, options.async, options.username, options.password );
+
+					// Apply custom fields if provided
+					if ( options.xhrFields ) {
+						for ( i in options.xhrFields ) {
+							xhr[ i ] = options.xhrFields[ i ];
+						}
 					}
-				}
 
-				// Override mime type if needed
-				if ( options.mimeType && xhr.overrideMimeType ) {
-					xhr.overrideMimeType( options.mimeType );
-				}
+					// Override mime type if needed
+					if ( options.mimeType && xhr.overrideMimeType ) {
+						xhr.overrideMimeType( options.mimeType );
+					}
 
-				// X-Requested-With header
-				// For cross-domain requests, seeing as conditions for a preflight are
-				// akin to a jigsaw puzzle, we simply never set it to be sure.
-				// (it can always be set on a per-request basis or even using ajaxSetup)
-				// For same-domain requests, won't change header if already provided.
-				if ( !options.crossDomain && !headers["X-Requested-With"] ) {
-					headers["X-Requested-With"] = "XMLHttpRequest";
-				}
+					// X-Requested-With header
+					// For cross-domain requests, seeing as conditions for a preflight are
+					// akin to a jigsaw puzzle, we simply never set it to be sure.
+					// (it can always be set on a per-request basis or even using ajaxSetup)
+					// For same-domain requests, won't change header if already provided.
+					if ( !options.crossDomain && !headers["X-Requested-With"] ) {
+						headers["X-Requested-With"] = "XMLHttpRequest";
+					}
 
-				// Set headers
-				for ( i in headers ) {
-					xhr.setRequestHeader( i, headers[ i ] );
-				}
+					// Set headers
+					for ( i in headers ) {
+						// Support: IE<9
+						// IE's ActiveXObject throws a 'Type Mismatch' exception when setting
+						// request header to a null-value.
+						//
+						// To keep consistent with other XHR implementations, cast the value
+						// to string and ignore `undefined`.
+						if ( headers[ i ] !== undefined ) {
+							xhr.setRequestHeader( i, headers[ i ] + "" );
+						}
+					}
 
-				// Callback
-				callback = function( type ) {
-					return function() {
-						if ( callback ) {
+					// Do send the request
+					// This may raise an exception which is actually
+					// handled in jQuery.ajax (so no try/catch here)
+					xhr.send( ( options.hasContent && options.data ) || null );
+
+					// Listener
+					callback = function( _, isAbort ) {
+						var status, statusText, responses;
+
+						// Was never called and is aborted or complete
+						if ( callback && ( isAbort || xhr.readyState === 4 ) ) {
+							// Clean up
 							delete xhrCallbacks[ id ];
-							callback = xhr.onload = xhr.onerror = null;
+							callback = undefined;
+							xhr.onreadystatechange = jQuery.noop;
 
-							if ( type === "abort" ) {
-								xhr.abort();
-							} else if ( type === "error" ) {
-								complete(
-									// file: protocol always yields status 0; see #8605, #14207
-									xhr.status,
-									xhr.statusText
-								);
+							// Abort manually if needed
+							if ( isAbort ) {
+								if ( xhr.readyState !== 4 ) {
+									xhr.abort();
+								}
 							} else {
-								complete(
-									xhrSuccessStatus[ xhr.status ] || xhr.status,
-									xhr.statusText,
-									// Support: IE9
-									// Accessing binary-data responseText throws an exception
-									// (#11426)
-									typeof xhr.responseText === "string" ? {
-										text: xhr.responseText
-									} : undefined,
-									xhr.getAllResponseHeaders()
-								);
+								responses = {};
+								status = xhr.status;
+
+								// Support: IE<10
+								// Accessing binary-data responseText throws an exception
+								// (#11426)
+								if ( typeof xhr.responseText === "string" ) {
+									responses.text = xhr.responseText;
+								}
+
+								// Firefox throws an exception when accessing
+								// statusText for faulty cross-domain requests
+								try {
+									statusText = xhr.statusText;
+								} catch( e ) {
+									// We normalize with Webkit giving an empty statusText
+									statusText = "";
+								}
+
+								// Filter status for non standard behaviors
+
+								// If the request is local and we have data: assume a success
+								// (success with no data won't get notified, that's the best we
+								// can do given current implementations)
+								if ( !status && options.isLocal && !options.crossDomain ) {
+									status = responses.text ? 200 : 404;
+								// IE - #1450: sometimes returns 1223 when it should be 204
+								} else if ( status === 1223 ) {
+									status = 204;
+								}
 							}
 						}
+
+						// Call complete if needed
+						if ( responses ) {
+							complete( status, statusText, responses, xhr.getAllResponseHeaders() );
+						}
 					};
-				};
 
-				// Listen to events
-				xhr.onload = callback();
-				xhr.onerror = callback("error");
+					if ( !options.async ) {
+						// if we're in sync mode we fire the callback
+						callback();
+					} else if ( xhr.readyState === 4 ) {
+						// (IE6 & IE7) if it's in cache and has been
+						// retrieved directly we need to fire the callback
+						setTimeout( callback );
+					} else {
+						// Add to the list of active xhr callbacks
+						xhr.onreadystatechange = xhrCallbacks[ id ] = callback;
+					}
+				},
 
-				// Create the abort callback
-				callback = xhrCallbacks[ id ] = callback("abort");
-
-				try {
-					// Do send the request (this may raise an exception)
-					xhr.send( options.hasContent && options.data || null );
-				} catch ( e ) {
-					// #14683: Only rethrow if this hasn't been notified as an error yet
+				abort: function() {
 					if ( callback ) {
-						throw e;
+						callback( undefined, true );
 					}
 				}
-			},
+			};
+		}
+	});
+}
 
-			abort: function() {
-				if ( callback ) {
-					callback();
-				}
-			}
-		};
-	}
-});
+// Functions to create xhrs
+function createStandardXHR() {
+	try {
+		return new window.XMLHttpRequest();
+	} catch( e ) {}
+}
+
+function createActiveXHR() {
+	try {
+		return new window.ActiveXObject( "Microsoft.XMLHTTP" );
+	} catch( e ) {}
+}
 
 
 
@@ -8659,42 +9769,71 @@ jQuery.ajaxSetup({
 	}
 });
 
-// Handle cache's special case and crossDomain
+// Handle cache's special case and global
 jQuery.ajaxPrefilter( "script", function( s ) {
 	if ( s.cache === undefined ) {
 		s.cache = false;
 	}
 	if ( s.crossDomain ) {
 		s.type = "GET";
+		s.global = false;
 	}
 });
 
 // Bind script tag hack transport
-jQuery.ajaxTransport( "script", function( s ) {
+jQuery.ajaxTransport( "script", function(s) {
+
 	// This transport only deals with cross domain requests
 	if ( s.crossDomain ) {
-		var script, callback;
+
+		var script,
+			head = document.head || jQuery("head")[0] || document.documentElement;
+
 		return {
-			send: function( _, complete ) {
-				script = jQuery("<script>").prop({
-					async: true,
-					charset: s.scriptCharset,
-					src: s.url
-				}).on(
-					"load error",
-					callback = function( evt ) {
-						script.remove();
-						callback = null;
-						if ( evt ) {
-							complete( evt.type === "error" ? 404 : 200, evt.type );
+
+			send: function( _, callback ) {
+
+				script = document.createElement("script");
+
+				script.async = true;
+
+				if ( s.scriptCharset ) {
+					script.charset = s.scriptCharset;
+				}
+
+				script.src = s.url;
+
+				// Attach handlers for all browsers
+				script.onload = script.onreadystatechange = function( _, isAbort ) {
+
+					if ( isAbort || !script.readyState || /loaded|complete/.test( script.readyState ) ) {
+
+						// Handle memory leak in IE
+						script.onload = script.onreadystatechange = null;
+
+						// Remove the script
+						if ( script.parentNode ) {
+							script.parentNode.removeChild( script );
+						}
+
+						// Dereference the script
+						script = null;
+
+						// Callback if not abort
+						if ( !isAbort ) {
+							callback( 200, "success" );
 						}
 					}
-				);
-				document.head.appendChild( script[ 0 ] );
+				};
+
+				// Circumvent IE6 bugs with base elements (#2709 and #4378) by prepending
+				// Use native DOM manipulation to avoid our domManip AJAX trickery
+				head.insertBefore( script, head.firstChild );
 			},
+
 			abort: function() {
-				if ( callback ) {
-					callback();
+				if ( script ) {
+					script.onload( undefined, true );
 				}
 			}
 		};
@@ -8830,12 +9969,12 @@ jQuery.fn.load = function( url, params, callback ) {
 		return _load.apply( this, arguments );
 	}
 
-	var selector, type, response,
+	var selector, response, type,
 		self = this,
 		off = url.indexOf(" ");
 
 	if ( off >= 0 ) {
-		selector = jQuery.trim( url.slice( off ) );
+		selector = jQuery.trim( url.slice( off, url.length ) );
 		url = url.slice( 0, off );
 	}
 
@@ -8904,13 +10043,18 @@ jQuery.expr.filters.animated = function( elem ) {
 
 
 
+
 var docElem = window.document.documentElement;
 
 /**
  * Gets a window from an element
  */
 function getWindow( elem ) {
-	return jQuery.isWindow( elem ) ? elem : elem.nodeType === 9 && elem.defaultView;
+	return jQuery.isWindow( elem ) ?
+		elem :
+		elem.nodeType === 9 ?
+			elem.defaultView || elem.parentWindow :
+			false;
 }
 
 jQuery.offset = {
@@ -8920,7 +10064,7 @@ jQuery.offset = {
 			curElem = jQuery( elem ),
 			props = {};
 
-		// Set position first, in-case top/left are set even on static elem
+		// set position first, in-case top/left are set even on static elem
 		if ( position === "static" ) {
 			elem.style.position = "relative";
 		}
@@ -8929,15 +10073,13 @@ jQuery.offset = {
 		curCSSTop = jQuery.css( elem, "top" );
 		curCSSLeft = jQuery.css( elem, "left" );
 		calculatePosition = ( position === "absolute" || position === "fixed" ) &&
-			( curCSSTop + curCSSLeft ).indexOf("auto") > -1;
+			jQuery.inArray("auto", [ curCSSTop, curCSSLeft ] ) > -1;
 
-		// Need to be able to calculate position if either
-		// top or left is auto and position is either absolute or fixed
+		// need to be able to calculate position if either top or left is auto and position is either absolute or fixed
 		if ( calculatePosition ) {
 			curPosition = curElem.position();
 			curTop = curPosition.top;
 			curLeft = curPosition.left;
-
 		} else {
 			curTop = parseFloat( curCSSTop ) || 0;
 			curLeft = parseFloat( curCSSLeft ) || 0;
@@ -8956,7 +10098,6 @@ jQuery.offset = {
 
 		if ( "using" in options ) {
 			options.using.call( elem, props );
-
 		} else {
 			curElem.css( props );
 		}
@@ -8974,8 +10115,8 @@ jQuery.fn.extend({
 		}
 
 		var docElem, win,
-			elem = this[ 0 ],
 			box = { top: 0, left: 0 },
+			elem = this[ 0 ],
 			doc = elem && elem.ownerDocument;
 
 		if ( !doc ) {
@@ -8989,15 +10130,15 @@ jQuery.fn.extend({
 			return box;
 		}
 
-		// Support: BlackBerry 5, iOS 3 (original iPhone)
 		// If we don't have gBCR, just use 0,0 rather than error
+		// BlackBerry 5, iOS 3 (original iPhone)
 		if ( typeof elem.getBoundingClientRect !== strundefined ) {
 			box = elem.getBoundingClientRect();
 		}
 		win = getWindow( doc );
 		return {
-			top: box.top + win.pageYOffset - docElem.clientTop,
-			left: box.left + win.pageXOffset - docElem.clientLeft
+			top: box.top  + ( win.pageYOffset || docElem.scrollTop )  - ( docElem.clientTop  || 0 ),
+			left: box.left + ( win.pageXOffset || docElem.scrollLeft ) - ( docElem.clientLeft || 0 )
 		};
 	},
 
@@ -9007,14 +10148,13 @@ jQuery.fn.extend({
 		}
 
 		var offsetParent, offset,
-			elem = this[ 0 ],
-			parentOffset = { top: 0, left: 0 };
+			parentOffset = { top: 0, left: 0 },
+			elem = this[ 0 ];
 
-		// Fixed elements are offset from window (parentOffset = {top:0, left: 0}, because it is its only offset parent
+		// fixed elements are offset from window (parentOffset = {top:0, left: 0}, because it is its only offset parent
 		if ( jQuery.css( elem, "position" ) === "fixed" ) {
-			// Assume getBoundingClientRect is there when computed position is fixed
+			// we assume that getBoundingClientRect is available when computed position is fixed
 			offset = elem.getBoundingClientRect();
-
 		} else {
 			// Get *real* offsetParent
 			offsetParent = this.offsetParent();
@@ -9026,14 +10166,16 @@ jQuery.fn.extend({
 			}
 
 			// Add offsetParent borders
-			parentOffset.top += jQuery.css( offsetParent[ 0 ], "borderTopWidth", true );
+			parentOffset.top  += jQuery.css( offsetParent[ 0 ], "borderTopWidth", true );
 			parentOffset.left += jQuery.css( offsetParent[ 0 ], "borderLeftWidth", true );
 		}
 
 		// Subtract parent offsets and element margins
+		// note: when an element has margin: auto the offsetLeft and marginLeft
+		// are the same in Safari causing offset.left to incorrectly be 0
 		return {
-			top: offset.top - parentOffset.top - jQuery.css( elem, "marginTop", true ),
-			left: offset.left - parentOffset.left - jQuery.css( elem, "marginLeft", true )
+			top:  offset.top  - parentOffset.top - jQuery.css( elem, "marginTop", true ),
+			left: offset.left - parentOffset.left - jQuery.css( elem, "marginLeft", true)
 		};
 	},
 
@@ -9044,7 +10186,6 @@ jQuery.fn.extend({
 			while ( offsetParent && ( !jQuery.nodeName( offsetParent, "html" ) && jQuery.css( offsetParent, "position" ) === "static" ) ) {
 				offsetParent = offsetParent.offsetParent;
 			}
-
 			return offsetParent || docElem;
 		});
 	}
@@ -9052,20 +10193,22 @@ jQuery.fn.extend({
 
 // Create scrollLeft and scrollTop methods
 jQuery.each( { scrollLeft: "pageXOffset", scrollTop: "pageYOffset" }, function( method, prop ) {
-	var top = "pageYOffset" === prop;
+	var top = /Y/.test( prop );
 
 	jQuery.fn[ method ] = function( val ) {
 		return access( this, function( elem, method, val ) {
 			var win = getWindow( elem );
 
 			if ( val === undefined ) {
-				return win ? win[ prop ] : elem[ method ];
+				return win ? (prop in win) ? win[ prop ] :
+					win.document.documentElement[ method ] :
+					elem[ method ];
 			}
 
 			if ( win ) {
 				win.scrollTo(
-					!top ? val : window.pageXOffset,
-					top ? val : window.pageYOffset
+					!top ? val : jQuery( win ).scrollLeft(),
+					top ? val : jQuery( win ).scrollTop()
 				);
 
 			} else {
@@ -9075,18 +10218,16 @@ jQuery.each( { scrollLeft: "pageXOffset", scrollTop: "pageYOffset" }, function( 
 	};
 });
 
-// Support: Safari<7+, Chrome<37+
 // Add the top/left cssHooks using jQuery.fn.position
 // Webkit bug: https://bugs.webkit.org/show_bug.cgi?id=29084
-// Blink bug: https://code.google.com/p/chromium/issues/detail?id=229280
-// getComputedStyle returns percent when specified for top/left/bottom/right;
-// rather than make the css module depend on the offset module, just check for it here
+// getComputedStyle returns percent when specified for top/left/bottom/right
+// rather than make the css module depend on the offset module, we just check for it here
 jQuery.each( [ "top", "left" ], function( i, prop ) {
 	jQuery.cssHooks[ prop ] = addGetHookIf( support.pixelPosition,
 		function( elem, computed ) {
 			if ( computed ) {
 				computed = curCSS( elem, prop );
-				// If curCSS returns percentage, fallback to offset
+				// if curCSS returns percentage, fallback to offset
 				return rnumnonpx.test( computed ) ?
 					jQuery( elem ).position()[ prop ] + "px" :
 					computed;
@@ -9099,7 +10240,7 @@ jQuery.each( [ "top", "left" ], function( i, prop ) {
 // Create innerHeight, innerWidth, height, width, outerHeight and outerWidth methods
 jQuery.each( { Height: "height", Width: "width" }, function( name, type ) {
 	jQuery.each( { padding: "inner" + name, content: type, "": "outer" + name }, function( defaultExtra, funcName ) {
-		// Margin is only for outerHeight, outerWidth
+		// margin is only for outerHeight, outerWidth
 		jQuery.fn[ funcName ] = function( margin, value ) {
 			var chainable = arguments.length && ( defaultExtra || typeof margin !== "boolean" ),
 				extra = defaultExtra || ( margin === true || value === true ? "margin" : "border" );
@@ -9118,8 +10259,8 @@ jQuery.each( { Height: "height", Width: "width" }, function( name, type ) {
 				if ( elem.nodeType === 9 ) {
 					doc = elem.documentElement;
 
-					// Either scroll[Width/Height] or offset[Width/Height] or client[Width/Height],
-					// whichever is greatest
+					// Either scroll[Width/Height] or offset[Width/Height] or client[Width/Height], whichever is greatest
+					// unfortunately, this causes bug #3838 in IE6/8 only, but there is currently no good, small way to fix it.
 					return Math.max(
 						elem.body[ "scroll" + name ], doc[ "scroll" + name ],
 						elem.body[ "offset" + name ], doc[ "offset" + name ],
@@ -9190,8 +10331,8 @@ jQuery.noConflict = function( deep ) {
 	return jQuery;
 };
 
-// Expose jQuery and $ identifiers, even in AMD
-// (#7102#comment:10, https://github.com/jquery/jquery/pull/557)
+// Expose jQuery and $ identifiers, even in
+// AMD (#7102#comment:10, https://github.com/jquery/jquery/pull/557)
 // and CommonJS for browser emulators (#13566)
 if ( typeof noGlobal === strundefined ) {
 	window.jQuery = window.$ = jQuery;
@@ -30127,7 +31268,7 @@ var tooltip = $.widget( "ui.tooltip", {
 }(this));
 
 /**
- * @license AngularJS v1.2.27
+ * @license AngularJS v1.2.28
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -30196,7 +31337,7 @@ function minErr(module) {
       return match;
     });
 
-    message = message + '\nhttp://errors.angularjs.org/1.2.27/' +
+    message = message + '\nhttp://errors.angularjs.org/1.2.28/' +
       (module ? module + '/' : '') + code;
     for (i = 2; i < arguments.length; i++) {
       message = message + (i == 2 ? '?' : '&') + 'p' + (i-2) + '=' +
@@ -30362,8 +31503,8 @@ if ('i' !== 'I'.toLowerCase()) {
 }
 
 
-var /** holds major version number for IE or NaN for real browsers */
-    msie,
+var
+    msie,             // holds major version number for IE, or NaN if UA is not IE.
     jqLite,           // delay binding since jQuery could be loaded after us.
     jQuery,           // delay binding
     slice             = [].slice,
@@ -32115,11 +33256,11 @@ function setupModuleLoader(window) {
  * - `codeName` – `{string}` – Code name of the release, such as "jiggling-armfat".
  */
 var version = {
-  full: '1.2.27',    // all of these placeholder strings will be replaced by grunt's
+  full: '1.2.28',    // all of these placeholder strings will be replaced by grunt's
   major: 1,    // package task
   minor: 2,
-  dot: 27,
-  codeName: 'prime-factorization'
+  dot: 28,
+  codeName: 'finnish-disembarkation'
 };
 
 
@@ -35939,6 +37080,21 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
     };
 
     Attributes.prototype = {
+      /**
+       * @ngdoc method
+       * @name $compile.directive.Attributes#$normalize
+       * @kind function
+       *
+       * @description
+       * Converts an attribute name (e.g. dash/colon/underscore-delimited string, optionally prefixed with `x-` or
+       * `data-`) to its normalized, camelCase form.
+       *
+       * Also there is special case for Moz prefix starting with upper case letter.
+       *
+       * For further information check out the guide on {@link guide/directive#matching-directives Matching Directives}
+       *
+       * @param {string} name Name to normalize
+       */
       $normalize: directiveNormalize,
 
 
@@ -37272,13 +38428,6 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
 var PREFIX_REGEXP = /^(x[\:\-_]|data[\:\-_])/i;
 /**
  * Converts all accepted directives format into proper directive name.
- * All of these will become 'myDirective':
- *   my:Directive
- *   my-directive
- *   x-my-directive
- *   data-my:directive
- *
- * Also there is special case for Moz prefix starting with upper case letter.
  * @param name Name to normalize
  */
 function directiveNormalize(name) {
@@ -37837,6 +38986,21 @@ function $HttpProvider() {
      * In addition, you can supply a `headers` property in the config object passed when
      * calling `$http(config)`, which overrides the defaults without changing them globally.
      *
+     * To explicitly remove a header automatically added via $httpProvider.defaults.headers on a per request basis,
+     * Use the `headers` property, setting the desired header to `undefined`. For example:
+     *
+     * ```js
+     * var req = {
+     *  method: 'POST',
+     *  url: 'http://example.com',
+     *  headers: {
+     *    'Content-Type': undefined
+     *  },
+     *  data: { test: 'test' },
+     * }
+     *
+     * $http(req).success(function(){...}).error(function(){...});
+     * ```
      *
      * # Transforming Requests and Responses
      *
@@ -39126,33 +40290,33 @@ function $IntervalProvider() {
       *             // Don't start a new fight if we are already fighting
       *             if ( angular.isDefined(stop) ) return;
       *
-      *           stop = $interval(function() {
-      *             if ($scope.blood_1 > 0 && $scope.blood_2 > 0) {
-      *               $scope.blood_1 = $scope.blood_1 - 3;
-      *               $scope.blood_2 = $scope.blood_2 - 4;
-      *             } else {
-      *               $scope.stopFight();
+      *             stop = $interval(function() {
+      *               if ($scope.blood_1 > 0 && $scope.blood_2 > 0) {
+      *                 $scope.blood_1 = $scope.blood_1 - 3;
+      *                 $scope.blood_2 = $scope.blood_2 - 4;
+      *               } else {
+      *                 $scope.stopFight();
+      *               }
+      *             }, 100);
+      *           };
+      *
+      *           $scope.stopFight = function() {
+      *             if (angular.isDefined(stop)) {
+      *               $interval.cancel(stop);
+      *               stop = undefined;
       *             }
-      *           }, 100);
-      *         };
+      *           };
       *
-      *         $scope.stopFight = function() {
-      *           if (angular.isDefined(stop)) {
-      *             $interval.cancel(stop);
-      *             stop = undefined;
-      *           }
-      *         };
+      *           $scope.resetFight = function() {
+      *             $scope.blood_1 = 100;
+      *             $scope.blood_2 = 120;
+      *           };
       *
-      *         $scope.resetFight = function() {
-      *           $scope.blood_1 = 100;
-      *           $scope.blood_2 = 120;
-      *         };
-      *
-      *         $scope.$on('$destroy', function() {
-      *           // Make sure that the interval is destroyed too
-      *           $scope.stopFight();
-      *         });
-      *       }])
+      *           $scope.$on('$destroy', function() {
+      *             // Make sure that the interval is destroyed too
+      *             $scope.stopFight();
+      *           });
+      *         }])
       *       // Register the 'myCurrentTime' directive factory method.
       *       // We inject $interval and dateFilter service since the factory method is DI.
       *       .directive('myCurrentTime', ['$interval', 'dateFilter',
@@ -41003,7 +42167,7 @@ Parser.prototype = {
       ensureSafeObject(context, parser.text);
       ensureSafeFunction(fnPtr, parser.text);
 
-      // IE stupidity! (IE doesn't have apply for some native functions)
+      // IE doesn't have apply for some native functions
       var v = fnPtr.apply
             ? fnPtr.apply(context, args)
             : fnPtr(args[0], args[1], args[2], args[3], args[4]);
@@ -45937,9 +47101,8 @@ var htmlAnchorDirective = valueFn({
  * make the link go to the wrong URL if the user clicks it before
  * Angular has a chance to replace the `{{hash}}` markup with its
  * value. Until Angular replaces the markup the link will be broken
- * and will most likely return a 404 error.
- *
- * The `ngHref` directive solves this problem.
+ * and will most likely return a 404 error. The `ngHref` directive
+ * solves this problem.
  *
  * The wrong way to write it:
  * ```html
@@ -51559,7 +52722,6 @@ var scriptDirective = ['$templateCache', function($templateCache) {
     compile: function(element, attr) {
       if (attr.type == 'text/ng-template') {
         var templateUrl = attr.id,
-            // IE is not consistent, in scripts we have to read .text but in other nodes we have to read .textContent
             text = element[0].text;
 
         $templateCache.put(templateUrl, text);
@@ -52260,7 +53422,7 @@ var styleDirective = valueFn({
 
 !window.angular.$$csp() && window.angular.element(document).find('head').prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\\:form{display:block;}.ng-animate-block-transitions{transition:0s all!important;-webkit-transition:0s all!important;}.ng-hide-add-active,.ng-hide-remove{display:block!important;}</style>');
 /**
- * @license AngularJS v1.2.27
+ * @license AngularJS v1.2.28
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -54455,7 +55617,7 @@ if(window.jasmine || window.mocha) {
 
 "use strict";var TrNgGrid;(function(n){function ot(t){t.get(n.cellHeaderTemplateId)||t.put(n.cellHeaderTemplateId,'<div class="'+n.headerCellCssClass+'" ng-switch="isCustomized">  <div ng-switch-when="true">    <div ng-transclude=""><\/div>  <\/div>  <div ng-switch-default>    <div class="'+n.columnTitleCssClass+'">      {{columnTitle |'+n.translateFilter+":gridOptions.locale}}       <div "+n.columnSortDirectiveAttribute+'=""><\/div>    <\/div>    <div '+n.columnFilterDirectiveAttribute+'=""><\/div>  <\/div><\/div>');t.get(n.cellBodyTemplateId)||t.put(n.cellBodyTemplateId,'<div ng-attr-class="'+n.bodyCellCssClass+' text-{{columnOptions.displayAlign}}" ng-switch="isCustomized">  <div ng-switch-when="true">    <div ng-transclude=""><\/div>  <\/div>  <div ng-switch-default>{{gridDisplayItem[columnOptions.displayFieldName]}}<\/div><\/div>');t.get(n.columnFilterTemplateId)||t.put(n.columnFilterTemplateId,'<div ng-show="(gridOptions.enableFiltering&&columnOptions.enableFiltering!==false)||columnOptions.enableFiltering" class="'+n.columnFilterCssClass+'"> <div class="'+n.columnFilterInputWrapperCssClass+'">   <input class="form-control input-sm" type="text" ng-model="columnOptions.filter" ng-keypress="speedUpAsyncDataRetrieval($event)"><\/input> <\/div><\/div>');t.get(n.columnSortTemplateId)||t.put(n.columnSortTemplateId,"<div ng-attr-title=\"{{'Sort'|"+n.translateFilter+':gridOptions.locale}}" ng-show="(gridOptions.enableSorting&&columnOptions.enableSorting!==false)||columnOptions.enableSorting" ng-click="toggleSorting(columnOptions.fieldName)" class="'+n.columnSortCssClass+'" >   <div ng-class="{\''+n.columnSortActiveCssClass+"':gridOptions.orderBy==columnOptions.fieldName,'"+n.columnSortInactiveCssClass+"':gridOptions.orderBy!=columnOptions.fieldName,'"+n.columnSortNormalOrderCssClass+"':gridOptions.orderBy==columnOptions.fieldName&&!gridOptions.orderByReverse,'"+n.columnSortReverseOrderCssClass+"':gridOptions.orderBy==columnOptions.fieldName&&gridOptions.orderByReverse}\" >  <\/div><\/div>");t.put(n.cellFooterTemplateId)||t.put(n.cellFooterTemplateId,'<div class="'+n.footerCssClass+'" ng-switch="isCustomized">  <div ng-switch-when="true">    <div ng-transclude=""><\/div>  <\/div>  <div ng-switch-default>    <span '+n.globalFilterDirectiveAttribute+'=""><\/span>    <span '+n.pagerDirectiveAttribute+'=""><\/span>  <\/div><\/div>');t.get(n.footerGlobalFilterTemplateId)||t.put(n.footerGlobalFilterTemplateId,'<span ng-show="gridOptions.enableFiltering" class="pull-left form-group">  <input class="form-control" type="text" ng-model="gridOptions.filterBy" ng-keypress="speedUpAsyncDataRetrieval($event)" ng-attr-placeholder="{{\'Search\'|'+n.translateFilter+':gridOptions.locale}}"><\/input><\/span>');t.get(n.footerPagerTemplateId)||t.put(n.footerPagerTemplateId,'<span class="pull-right form-group"> <ul class="pagination">   <li ng-class="{disabled:!pageCanGoBack}" ng-if="extendedControlsActive">     <a href="" ng-click="pageCanGoBack&&navigateToPage(0)" ng-attr-title="{{\'First Page\'|'+n.translateFilter+':gridOptions.locale}}">         <span>&laquo;<\/span>     <\/a>   <\/li>   <li ng-class="{disabled:!pageCanGoBack}" ng-if="extendedControlsActive">     <a href="" ng-click="pageCanGoBack&&navigateToPage(gridOptions.currentPage - 1)" ng-attr-title="{{\'Previous Page\'|'+n.translateFilter+':gridOptions.locale}}">         <span>&lsaquo;<\/span>     <\/a>   <\/li>   <li ng-if="pageSelectionActive" ng-repeat="pageIndex in pageIndexes track by $index" ng-class="{disabled:pageIndex===null, active:pageIndex===gridOptions.currentPage}">      <span ng-if="pageIndex===null">...<\/span>      <a href="" ng-click="navigateToPage(pageIndex)" ng-if="pageIndex!==null" ng-attr-title="{{\'Page\'|'+n.translateFilter+':gridOptions.locale}}">{{pageIndex+1}}<\/a>   <\/li>   <li ng-class="{disabled:!pageCanGoForward}" ng-if="extendedControlsActive">     <a href="" ng-click="pageCanGoForward&&navigateToPage(gridOptions.currentPage + 1)" ng-attr-title="{{\'Next Page\'|'+n.translateFilter+':gridOptions.locale}}">         <span>&rsaquo;<\/span>     <\/a>   <\/li>   <li ng-class="{disabled:!pageCanGoForward}" ng-if="extendedControlsActive">     <a href="" ng-click="pageCanGoForward&&navigateToPage(lastPageIndex)" ng-attr-title="{{\'Last Page\'|'+n.translateFilter+':gridOptions.locale}}">         <span>&raquo;<\/span>     <\/a>   <\/li>   <li class="disabled" style="white-space: nowrap;">     <span ng-hide="totalItemsCount">{{\'No items to display\'|'+n.translateFilter+':gridOptions.locale}}<\/span>     <span ng-show="totalItemsCount" ng-attr-title="{{\'Select Page\'|'+n.translateFilter+":gridOptions.locale}}\">       {{startItemIndex+1}} - {{endItemIndex+1}} {{'displayed'|"+n.translateFilter+":gridOptions.locale}}       <span>, {{totalItemsCount}} {{'in total'|"+n.translateFilter+":gridOptions.locale}}<\/span>     <\/span >    <\/li> <\/ul><\/span>")}var i,u,t,f,e,o,s;(function(n){n[n.None=0]="None";n[n.SingleRow=1]="SingleRow";n[n.MultiRow=2]="MultiRow";n[n.MultiRowWithKeyModifiers=3]="MultiRowWithKeyModifiers"})(n.SelectionMode||(n.SelectionMode={}));i=n.SelectionMode;n.defaultColumnOptions={cellWidth:null,cellHeight:null,displayAlign:null,displayFormat:null,displayName:null,filter:null,enableFiltering:null,enableSorting:null};n.translations={};n.debugMode=!1;u=!1;t="trNgGrid";n.dataPagingFilter=t+"DataPagingFilter";n.translateFilter=t+"TranslateFilter";n.translationDateFormat=t+"DateFormat";n.dataFormattingFilter=t+"DataFormatFilter";var l="tr-ng-grid-body",a="field-name",d="is-customized",g="tr-ng-grid-footer-cell",v="trNgGridFooterCellTemplate",nt="tr-ng-grid-footer-cell-template";n.cellFooterTemplateId=v+".html";f="trNgGridGlobalFilter";n.globalFilterDirectiveAttribute="tr-ng-grid-global-filter";n.footerGlobalFilterTemplateId=f+".html";e="trNgGridPager";n.pagerDirectiveAttribute="tr-ng-grid-pager";n.footerPagerTemplateId=e+".html";var y="trNgGridHeaderCell",tt="tr-ng-grid-header-cell",p="trNgGridHeaderCellTemplate",it="tr-ng-grid-header-cell-template";n.cellHeaderTemplateId=p+".html";var w="trNgGridBodyCell",rt="tr-ng-grid-body-cell",b="trNgGridBodyCellTemplate",ut="tr-ng-grid-body-cell-template";n.cellBodyTemplateId=b+".html";o="trNgGridColumnSort";n.columnSortDirectiveAttribute="tr-ng-grid-column-sort";n.columnSortTemplateId=o+".html";s="trNgGridColumnFilter";n.columnFilterDirectiveAttribute="tr-ng-grid-column-filter";n.columnFilterTemplateId=s+".html";var k=function(n,t){var r,i,u;for(t=t.toUpperCase(),r=n.children(),i=0;i<r.length;i++)if(u=r[i],u.tagName==t)return angular.element(u);return null},st=function(n,t){var r,u,i,f;for(t=t.toUpperCase(),r=[],u=n.children(),i=0;i<u.length;i++)f=u[i],f.tagName==t&&r.push(angular.element(f));return r},r=function(n,t,i,r){var u=[],f=t.slice(0);return angular.forEach(n,function(n){for(var t=null,i=0;!t&&i<f.length;i++)t=f[i],t.fieldName===n.fieldName?f.splice(i,1):t=null;t?u.push(t):u.push(n)}),(i||r)&&angular.forEach(f,function(n){(i&&n.fieldName||r&&!n.fieldName)&&u.push(n)}),u},h=function(n,t,i,r){var u,e,f;i?(u=n.children(),e=angular.element(u[0]),u.length===1&&e.attr(r)||(n.empty(),f=angular.element("<div><\/div>").attr(r,""),n.append(f),angular.forEach(u,function(n){f.append(angular.element(n))}))):(n.empty(),n.append(angular.element("<div><\/div>").attr(r,"")))},ft=function(){function n(n,t){this.parent=n;this.cellElement=t;this.fieldName=t.attr(a);var i=t.children();this.isStandardColumn=i.length===0}return n}(),c=function(){function n(n,t,i,r,u){this.sectionTagName=n;this.sectionDirectiveAttribute=t;this.rowDirectiveAttribute=i;this.cellTagName=r;this.cellDirectiveAttribute=u;this.cellTagName=this.cellTagName.toUpperCase();this.cells=null}return n.prototype.configureSection=function(n,t){var i=this,u=this.getSectionElement(n,!0),f,e;return u.empty(),u.removeAttr("ng-non-bindable"),f=r(t,this.cells,!1,!1),e=this.getTemplatedRowElement(u,!0),angular.forEach(f,function(n,t){var r,u=n;r=u.parent===i&&u.cellElement?u.cellElement.clone(!0):angular.element("<table><"+i.cellTagName+"><\/"+i.cellTagName+"><\/table>").find(i.cellTagName);i.cellDirectiveAttribute&&r.attr(i.cellDirectiveAttribute,t);n.isStandardColumn||r.attr(d,"true");n.fieldName&&r.attr(a,n.fieldName);r.attr("ng-style","{'width':columnOptions.cellWidth,'height':columnOptions.cellHeight}");e.append(r)}),u},n.prototype.extractPartialColumnDefinitions=function(){return this.cells},n.prototype.discoverCells=function(n){var t=this,i;this.cells=[];i=this.getTemplatedRowElement(this.getSectionElement(n,!1),!1);i&&angular.forEach(i.children(),function(n){if(n=angular.element(n),n[0].tagName===t.cellTagName.toUpperCase()){var i=n.clone(!0);t.cells.push(new ft(t,i))}})},n.prototype.getSectionElement=function(n,t){var i=null;return n&&(i=k(n,this.sectionTagName)),!i&&t&&(i=angular.element("<table><"+this.sectionTagName+"><\/"+this.sectionTagName+"><\/table>").find(this.sectionTagName),n&&n.append(i)),t&&this.sectionDirectiveAttribute&&i.attr(this.sectionDirectiveAttribute,""),i},n.prototype.getTemplatedRowElement=function(n,t){var i=null;return n&&(i=k(n,"tr")),!i&&t&&(i=angular.element("<table><tr><\/tr><\/table>").find("tr"),n&&n.append(i)),t&&this.rowDirectiveAttribute&&i.attr(this.rowDirectiveAttribute,""),i},n}(),et=function(){function f(n,t,i,r){this.$compile=n;this.$parse=t;this.$timeout=i;u||(ot(r),u=!0)}return f.prototype.setupScope=function(t,r,u){var f=this,e=angular.element(r).scope().$new(),o;return this.gridOptions={immediateDataRetrieval:!0,items:[],fields:null,locale:"en",selectedItems:[],filterBy:null,filterByFields:{},orderBy:null,orderByReverse:!1,pageItems:null,currentPage:0,totalItems:null,enableFiltering:!0,enableSorting:!0,selectionMode:i[2],onDataRequiredDelay:1e3},this.gridOptions.onDataRequired=u.onDataRequired?t.onDataRequired:null,this.gridOptions.gridColumnDefs=[],e.gridOptions=this.gridOptions,e.TrNgGrid=n,this.linkScope(e,t,"gridOptions",u),this.gridOptions.onDataRequired&&(o=function(){f.dataRequestPromise=null;f.gridOptions.immediateDataRetrieval=!1;f.gridOptions.onDataRequired(f.gridOptions)},e.$watchCollection("[gridOptions.filterBy, gridOptions.filterByFields, gridOptions.orderBy, gridOptions.orderByReverse, gridOptions.pageItems, gridOptions.currentPage]",function(){f.dataRequestPromise&&(f.$timeout.cancel(f.dataRequestPromise),f.dataRequestPromise=null);f.gridOptions.immediateDataRetrieval?o():f.dataRequestPromise=f.$timeout(function(){o()},f.gridOptions.onDataRequiredDelay,!0)}),e.$watch("gridOptions.immediateDataRetrieval",function(n){n&&f.dataRequestPromise&&(f.$timeout.cancel(f.dataRequestPromise),o())})),e.$watch("gridOptions.selectionMode",function(n,t){if(n!==t)switch(n){case i[0]:f.gridOptions.selectedItems.splice(0);break;case i[1]:f.gridOptions.selectedItems.length>1&&f.gridOptions.selectedItems.splice(1)}}),e},f.prototype.speedUpAsyncDataRetrieval=function(n){n&&n.keyCode!=13||(this.gridOptions.immediateDataRetrieval=!0)},f.prototype.setColumnOptions=function(n,t){var i=this.gridOptions.gridColumnDefs[n];if(!i)throw"Invalid grid column options found for column index "+n+". Please report this error.";t=angular.extend(t,i);this.gridOptions.gridColumnDefs[n]=t},f.prototype.toggleSorting=function(n){this.gridOptions.orderBy!=n?this.gridOptions.orderBy=n:this.gridOptions.orderByReverse=!this.gridOptions.orderByReverse;this.speedUpAsyncDataRetrieval()},f.prototype.getFormattedFieldName=function(n){return n.replace(/[\.\[\]]/g,"_")},f.prototype.setFilter=function(n,t){t?this.gridOptions.filterByFields[n]=t:delete this.gridOptions.filterByFields[n];this.gridOptions.filterByFields=angular.extend({},this.gridOptions.filterByFields)},f.prototype.toggleItemSelection=function(n,t,r){var h,f,c,e,l,o,s,u;if(this.gridOptions.selectionMode!==i[0])switch(this.gridOptions.selectionMode){case i[3]:if(r.ctrlKey||r.shiftKey||r.metaKey){if(r.ctrlKey||r.metaKey)u=this.gridOptions.selectedItems.indexOf(t),u>=0?this.gridOptions.selectedItems.splice(u,1):this.gridOptions.selectedItems.push(t);else if(r.shiftKey){for(document.selection&&document.selection.empty?document.selection.empty():window.getSelection&&(h=window.getSelection(),h.removeAllRanges()),c=this.gridOptions.selectedItems[this.gridOptions.selectedItems.length-1],f=0;f<n.length&&n[f].$$_gridItem!==c;f++);for(f>=n.length&&(f=0),e=0;e<n.length&&n[e].$$_gridItem!==t;e++);if(e>=n.length)throw"Invalid selection on a key modifier selection mode";for(e<f&&(l=f,f=e,e=l),o=f;o<=e;o++)s=n[o].$$_gridItem,this.gridOptions.selectedItems.indexOf(s)<0&&this.gridOptions.selectedItems.push(s)}}else u=this.gridOptions.selectedItems.indexOf(t),this.gridOptions.selectedItems.splice(0),u<0&&this.gridOptions.selectedItems.push(t);break;case i[1]:u=this.gridOptions.selectedItems.indexOf(t);this.gridOptions.selectedItems.splice(0);u<0&&this.gridOptions.selectedItems.push(t);break;case i[2]:u=this.gridOptions.selectedItems.indexOf(t);u>=0?this.gridOptions.selectedItems.splice(u,1):this.gridOptions.selectedItems.push(t)}},f.prototype.discoverTemplates=function(n){this.templatedHeader=new c("thead",null,null,"th",tt);this.templatedBody=new c("tbody",l,null,"td",rt);this.templatedFooter=new c("tfoot",null,null,"td",g);this.templatedHeader.discoverCells(n);this.templatedFooter.discoverCells(n);this.templatedBody.discoverCells(n)},f.prototype.configureTableStructure=function(t,i,u){var h=this,e=t.$new(),y;i.empty();this.columnDefsItemsWatcherDeregistration&&(this.columnDefsItemsWatcherDeregistration(),this.columnDefsItemsWatcherDeregistration=null);this.columnDefsFieldsWatcherDeregistration&&(this.columnDefsFieldsWatcherDeregistration(),this.columnDefsFieldsWatcherDeregistration=null);this.columnDefsFieldsWatcherDeregistration=e.$watch("gridOptions.fields",function(n,r){angular.equals(n,r)||h.configureTableStructure(t,i,e)},!0);var c=this.templatedHeader.extractPartialColumnDefinitions(),a=this.templatedBody.extractPartialColumnDefinitions(),v=this.templatedFooter.extractPartialColumnDefinitions(),f=[],b=this.gridOptions.fields;if(b)angular.forEach(this.gridOptions.fields,function(n){n&&f.push({isStandardColumn:!0,fieldName:n})}),f=r(f,c,!1,!0),f=r(f,a,!1,!0);else if(c.length>0)f=r(c,a,!0,!0);else{if(!this.gridOptions.items||this.gridOptions.items.length==0){this.columnDefsItemsWatcherDeregistration=e.$watch("gridOptions.items.length",function(n){n&&h.configureTableStructure(t,i,e)});return}for(y in this.gridOptions.items[0])y.match(/^[_\$]/g)||f.push({isStandardColumn:!0,fieldName:y});f=r(f,a,!0,!0)}v.length==0&&v.push({isStandardColumn:!0});angular.forEach(f,function(n){n.fieldName&&(n.displayFieldName=h.getFormattedFieldName(n.fieldName))});this.gridOptions.gridColumnDefs=f;var p=this.templatedHeader.configureSection(i,f),w=this.templatedFooter.configureSection(i,v),o=this.templatedBody.configureSection(i,f),s=this.templatedBody.getTemplatedRowElement(o),k=this.templatedHeader.getTemplatedRowElement(p);o.attr(l,"");s.attr("ng-click","toggleItemSelection(gridItem, $event)");s.attr("ng-repeat","gridDisplayItem in filteredItems");s.attr("ng-init","gridItem=gridDisplayItem.$$_gridItem");s.attr("ng-class","{'"+n.rowSelectedCssClass+"':gridOptions.selectedItems.indexOf(gridItem)>=0}");p.replaceWith(this.$compile(p)(e));w.replaceWith(this.$compile(w)(e));o.replaceWith(this.$compile(o)(e));u&&this.$timeout(function(){return u.$destroy()})},f.prototype.computeFormattedItems=function(scope){var input=scope.gridOptions.items||[],formattedItems,gridColumnDefs,inputIndex,inputItem,outputItem,gridColumnDefIndex,gridColumnDef,fieldName,displayFormat;for(n.debugMode&&this.log("formatting items of length "+input.length),formattedItems=scope.formattedItems=scope.formattedItems||[],scope.gridOptions.onDataRequired?scope.filteredItems=formattedItems:scope.requiresReFilteringTrigger=!scope.requiresReFilteringTrigger,gridColumnDefs=scope.gridOptions.gridColumnDefs,inputIndex=0;inputIndex<input.length;inputIndex++){for(inputItem=input[inputIndex];formattedItems.length>input.length&&(outputItem=formattedItems[inputIndex]).$$_gridItem!==inputItem;)formattedItems.splice(inputIndex,1);for(inputIndex<formattedItems.length?(outputItem=formattedItems[inputIndex],outputItem.$$_gridItem!==inputItem&&(outputItem={$$_gridItem:inputItem},formattedItems[inputIndex]=outputItem)):(outputItem={$$_gridItem:inputItem},formattedItems.push(outputItem)),gridColumnDefIndex=0;gridColumnDefIndex<gridColumnDefs.length;gridColumnDefIndex++)try{gridColumnDef=gridColumnDefs[gridColumnDefIndex];fieldName=gridColumnDef.fieldName;fieldName&&(displayFormat=gridColumnDef.displayFormat,displayFormat?(displayFormat[0]!="."&&displayFormat[0]!="|"&&(displayFormat=" | "+displayFormat),outputItem[gridColumnDef.displayFieldName]=scope.$eval("gridOptions.items["+inputIndex+"]."+fieldName+displayFormat)):outputItem[gridColumnDef.displayFieldName]=eval("inputItem."+fieldName))}catch(ex){n.debugMode&&this.log("Field evaluation failed for <"+fieldName+"> with error "+ex)}}formattedItems.length>input.length&&formattedItems.splice(input.length,formattedItems.length-input.length)},f.prototype.computeFilteredItems=function(t){if(t.filterByDisplayFields={},t.gridOptions.filterByFields)for(var i in t.gridOptions.filterByFields)t.filterByDisplayFields[this.getFormattedFieldName(i)]=t.gridOptions.filterByFields[i];n.debugMode&&this.log("filtering items of length "+(t.formattedItems?t.formattedItems.length:0));t.filteredItems=t.$eval("formattedItems | filter:gridOptions.filterBy | filter:filterByDisplayFields | orderBy:'$$_gridItem.'+gridOptions.orderBy:gridOptions.orderByReverse | "+n.dataPagingFilter+":gridOptions")},f.prototype.setupDisplayItemsArray=function(t){var r=this,i="[gridOptions.items,gridOptions.gridColumnDefs.length";angular.forEach(t.gridOptions.gridColumnDefs,function(n){if(n.displayFormat&&n.displayFormat[0]!="."){var t=n.displayFormat.split("|");angular.forEach(t,function(n){var t=n.split(":");t.length>1&&angular.forEach(t.slice(1),function(n){n=n.trim();n&&(i+=","+n)})})}});i+="]";n.debugMode&&this.log("re-formatting is set to watch for changes in "+i);t.$watch(i,function(){return r.computeFormattedItems(t)},!0);t.gridOptions.onDataRequired||(i="[requiresReFilteringTrigger, gridOptions.filterBy, gridOptions.filterByFields, gridOptions.orderBy, gridOptions.orderByReverse, gridOptions.currentPage, gridOptions.pageItems]",t.$watch(i,function(){r.computeFilteredItems(t)},!0))},f.prototype.linkAttrs=function(n,t){var r=function(n,i){if(typeof i!="undefined"){switch(i){case"true":i=!0;break;case"false":i=!1}t[n]=i}};for(var i in t)r(i,n[i]),function(t){n.$observe(t,function(n){return r(t,n)})}(i)},f.prototype.linkScope=function(t,i,r,u){var c=this,e=t[r],f,s,h,o;for(f in e)if(s=typeof u[f]!="undefined"&&u[f]!=null,s){h=!1;typeof i[f]!="undefined"&&i[f]!=null&&(e[f]=i[f],h=e[f]instanceof Array);o=null;try{o=this.$parse(u[f])}catch(l){}(function(u,f){f&&f.constant||i.$watch(u,function(n){e[u]=n});var o=f&&f.assign?f.assign:null;o&&t.$watch(r+"."+u,function(t){try{i[u]=t}catch(r){if(n.debugMode){c.log("Mirroring the property on the external scope failed with "+r);throw r;}}})})(f,o)}},f.prototype.log=function(n){console.log(t+"("+(new Date).getTime()+"): "+n)},f}();angular.module("trNgGrid",[]).directive(t,[function(){return{restrict:"A",scope:{items:"=",selectedItems:"=?",filterBy:"=?",filterByFields:"=?",orderBy:"=?",orderByReverse:"=?",pageItems:"=?",currentPage:"=?",totalItems:"=?",enableFiltering:"=?",enableSorting:"=?",enableSelections:"=?",enableMultiRowSelections:"=?",selectionMode:"@",locale:"@",onDataRequired:"&",onDataRequiredDelay:"=?",fields:"=?"},template:function(t){t.addClass(n.tableCssClass);angular.forEach(t.children(),function(n){n=angular.element(n);n.attr("ng-non-bindable","")})},controller:["$compile","$parse","$timeout","$templateCache",et],compile:function(){return{pre:function(n,t,i,r){r.discoverTemplates(t)},post:function(n,t,i,r){var u=r.setupScope(n,t,i);u.speedUpAsyncDataRetrieval=function(n){return r.speedUpAsyncDataRetrieval(n)};r.configureTableStructure(u,t);r.setupDisplayItemsArray(u)}}}}}]).directive(y,[function(){var i=function(n){if(n.columnOptions.displayName)n.columnTitle=n.columnOptions.displayName;else if(n.columnOptions.fieldName){var t=n.columnOptions.fieldName.match(/^[^\.\[\]]*/);t=t[0].split(/(?=[A-Z])/);t.length&&t[0].length&&(t[0]=t[0][0].toLocaleUpperCase()+t[0].substr(1));n.columnTitle=t.join(" ")}else n.columnTitle="[Invalid Field Name]"};return{restrict:"A",require:"^"+t,scope:!0,compile:function(t,r){var u=r.isCustomized=="true";return h(t,r,u,it),{pre:function(t,r,f,e){var s=parseInt(f[y]),o=angular.extend(t.gridOptions.gridColumnDefs[s],n.defaultColumnOptions);e.linkAttrs(f,o);t.columnOptions=o;t.isCustomized=u;t.toggleSorting=function(n){e.toggleSorting(n)};i(t);t.$watch("columnOptions.filter",function(n,t){n!==t&&e.setFilter(o.fieldName,n)})}}}}}]).directive(p,[function(){return{restrict:"A",templateUrl:n.cellHeaderTemplateId,transclude:!0,replace:!0}}]).directive("trNgGridBody",[function(){return{restrict:"A",require:"^"+t,scope:!0,compile:function(){return{pre:function(n,t,i,r){n.toggleItemSelection=function(t,i){r.toggleItemSelection(n.filteredItems,t,i)}}}}}}]).directive(w,[function(){return{restrict:"A",require:"^"+t,scope:!0,compile:function(n,t){var i=t.isCustomized=="true";return h(n,t,i,ut),{pre:function(n,t,r){n.columnOptions=n.gridOptions.gridColumnDefs[parseInt(r[w])];n.gridItem=n.gridDisplayItem.$$_gridItem;n.isCustomized=i}}}}}]).directive(b,[function(){return{restrict:"A",templateUrl:n.cellBodyTemplateId,transclude:!0,replace:!0}}]).directive("trNgGridFooterCell",[function(){return{restrict:"A",require:"^"+t,scope:!0,compile:function(n,t){var i=t.isCustomized=="true";return h(n,t,i,nt),{pre:function(n,t){n.isCustomized=i;t.attr("colspan",n.gridOptions.gridColumnDefs.length)}}}}}]).directive(v,[function(){return{restrict:"A",templateUrl:n.cellFooterTemplateId,transclude:!0,replace:!0}}]).directive(o,[function(){return{restrict:"A",replace:!0,templateUrl:n.columnSortTemplateId}}]).directive(s,[function(){return{restrict:"A",replace:!0,templateUrl:n.columnFilterTemplateId}}]).directive(f,[function(){return{restrict:"A",scope:!1,templateUrl:n.footerGlobalFilterTemplateId}}]).directive(e,[function(){var i=function(t){var f,i;if(t.totalItemsCount=typeof t.gridOptions.totalItems!="undefined"&&t.gridOptions.totalItems!=null?t.gridOptions.totalItems:t.gridOptions.items?t.gridOptions.items.length:0,t.isPaged=!!t.gridOptions.pageItems&&t.gridOptions.pageItems<t.totalItemsCount,t.extendedControlsActive=!1,t.startItemIndex=t.isPaged?t.gridOptions.pageItems*t.gridOptions.currentPage:0,t.endItemIndex=t.isPaged?t.startItemIndex+t.gridOptions.pageItems-1:t.totalItemsCount-1,t.endItemIndex>=t.totalItemsCount&&(t.endItemIndex=t.totalItemsCount-1),t.endItemIndex<t.startItemIndex&&(t.endItemIndex=t.startItemIndex),t.lastPageIndex=!t.totalItemsCount||!t.isPaged?0:Math.floor(t.totalItemsCount/t.gridOptions.pageItems)+(t.totalItemsCount%t.gridOptions.pageItems?0:-1),t.pageCanGoBack=t.isPaged&&t.gridOptions.currentPage>0,t.pageCanGoForward=t.isPaged&&t.gridOptions.currentPage<t.lastPageIndex,t.pageIndexes=t.pageIndexes||[],t.pageIndexes.splice(0),t.isPaged)if(t.lastPageIndex+1>n.defaultPagerMinifiedPageCountThreshold){t.extendedControlsActive=!0;var e=Math.floor(n.defaultPagerMinifiedPageCountThreshold/2),r=t.gridOptions.currentPage-e,u=t.gridOptions.currentPage+e;for(r<0?(u+=-r,r=0):u>t.lastPageIndex&&(r-=u-t.lastPageIndex,u=t.lastPageIndex),r>0&&(t.pageIndexes.push(null),r++),f=!1,u<t.lastPageIndex&&(f=!0,u--),i=r;i<=u;i++)t.pageIndexes.push(i);f&&t.pageIndexes.push(null)}else for(t.extendedControlsActive=!1,i=0;i<=t.lastPageIndex;i++)t.pageIndexes.push(i);t.pageSelectionActive=t.pageIndexes.length>1;t.navigateToPage=function(n){t.gridOptions.currentPage=n;t.speedUpAsyncDataRetrieval()};t.switchPageSelection=function(n,i){t.pageSelectionActive=i;n&&(n.preventDefault(),n.stopPropagation())}};return{restrict:"A",scope:!0,require:"^"+t,templateUrl:n.footerPagerTemplateId,replace:!0,compile:function(){return{pre:function(n,t,r,u){i(n,u)},post:function(n,t,r,u){n.$watchCollection("[gridOptions.currentPage, gridOptions.items.length, gridOptions.totalItems, gridOptions.pageItems]",function(){i(n,u)})}}}}}]).filter(n.dataPagingFilter,function(){return function(n,t){var i,r;return(n&&(t.totalItems=n.length),!t.pageItems||!n||n.length==0)?n:(t.currentPage||(t.currentPage=0),i=t.currentPage*t.pageItems,i>=n.length&&(t.currentPage=0,i=0),r=t.currentPage*t.pageItems+t.pageItems,n.slice(i,r))}}).filter(n.translateFilter,["$filter",function(t){return function(i,r){var u,f,o,e,c,s,h;if(i instanceof Date)return(f=t(n.translateFilter)(n.translationDateFormat,r),f&&f!==n.translationDateFormat)?t("date")(i,f):i;if(!u)for(o=r.split(/[-_]/),e=o.length;e>0&&!u;e--)c=o.slice(0,e).join("-"),s=n.translations[c],s&&(u=s[i]);if(!u)try{h=t("translate");h&&(u=h(i))}catch(l){}return u||(u=i),u}}]).run(function(){n.tableCssClass="tr-ng-grid table table-bordered table-hover";n.cellCssClass="tr-ng-cell";n.headerCellCssClass="tr-ng-column-header "+n.cellCssClass;n.bodyCellCssClass=n.cellCssClass;n.columnTitleCssClass="tr-ng-title";n.columnSortCssClass="tr-ng-sort";n.columnFilterCssClass="tr-ng-column-filter";n.columnFilterInputWrapperCssClass="";n.columnSortActiveCssClass="tr-ng-sort-active text-info";n.columnSortInactiveCssClass="tr-ng-sort-inactive text-muted glyphicon glyphicon-chevron-down";n.columnSortReverseOrderCssClass="tr-ng-sort-order-reverse glyphicon glyphicon-chevron-down";n.columnSortNormalOrderCssClass="tr-ng-sort-order-normal glyphicon glyphicon-chevron-up";n.rowSelectedCssClass="active";n.footerCssClass="tr-ng-grid-footer form-inline"}).run(function(){n.defaultColumnOptions.displayAlign="left";n.defaultPagerMinifiedPageCountThreshold=3})})(TrNgGrid||(TrNgGrid={}));
 /**
- * @license AngularJS v1.3.6
+ * @license AngularJS v1.3.8
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -57192,7 +58354,7 @@ angular.module('ui.utils',  [
 ]);
 
 /**
- * @license AngularJS v1.3.6
+ * @license AngularJS v1.3.8
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -57309,7 +58471,7 @@ function shallowClearAndCopy(src, dst) {
  *   example, if the `defaultParam` object is `{someParam: '@someProp'}` then the value of `someParam`
  *   will be `data.someProp`.
  *
- * @param {Object.<Object>=} actions Hash with declaration of custom action that should extend
+ * @param {Object.<Object>=} actions Hash with declaration of custom actions that should extend
  *   the default set of resource actions. The declaration should be created in the format of {@link
  *   ng.$http#usage $http.config}:
  *
@@ -68718,6 +69880,18 @@ return tv4; // used by _header.js to globalise.
 
 		normalize: function(data, quote){
 			return ObjectPath.stringify(Array.isArray(data) ? data : ObjectPath.parse(data), quote);
+		},
+
+		// Angular
+		registerModule: function(angular) {
+			angular.module('ObjectPath', []).provider('ObjectPath', function(){
+				this.parse = ObjectPath.parse;
+				this.stringify = ObjectPath.stringify;
+				this.normalize = ObjectPath.normalize;
+				this.$get = function(){
+					return ObjectPath;
+				};
+			});
 		}
 	};
 
@@ -68733,25 +69907,14 @@ return tv4; // used by _header.js to globalise.
 		exports.ObjectPath = ObjectPath;
 	}
 
-	// Angular
-	else if (typeof angular === 'object') {
-		angular.module('ObjectPath', []).provider('ObjectPath', function(){
-			this.parse = ObjectPath.parse;
-			this.stringify = ObjectPath.stringify;
-			this.normalize = ObjectPath.normalize;
-			this.$get = function(){
-				return ObjectPath;
-			};
-		});
-	}
-
-	// Browser global.
+	// Browser global
 	else {
 		window.ObjectPath = ObjectPath;
 	}
+	
 }();
 /**
- * @license AngularJS v1.2.27
+ * @license AngularJS v1.2.28
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -70456,14 +71619,14 @@ angular.module('ngAnimate', ['ng'])
 /**
 * @author Jason Dobry <jason.dobry@gmail.com>
 * @file angular-cache.min.js
-* @version 3.2.3 - Homepage <https://github.com/jmdobry/angular-cache>
+* @version 3.2.4 - Homepage <https://github.com/jmdobry/angular-cache>
 * @copyright (c) 2013-2014 Jason Dobry <http://www.pseudobry.com>
 * @license MIT <https://github.com/jmdobry/angular-cache/blob/master/LICENSE>
 *
 * @overview angular-cache is a very useful replacement for Angular's $cacheFactory.
 */
 
-!function a(b,c,d){function e(g,h){if(!c[g]){if(!b[g]){var i="function"==typeof require&&require;if(!h&&i)return i(g,!0);if(f)return f(g,!0);var j=new Error("Cannot find module '"+g+"'");throw j.code="MODULE_NOT_FOUND",j}var k=c[g]={exports:{}};b[g][0].call(k.exports,function(a){var c=b[g][1][a];return e(c?c:a)},k,k.exports,a,b,c,d)}return c[g].exports}for(var f="function"==typeof require&&require,g=0;g<d.length;g++)e(d[g]);return e}({1:[function(a,b){function c(a,b,c){for(var d=a[c],e=b(d);c>0;){var f=Math.floor((c+1)/2)-1,g=a[f];if(e>=b(g))break;a[f]=d,a[c]=g,c=f}}function d(a,b,c){for(var d=a.length,e=a[c],f=b(e);;){var g=2*(c+1),h=g-1,i=null;if(d>h){var j=a[h],k=b(j);f>k&&(i=h)}if(d>g){var l=a[g],m=b(l);m<(null===i?f:b(a[h]))&&(i=g)}if(null===i)break;a[c]=a[i],a[i]=e,c=i}}function e(a){if(a&&!angular.isFunction(a))throw new Error("DSBinaryHeap(weightFunc): weightFunc: must be a function!");a=a||function(a){return a},this.weightFunc=a,this.heap=[]}function f(){this.$get=function(){return e}}e.prototype.push=function(a){this.heap.push(a),c(this.heap,this.weightFunc,this.heap.length-1)},e.prototype.peek=function(){return this.heap[0]},e.prototype.pop=function(){var a=this.heap[0],b=this.heap.pop();return this.heap.length>0&&(this.heap[0]=b,d(this.heap,this.weightFunc,0)),a},e.prototype.remove=function(a){for(var b=this.heap.length,e=0;b>e;e++)if(angular.equals(this.heap[e],a)){var f=this.heap[e],g=this.heap.pop();return e!==b-1&&(this.heap[e]=g,c(this.heap,this.weightFunc,e),d(this.heap,this.weightFunc,e)),f}return null},e.prototype.removeAll=function(){this.heap=[]},e.prototype.size=function(){return this.heap.length},b.exports={DSBinaryHeapProvider:f,DSBinaryHeap:e}},{}],2:[function(a,b){b.exports=function(){var a=this;clearInterval(a.$$cacheFlushIntervalId),clearInterval(a.$$recycleFreqId),a.removeAll(),a.$$storage&&(a.$$storage().removeItem(a.$$prefix+".keys"),a.$$storage().removeItem(a.$$prefix)),a.$$storage=null,a.$$data=null,a.$$lruHeap=null,a.$$expiresHeap=null,a.$$prefix=null}},{}],3:[function(a,b){var c=a("../utils");b.exports=function(a,b){var d=this;if(angular.isArray(a)){var e=a,f=[];return angular.forEach(e,function(a){var c=d.get(a,b);null!==c&&void 0!==c&&f.push(c)}),f}if(a=c.stringifyNumber(a),!d.$$disabled){if(b=b||{},!angular.isString(a))throw angular.$$minErr("ng")("areq","Expected key to be a string! Found: {0}.",typeof a);if(b&&!angular.isObject(b))throw angular.$$minErr("ng")("areq","Expected options to be an object! Found: {0}.",typeof b);if(b.onExpire&&!angular.isFunction(b.onExpire))throw angular.$$minErr("ng")("areq","Expected options.onExpire to be a function! Found: {0}.",typeof b.onExpire);var g;if(d.$$storage){if(d.$$promises[a])return d.$$promises[a];var h=d.$$storage().getItem(d.$$prefix+".data."+a);if(!h)return;g=angular.fromJson(h)}else{if(!(a in d.$$data))return;g=d.$$data[a]}var i=g.value,j=(new Date).getTime();return d.$$storage?(d.$$lruHeap.remove({key:a,accessed:g.accessed}),g.accessed=j,d.$$lruHeap.push({key:a,accessed:j})):(d.$$lruHeap.remove(g),g.accessed=j,d.$$lruHeap.push(g)),"passive"===d.$$deleteOnExpire&&"expires"in g&&g.expires<j?(d.remove(a),d.$$onExpire?d.$$onExpire(a,g.value,b.onExpire):b.onExpire&&b.onExpire(a,g.value),i=void 0):d.$$storage&&d.$$storage().setItem(d.$$prefix+".data."+a,JSON.stringify(g)),i}}},{"../utils":21}],4:[function(a,b){function c(a,b){var c=this;if(!angular.isString(a))throw angular.$$minErr("ng")("areq","Expected storageMode to be a string! Found: {0}.",typeof a);if("memory"!==a&&"localStorage"!==a&&"sessionStorage"!==a)throw angular.$$minErr("ng")("areq",'Expected storageMode to be "memory", "localStorage" or "sessionStorage"! Found: {0}.',a);if(c.$$storageMode=a,b){if(!angular.isObject(b))throw angular.$$minErr("ng")("areq","Expected storageImpl to be an object! Found: {0}.",typeof b);if(!("setItem"in b&&"function"==typeof b.setItem))throw angular.$$minErr("ng")("areq",'Expected storageImpl to implement "setItem(key, value)"! Found: {0}.',typeof b.setItem);if(!("getItem"in b&&"function"==typeof b.getItem))throw angular.$$minErr("ng")("areq",'Expected storageImpl to implement "getItem(key)"! Found: {0}.',typeof b.getItem);if(!("removeItem"in b)||"function"!=typeof b.removeItem)throw angular.$$minErr("ng")("areq",'Expected storageImpl to implement "removeItem(key)"! Found: {0}.',typeof b.removeItem);c.$$storage=function(){return b}}else if("localStorage"===c.$$storageMode)try{localStorage.setItem("angular-cache","angular-cache"),localStorage.removeItem("angular-cache"),c.$$storage=function(){return localStorage}}catch(d){delete c.$$storage,c.$$storageMode="memory"}else if("sessionStorage"===c.$$storageMode)try{sessionStorage.setItem("angular-cache","angular-cache"),sessionStorage.removeItem("angular-cache"),c.$$storage=function(){return sessionStorage}}catch(d){delete c.$$storage,c.$$storageMode="memory"}}function d(a,b){var c=this;if(a=a||{},b=!!b,!angular.isObject(a))throw angular.$$minErr("ng")("areq","Expected cacheOptions to be an object! Found: {0}.",typeof a);"disabled"in a?c.$$disabled=!!a.disabled:b&&delete c.$$disabled,"storeOnResolve"in a?c.$$storeOnResolve=!!a.storeOnResolve:b&&(c.$$storeOnResolve=!1),"storeOnReject"in a?c.$$storeOnReject=!!a.storeOnReject:b&&(c.$$storeOnReject=!1),"capacity"in a?c.setCapacity(a.capacity):b&&c.setCapacity(null),"deleteOnExpire"in a?c.setDeleteOnExpire(a.deleteOnExpire):b&&c.setDeleteOnExpire(null),"maxAge"in a?c.setMaxAge(a.maxAge):b&&c.setMaxAge(null),"recycleFreq"in a?c.setRecycleFreq(a.recycleFreq):b&&c.setRecycleFreq(null),"cacheFlushInterval"in a?c.setCacheFlushInterval(a.cacheFlushInterval):b&&c.setCacheFlushInterval(null),"onExpire"in a?c.setOnExpire(a.onExpire):b&&c.setOnExpire(null)}function e(a,b){var e=this;e.$$data={},e.$$promises={},e.$$id=a,e.$$storage=null,e.$$expiresHeap=new g(function(a){return a.expires}),e.$$lruHeap=new g(function(a){return a.accessed}),b=b||{},"storageMode"in b&&c.apply(e,[b.storageMode,b.storageImpl]),"storagePrefix"in b&&(e.$$storagePrefix=b.storagePrefix),e.$$prefix=e.$$storagePrefix+a,d.apply(e,[b,!0])}var f=a("../defaults"),g=a("../DSBinaryHeap").DSBinaryHeap;for(var h in f.defaults)e.prototype["$$"+h]=f.defaults[h];e.prototype.setOptions=d,e.prototype.setCapacity=a("./setCapacity"),e.prototype.setDeleteOnExpire=a("./setDeleteOnExpire"),e.prototype.setMaxAge=a("./setMaxAge"),e.prototype.setRecycleFreq=a("./setRecycleFreq"),e.prototype.setCacheFlushInterval=a("./setCacheFlushInterval"),e.prototype.setOnExpire=a("./setOnExpire"),e.prototype.put=a("./put"),e.prototype.get=a("./get"),e.prototype.remove=a("./remove"),e.prototype.removeAll=a("./removeAll"),e.prototype.removeExpired=a("./removeExpired"),e.prototype.destroy=a("./destroy"),e.prototype.info=a("./info"),e.prototype.keySet=a("./keySet"),e.prototype.keys=a("./keys"),e.prototype.disable=function(){this.$$disabled=!0},e.prototype.enable=function(){delete this.$$disabled},e.prototype.touch=function(a){var b=this;if(a){var c=b.get(a,{onExpire:function(a,c){b.put(a,c)}});c&&b.put(a,c)}else for(var d=b.keys(),e=0;e<d.length;e++)b.touch(d[e])},b.exports=e},{"../DSBinaryHeap":1,"../defaults":19,"./destroy":2,"./get":3,"./info":5,"./keySet":6,"./keys":7,"./put":8,"./remove":9,"./removeAll":10,"./removeExpired":11,"./setCacheFlushInterval":12,"./setCapacity":13,"./setDeleteOnExpire":14,"./setMaxAge":15,"./setOnExpire":16,"./setRecycleFreq":17}],5:[function(a,b){b.exports=function(a){var b=this;if(a){var c;if(b.$$storage){var d=b.$$storage().getItem(b.$$prefix+".data."+a);return d?(c=angular.fromJson(d),{created:c.created,accessed:c.accessed,expires:c.expires,isExpired:(new Date).getTime()-c.created>b.$$maxAge}):void 0}return a in b.$$data?(c=b.$$data[a],{created:c.created,accessed:c.accessed,expires:c.expires,isExpired:(new Date).getTime()-c.created>b.$$maxAge}):void 0}return{id:b.$$id,capacity:b.$$capacity,maxAge:b.$$maxAge,deleteOnExpire:b.$$deleteOnExpire,onExpire:b.$$onExpire,cacheFlushInterval:b.$$cacheFlushInterval,recycleFreq:b.$$recycleFreq,storageMode:b.$$storageMode,storageImpl:b.$$storage?b.$$storage():void 0,disabled:b.$$disabled,size:b.$$lruHeap&&b.$$lruHeap.size()||0}}},{}],6:[function(a,b){var c=a("../utils");b.exports=function(){var a=this;if(a.$$storage){var b=a.$$storage().getItem(a.$$prefix+".keys"),d={};if(b)for(var e=angular.fromJson(b),f=0;f<e.length;f++)d[e[f]]=e[f];return d}return c.keySet(a.$$data)}},{"../utils":21}],7:[function(a,b){var c=a("../utils");b.exports=function(){var a=this;if(a.$$storage){var b=a.$$storage().getItem(a.$$prefix+".keys");return b?angular.fromJson(b):[]}return c.keys(a.$$data)}},{"../utils":21}],8:[function(a,b){function c(a){return a&&"function"==typeof a.then}var d=a("../utils");b.exports=function(a,b,e){function f(b,c){return function(d){return b&&(delete g.$$promises[a],angular.isObject(d)&&"status"in d&&"data"in d?(d=[d.status,d.data,d.headers(),d.statusText],g.put(a,d)):g.put(a,d)),c?g.$q.reject(d):d}}e=e||{};var g=this,h="storeOnResolve"in e?!!e.storeOnResolve:g.$$storeOnResolve,i="storeOnReject"in e?!!e.storeOnReject:g.$$storeOnReject;if(!g.$$disabled&&null!==b&&void 0!==b){if(a=d.stringifyNumber(a),!angular.isString(a))throw angular.$$minErr("ng")("areq","Expected key to be a string! Found: {0}.",typeof a);var j=(new Date).getTime(),k={key:a,value:c(b)?b.then(f(h,!1),f(i,!0)):b,created:j,accessed:j};if(k.expires=k.created+g.$$maxAge,g.$$storage){if(c(k.value))return g.$$promises[a]=k.value,g.$$promises[a];var l=g.$$storage().getItem(g.$$prefix+".keys"),m=l?angular.fromJson(l):[],n=g.$$storage().getItem(g.$$prefix+".data."+a);n&&g.remove(a),g.$$expiresHeap.push({key:a,expires:k.expires}),g.$$lruHeap.push({key:a,accessed:k.accessed}),g.$$storage().setItem(g.$$prefix+".data."+a,JSON.stringify(k));for(var o=!1,p=0;p<m.length;p++)if(m[p]===a){o=!0;break}o||m.push(a),g.$$storage().setItem(g.$$prefix+".keys",JSON.stringify(m))}else g.$$data[a]&&g.remove(a),g.$$expiresHeap.push(k),g.$$lruHeap.push(k),g.$$data[a]=k,delete g.$$promises[a];return g.$$lruHeap.size()>g.$$capacity&&g.remove(g.$$lruHeap.peek().key),b}}},{"../utils":21}],9:[function(a,b){b.exports=function(a){var b=this;if(delete b.$$promises[a],!b.$$storage){var c=b.$$data[a]?b.$$data[a].value:void 0;return b.$$lruHeap.remove(b.$$data[a]),b.$$expiresHeap.remove(b.$$data[a]),b.$$data[a]=null,delete b.$$data[a],c}var d=b.$$storage().getItem(b.$$prefix+".data."+a);if(d){var e=angular.fromJson(d);b.$$lruHeap.remove({key:a,accessed:e.accessed}),b.$$expiresHeap.remove({key:a,expires:e.expires}),b.$$storage().removeItem(b.$$prefix+".data."+a);var f=b.$$storage().getItem(b.$$prefix+".keys"),g=f?angular.fromJson(f):[],h=g.indexOf(a);return h>=0&&g.splice(h,1),b.$$storage().setItem(b.$$prefix+".keys",JSON.stringify(g)),e.value}}},{}],10:[function(a,b){b.exports=function(){var a=this;if(a.$$storage){a.$$lruHeap.removeAll(),a.$$expiresHeap.removeAll();var b=a.$$storage().getItem(a.$$prefix+".keys");if(b)for(var c=angular.fromJson(b),d=0;d<c.length;d++)a.remove(c[d]);a.$$storage().setItem(a.$$prefix+".keys",JSON.stringify([]))}else{a.$$lruHeap.removeAll(),a.$$expiresHeap.removeAll();for(var e in a.$$data)a.$$data[e]=null;a.$$data={}}}},{}],11:[function(a,b){b.exports=function(){for(var a,b,c=this,d=(new Date).getTime(),e={};(b=c.$$expiresHeap.peek())&&b.expires<d;)e[b.key]=b.value?b.value:null,c.$$expiresHeap.pop();if(c.$$storage)for(a in e){var f=c.$$storage().getItem(c.$$prefix+".data."+a);f&&(e[a]=angular.fromJson(f).value,c.remove(a))}else for(a in e)c.remove(a);if(c.$$onExpire)for(a in e)c.$$onExpire(a,e[a]);return e}},{}],12:[function(a,b){b.exports=function(a){var b=this;if(null===a)delete b.$$cacheFlushInterval;else{if(!angular.isNumber(a))throw angular.$$minErr("ng")("areq","Expected cacheFlushInterval to be a number! Found: {0}.",typeof a);if(0>a)throw angular.$$minErr("ng")("areq","Expected cacheFlushInterval to be greater than zero! Found: {0}.",a);a!==b.$$cacheFlushInterval&&(b.$$cacheFlushInterval=a,clearInterval(b.$$cacheFlushIntervalId),function(a){a.$$cacheFlushIntervalId=setInterval(function(){a.removeAll()},a.$$cacheFlushInterval)}(b))}}},{}],13:[function(a,b){b.exports=function(a){var b=this;if(null===a)delete b.$$capacity;else{if(!angular.isNumber(a))throw angular.$$minErr("ng")("areq","Expected capacity to be a number! Found: {0}.",typeof a);if(0>a)throw angular.$$minErr("ng")("areq","Expected capacity to be greater than zero! Found: {0}.",a);b.$$capacity=a}for(var c={};b.$$lruHeap.size()>b.$$capacity;)c[b.$$lruHeap.peek().key]=b.remove(b.$$lruHeap.peek().key);return c}},{}],14:[function(a,b){b.exports=function(a){var b=this;if(null===a)delete b.$$deleteOnExpire;else{if(!angular.isString(a))throw angular.$$minErr("ng")("areq","Expected deleteOnExpire to be a string! Found: {0}.",typeof a);if("none"!==a&&"passive"!==a&&"aggressive"!==a)throw angular.$$minErr("ng")("areq",'Expected deleteOnExpire to be "none", "passive" or "aggressive"! Found: {0}.',a);b.$$deleteOnExpire=a}b.setRecycleFreq(b.$$recycleFreq)}},{}],15:[function(a,b){var c=a("../utils");b.exports=function(a){var b=this;if(null===a)delete b.$$maxAge;else{if(!angular.isNumber(a))throw angular.$$minErr("ng")("areq","Expected maxAge to be a number! Found: {0}.",typeof a);if(0>a)throw angular.$$minErr("ng")("areq","Expected maxAge to be greater than zero! Found: {0}.",a);b.$$maxAge=a}var d,e,f;if(b.$$expiresHeap.removeAll(),b.$$storage){var g=b.$$storage().getItem(b.$$prefix+".keys");for(e=g?angular.fromJson(g):[],d=0;d<e.length;d++){f=e[d];var h=b.$$storage().getItem(b.$$prefix+".data."+f);if(h){var i=angular.fromJson(h);i.expires=b.$$maxAge===Number.MAX_VALUE?Number.MAX_VALUE:i.created+b.$$maxAge,b.$$expiresHeap.push({key:f,expires:i.expires})}}}else for(e=c.keys(b.$$data),d=0;d<e.length;d++)f=e[d],b.$$data[f].expires=b.$$maxAge===Number.MAX_VALUE?Number.MAX_VALUE:b.$$data[f].created+b.$$maxAge,b.$$expiresHeap.push(b.$$data[f]);return"aggressive"===b.$$deleteOnExpire?b.removeExpired():{}}},{"../utils":21}],16:[function(a,b){b.exports=function(a){if(null===a)delete this.$$onExpire;else{if(!angular.isFunction(a))throw angular.$$minErr("ng")("areq","Expected onExpire to be a function! Found: {0}.",typeof a);this.$$onExpire=a}}},{}],17:[function(a,b){b.exports=function(a){var b=this;if(null===a)delete b.$$recycleFreq;else{if(!angular.isNumber(a))throw angular.$$minErr("ng")("areq","Expected recycleFreq to be a number! Found: {0}.",typeof a);if(0>a)throw angular.$$minErr("ng")("areq","Expected recycleFreq to be greater than zero! Found: {0}.",a);b.$$recycleFreq=a}clearInterval(b.$$recycleFreqId),"aggressive"===b.$$deleteOnExpire?!function(a){a.$$recycleFreqId=setInterval(function(){a.removeExpired()},a.$$recycleFreq)}(b):delete b.$$recycleFreqId}},{}],18:[function(a,b){function c(){var a=this,b=new d.Config;a.version=f,a.setCacheDefaults=function(a){if(a=a||{},!angular.isObject(a))throw angular.$$minErr("ng")("areq","Expected options to be an object! Found: {0}.",typeof a);for(var c in d.defaults)c in a&&(b[c]=a[c]);"disabled"in a&&(b.$$disabled=!!a.disabled)},a.$get=["$q",function(a){function c(a){var b,c=[];for(b in a)a.hasOwnProperty(b)&&c.push(b);return c}function g(c,d){if(c in i)throw angular.$$minErr("$cacheFactory")("iid","CacheId '{0}' is already taken!",c);if(!angular.isString(c))throw angular.$$minErr("ng")("areq","Expected cacheId to be a string! Found: {0}.",typeof c);return i[c]=new e(c,angular.extend({},b,d)),i[c].destroy=function(){this.constructor.prototype.destroy.call(this),delete i[this.$$id]},i[c].$q=a,i[c]}function h(a,b){return g(a,b)}var i={};return h.createCache=g,h.version=f,h.info=function(){for(var a=c(i),e={size:a.length,caches:{}},f=0;f<a.length;f++){var g=a[f];e.caches[g]=i[g].info()}var h=e.cacheDefaults=angular.extend({},b);for(var j in d.defaults)j in h||(h[j]=b["$$"+j]);return e},h.get=function(a){if(!angular.isString(a))throw angular.$$minErr("ng")("areq","Expected cacheId to be a string! Found: {0}.",typeof a);return i[a]},h.keySet=function(){var a,b={};for(a in i)i.hasOwnProperty(a)&&(b[a]=a);return b},h.keys=function(){return c(i)},h.destroyAll=function(){for(var a in i)i[a].destroy();i={}},h.clearAll=function(){for(var a in i)i[a].removeAll()},h.enableAll=function(){for(var a in i)i[a].$$disabled=!1},h.disableAll=function(){for(var a in i)i[a].$$disabled=!0},h}]}var d=a("../defaults"),e=a("../DSCache"),f="3.2.3";b.exports=c},{"../DSCache":4,"../defaults":19}],19:[function(a,b){function c(){}var d={capacity:Number.MAX_VALUE,maxAge:Number.MAX_VALUE,deleteOnExpire:"none",onExpire:null,cacheFlushInterval:null,recycleFreq:1e3,storageMode:"memory",storageImpl:null,disabled:!1,storagePrefix:"angular-cache.caches.",storeOnResolve:!1,storeOnReject:!1};for(var e in d)c.prototype["$$"+e]=d[e];b.exports={Config:c,defaults:d}},{}],20:[function(a){!function(b,c){"use strict";c.$$minErr=c.$$minErr||function(a){return function(){var b,d,e=arguments[0],f="["+(a?a+":":"")+e+"] ",g=arguments[1],h=arguments,i=function(a){return"function"==typeof a?a.toString().replace(/ \{[\s\S]*$/,""):"undefined"==typeof a?"undefined":"string"!=typeof a?JSON.stringify(a):a};for(b=f+g.replace(/\{\d+\}/g,function(a){var b,d=+a.slice(1,-1);return d+2<h.length?(b=h[d+2],"function"==typeof b?b.toString().replace(/ ?\{[\s\S]*$/,""):"undefined"==typeof b?"undefined":"string"!=typeof b?c.toJson(b):b):a}),b=b+"\nhttp://errors.angularjs.org/"+c.version.full+"/"+(a?a+"/":"")+e,d=2;d<arguments.length;d++)b=b+(2==d?"?":"&")+"p"+(d-2)+"="+encodeURIComponent(i(arguments[d]));return new Error(b)}},c.module("angular-data.DSBinaryHeap",[]).provider("DSBinaryHeap",a("./DSBinaryHeap").DSBinaryHeapProvider),c.module("angular-data.DSCacheFactory",["ng","angular-data.DSBinaryHeap"]).provider("DSCacheFactory",a("./DSCacheFactory"))}(window,window.angular)},{"./DSBinaryHeap":1,"./DSCacheFactory":18}],21:[function(a,b){b.exports={stringifyNumber:function(a){return angular.isNumber(a)?a.toString():a},keySet:function(a){var b,c={};for(b in a)a.hasOwnProperty(b)&&(c[b]=b);return c},keys:function(a){var b,c=[];for(b in a)a.hasOwnProperty(b)&&c.push(b);return c}}},{}]},{},[20]);
+!function a(b,c,d){function e(g,h){if(!c[g]){if(!b[g]){var i="function"==typeof require&&require;if(!h&&i)return i(g,!0);if(f)return f(g,!0);var j=new Error("Cannot find module '"+g+"'");throw j.code="MODULE_NOT_FOUND",j}var k=c[g]={exports:{}};b[g][0].call(k.exports,function(a){var c=b[g][1][a];return e(c?c:a)},k,k.exports,a,b,c,d)}return c[g].exports}for(var f="function"==typeof require&&require,g=0;g<d.length;g++)e(d[g]);return e}({1:[function(a,b){function c(a,b,c){for(var d=a[c],e=b(d);c>0;){var f=Math.floor((c+1)/2)-1,g=a[f];if(e>=b(g))break;a[f]=d,a[c]=g,c=f}}function d(a,b,c){for(var d=a.length,e=a[c],f=b(e);;){var g=2*(c+1),h=g-1,i=null;if(d>h){var j=a[h],k=b(j);f>k&&(i=h)}if(d>g){var l=a[g],m=b(l);m<(null===i?f:b(a[h]))&&(i=g)}if(null===i)break;a[c]=a[i],a[i]=e,c=i}}function e(a){if(a&&!angular.isFunction(a))throw new Error("DSBinaryHeap(weightFunc): weightFunc: must be a function!");a=a||function(a){return a},this.weightFunc=a,this.heap=[]}function f(){this.$get=function(){return e}}e.prototype.push=function(a){this.heap.push(a),c(this.heap,this.weightFunc,this.heap.length-1)},e.prototype.peek=function(){return this.heap[0]},e.prototype.pop=function(){var a=this.heap[0],b=this.heap.pop();return this.heap.length>0&&(this.heap[0]=b,d(this.heap,this.weightFunc,0)),a},e.prototype.remove=function(a){for(var b=this.heap.length,e=0;b>e;e++)if(angular.equals(this.heap[e],a)){var f=this.heap[e],g=this.heap.pop();return e!==b-1&&(this.heap[e]=g,c(this.heap,this.weightFunc,e),d(this.heap,this.weightFunc,e)),f}return null},e.prototype.removeAll=function(){this.heap=[]},e.prototype.size=function(){return this.heap.length},b.exports={DSBinaryHeapProvider:f,DSBinaryHeap:e}},{}],2:[function(a,b){b.exports=function(){var a=this;clearInterval(a.$$cacheFlushIntervalId),clearInterval(a.$$recycleFreqId),a.removeAll(),a.$$storage&&(a.$$storage().removeItem(a.$$prefix+".keys"),a.$$storage().removeItem(a.$$prefix)),a.$$storage=null,a.$$data=null,a.$$lruHeap=null,a.$$expiresHeap=null,a.$$prefix=null}},{}],3:[function(a,b){var c=a("../utils");b.exports=function(a,b){var d=this;if(angular.isArray(a)){var e=a,f=[];return angular.forEach(e,function(a){var c=d.get(a,b);null!==c&&void 0!==c&&f.push(c)}),f}if(a=c.stringifyNumber(a),!d.$$disabled){if(b=b||{},!angular.isString(a))throw angular.$$minErr("ng")("areq","Expected key to be a string! Found: {0}.",typeof a);if(b&&!angular.isObject(b))throw angular.$$minErr("ng")("areq","Expected options to be an object! Found: {0}.",typeof b);if(b.onExpire&&!angular.isFunction(b.onExpire))throw angular.$$minErr("ng")("areq","Expected options.onExpire to be a function! Found: {0}.",typeof b.onExpire);var g;if(d.$$storage){if(d.$$promises[a])return d.$$promises[a];var h=d.$$storage().getItem(d.$$prefix+".data."+a);if(!h)return;g=angular.fromJson(h)}else{if(!(a in d.$$data))return;g=d.$$data[a]}var i=g.value,j=(new Date).getTime();return d.$$storage?(d.$$lruHeap.remove({key:a,accessed:g.accessed}),g.accessed=j,d.$$lruHeap.push({key:a,accessed:j})):(d.$$lruHeap.remove(g),g.accessed=j,d.$$lruHeap.push(g)),"passive"===d.$$deleteOnExpire&&"expires"in g&&g.expires<j?(d.remove(a),d.$$onExpire?d.$$onExpire(a,g.value,b.onExpire):b.onExpire&&b.onExpire(a,g.value),i=void 0):d.$$storage&&d.$$storage().setItem(d.$$prefix+".data."+a,JSON.stringify(g)),i}}},{"../utils":21}],4:[function(a,b){function c(a,b){var c=this;if(!angular.isString(a))throw angular.$$minErr("ng")("areq","Expected storageMode to be a string! Found: {0}.",typeof a);if("memory"!==a&&"localStorage"!==a&&"sessionStorage"!==a)throw angular.$$minErr("ng")("areq",'Expected storageMode to be "memory", "localStorage" or "sessionStorage"! Found: {0}.',a);if(c.$$storageMode=a,b){if(!angular.isObject(b))throw angular.$$minErr("ng")("areq","Expected storageImpl to be an object! Found: {0}.",typeof b);if(!("setItem"in b&&"function"==typeof b.setItem))throw angular.$$minErr("ng")("areq",'Expected storageImpl to implement "setItem(key, value)"! Found: {0}.',typeof b.setItem);if(!("getItem"in b&&"function"==typeof b.getItem))throw angular.$$minErr("ng")("areq",'Expected storageImpl to implement "getItem(key)"! Found: {0}.',typeof b.getItem);if(!("removeItem"in b)||"function"!=typeof b.removeItem)throw angular.$$minErr("ng")("areq",'Expected storageImpl to implement "removeItem(key)"! Found: {0}.',typeof b.removeItem);c.$$storage=function(){return b}}else if("localStorage"===c.$$storageMode)try{localStorage.setItem("angular-cache","angular-cache"),localStorage.removeItem("angular-cache"),c.$$storage=function(){return localStorage}}catch(d){delete c.$$storage,c.$$storageMode="memory"}else if("sessionStorage"===c.$$storageMode)try{sessionStorage.setItem("angular-cache","angular-cache"),sessionStorage.removeItem("angular-cache"),c.$$storage=function(){return sessionStorage}}catch(d){delete c.$$storage,c.$$storageMode="memory"}}function d(a,b){var c=this;if(a=a||{},b=!!b,!angular.isObject(a))throw angular.$$minErr("ng")("areq","Expected cacheOptions to be an object! Found: {0}.",typeof a);"disabled"in a?c.$$disabled=!!a.disabled:b&&delete c.$$disabled,"storeOnResolve"in a?c.$$storeOnResolve=!!a.storeOnResolve:b&&(c.$$storeOnResolve=!1),"storeOnReject"in a?c.$$storeOnReject=!!a.storeOnReject:b&&(c.$$storeOnReject=!1),"capacity"in a?c.setCapacity(a.capacity):b&&c.setCapacity(null),"deleteOnExpire"in a?c.setDeleteOnExpire(a.deleteOnExpire):b&&c.setDeleteOnExpire(null),"maxAge"in a?c.setMaxAge(a.maxAge):b&&c.setMaxAge(null),"recycleFreq"in a?c.setRecycleFreq(a.recycleFreq):b&&c.setRecycleFreq(null),"cacheFlushInterval"in a?c.setCacheFlushInterval(a.cacheFlushInterval):b&&c.setCacheFlushInterval(null),"onExpire"in a?c.setOnExpire(a.onExpire):b&&c.setOnExpire(null)}function e(a,b){var e=this;e.$$data={},e.$$promises={},e.$$id=a,e.$$storage=null,e.$$expiresHeap=new g(function(a){return a.expires}),e.$$lruHeap=new g(function(a){return a.accessed}),b=b||{},"storageMode"in b&&c.apply(e,[b.storageMode,b.storageImpl]),"storagePrefix"in b&&(e.$$storagePrefix=b.storagePrefix),e.$$prefix=e.$$storagePrefix+a,d.apply(e,[b,!0])}var f=a("../defaults"),g=a("../DSBinaryHeap").DSBinaryHeap;for(var h in f.defaults)e.prototype["$$"+h]=f.defaults[h];e.prototype.setOptions=d,e.prototype.setCapacity=a("./setCapacity"),e.prototype.setDeleteOnExpire=a("./setDeleteOnExpire"),e.prototype.setMaxAge=a("./setMaxAge"),e.prototype.setRecycleFreq=a("./setRecycleFreq"),e.prototype.setCacheFlushInterval=a("./setCacheFlushInterval"),e.prototype.setOnExpire=a("./setOnExpire"),e.prototype.put=a("./put"),e.prototype.get=a("./get"),e.prototype.remove=a("./remove"),e.prototype.removeAll=a("./removeAll"),e.prototype.removeExpired=a("./removeExpired"),e.prototype.destroy=a("./destroy"),e.prototype.info=a("./info"),e.prototype.keySet=a("./keySet"),e.prototype.keys=a("./keys"),e.prototype.disable=function(){this.$$disabled=!0},e.prototype.enable=function(){delete this.$$disabled},e.prototype.touch=function(a){var b=this;if(a){var c=b.get(a,{onExpire:function(a,c){b.put(a,c)}});c&&b.put(a,c)}else for(var d=b.keys(),e=0;e<d.length;e++)b.touch(d[e])},b.exports=e},{"../DSBinaryHeap":1,"../defaults":19,"./destroy":2,"./get":3,"./info":5,"./keySet":6,"./keys":7,"./put":8,"./remove":9,"./removeAll":10,"./removeExpired":11,"./setCacheFlushInterval":12,"./setCapacity":13,"./setDeleteOnExpire":14,"./setMaxAge":15,"./setOnExpire":16,"./setRecycleFreq":17}],5:[function(a,b){b.exports=function(a){var b=this;if(a){var c;if(b.$$storage){var d=b.$$storage().getItem(b.$$prefix+".data."+a);return d?(c=angular.fromJson(d),{created:c.created,accessed:c.accessed,expires:c.expires,isExpired:(new Date).getTime()-c.created>b.$$maxAge}):void 0}return a in b.$$data?(c=b.$$data[a],{created:c.created,accessed:c.accessed,expires:c.expires,isExpired:(new Date).getTime()-c.created>b.$$maxAge}):void 0}return{id:b.$$id,capacity:b.$$capacity,maxAge:b.$$maxAge,deleteOnExpire:b.$$deleteOnExpire,onExpire:b.$$onExpire,cacheFlushInterval:b.$$cacheFlushInterval,recycleFreq:b.$$recycleFreq,storageMode:b.$$storageMode,storageImpl:b.$$storage?b.$$storage():void 0,disabled:b.$$disabled,size:b.$$lruHeap&&b.$$lruHeap.size()||0}}},{}],6:[function(a,b){var c=a("../utils");b.exports=function(){var a=this;if(a.$$storage){var b=a.$$storage().getItem(a.$$prefix+".keys"),d={};if(b)for(var e=angular.fromJson(b),f=0;f<e.length;f++)d[e[f]]=e[f];return d}return c.keySet(a.$$data)}},{"../utils":21}],7:[function(a,b){var c=a("../utils");b.exports=function(){var a=this;if(a.$$storage){var b=a.$$storage().getItem(a.$$prefix+".keys");return b?angular.fromJson(b):[]}return c.keys(a.$$data)}},{"../utils":21}],8:[function(a,b){function c(a){return a&&"function"==typeof a.then}var d=a("../utils");b.exports=function(a,b,e){function f(b,c){return function(d){return b&&(delete g.$$promises[a],angular.isObject(d)&&"status"in d&&"data"in d?(d=[d.status,d.data,d.headers(),d.statusText],g.put(a,d)):g.put(a,d)),c?g.$q.reject(d):d}}e=e||{};var g=this,h="storeOnResolve"in e?!!e.storeOnResolve:g.$$storeOnResolve,i="storeOnReject"in e?!!e.storeOnReject:g.$$storeOnReject;if(!g.$$disabled&&null!==b&&void 0!==b){if(a=d.stringifyNumber(a),!angular.isString(a))throw angular.$$minErr("ng")("areq","Expected key to be a string! Found: {0}.",typeof a);var j=(new Date).getTime(),k={key:a,value:c(b)?b.then(f(h,!1),f(i,!0)):b,created:j,accessed:j};if(k.expires=k.created+g.$$maxAge,g.$$storage){if(c(k.value))return g.$$promises[a]=k.value,g.$$promises[a];var l=g.$$storage().getItem(g.$$prefix+".keys"),m=l?angular.fromJson(l):[],n=g.$$storage().getItem(g.$$prefix+".data."+a);n&&g.remove(a),g.$$expiresHeap.push({key:a,expires:k.expires}),g.$$lruHeap.push({key:a,accessed:k.accessed}),g.$$storage().setItem(g.$$prefix+".data."+a,JSON.stringify(k));for(var o=!1,p=0;p<m.length;p++)if(m[p]===a){o=!0;break}o||m.push(a),g.$$storage().setItem(g.$$prefix+".keys",JSON.stringify(m))}else g.$$data[a]&&g.remove(a),g.$$expiresHeap.push(k),g.$$lruHeap.push(k),g.$$data[a]=k,delete g.$$promises[a];return g.$$lruHeap.size()>g.$$capacity&&g.remove(g.$$lruHeap.peek().key),b}}},{"../utils":21}],9:[function(a,b){b.exports=function(a){var b=this;if(a+="",delete b.$$promises[a],!b.$$storage){var c=b.$$data[a]?b.$$data[a].value:void 0;return b.$$lruHeap.remove(b.$$data[a]),b.$$expiresHeap.remove(b.$$data[a]),b.$$data[a]=null,delete b.$$data[a],c}var d=b.$$storage().getItem(b.$$prefix+".data."+a);if(d){var e=angular.fromJson(d);b.$$lruHeap.remove({key:a,accessed:e.accessed}),b.$$expiresHeap.remove({key:a,expires:e.expires}),b.$$storage().removeItem(b.$$prefix+".data."+a);var f=b.$$storage().getItem(b.$$prefix+".keys"),g=f?angular.fromJson(f):[],h=g.indexOf(a);return h>=0&&g.splice(h,1),b.$$storage().setItem(b.$$prefix+".keys",JSON.stringify(g)),e.value}}},{}],10:[function(a,b){b.exports=function(){var a=this;if(a.$$storage){a.$$lruHeap.removeAll(),a.$$expiresHeap.removeAll();var b=a.$$storage().getItem(a.$$prefix+".keys");if(b)for(var c=angular.fromJson(b),d=0;d<c.length;d++)a.remove(c[d]);a.$$storage().setItem(a.$$prefix+".keys",JSON.stringify([]))}else{a.$$lruHeap.removeAll(),a.$$expiresHeap.removeAll();for(var e in a.$$data)a.$$data[e]=null;a.$$data={}}}},{}],11:[function(a,b){b.exports=function(){for(var a,b,c=this,d=(new Date).getTime(),e={};(b=c.$$expiresHeap.peek())&&b.expires<d;)e[b.key]=b.value?b.value:null,c.$$expiresHeap.pop();if(c.$$storage)for(a in e){var f=c.$$storage().getItem(c.$$prefix+".data."+a);f&&(e[a]=angular.fromJson(f).value,c.remove(a))}else for(a in e)c.remove(a);if(c.$$onExpire)for(a in e)c.$$onExpire(a,e[a]);return e}},{}],12:[function(a,b){b.exports=function(a){var b=this;if(null===a)delete b.$$cacheFlushInterval;else{if(!angular.isNumber(a))throw angular.$$minErr("ng")("areq","Expected cacheFlushInterval to be a number! Found: {0}.",typeof a);if(0>a)throw angular.$$minErr("ng")("areq","Expected cacheFlushInterval to be greater than zero! Found: {0}.",a);a!==b.$$cacheFlushInterval&&(b.$$cacheFlushInterval=a,clearInterval(b.$$cacheFlushIntervalId),function(a){a.$$cacheFlushIntervalId=setInterval(function(){a.removeAll()},a.$$cacheFlushInterval)}(b))}}},{}],13:[function(a,b){b.exports=function(a){var b=this;if(null===a)delete b.$$capacity;else{if(!angular.isNumber(a))throw angular.$$minErr("ng")("areq","Expected capacity to be a number! Found: {0}.",typeof a);if(0>a)throw angular.$$minErr("ng")("areq","Expected capacity to be greater than zero! Found: {0}.",a);b.$$capacity=a}for(var c={};b.$$lruHeap.size()>b.$$capacity;)c[b.$$lruHeap.peek().key]=b.remove(b.$$lruHeap.peek().key);return c}},{}],14:[function(a,b){b.exports=function(a){var b=this;if(null===a)delete b.$$deleteOnExpire;else{if(!angular.isString(a))throw angular.$$minErr("ng")("areq","Expected deleteOnExpire to be a string! Found: {0}.",typeof a);if("none"!==a&&"passive"!==a&&"aggressive"!==a)throw angular.$$minErr("ng")("areq",'Expected deleteOnExpire to be "none", "passive" or "aggressive"! Found: {0}.',a);b.$$deleteOnExpire=a}b.setRecycleFreq(b.$$recycleFreq)}},{}],15:[function(a,b){var c=a("../utils");b.exports=function(a){var b=this;if(null===a)delete b.$$maxAge;else{if(!angular.isNumber(a))throw angular.$$minErr("ng")("areq","Expected maxAge to be a number! Found: {0}.",typeof a);if(0>a)throw angular.$$minErr("ng")("areq","Expected maxAge to be greater than zero! Found: {0}.",a);b.$$maxAge=a}var d,e,f;if(b.$$expiresHeap.removeAll(),b.$$storage){var g=b.$$storage().getItem(b.$$prefix+".keys");for(e=g?angular.fromJson(g):[],d=0;d<e.length;d++){f=e[d];var h=b.$$storage().getItem(b.$$prefix+".data."+f);if(h){var i=angular.fromJson(h);i.expires=b.$$maxAge===Number.MAX_VALUE?Number.MAX_VALUE:i.created+b.$$maxAge,b.$$expiresHeap.push({key:f,expires:i.expires})}}}else for(e=c.keys(b.$$data),d=0;d<e.length;d++)f=e[d],b.$$data[f].expires=b.$$maxAge===Number.MAX_VALUE?Number.MAX_VALUE:b.$$data[f].created+b.$$maxAge,b.$$expiresHeap.push(b.$$data[f]);return"aggressive"===b.$$deleteOnExpire?b.removeExpired():{}}},{"../utils":21}],16:[function(a,b){b.exports=function(a){if(null===a)delete this.$$onExpire;else{if(!angular.isFunction(a))throw angular.$$minErr("ng")("areq","Expected onExpire to be a function! Found: {0}.",typeof a);this.$$onExpire=a}}},{}],17:[function(a,b){b.exports=function(a){var b=this;if(null===a)delete b.$$recycleFreq;else{if(!angular.isNumber(a))throw angular.$$minErr("ng")("areq","Expected recycleFreq to be a number! Found: {0}.",typeof a);if(0>a)throw angular.$$minErr("ng")("areq","Expected recycleFreq to be greater than zero! Found: {0}.",a);b.$$recycleFreq=a}clearInterval(b.$$recycleFreqId),"aggressive"===b.$$deleteOnExpire?!function(a){a.$$recycleFreqId=setInterval(function(){a.removeExpired()},a.$$recycleFreq)}(b):delete b.$$recycleFreqId}},{}],18:[function(a,b){function c(){var a=this,b=new d.Config;a.version=f,a.setCacheDefaults=function(a){if(a=a||{},!angular.isObject(a))throw angular.$$minErr("ng")("areq","Expected options to be an object! Found: {0}.",typeof a);for(var c in d.defaults)c in a&&(b[c]=a[c]);"disabled"in a&&(b.$$disabled=!!a.disabled)},a.$get=["$q",function(a){function c(a){var b,c=[];for(b in a)a.hasOwnProperty(b)&&c.push(b);return c}function g(c,d){if(c in i)throw angular.$$minErr("$cacheFactory")("iid","CacheId '{0}' is already taken!",c);if(!angular.isString(c))throw angular.$$minErr("ng")("areq","Expected cacheId to be a string! Found: {0}.",typeof c);return i[c]=new e(c,angular.extend({},b,d)),i[c].destroy=function(){this.constructor.prototype.destroy.call(this),delete i[this.$$id]},i[c].$q=a,i[c]}function h(a,b){return g(a,b)}var i={};return h.createCache=g,h.version=f,h.info=function(){for(var a=c(i),e={size:a.length,caches:{}},f=0;f<a.length;f++){var g=a[f];e.caches[g]=i[g].info()}var h=e.cacheDefaults=angular.extend({},b);for(var j in d.defaults)j in h||(h[j]=b["$$"+j]);return e},h.get=function(a){if(!angular.isString(a))throw angular.$$minErr("ng")("areq","Expected cacheId to be a string! Found: {0}.",typeof a);return i[a]},h.keySet=function(){var a,b={};for(a in i)i.hasOwnProperty(a)&&(b[a]=a);return b},h.keys=function(){return c(i)},h.destroyAll=function(){for(var a in i)i[a].destroy();i={}},h.clearAll=function(){for(var a in i)i[a].removeAll()},h.enableAll=function(){for(var a in i)i[a].$$disabled=!1},h.disableAll=function(){for(var a in i)i[a].$$disabled=!0},h}]}var d=a("../defaults"),e=a("../DSCache"),f="3.2.4";b.exports=c},{"../DSCache":4,"../defaults":19}],19:[function(a,b){function c(){}var d={capacity:Number.MAX_VALUE,maxAge:Number.MAX_VALUE,deleteOnExpire:"none",onExpire:null,cacheFlushInterval:null,recycleFreq:1e3,storageMode:"memory",storageImpl:null,disabled:!1,storagePrefix:"angular-cache.caches.",storeOnResolve:!1,storeOnReject:!1};for(var e in d)c.prototype["$$"+e]=d[e];b.exports={Config:c,defaults:d}},{}],20:[function(a){!function(b,c){"use strict";c.$$minErr=c.$$minErr||function(a){return function(){var b,d,e=arguments[0],f="["+(a?a+":":"")+e+"] ",g=arguments[1],h=arguments,i=function(a){return"function"==typeof a?a.toString().replace(/ \{[\s\S]*$/,""):"undefined"==typeof a?"undefined":"string"!=typeof a?JSON.stringify(a):a};for(b=f+g.replace(/\{\d+\}/g,function(a){var b,d=+a.slice(1,-1);return d+2<h.length?(b=h[d+2],"function"==typeof b?b.toString().replace(/ ?\{[\s\S]*$/,""):"undefined"==typeof b?"undefined":"string"!=typeof b?c.toJson(b):b):a}),b=b+"\nhttp://errors.angularjs.org/"+c.version.full+"/"+(a?a+"/":"")+e,d=2;d<arguments.length;d++)b=b+(2==d?"?":"&")+"p"+(d-2)+"="+encodeURIComponent(i(arguments[d]));return new Error(b)}},c.module("angular-data.DSBinaryHeap",[]).provider("DSBinaryHeap",a("./DSBinaryHeap").DSBinaryHeapProvider),c.module("angular-data.DSCacheFactory",["ng","angular-data.DSBinaryHeap"]).provider("DSCacheFactory",a("./DSCacheFactory"))}(window,window.angular)},{"./DSBinaryHeap":1,"./DSCacheFactory":18}],21:[function(a,b){b.exports={stringifyNumber:function(a){return angular.isNumber(a)?a.toString():a},keySet:function(a){var b,c={};for(b in a)a.hasOwnProperty(b)&&(c[b]=b);return c},keys:function(a){var b,c=[];for(b in a)a.hasOwnProperty(b)&&c.push(b);return c}}},{}]},{},[20]);
 //# sourceMappingURL=angular-cache.min.map
 (function(window, angular, undefined) {
 'use strict';
@@ -77002,7 +78165,7 @@ angular.module('ui.sortable', [])
 }.call(this));
 
 /*!
- * FullCalendar v2.2.3
+ * FullCalendar v2.2.5
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -77020,7 +78183,8 @@ angular.module('ui.sortable', [])
 
 var defaults = {
 
-	lang: 'en',
+	titleRangeSeparator: ' \u2014 ', // emphasized dash
+	monthYearFormat: 'MMMM YYYY', // required for en. other languages rely on datepicker computable option
 
 	defaultTimedEventDuration: '02:00:00',
 	defaultAllDayEventDuration: { days: 1 },
@@ -77052,28 +78216,7 @@ var defaults = {
 	timezone: false,
 
 	//allDayDefault: undefined,
-	
-	// time formats
-	titleFormat: {
-		month: 'MMMM YYYY', // like "September 1986". each language will override this
-		week: 'll', // like "Sep 4 1986"
-		day: 'LL' // like "September 4 1986"
-	},
-	columnFormat: {
-		month: 'ddd', // like "Sat"
-		week: generateWeekColumnFormat,
-		day: 'dddd' // like "Saturday"
-	},
-	timeFormat: { // for event elements
-		'default': generateShortTimeFormat
-	},
 
-	displayEventEnd: {
-		month: false,
-		basicWeek: false,
-		'default': true
-	},
-	
 	// locale
 	isRTL: false,
 	defaultButtonText: {
@@ -77118,39 +78261,13 @@ var defaults = {
 	dayPopoverFormat: 'LL',
 	
 	handleWindowResize: true,
-	windowResizeDelay: 200 // milliseconds before a rerender happens
+	windowResizeDelay: 200 // milliseconds before an updateSize happens
 	
 };
 
 
-function generateShortTimeFormat(options, langData) {
-	return langData.longDateFormat('LT')
-		.replace(':mm', '(:mm)')
-		.replace(/(\Wmm)$/, '($1)') // like above, but for foreign langs
-		.replace(/\s*a$/i, 't'); // convert to AM/PM/am/pm to lowercase one-letter. remove any spaces beforehand
-}
-
-
-function generateWeekColumnFormat(options, langData) {
-	var format = langData.longDateFormat('L'); // for the format like "MM/DD/YYYY"
-	format = format.replace(/^Y+[^\w\s]*|[^\w\s]*Y+$/g, ''); // strip the year off the edge, as well as other misc non-whitespace chars
-	if (options.isRTL) {
-		format += ' ddd'; // for RTL, add day-of-week to end
-	}
-	else {
-		format = 'ddd ' + format; // for LTR, add day-of-week to beginning
-	}
-	return format;
-}
-
-
-var langOptionHash = {
-	en: {
-		columnFormat: {
-			week: 'ddd M/D' // override for english. different from the generated default, which is MM/DD
-		},
-		dayPopoverFormat: 'dddd, MMMM D'
-	}
+var englishDefaults = {
+	dayPopoverFormat: 'dddd, MMMM D'
 };
 
 
@@ -77177,7 +78294,7 @@ var rtlDefaults = {
 
 ;;
 
-var fc = $.fullCalendar = { version: "2.2.3" };
+var fc = $.fullCalendar = { version: "2.2.5" };
 var fcViews = fc.views = {};
 
 
@@ -77257,36 +78374,27 @@ function isForcedAtomicOption(name) {
 
 ;;
 
-//var langOptionHash = {}; // initialized in defaults.js
-fc.langs = langOptionHash; // expose
+var langOptionHash = fc.langs = {}; // initialize and expose
 
 
-// Initialize jQuery UI Datepicker translations while using some of the translations
-// for our own purposes. Will set this as the default language for datepicker.
-// Called from a translation file.
-fc.datepickerLang = function(langCode, datepickerLangCode, options) {
-	var langOptions = langOptionHash[langCode];
+// TODO: document the structure and ordering of a FullCalendar lang file
+// TODO: rename everything "lang" to "locale", like what the moment project did
 
-	// initialize FullCalendar's lang hash for this language
-	if (!langOptions) {
-		langOptions = langOptionHash[langCode] = {};
-	}
 
-	// merge certain Datepicker options into FullCalendar's options
-	mergeOptions(langOptions, {
-		isRTL: options.isRTL,
-		weekNumberTitle: options.weekHeader,
-		titleFormat: {
-			month: options.showMonthAfterYear ?
-				'YYYY[' + options.yearSuffix + '] MMMM' :
-				'MMMM YYYY[' + options.yearSuffix + ']'
-		},
-		defaultButtonText: {
-			// the translations sometimes wrongly contain HTML entities
-			prev: stripHtmlEntities(options.prevText),
-			next: stripHtmlEntities(options.nextText),
-			today: stripHtmlEntities(options.currentText)
-		}
+// Initialize jQuery UI datepicker translations while using some of the translations
+// Will set this as the default language for datepicker.
+fc.datepickerLang = function(langCode, dpLangCode, dpOptions) {
+
+	// get the FullCalendar internal option hash for this language. create if necessary
+	var fcOptions = langOptionHash[langCode] || (langOptionHash[langCode] = {});
+
+	// transfer some simple options from datepicker to fc
+	fcOptions.isRTL = dpOptions.isRTL;
+	fcOptions.weekNumberTitle = dpOptions.weekHeader;
+
+	// compute some more complex options from datepicker
+	$.each(dpComputableOptions, function(name, func) {
+		fcOptions[name] = func(dpOptions);
 	});
 
 	// is jQuery UI Datepicker is on the page?
@@ -77296,2045 +78404,132 @@ fc.datepickerLang = function(langCode, datepickerLangCode, options) {
 		// FullCalendar and MomentJS use language codes like "pt-br" but Datepicker
 		// does it like "pt-BR" or if it doesn't have the language, maybe just "pt".
 		// Make an alias so the language can be referenced either way.
-		$.datepicker.regional[datepickerLangCode] =
+		$.datepicker.regional[dpLangCode] =
 			$.datepicker.regional[langCode] = // alias
-				options;
+				dpOptions;
 
 		// Alias 'en' to the default language data. Do this every time.
 		$.datepicker.regional.en = $.datepicker.regional[''];
 
 		// Set as Datepicker's global defaults.
-		$.datepicker.setDefaults(options);
+		$.datepicker.setDefaults(dpOptions);
 	}
 };
 
 
-// Sets FullCalendar-specific translations. Also sets the language as the global default.
-// Called from a translation file.
-fc.lang = function(langCode, options) {
-	var langOptions;
+// Sets FullCalendar-specific translations. Will set the language as the global default.
+fc.lang = function(langCode, newFcOptions) {
+	var fcOptions;
+	var momOptions;
 
-	if (options) {
-		langOptions = langOptionHash[langCode];
+	// get the FullCalendar internal option hash for this language. create if necessary
+	fcOptions = langOptionHash[langCode] || (langOptionHash[langCode] = {});
 
-		// initialize the hash for this language
-		if (!langOptions) {
-			langOptions = langOptionHash[langCode] = {};
-		}
-
-		mergeOptions(langOptions, options || {});
+	// provided new options for this language? merge them in
+	if (newFcOptions) {
+		mergeOptions(fcOptions, newFcOptions);
 	}
+
+	// compute language options that weren't defined.
+	// always do this. newFcOptions can be undefined when initializing from i18n file,
+	// so no way to tell if this is an initialization or a default-setting.
+	momOptions = getMomentLocaleData(langCode); // will fall back to en
+	$.each(momComputableOptions, function(name, func) {
+		if (fcOptions[name] === undefined) {
+			fcOptions[name] = func(momOptions, fcOptions);
+		}
+	});
 
 	// set it as the default language for FullCalendar
 	defaults.lang = langCode;
 };
-;;
-
- 
-function Calendar(element, instanceOptions) {
-	var t = this;
 
 
+// NOTE: can't guarantee any of these computations will run because not every language has datepicker
+// configs, so make sure there are English fallbacks for these in the defaults file.
+var dpComputableOptions = {
 
-	// Build options object
-	// -----------------------------------------------------------------------------------
-	// Precedence (lowest to highest): defaults, rtlDefaults, langOptions, instanceOptions
+	defaultButtonText: function(dpOptions) {
+		return {
+			// the translations sometimes wrongly contain HTML entities
+			prev: stripHtmlEntities(dpOptions.prevText),
+			next: stripHtmlEntities(dpOptions.nextText),
+			today: stripHtmlEntities(dpOptions.currentText)
+		};
+	},
 
-	instanceOptions = instanceOptions || {};
-
-	var options = mergeOptions({}, defaults, instanceOptions);
-	var langOptions;
-
-	// determine language options
-	if (options.lang in langOptionHash) {
-		langOptions = langOptionHash[options.lang];
-	}
-	else {
-		langOptions = langOptionHash[defaults.lang];
+	// Produces format strings like "MMMM YYYY" -> "September 2014"
+	monthYearFormat: function(dpOptions) {
+		return dpOptions.showMonthAfterYear ?
+			'YYYY[' + dpOptions.yearSuffix + '] MMMM' :
+			'MMMM YYYY[' + dpOptions.yearSuffix + ']';
 	}
 
-	if (langOptions) { // if language options exist, rebuild...
-		options = mergeOptions({}, defaults, langOptions, instanceOptions);
-	}
-
-	if (options.isRTL) { // is isRTL, rebuild...
-		options = mergeOptions({}, defaults, rtlDefaults, langOptions || {}, instanceOptions);
-	}
-
-
-	
-	// Exports
-	// -----------------------------------------------------------------------------------
-
-	t.options = options;
-	t.render = render;
-	t.destroy = destroy;
-	t.refetchEvents = refetchEvents;
-	t.reportEvents = reportEvents;
-	t.reportEventChange = reportEventChange;
-	t.rerenderEvents = renderEvents; // `renderEvents` serves as a rerender. an API method
-	t.changeView = changeView;
-	t.select = select;
-	t.unselect = unselect;
-	t.prev = prev;
-	t.next = next;
-	t.prevYear = prevYear;
-	t.nextYear = nextYear;
-	t.today = today;
-	t.gotoDate = gotoDate;
-	t.incrementDate = incrementDate;
-	t.zoomTo = zoomTo;
-	t.getDate = getDate;
-	t.getCalendar = getCalendar;
-	t.getView = getView;
-	t.option = option;
-	t.trigger = trigger;
-
-
-
-	// Language-data Internals
-	// -----------------------------------------------------------------------------------
-	// Apply overrides to the current language's data
-
-
-	// Returns moment's internal locale data. If doesn't exist, returns English.
-	// Works with moment-pre-2.8
-	function getLocaleData(langCode) {
-		var f = moment.localeData || moment.langData;
-		return f.call(moment, langCode) ||
-			f.call(moment, 'en'); // the newer localData could return null, so fall back to en
-	}
-
-
-	var localeData = createObject(getLocaleData(options.lang)); // make a cheap copy
-
-	if (options.monthNames) {
-		localeData._months = options.monthNames;
-	}
-	if (options.monthNamesShort) {
-		localeData._monthsShort = options.monthNamesShort;
-	}
-	if (options.dayNames) {
-		localeData._weekdays = options.dayNames;
-	}
-	if (options.dayNamesShort) {
-		localeData._weekdaysShort = options.dayNamesShort;
-	}
-	if (options.firstDay != null) {
-		var _week = createObject(localeData._week); // _week: { dow: # }
-		_week.dow = options.firstDay;
-		localeData._week = _week;
-	}
-
-
-
-	// Calendar-specific Date Utilities
-	// -----------------------------------------------------------------------------------
-
-
-	t.defaultAllDayEventDuration = moment.duration(options.defaultAllDayEventDuration);
-	t.defaultTimedEventDuration = moment.duration(options.defaultTimedEventDuration);
-
-
-	// Builds a moment using the settings of the current calendar: timezone and language.
-	// Accepts anything the vanilla moment() constructor accepts.
-	t.moment = function() {
-		var mom;
-
-		if (options.timezone === 'local') {
-			mom = fc.moment.apply(null, arguments);
-
-			// Force the moment to be local, because fc.moment doesn't guarantee it.
-			if (mom.hasTime()) { // don't give ambiguously-timed moments a local zone
-				mom.local();
-			}
-		}
-		else if (options.timezone === 'UTC') {
-			mom = fc.moment.utc.apply(null, arguments); // process as UTC
-		}
-		else {
-			mom = fc.moment.parseZone.apply(null, arguments); // let the input decide the zone
-		}
-
-		if ('_locale' in mom) { // moment 2.8 and above
-			mom._locale = localeData;
-		}
-		else { // pre-moment-2.8
-			mom._lang = localeData;
-		}
-
-		return mom;
-	};
-
-
-	// Returns a boolean about whether or not the calendar knows how to calculate
-	// the timezone offset of arbitrary dates in the current timezone.
-	t.getIsAmbigTimezone = function() {
-		return options.timezone !== 'local' && options.timezone !== 'UTC';
-	};
-
-
-	// Returns a copy of the given date in the current timezone of it is ambiguously zoned.
-	// This will also give the date an unambiguous time.
-	t.rezoneDate = function(date) {
-		return t.moment(date.toArray());
-	};
-
-
-	// Returns a moment for the current date, as defined by the client's computer,
-	// or overridden by the `now` option.
-	t.getNow = function() {
-		var now = options.now;
-		if (typeof now === 'function') {
-			now = now();
-		}
-		return t.moment(now);
-	};
-
-
-	// Calculates the week number for a moment according to the calendar's
-	// `weekNumberCalculation` setting.
-	t.calculateWeekNumber = function(mom) {
-		var calc = options.weekNumberCalculation;
-
-		if (typeof calc === 'function') {
-			return calc(mom);
-		}
-		else if (calc === 'local') {
-			return mom.week();
-		}
-		else if (calc.toUpperCase() === 'ISO') {
-			return mom.isoWeek();
-		}
-	};
-
-
-	// Get an event's normalized end date. If not present, calculate it from the defaults.
-	t.getEventEnd = function(event) {
-		if (event.end) {
-			return event.end.clone();
-		}
-		else {
-			return t.getDefaultEventEnd(event.allDay, event.start);
-		}
-	};
-
-
-	// Given an event's allDay status and start date, return swhat its fallback end date should be.
-	t.getDefaultEventEnd = function(allDay, start) { // TODO: rename to computeDefaultEventEnd
-		var end = start.clone();
-
-		if (allDay) {
-			end.stripTime().add(t.defaultAllDayEventDuration);
-		}
-		else {
-			end.add(t.defaultTimedEventDuration);
-		}
-
-		if (t.getIsAmbigTimezone()) {
-			end.stripZone(); // we don't know what the tzo should be
-		}
-
-		return end;
-	};
-
-
-
-	// Date-formatting Utilities
-	// -----------------------------------------------------------------------------------
-
-
-	// Like the vanilla formatRange, but with calendar-specific settings applied.
-	t.formatRange = function(m1, m2, formatStr) {
-
-		// a function that returns a formatStr // TODO: in future, precompute this
-		if (typeof formatStr === 'function') {
-			formatStr = formatStr.call(t, options, localeData);
-		}
-
-		return formatRange(m1, m2, formatStr, null, options.isRTL);
-	};
-
-
-	// Like the vanilla formatDate, but with calendar-specific settings applied.
-	t.formatDate = function(mom, formatStr) {
-
-		// a function that returns a formatStr // TODO: in future, precompute this
-		if (typeof formatStr === 'function') {
-			formatStr = formatStr.call(t, options, localeData);
-		}
-
-		return formatDate(mom, formatStr);
-	};
-
-
-	
-	// Imports
-	// -----------------------------------------------------------------------------------
-
-
-	EventManager.call(t, options);
-	var isFetchNeeded = t.isFetchNeeded;
-	var fetchEvents = t.fetchEvents;
-
-
-
-	// Locals
-	// -----------------------------------------------------------------------------------
-
-
-	var _element = element[0];
-	var header;
-	var headerElement;
-	var content;
-	var tm; // for making theme classes
-	var currentView;
-	var suggestedViewHeight;
-	var windowResizeProxy; // wraps the windowResize function
-	var ignoreWindowResize = 0;
-	var date;
-	var events = [];
-	
-	
-	
-	// Main Rendering
-	// -----------------------------------------------------------------------------------
-
-
-	if (options.defaultDate != null) {
-		date = t.moment(options.defaultDate);
-	}
-	else {
-		date = t.getNow();
-	}
-	
-	
-	function render(inc) {
-		if (!content) {
-			initialRender();
-		}
-		else if (elementVisible()) {
-			// mainly for the public API
-			calcSize();
-			renderView(inc);
-		}
-	}
-	
-	
-	function initialRender() {
-		tm = options.theme ? 'ui' : 'fc';
-		element.addClass('fc');
-
-		if (options.isRTL) {
-			element.addClass('fc-rtl');
-		}
-		else {
-			element.addClass('fc-ltr');
-		}
-
-		if (options.theme) {
-			element.addClass('ui-widget');
-		}
-		else {
-			element.addClass('fc-unthemed');
-		}
-
-		content = $("<div class='fc-view-container'/>").prependTo(element);
-
-		header = new Header(t, options);
-		headerElement = header.render();
-		if (headerElement) {
-			element.prepend(headerElement);
-		}
-
-		changeView(options.defaultView);
-
-		if (options.handleWindowResize) {
-			windowResizeProxy = debounce(windowResize, options.windowResizeDelay); // prevents rapid calls
-			$(window).resize(windowResizeProxy);
-		}
-	}
-	
-	
-	function destroy() {
-
-		if (currentView) {
-			currentView.destroy();
-		}
-
-		header.destroy();
-		content.remove();
-		element.removeClass('fc fc-ltr fc-rtl fc-unthemed ui-widget');
-
-		$(window).unbind('resize', windowResizeProxy);
-	}
-	
-	
-	function elementVisible() {
-		return element.is(':visible');
-	}
-	
-	
-
-	// View Rendering
-	// -----------------------------------------------------------------------------------
-
-
-	function changeView(viewName) {
-		renderView(0, viewName);
-	}
-
-
-	// Renders a view because of a date change, view-type change, or for the first time
-	function renderView(delta, viewName) {
-		ignoreWindowResize++;
-
-		// if viewName is changing, destroy the old view
-		if (currentView && viewName && currentView.name !== viewName) {
-			header.deactivateButton(currentView.name);
-			freezeContentHeight(); // prevent a scroll jump when view element is removed
-			if (currentView.start) { // rendered before?
-				currentView.destroy();
-			}
-			currentView.el.remove();
-			currentView = null;
-		}
-
-		// if viewName changed, or the view was never created, create a fresh view
-		if (!currentView && viewName) {
-			currentView = new fcViews[viewName](t);
-			currentView.el =  $("<div class='fc-view fc-" + viewName + "-view' />").appendTo(content);
-			header.activateButton(viewName);
-		}
-
-		if (currentView) {
-
-			// let the view determine what the delta means
-			if (delta) {
-				date = currentView.incrementDate(date, delta);
-			}
-
-			// render or rerender the view
-			if (
-				!currentView.start || // never rendered before
-				delta || // explicit date window change
-				!date.isWithin(currentView.intervalStart, currentView.intervalEnd) // implicit date window change
-			) {
-				if (elementVisible()) {
-
-					freezeContentHeight();
-					if (currentView.start) { // rendered before?
-						currentView.destroy();
-					}
-					currentView.render(date);
-					unfreezeContentHeight();
-
-					// need to do this after View::render, so dates are calculated
-					updateTitle();
-					updateTodayButton();
-
-					getAndRenderEvents();
-				}
-			}
-		}
-
-		unfreezeContentHeight(); // undo any lone freezeContentHeight calls
-		ignoreWindowResize--;
-	}
-	
-	
-
-	// Resizing
-	// -----------------------------------------------------------------------------------
-
-
-	t.getSuggestedViewHeight = function() {
-		if (suggestedViewHeight === undefined) {
-			calcSize();
-		}
-		return suggestedViewHeight;
-	};
-
-
-	t.isHeightAuto = function() {
-		return options.contentHeight === 'auto' || options.height === 'auto';
-	};
-	
-	
-	function updateSize(shouldRecalc) {
-		if (elementVisible()) {
-
-			if (shouldRecalc) {
-				_calcSize();
-			}
-
-			ignoreWindowResize++;
-			currentView.updateSize(true); // isResize=true. will poll getSuggestedViewHeight() and isHeightAuto()
-			ignoreWindowResize--;
-
-			return true; // signal success
-		}
-	}
-
-
-	function calcSize() {
-		if (elementVisible()) {
-			_calcSize();
-		}
-	}
-	
-	
-	function _calcSize() { // assumes elementVisible
-		if (typeof options.contentHeight === 'number') { // exists and not 'auto'
-			suggestedViewHeight = options.contentHeight;
-		}
-		else if (typeof options.height === 'number') { // exists and not 'auto'
-			suggestedViewHeight = options.height - (headerElement ? headerElement.outerHeight(true) : 0);
-		}
-		else {
-			suggestedViewHeight = Math.round(content.width() / Math.max(options.aspectRatio, .5));
-		}
-	}
-	
-	
-	function windowResize(ev) {
-		if (
-			!ignoreWindowResize &&
-			ev.target === window && // so we don't process jqui "resize" events that have bubbled up
-			currentView.start // view has already been rendered
-		) {
-			if (updateSize(true)) {
-				currentView.trigger('windowResize', _element);
-			}
-		}
-	}
-	
-	
-	
-	/* Event Fetching/Rendering
-	-----------------------------------------------------------------------------*/
-	// TODO: going forward, most of this stuff should be directly handled by the view
-
-
-	function refetchEvents() { // can be called as an API method
-		destroyEvents(); // so that events are cleared before user starts waiting for AJAX
-		fetchAndRenderEvents();
-	}
-
-
-	function renderEvents() { // destroys old events if previously rendered
-		if (elementVisible()) {
-			freezeContentHeight();
-			currentView.destroyEvents(); // no performance cost if never rendered
-			currentView.renderEvents(events);
-			unfreezeContentHeight();
-		}
-	}
-
-
-	function destroyEvents() {
-		freezeContentHeight();
-		currentView.destroyEvents();
-		unfreezeContentHeight();
-	}
-	
-
-	function getAndRenderEvents() {
-		if (!options.lazyFetching || isFetchNeeded(currentView.start, currentView.end)) {
-			fetchAndRenderEvents();
-		}
-		else {
-			renderEvents();
-		}
-	}
-
-
-	function fetchAndRenderEvents() {
-		fetchEvents(currentView.start, currentView.end);
-			// ... will call reportEvents
-			// ... which will call renderEvents
-	}
-
-	
-	// called when event data arrives
-	function reportEvents(_events) {
-		events = _events;
-		renderEvents();
-	}
-
-
-	// called when a single event's data has been changed
-	function reportEventChange() {
-		renderEvents();
-	}
-
-
-
-	/* Header Updating
-	-----------------------------------------------------------------------------*/
-
-
-	function updateTitle() {
-		header.updateTitle(currentView.title);
-	}
-
-
-	function updateTodayButton() {
-		var now = t.getNow();
-		if (now.isWithin(currentView.intervalStart, currentView.intervalEnd)) {
-			header.disableButton('today');
-		}
-		else {
-			header.enableButton('today');
-		}
-	}
-	
-
-
-	/* Selection
-	-----------------------------------------------------------------------------*/
-	
-
-	function select(start, end) {
-
-		start = t.moment(start);
-		if (end) {
-			end = t.moment(end);
-		}
-		else if (start.hasTime()) {
-			end = start.clone().add(t.defaultTimedEventDuration);
-		}
-		else {
-			end = start.clone().add(t.defaultAllDayEventDuration);
-		}
-
-		currentView.select(start, end);
-	}
-	
-
-	function unselect() { // safe to be called before renderView
-		if (currentView) {
-			currentView.unselect();
-		}
-	}
-	
-	
-	
-	/* Date
-	-----------------------------------------------------------------------------*/
-	
-	
-	function prev() {
-		renderView(-1);
-	}
-	
-	
-	function next() {
-		renderView(1);
-	}
-	
-	
-	function prevYear() {
-		date.add(-1, 'years');
-		renderView();
-	}
-	
-	
-	function nextYear() {
-		date.add(1, 'years');
-		renderView();
-	}
-	
-	
-	function today() {
-		date = t.getNow();
-		renderView();
-	}
-	
-	
-	function gotoDate(dateInput) {
-		date = t.moment(dateInput);
-		renderView();
-	}
-	
-	
-	function incrementDate(delta) {
-		date.add(moment.duration(delta));
-		renderView();
-	}
-
-
-	// Forces navigation to a view for the given date.
-	// `viewName` can be a specific view name or a generic one like "week" or "day".
-	function zoomTo(newDate, viewName) {
-		var viewStr;
-		var match;
-
-		if (!viewName || fcViews[viewName] === undefined) { // a general view name, or "auto"
-			viewName = viewName || 'day';
-			viewStr = header.getViewsWithButtons().join(' '); // space-separated string of all the views in the header
-
-			// try to match a general view name, like "week", against a specific one, like "agendaWeek"
-			match = viewStr.match(new RegExp('\\w+' + capitaliseFirstLetter(viewName)));
-
-			// fall back to the day view being used in the header
-			if (!match) {
-				match = viewStr.match(/\w+Day/);
-			}
-
-			viewName = match ? match[0] : 'agendaDay'; // fall back to agendaDay
-		}
-
-		date = newDate;
-		changeView(viewName);
-	}
-	
-	
-	function getDate() {
-		return date.clone();
-	}
-
-
-
-	/* Height "Freezing"
-	-----------------------------------------------------------------------------*/
-
-
-	function freezeContentHeight() {
-		content.css({
-			width: '100%',
-			height: content.height(),
-			overflow: 'hidden'
-		});
-	}
-
-
-	function unfreezeContentHeight() {
-		content.css({
-			width: '',
-			height: '',
-			overflow: ''
-		});
-	}
-	
-	
-	
-	/* Misc
-	-----------------------------------------------------------------------------*/
-	
-
-	function getCalendar() {
-		return t;
-	}
-
-	
-	function getView() {
-		return currentView;
-	}
-	
-	
-	function option(name, value) {
-		if (value === undefined) {
-			return options[name];
-		}
-		if (name == 'height' || name == 'contentHeight' || name == 'aspectRatio') {
-			options[name] = value;
-			updateSize(true); // true = allow recalculation of height
-		}
-	}
-	
-	
-	function trigger(name, thisObj) {
-		if (options[name]) {
-			return options[name].apply(
-				thisObj || _element,
-				Array.prototype.slice.call(arguments, 2)
-			);
-		}
-	}
-
-}
-
-;;
-
-/* Top toolbar area with buttons and title
-----------------------------------------------------------------------------------------------------------------------*/
-// TODO: rename all header-related things to "toolbar"
-
-function Header(calendar, options) {
-	var t = this;
-	
-	// exports
-	t.render = render;
-	t.destroy = destroy;
-	t.updateTitle = updateTitle;
-	t.activateButton = activateButton;
-	t.deactivateButton = deactivateButton;
-	t.disableButton = disableButton;
-	t.enableButton = enableButton;
-	t.getViewsWithButtons = getViewsWithButtons;
-	
-	// locals
-	var el = $();
-	var viewsWithButtons = [];
-	var tm;
-
-
-	function render() {
-		var sections = options.header;
-
-		tm = options.theme ? 'ui' : 'fc';
-
-		if (sections) {
-			el = $("<div class='fc-toolbar'/>")
-				.append(renderSection('left'))
-				.append(renderSection('right'))
-				.append(renderSection('center'))
-				.append('<div class="fc-clear"/>');
-
-			return el;
-		}
-	}
-	
-	
-	function destroy() {
-		el.remove();
-	}
-	
-	
-	function renderSection(position) {
-		var sectionEl = $('<div class="fc-' + position + '"/>');
-		var buttonStr = options.header[position];
-
-		if (buttonStr) {
-			$.each(buttonStr.split(' '), function(i) {
-				var groupChildren = $();
-				var isOnlyButtons = true;
-				var groupEl;
-
-				$.each(this.split(','), function(j, buttonName) {
-					var buttonClick;
-					var themeIcon;
-					var normalIcon;
-					var defaultText;
-					var customText;
-					var innerHtml;
-					var classes;
-					var button;
-
-					if (buttonName == 'title') {
-						groupChildren = groupChildren.add($('<h2>&nbsp;</h2>')); // we always want it to take up height
-						isOnlyButtons = false;
-					}
-					else {
-						if (calendar[buttonName]) { // a calendar method
-							buttonClick = function() {
-								calendar[buttonName]();
-							};
-						}
-						else if (fcViews[buttonName]) { // a view name
-							buttonClick = function() {
-								calendar.changeView(buttonName);
-							};
-							viewsWithButtons.push(buttonName);
-						}
-						if (buttonClick) {
-
-							// smartProperty allows different text per view button (ex: "Agenda Week" vs "Basic Week")
-							themeIcon = smartProperty(options.themeButtonIcons, buttonName);
-							normalIcon = smartProperty(options.buttonIcons, buttonName);
-							defaultText = smartProperty(options.defaultButtonText, buttonName);
-							customText = smartProperty(options.buttonText, buttonName);
-
-							if (customText) {
-								innerHtml = htmlEscape(customText);
-							}
-							else if (themeIcon && options.theme) {
-								innerHtml = "<span class='ui-icon ui-icon-" + themeIcon + "'></span>";
-							}
-							else if (normalIcon && !options.theme) {
-								innerHtml = "<span class='fc-icon fc-icon-" + normalIcon + "'></span>";
-							}
-							else {
-								innerHtml = htmlEscape(defaultText || buttonName);
-							}
-
-							classes = [
-								'fc-' + buttonName + '-button',
-								tm + '-button',
-								tm + '-state-default'
-							];
-
-							button = $( // type="button" so that it doesn't submit a form
-								'<button type="button" class="' + classes.join(' ') + '">' +
-									innerHtml +
-								'</button>'
-								)
-								.click(function() {
-									// don't process clicks for disabled buttons
-									if (!button.hasClass(tm + '-state-disabled')) {
-
-										buttonClick();
-
-										// after the click action, if the button becomes the "active" tab, or disabled,
-										// it should never have a hover class, so remove it now.
-										if (
-											button.hasClass(tm + '-state-active') ||
-											button.hasClass(tm + '-state-disabled')
-										) {
-											button.removeClass(tm + '-state-hover');
-										}
-									}
-								})
-								.mousedown(function() {
-									// the *down* effect (mouse pressed in).
-									// only on buttons that are not the "active" tab, or disabled
-									button
-										.not('.' + tm + '-state-active')
-										.not('.' + tm + '-state-disabled')
-										.addClass(tm + '-state-down');
-								})
-								.mouseup(function() {
-									// undo the *down* effect
-									button.removeClass(tm + '-state-down');
-								})
-								.hover(
-									function() {
-										// the *hover* effect.
-										// only on buttons that are not the "active" tab, or disabled
-										button
-											.not('.' + tm + '-state-active')
-											.not('.' + tm + '-state-disabled')
-											.addClass(tm + '-state-hover');
-									},
-									function() {
-										// undo the *hover* effect
-										button
-											.removeClass(tm + '-state-hover')
-											.removeClass(tm + '-state-down'); // if mouseleave happens before mouseup
-									}
-								);
-
-							groupChildren = groupChildren.add(button);
-						}
-					}
-				});
-
-				if (isOnlyButtons) {
-					groupChildren
-						.first().addClass(tm + '-corner-left').end()
-						.last().addClass(tm + '-corner-right').end();
-				}
-
-				if (groupChildren.length > 1) {
-					groupEl = $('<div/>');
-					if (isOnlyButtons) {
-						groupEl.addClass('fc-button-group');
-					}
-					groupEl.append(groupChildren);
-					sectionEl.append(groupEl);
-				}
-				else {
-					sectionEl.append(groupChildren); // 1 or 0 children
-				}
-			});
-		}
-
-		return sectionEl;
-	}
-	
-	
-	function updateTitle(text) {
-		el.find('h2').text(text);
-	}
-	
-	
-	function activateButton(buttonName) {
-		el.find('.fc-' + buttonName + '-button')
-			.addClass(tm + '-state-active');
-	}
-	
-	
-	function deactivateButton(buttonName) {
-		el.find('.fc-' + buttonName + '-button')
-			.removeClass(tm + '-state-active');
-	}
-	
-	
-	function disableButton(buttonName) {
-		el.find('.fc-' + buttonName + '-button')
-			.attr('disabled', 'disabled')
-			.addClass(tm + '-state-disabled');
-	}
-	
-	
-	function enableButton(buttonName) {
-		el.find('.fc-' + buttonName + '-button')
-			.removeAttr('disabled')
-			.removeClass(tm + '-state-disabled');
-	}
-
-
-	function getViewsWithButtons() {
-		return viewsWithButtons;
-	}
-
-}
-
-;;
-
-fc.sourceNormalizers = [];
-fc.sourceFetchers = [];
-
-var ajaxDefaults = {
-	dataType: 'json',
-	cache: false
 };
 
-var eventGUID = 1;
+var momComputableOptions = {
 
+	// Produces format strings like "ddd MM/DD" -> "Fri 12/10"
+	dayOfMonthFormat: function(momOptions, fcOptions) {
+		var format = momOptions.longDateFormat('l'); // for the format like "M/D/YYYY"
 
-function EventManager(options) { // assumed to be a calendar
-	var t = this;
-	
-	
-	// exports
-	t.isFetchNeeded = isFetchNeeded;
-	t.fetchEvents = fetchEvents;
-	t.addEventSource = addEventSource;
-	t.removeEventSource = removeEventSource;
-	t.updateEvent = updateEvent;
-	t.renderEvent = renderEvent;
-	t.removeEvents = removeEvents;
-	t.clientEvents = clientEvents;
-	t.mutateEvent = mutateEvent;
-	
-	
-	// imports
-	var trigger = t.trigger;
-	var getView = t.getView;
-	var reportEvents = t.reportEvents;
-	var getEventEnd = t.getEventEnd;
-	
-	
-	// locals
-	var stickySource = { events: [] };
-	var sources = [ stickySource ];
-	var rangeStart, rangeEnd;
-	var currentFetchID = 0;
-	var pendingSourceCnt = 0;
-	var loadingLevel = 0;
-	var cache = []; // holds events that have already been expanded
+		// strip the year off the edge, as well as other misc non-whitespace chars
+		format = format.replace(/^Y+[^\w\s]*|[^\w\s]*Y+$/g, '');
 
-
-	$.each(
-		(options.events ? [ options.events ] : []).concat(options.eventSources || []),
-		function(i, sourceInput) {
-			var source = buildEventSource(sourceInput);
-			if (source) {
-				sources.push(source);
-			}
-		}
-	);
-	
-	
-	
-	/* Fetching
-	-----------------------------------------------------------------------------*/
-	
-	
-	function isFetchNeeded(start, end) {
-		return !rangeStart || // nothing has been fetched yet?
-			// or, a part of the new range is outside of the old range? (after normalizing)
-			start.clone().stripZone() < rangeStart.clone().stripZone() ||
-			end.clone().stripZone() > rangeEnd.clone().stripZone();
-	}
-	
-	
-	function fetchEvents(start, end) {
-		rangeStart = start;
-		rangeEnd = end;
-		cache = [];
-		var fetchID = ++currentFetchID;
-		var len = sources.length;
-		pendingSourceCnt = len;
-		for (var i=0; i<len; i++) {
-			fetchEventSource(sources[i], fetchID);
-		}
-	}
-	
-	
-	function fetchEventSource(source, fetchID) {
-		_fetchEventSource(source, function(eventInputs) {
-			var isArraySource = $.isArray(source.events);
-			var i, eventInput;
-			var abstractEvent;
-
-			if (fetchID == currentFetchID) {
-
-				if (eventInputs) {
-					for (i = 0; i < eventInputs.length; i++) {
-						eventInput = eventInputs[i];
-
-						if (isArraySource) { // array sources have already been convert to Event Objects
-							abstractEvent = eventInput;
-						}
-						else {
-							abstractEvent = buildEventFromInput(eventInput, source);
-						}
-
-						if (abstractEvent) { // not false (an invalid event)
-							cache.push.apply(
-								cache,
-								expandEvent(abstractEvent) // add individual expanded events to the cache
-							);
-						}
-					}
-				}
-
-				pendingSourceCnt--;
-				if (!pendingSourceCnt) {
-					reportEvents(cache);
-				}
-			}
-		});
-	}
-	
-	
-	function _fetchEventSource(source, callback) {
-		var i;
-		var fetchers = fc.sourceFetchers;
-		var res;
-
-		for (i=0; i<fetchers.length; i++) {
-			res = fetchers[i].call(
-				t, // this, the Calendar object
-				source,
-				rangeStart.clone(),
-				rangeEnd.clone(),
-				options.timezone,
-				callback
-			);
-
-			if (res === true) {
-				// the fetcher is in charge. made its own async request
-				return;
-			}
-			else if (typeof res == 'object') {
-				// the fetcher returned a new source. process it
-				_fetchEventSource(res, callback);
-				return;
-			}
-		}
-
-		var events = source.events;
-		if (events) {
-			if ($.isFunction(events)) {
-				pushLoading();
-				events.call(
-					t, // this, the Calendar object
-					rangeStart.clone(),
-					rangeEnd.clone(),
-					options.timezone,
-					function(events) {
-						callback(events);
-						popLoading();
-					}
-				);
-			}
-			else if ($.isArray(events)) {
-				callback(events);
-			}
-			else {
-				callback();
-			}
-		}else{
-			var url = source.url;
-			if (url) {
-				var success = source.success;
-				var error = source.error;
-				var complete = source.complete;
-
-				// retrieve any outbound GET/POST $.ajax data from the options
-				var customData;
-				if ($.isFunction(source.data)) {
-					// supplied as a function that returns a key/value object
-					customData = source.data();
-				}
-				else {
-					// supplied as a straight key/value object
-					customData = source.data;
-				}
-
-				// use a copy of the custom data so we can modify the parameters
-				// and not affect the passed-in object.
-				var data = $.extend({}, customData || {});
-
-				var startParam = firstDefined(source.startParam, options.startParam);
-				var endParam = firstDefined(source.endParam, options.endParam);
-				var timezoneParam = firstDefined(source.timezoneParam, options.timezoneParam);
-
-				if (startParam) {
-					data[startParam] = rangeStart.format();
-				}
-				if (endParam) {
-					data[endParam] = rangeEnd.format();
-				}
-				if (options.timezone && options.timezone != 'local') {
-					data[timezoneParam] = options.timezone;
-				}
-
-				pushLoading();
-				$.ajax($.extend({}, ajaxDefaults, source, {
-					data: data,
-					success: function(events) {
-						events = events || [];
-						var res = applyAll(success, this, arguments);
-						if ($.isArray(res)) {
-							events = res;
-						}
-						callback(events);
-					},
-					error: function() {
-						applyAll(error, this, arguments);
-						callback();
-					},
-					complete: function() {
-						applyAll(complete, this, arguments);
-						popLoading();
-					}
-				}));
-			}else{
-				callback();
-			}
-		}
-	}
-	
-	
-	
-	/* Sources
-	-----------------------------------------------------------------------------*/
-	
-
-	function addEventSource(sourceInput) {
-		var source = buildEventSource(sourceInput);
-		if (source) {
-			sources.push(source);
-			pendingSourceCnt++;
-			fetchEventSource(source, currentFetchID); // will eventually call reportEvents
-		}
-	}
-
-
-	function buildEventSource(sourceInput) { // will return undefined if invalid source
-		var normalizers = fc.sourceNormalizers;
-		var source;
-		var i;
-
-		if ($.isFunction(sourceInput) || $.isArray(sourceInput)) {
-			source = { events: sourceInput };
-		}
-		else if (typeof sourceInput === 'string') {
-			source = { url: sourceInput };
-		}
-		else if (typeof sourceInput === 'object') {
-			source = $.extend({}, sourceInput); // shallow copy
-		}
-
-		if (source) {
-
-			// TODO: repeat code, same code for event classNames
-			if (source.className) {
-				if (typeof source.className === 'string') {
-					source.className = source.className.split(/\s+/);
-				}
-				// otherwise, assumed to be an array
-			}
-			else {
-				source.className = [];
-			}
-
-			// for array sources, we convert to standard Event Objects up front
-			if ($.isArray(source.events)) {
-				source.origArray = source.events; // for removeEventSource
-				source.events = $.map(source.events, function(eventInput) {
-					return buildEventFromInput(eventInput, source);
-				});
-			}
-
-			for (i=0; i<normalizers.length; i++) {
-				normalizers[i].call(t, source);
-			}
-
-			return source;
-		}
-	}
-
-
-	function removeEventSource(source) {
-		sources = $.grep(sources, function(src) {
-			return !isSourcesEqual(src, source);
-		});
-		// remove all client events from that source
-		cache = $.grep(cache, function(e) {
-			return !isSourcesEqual(e.source, source);
-		});
-		reportEvents(cache);
-	}
-
-
-	function isSourcesEqual(source1, source2) {
-		return source1 && source2 && getSourcePrimitive(source1) == getSourcePrimitive(source2);
-	}
-
-
-	function getSourcePrimitive(source) {
-		return (
-			(typeof source === 'object') ? // a normalized event source?
-				(source.origArray || source.googleCalendarId || source.url || source.events) : // get the primitive
-				null
-		) ||
-		source; // the given argument *is* the primitive
-	}
-	
-	
-	
-	/* Manipulation
-	-----------------------------------------------------------------------------*/
-
-
-	function updateEvent(event) {
-
-		event.start = t.moment(event.start);
-		if (event.end) {
-			event.end = t.moment(event.end);
-		}
-
-		mutateEvent(event);
-		propagateMiscProperties(event);
-		reportEvents(cache); // reports event modifications (so we can redraw)
-	}
-
-
-	var miscCopyableProps = [
-		'title',
-		'url',
-		'allDay',
-		'className',
-		'editable',
-		'color',
-		'backgroundColor',
-		'borderColor',
-		'textColor'
-	];
-
-	function propagateMiscProperties(event) {
-		var i;
-		var cachedEvent;
-		var j;
-		var prop;
-
-		for (i=0; i<cache.length; i++) {
-			cachedEvent = cache[i];
-			if (cachedEvent._id == event._id && cachedEvent !== event) {
-				for (j=0; j<miscCopyableProps.length; j++) {
-					prop = miscCopyableProps[j];
-					if (event[prop] !== undefined) {
-						cachedEvent[prop] = event[prop];
-					}
-				}
-			}
-		}
-	}
-
-	
-	// returns the expanded events that were created
-	function renderEvent(eventInput, stick) {
-		var abstractEvent = buildEventFromInput(eventInput);
-		var events;
-		var i, event;
-
-		if (abstractEvent) { // not false (a valid input)
-			events = expandEvent(abstractEvent);
-
-			for (i = 0; i < events.length; i++) {
-				event = events[i];
-
-				if (!event.source) {
-					if (stick) {
-						stickySource.events.push(event);
-						event.source = stickySource;
-					}
-					cache.push(event);
-				}
-			}
-
-			reportEvents(cache);
-
-			return events;
-		}
-
-		return [];
-	}
-	
-	
-	function removeEvents(filter) {
-		var eventID;
-		var i;
-
-		if (filter == null) { // null or undefined. remove all events
-			filter = function() { return true; }; // will always match
-		}
-		else if (!$.isFunction(filter)) { // an event ID
-			eventID = filter + '';
-			filter = function(event) {
-				return event._id == eventID;
-			};
-		}
-
-		// Purge event(s) from our local cache
-		cache = $.grep(cache, filter, true); // inverse=true
-
-		// Remove events from array sources.
-		// This works because they have been converted to official Event Objects up front.
-		// (and as a result, event._id has been calculated).
-		for (i=0; i<sources.length; i++) {
-			if ($.isArray(sources[i].events)) {
-				sources[i].events = $.grep(sources[i].events, filter, true);
-			}
-		}
-
-		reportEvents(cache);
-	}
-	
-	
-	function clientEvents(filter) {
-		if ($.isFunction(filter)) {
-			return $.grep(cache, filter);
-		}
-		else if (filter != null) { // not null, not undefined. an event ID
-			filter += '';
-			return $.grep(cache, function(e) {
-				return e._id == filter;
-			});
-		}
-		return cache; // else, return all
-	}
-	
-	
-	
-	/* Loading State
-	-----------------------------------------------------------------------------*/
-	
-	
-	function pushLoading() {
-		if (!(loadingLevel++)) {
-			trigger('loading', null, true, getView());
-		}
-	}
-	
-	
-	function popLoading() {
-		if (!(--loadingLevel)) {
-			trigger('loading', null, false, getView());
-		}
-	}
-	
-	
-	
-	/* Event Normalization
-	-----------------------------------------------------------------------------*/
-
-
-	// Given a raw object with key/value properties, returns an "abstract" Event object.
-	// An "abstract" event is an event that, if recurring, will not have been expanded yet.
-	// Will return `false` when input is invalid.
-	// `source` is optional
-	function buildEventFromInput(input, source) {
-		var out = {};
-		var start, end;
-		var allDay;
-		var allDayDefault;
-
-		if (options.eventDataTransform) {
-			input = options.eventDataTransform(input);
-		}
-		if (source && source.eventDataTransform) {
-			input = source.eventDataTransform(input);
-		}
-
-		// Copy all properties over to the resulting object.
-		// The special-case properties will be copied over afterwards.
-		$.extend(out, input);
-
-		if (source) {
-			out.source = source;
-		}
-
-		out._id = input._id || (input.id === undefined ? '_fc' + eventGUID++ : input.id + '');
-
-		if (input.className) {
-			if (typeof input.className == 'string') {
-				out.className = input.className.split(/\s+/);
-			}
-			else { // assumed to be an array
-				out.className = input.className;
-			}
+		if (fcOptions.isRTL) {
+			format += ' ddd'; // for RTL, add day-of-week to end
 		}
 		else {
-			out.className = [];
+			format = 'ddd ' + format; // for LTR, add day-of-week to beginning
 		}
+		return format;
+	},
 
-		start = input.start || input.date; // "date" is an alias for "start"
-		end = input.end;
+	// Produces format strings like "H(:mm)a" -> "6pm" or "6:30pm"
+	smallTimeFormat: function(momOptions) {
+		return momOptions.longDateFormat('LT')
+			.replace(':mm', '(:mm)')
+			.replace(/(\Wmm)$/, '($1)') // like above, but for foreign langs
+			.replace(/\s*a$/i, 'a'); // convert AM/PM/am/pm to lowercase. remove any spaces beforehand
+	},
 
-		// parse as a time (Duration) if applicable
-		if (isTimeString(start)) {
-			start = moment.duration(start);
-		}
-		if (isTimeString(end)) {
-			end = moment.duration(end);
-		}
+	// Produces format strings like "H(:mm)t" -> "6p" or "6:30p"
+	extraSmallTimeFormat: function(momOptions) {
+		return momOptions.longDateFormat('LT')
+			.replace(':mm', '(:mm)')
+			.replace(/(\Wmm)$/, '($1)') // like above, but for foreign langs
+			.replace(/\s*a$/i, 't'); // convert to AM/PM/am/pm to lowercase one-letter. remove any spaces beforehand
+	},
 
-		if (input.dow || moment.isDuration(start) || moment.isDuration(end)) {
-
-			// the event is "abstract" (recurring) so don't calculate exact start/end dates just yet
-			out.start = start ? moment.duration(start) : null; // will be a Duration or null
-			out.end = end ? moment.duration(end) : null; // will be a Duration or null
-			out._recurring = true; // our internal marker
-		}
-		else {
-
-			if (start) {
-				start = t.moment(start);
-				if (!start.isValid()) {
-					return false;
-				}
-			}
-
-			if (end) {
-				end = t.moment(end);
-				if (!end.isValid()) {
-					end = null; // let defaults take over
-				}
-			}
-
-			allDay = input.allDay;
-			if (allDay === undefined) {
-				allDayDefault = firstDefined(
-					source ? source.allDayDefault : undefined,
-					options.allDayDefault
-				);
-				if (allDayDefault !== undefined) {
-					// use the default
-					allDay = allDayDefault;
-				}
-				else {
-					// if a single date has a time, the event should not be all-day
-					allDay = !start.hasTime() && (!end || !end.hasTime());
-				}
-			}
-
-			assignDatesToEvent(start, end, allDay, out);
-		}
-
-		return out;
+	// Produces format strings like "H:mm" -> "6:30" (with no AM/PM)
+	noMeridiemTimeFormat: function(momOptions) {
+		return momOptions.longDateFormat('LT')
+			.replace(/\s*a$/i, ''); // remove trailing AM/PM
 	}
 
-
-	// Normalizes and assigns the given dates to the given partially-formed event object.
-	// Requires an explicit `allDay` boolean parameter.
-	// NOTE: mutates the given start/end moments. does not make an internal copy
-	function assignDatesToEvent(start, end, allDay, event) {
-
-		// normalize the date based on allDay
-		if (allDay) {
-			// neither date should have a time
-			if (start.hasTime()) {
-				start.stripTime();
-			}
-			if (end && end.hasTime()) {
-				end.stripTime();
-			}
-		}
-		else {
-			// force a time/zone up the dates
-			if (!start.hasTime()) {
-				start = t.rezoneDate(start);
-			}
-			if (end && !end.hasTime()) {
-				end = t.rezoneDate(end);
-			}
-		}
-
-		if (end && end <= start) { // end is exclusive. must be after start
-			end = null; // let defaults take over
-		}
-
-		event.allDay = allDay;
-		event.start = start;
-		event.end = end || null; // ensure null if falsy
-
-		if (options.forceEventDuration && !event.end) {
-			event.end = getEventEnd(event);
-		}
-
-		backupEventDates(event);
-	}
-
-
-	// If the given event is a recurring event, break it down into an array of individual instances.
-	// If not a recurring event, return an array with the single original event.
-	// If given a falsy input (probably because of a failed buildEventFromInput call), returns an empty array.
-	// HACK: can override the recurring window by providing custom rangeStart/rangeEnd (for businessHours).
-	function expandEvent(abstractEvent, _rangeStart, _rangeEnd) {
-		var events = [];
-		var dowHash;
-		var dow;
-		var i;
-		var date;
-		var startTime, endTime;
-		var start, end;
-		var event;
-
-		_rangeStart = _rangeStart || rangeStart;
-		_rangeEnd = _rangeEnd || rangeEnd;
-
-		if (abstractEvent) {
-			if (abstractEvent._recurring) {
-
-				// make a boolean hash as to whether the event occurs on each day-of-week
-				if ((dow = abstractEvent.dow)) {
-					dowHash = {};
-					for (i = 0; i < dow.length; i++) {
-						dowHash[dow[i]] = true;
-					}
-				}
-
-				// iterate through every day in the current range
-				date = _rangeStart.clone().stripTime(); // holds the date of the current day
-				while (date.isBefore(_rangeEnd)) {
-
-					if (!dowHash || dowHash[date.day()]) { // if everyday, or this particular day-of-week
-
-						startTime = abstractEvent.start; // the stored start and end properties are times (Durations)
-						endTime = abstractEvent.end; // "
-						start = date.clone();
-						end = null;
-
-						if (startTime) {
-							start = start.time(startTime);
-						}
-						if (endTime) {
-							end = date.clone().time(endTime);
-						}
-
-						event = $.extend({}, abstractEvent); // make a copy of the original
-						assignDatesToEvent(
-							start, end,
-							!startTime && !endTime, // allDay?
-							event
-						);
-						events.push(event);
-					}
-
-					date.add(1, 'days');
-				}
-			}
-			else {
-				events.push(abstractEvent); // return the original event. will be a one-item array
-			}
-		}
-
-		return events;
-	}
-
-
-
-	/* Event Modification Math
-	-----------------------------------------------------------------------------------------*/
-
-
-	// Modify the date(s) of an event and make this change propagate to all other events with
-	// the same ID (related repeating events).
-	//
-	// If `newStart`/`newEnd` are not specified, the "new" dates are assumed to be `event.start` and `event.end`.
-	// The "old" dates to be compare against are always `event._start` and `event._end` (set by EventManager).
-	//
-	// Returns an object with delta information and a function to undo all operations.
-	//
-	function mutateEvent(event, newStart, newEnd) {
-		var oldAllDay = event._allDay;
-		var oldStart = event._start;
-		var oldEnd = event._end;
-		var clearEnd = false;
-		var newAllDay;
-		var dateDelta;
-		var durationDelta;
-		var undoFunc;
-
-		// if no new dates were passed in, compare against the event's existing dates
-		if (!newStart && !newEnd) {
-			newStart = event.start;
-			newEnd = event.end;
-		}
-
-		// NOTE: throughout this function, the initial values of `newStart` and `newEnd` are
-		// preserved. These values may be undefined.
-
-		// detect new allDay
-		if (event.allDay != oldAllDay) { // if value has changed, use it
-			newAllDay = event.allDay;
-		}
-		else { // otherwise, see if any of the new dates are allDay
-			newAllDay = !(newStart || newEnd).hasTime();
-		}
-
-		// normalize the new dates based on allDay
-		if (newAllDay) {
-			if (newStart) {
-				newStart = newStart.clone().stripTime();
-			}
-			if (newEnd) {
-				newEnd = newEnd.clone().stripTime();
-			}
-		}
-
-		// compute dateDelta
-		if (newStart) {
-			if (newAllDay) {
-				dateDelta = dayishDiff(newStart, oldStart.clone().stripTime()); // treat oldStart as allDay
-			}
-			else {
-				dateDelta = dayishDiff(newStart, oldStart);
-			}
-		}
-
-		if (newAllDay != oldAllDay) {
-			// if allDay has changed, always throw away the end
-			clearEnd = true;
-		}
-		else if (newEnd) {
-			durationDelta = dayishDiff(
-				// new duration
-				newEnd || t.getDefaultEventEnd(newAllDay, newStart || oldStart),
-				newStart || oldStart
-			).subtract(dayishDiff(
-				// subtract old duration
-				oldEnd || t.getDefaultEventEnd(oldAllDay, oldStart),
-				oldStart
-			));
-		}
-
-		undoFunc = mutateEvents(
-			clientEvents(event._id), // get events with this ID
-			clearEnd,
-			newAllDay,
-			dateDelta,
-			durationDelta
-		);
-
-		return {
-			dateDelta: dateDelta,
-			durationDelta: durationDelta,
-			undo: undoFunc
-		};
-	}
-
-
-	// Modifies an array of events in the following ways (operations are in order):
-	// - clear the event's `end`
-	// - convert the event to allDay
-	// - add `dateDelta` to the start and end
-	// - add `durationDelta` to the event's duration
-	//
-	// Returns a function that can be called to undo all the operations.
-	//
-	function mutateEvents(events, clearEnd, forceAllDay, dateDelta, durationDelta) {
-		var isAmbigTimezone = t.getIsAmbigTimezone();
-		var undoFunctions = [];
-
-		$.each(events, function(i, event) {
-			var oldAllDay = event._allDay;
-			var oldStart = event._start;
-			var oldEnd = event._end;
-			var newAllDay = forceAllDay != null ? forceAllDay : oldAllDay;
-			var newStart = oldStart.clone();
-			var newEnd = (!clearEnd && oldEnd) ? oldEnd.clone() : null;
-
-			// NOTE: this function is responsible for transforming `newStart` and `newEnd`,
-			// which were initialized to the OLD values first. `newEnd` may be null.
-
-			// normlize newStart/newEnd to be consistent with newAllDay
-			if (newAllDay) {
-				newStart.stripTime();
-				if (newEnd) {
-					newEnd.stripTime();
-				}
-			}
-			else {
-				if (!newStart.hasTime()) {
-					newStart = t.rezoneDate(newStart);
-				}
-				if (newEnd && !newEnd.hasTime()) {
-					newEnd = t.rezoneDate(newEnd);
-				}
-			}
-
-			// ensure we have an end date if necessary
-			if (!newEnd && (options.forceEventDuration || +durationDelta)) {
-				newEnd = t.getDefaultEventEnd(newAllDay, newStart);
-			}
-
-			// translate the dates
-			newStart.add(dateDelta);
-			if (newEnd) {
-				newEnd.add(dateDelta).add(durationDelta);
-			}
-
-			// if the dates have changed, and we know it is impossible to recompute the
-			// timezone offsets, strip the zone.
-			if (isAmbigTimezone) {
-				if (+dateDelta || +durationDelta) {
-					newStart.stripZone();
-					if (newEnd) {
-						newEnd.stripZone();
-					}
-				}
-			}
-
-			event.allDay = newAllDay;
-			event.start = newStart;
-			event.end = newEnd;
-			backupEventDates(event);
-
-			undoFunctions.push(function() {
-				event.allDay = oldAllDay;
-				event.start = oldStart;
-				event.end = oldEnd;
-				backupEventDates(event);
-			});
-		});
-
-		return function() {
-			for (var i=0; i<undoFunctions.length; i++) {
-				undoFunctions[i]();
-			}
-		};
-	}
-
-
-	/* Business Hours
-	-----------------------------------------------------------------------------------------*/
-
-	t.getBusinessHoursEvents = getBusinessHoursEvents;
-
-
-	// Returns an array of events as to when the business hours occur in the given view.
-	// Abuse of our event system :(
-	function getBusinessHoursEvents() {
-		var optionVal = options.businessHours;
-		var defaultVal = {
-			className: 'fc-nonbusiness',
-			start: '09:00',
-			end: '17:00',
-			dow: [ 1, 2, 3, 4, 5 ], // monday - friday
-			rendering: 'inverse-background'
-		};
-		var view = t.getView();
-		var eventInput;
-
-		if (optionVal) {
-			if (typeof optionVal === 'object') {
-				// option value is an object that can override the default business hours
-				eventInput = $.extend({}, defaultVal, optionVal);
-			}
-			else {
-				// option value is `true`. use default business hours
-				eventInput = defaultVal;
-			}
-		}
-
-		if (eventInput) {
-			return expandEvent(
-				buildEventFromInput(eventInput),
-				view.start,
-				view.end
-			);
-		}
-
-		return [];
-	}
-
-
-	/* Overlapping / Constraining
-	-----------------------------------------------------------------------------------------*/
-
-	t.isEventAllowedInRange = isEventAllowedInRange;
-	t.isSelectionAllowedInRange = isSelectionAllowedInRange;
-	t.isExternalDragAllowedInRange = isExternalDragAllowedInRange;
-
-
-	function isEventAllowedInRange(event, start, end) {
-		var source = event.source || {};
-		var constraint = firstDefined(
-			event.constraint,
-			source.constraint,
-			options.eventConstraint
-		);
-		var overlap = firstDefined(
-			event.overlap,
-			source.overlap,
-			options.eventOverlap
-		);
-
-		return isRangeAllowed(start, end, constraint, overlap, event);
-	}
-
-
-	function isSelectionAllowedInRange(start, end) {
-		return isRangeAllowed(
-			start,
-			end,
-			options.selectConstraint,
-			options.selectOverlap
-		);
-	}
-
-
-	function isExternalDragAllowedInRange(start, end, eventInput) { // eventInput is optional associated event data
-		var event;
-
-		if (eventInput) {
-			event = expandEvent(buildEventFromInput(eventInput))[0];
-			if (event) {
-				return isEventAllowedInRange(event, start, end);
-			}
-		}
-
-		return isSelectionAllowedInRange(start, end); // treat it as a selection
-	}
-
-
-	// Returns true if the given range (caused by an event drop/resize or a selection) is allowed to exist
-	// according to the constraint/overlap settings.
-	// `event` is not required if checking a selection.
-	function isRangeAllowed(start, end, constraint, overlap, event) {
-		var constraintEvents;
-		var anyContainment;
-		var i, otherEvent;
-		var otherOverlap;
-
-		// normalize. fyi, we're normalizing in too many places :(
-		start = start.clone().stripZone();
-		end = end.clone().stripZone();
-
-		// the range must be fully contained by at least one of produced constraint events
-		if (constraint != null) {
-			constraintEvents = constraintToEvents(constraint);
-			anyContainment = false;
-
-			for (i = 0; i < constraintEvents.length; i++) {
-				if (eventContainsRange(constraintEvents[i], start, end)) {
-					anyContainment = true;
-					break;
-				}
-			}
-
-			if (!anyContainment) {
-				return false;
-			}
-		}
-
-		for (i = 0; i < cache.length; i++) { // loop all events and detect overlap
-			otherEvent = cache[i];
-
-			// don't compare the event to itself or other related [repeating] events
-			if (event && event._id === otherEvent._id) {
-				continue;
-			}
-
-			// there needs to be an actual intersection before disallowing anything
-			if (eventIntersectsRange(otherEvent, start, end)) {
-
-				// evaluate overlap for the given range and short-circuit if necessary
-				if (overlap === false) {
-					return false;
-				}
-				else if (typeof overlap === 'function' && !overlap(otherEvent, event)) {
-					return false;
-				}
-
-				// if we are computing if the given range is allowable for an event, consider the other event's
-				// EventObject-specific or Source-specific `overlap` property
-				if (event) {
-					otherOverlap = firstDefined(
-						otherEvent.overlap,
-						(otherEvent.source || {}).overlap
-						// we already considered the global `eventOverlap`
-					);
-					if (otherOverlap === false) {
-						return false;
-					}
-					if (typeof otherOverlap === 'function' && !otherOverlap(event, otherEvent)) {
-						return false;
-					}
-				}
-			}
-		}
-
-		return true;
-	}
-
-
-	// Given an event input from the API, produces an array of event objects. Possible event inputs:
-	// 'businessHours'
-	// An event ID (number or string)
-	// An object with specific start/end dates or a recurring event (like what businessHours accepts)
-	function constraintToEvents(constraintInput) {
-
-		if (constraintInput === 'businessHours') {
-			return getBusinessHoursEvents();
-		}
-
-		if (typeof constraintInput === 'object') {
-			return expandEvent(buildEventFromInput(constraintInput));
-		}
-
-		return clientEvents(constraintInput); // probably an ID
-	}
-
-
-	// Is the event's date ranged fully contained by the given range?
-	// start/end already assumed to have stripped zones :(
-	function eventContainsRange(event, start, end) {
-		var eventStart = event.start.clone().stripZone();
-		var eventEnd = t.getEventEnd(event).stripZone();
-
-		return start >= eventStart && end <= eventEnd;
-	}
-
-
-	// Does the event's date range intersect with the given range?
-	// start/end already assumed to have stripped zones :(
-	function eventIntersectsRange(event, start, end) {
-		var eventStart = event.start.clone().stripZone();
-		var eventEnd = t.getEventEnd(event).stripZone();
-
-		return start < eventEnd && end > eventStart;
-	}
-
+};
+
+
+// Returns moment's internal locale data. If doesn't exist, returns English.
+// Works with moment-pre-2.8
+function getMomentLocaleData(langCode) {
+	var func = moment.localeData || moment.langData;
+	return func.call(moment, langCode) ||
+		func.call(moment, 'en'); // the newer localData could return null, so fall back to en
 }
 
 
-// updates the "backup" properties, which are preserved in order to compute diffs later on.
-function backupEventDates(event) {
-	event._allDay = event.allDay;
-	event._start = event.start.clone();
-	event._end = event.end ? event.end.clone() : null;
-}
+// Initialize English by forcing computation of moment-derived options.
+// Also, sets it as the default.
+fc.lang('en', englishDefaults);
 
 ;;
+
+// exports
+fc.intersectionToSeg = intersectionToSeg;
+fc.applyAll = applyAll;
+fc.debounce = debounce;
+
 
 /* FullCalendar-specific DOM Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -79533,27 +78728,32 @@ function isPrimaryMouseButton(ev) {
 
 // Creates a basic segment with the intersection of the two ranges. Returns undefined if no intersection.
 // Expects all dates to be normalized to the same timezone beforehand.
-function intersectionToSeg(subjectStart, subjectEnd, intervalStart, intervalEnd) {
+// TODO: move to date section?
+function intersectionToSeg(subjectRange, constraintRange) {
+	var subjectStart = subjectRange.start;
+	var subjectEnd = subjectRange.end;
+	var constraintStart = constraintRange.start;
+	var constraintEnd = constraintRange.end;
 	var segStart, segEnd;
 	var isStart, isEnd;
 
-	if (subjectEnd > intervalStart && subjectStart < intervalEnd) { // in bounds at all?
+	if (subjectEnd > constraintStart && subjectStart < constraintEnd) { // in bounds at all?
 
-		if (subjectStart >= intervalStart) {
+		if (subjectStart >= constraintStart) {
 			segStart = subjectStart.clone();
 			isStart = true;
 		}
 		else {
-			segStart = intervalStart.clone();
+			segStart = constraintStart.clone();
 			isStart =  false;
 		}
 
-		if (subjectEnd <= intervalEnd) {
+		if (subjectEnd <= constraintEnd) {
 			segEnd = subjectEnd.clone();
 			isEnd = true;
 		}
 		else {
-			segEnd = intervalEnd.clone();
+			segEnd = constraintEnd.clone();
 			isEnd = false;
 		}
 
@@ -79588,15 +78788,88 @@ function smartProperty(obj, name) { // get a camel-cased/namespaced property of 
 ----------------------------------------------------------------------------------------------------------------------*/
 
 var dayIDs = [ 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat' ];
+var intervalUnits = [ 'year', 'month', 'week', 'day', 'hour', 'minute', 'second', 'millisecond' ];
 
 
 // Diffs the two moments into a Duration where full-days are recorded first, then the remaining time.
 // Moments will have their timezones normalized.
-function dayishDiff(a, b) {
+function diffDayTime(a, b) {
 	return moment.duration({
 		days: a.clone().stripTime().diff(b.clone().stripTime(), 'days'),
-		ms: a.time() - b.time()
+		ms: a.time() - b.time() // time-of-day from day start. disregards timezone
 	});
+}
+
+
+// Diffs the two moments via their start-of-day (regardless of timezone). Produces whole-day durations.
+function diffDay(a, b) {
+	return moment.duration({
+		days: a.clone().stripTime().diff(b.clone().stripTime(), 'days')
+	});
+}
+
+
+// Computes the larges whole-unit period of time, as a duration object.
+// For example, 48 hours will be {days:2} whereas 49 hours will be {hours:49}.
+// Accepts start/end, a range object, or an original duration object.
+/* (never used)
+function computeIntervalDuration(start, end) {
+	var durationInput = {};
+	var i, unit;
+	var val;
+
+	for (i = 0; i < intervalUnits.length; i++) {
+		unit = intervalUnits[i];
+		val = computeIntervalAs(unit, start, end);
+		if (val) {
+			break;
+		}
+	}
+
+	durationInput[unit] = val;
+	return moment.duration(durationInput);
+}
+*/
+
+
+// Computes the unit name of the largest whole-unit period of time.
+// For example, 48 hours will be "days" wherewas 49 hours will be "hours".
+// Accepts start/end, a range object, or an original duration object.
+function computeIntervalUnit(start, end) {
+	var i, unit;
+
+	for (i = 0; i < intervalUnits.length; i++) {
+		unit = intervalUnits[i];
+		if (computeIntervalAs(unit, start, end)) {
+			break;
+		}
+	}
+
+	return unit; // will be "milliseconds" if nothing else matches
+}
+
+
+// Computes the number of units the interval is cleanly comprised of.
+// If the given unit does not cleanly divide the interval a whole number of times, `false` is returned.
+// Accepts start/end, a range object, or an original duration object.
+function computeIntervalAs(unit, start, end) {
+	var val;
+
+	if (end != null) { // given start, end
+		val = end.diff(start, unit, true);
+	}
+	else if (moment.isDuration(start)) { // given duration
+		val = start.as(unit);
+	}
+	else { // given { start, end } range object
+		val = start.end.diff(start.start, unit, true);
+	}
+
+	if (val >= 1 && isInt(val)) {
+		return val;
+	}
+
+	return false;
 }
 
 
@@ -79614,7 +78887,7 @@ function isTimeString(str) {
 /* General Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
-fc.applyAll = applyAll; // export
+var hasOwnPropMethod = {}.hasOwnProperty;
 
 
 // Create an object that has the given prototype. Just like Object.create
@@ -79622,6 +78895,26 @@ function createObject(proto) {
 	var f = function() {};
 	f.prototype = proto;
 	return new f();
+}
+
+
+function copyOwnProps(src, dest) {
+	for (var name in src) {
+		if (hasOwnProp(src, name)) {
+			dest[name] = src[name];
+		}
+	}
+}
+
+
+function hasOwnProp(obj, name) {
+	return hasOwnPropMethod.call(obj, name);
+}
+
+
+// Is the given value a non-object non-function value?
+function isAtomic(val) {
+	return /undefined|null|boolean|number|string/.test($.type(val));
 }
 
 
@@ -79671,6 +78964,11 @@ function capitaliseFirstLetter(str) {
 
 function compareNumbers(a, b) { // for .sort()
 	return a - b;
+}
+
+
+function isInt(n) {
+	return n % 1 === 0;
 }
 
 
@@ -79792,7 +79090,7 @@ function makeMoment(args, parseAsUTC, parseZone) {
 		}
 		// otherwise, probably a string with a format
 
-		if (parseAsUTC) {
+		if (parseAsUTC || isAmbigTime) {
 			mom = moment.utc.apply(moment, args);
 		}
 		else {
@@ -79888,15 +79186,21 @@ newMomentProto.time = function(time) {
 // but preserving its YMD. A moment with a stripped time will display no time
 // nor timezone offset when .format() is called.
 newMomentProto.stripTime = function() {
-	var a = this.toArray(); // year,month,date,hours,minutes,seconds as an array
+	var a;
 
-	this.utc(); // set the internal UTC flag (will clear the ambig flags)
-	setUTCValues(this, a.slice(0, 3)); // set the year/month/date. time will be zero
+	if (!this._ambigTime) {
 
-	// Mark the time as ambiguous. This needs to happen after the .utc() call, which calls .zone(),
-	// which clears all ambig flags. Same with setUTCValues with moment-timezone.
-	this._ambigTime = true;
-	this._ambigZone = true; // if ambiguous time, also ambiguous timezone offset
+		// get the values before any conversion happens
+		a = this.toArray(); // array of y/m/d/h/m/s/ms
+
+		this.utc(); // set the internal UTC flag (will clear the ambig flags)
+		setUTCValues(this, a.slice(0, 3)); // set the year/month/date. time will be zero
+
+		// Mark the time as ambiguous. This needs to happen after the .utc() call, which calls .zone(),
+		// which clears all ambig flags. Same with setUTCValues with moment-timezone.
+		this._ambigTime = true;
+		this._ambigZone = true; // if ambiguous time, also ambiguous timezone offset
+	}
 
 	return this; // for chaining
 };
@@ -79914,20 +79218,26 @@ newMomentProto.hasTime = function() {
 // YMD and time-of-day. A moment with a stripped timezone offset will display no
 // timezone offset when .format() is called.
 newMomentProto.stripZone = function() {
-	var a = this.toArray(); // year,month,date,hours,minutes,seconds as an array
-	var wasAmbigTime = this._ambigTime;
+	var a, wasAmbigTime;
 
-	this.utc(); // set the internal UTC flag (will clear the ambig flags)
-	setUTCValues(this, a); // will set the year/month/date/hours/minutes/seconds/ms
+	if (!this._ambigZone) {
 
-	if (wasAmbigTime) {
-		// the above call to .utc()/.zone() unfortunately clears the ambig flags, so reassign
-		this._ambigTime = true;
+		// get the values before any conversion happens
+		a = this.toArray(); // array of y/m/d/h/m/s/ms
+		wasAmbigTime = this._ambigTime;
+
+		this.utc(); // set the internal UTC flag (will clear the ambig flags)
+		setUTCValues(this, a); // will set the year/month/date/hours/minutes/seconds/ms
+
+		if (wasAmbigTime) {
+			// the above call to .utc()/.zone() unfortunately clears the ambig flags, so reassign
+			this._ambigTime = true;
+		}
+
+		// Mark the zone as ambiguous. This needs to happen after the .utc() call, which calls .zone(),
+		// which clears all ambig flags. Same with setUTCValues with moment-timezone.
+		this._ambigZone = true;
 	}
-
-	// Mark the zone as ambiguous. This needs to happen after the .utc() call, which calls .zone(),
-	// which clears all ambig flags. Same with setUTCValues with moment-timezone.
-	this._ambigZone = true;
 
 	return this; // for chaining
 };
@@ -80051,28 +79361,38 @@ $.each([
 // given an array of moment-like inputs, return a parallel array w/ moments similarly ambiguated.
 // for example, of one moment has ambig time, but not others, all moments will have their time stripped.
 // set `preserveTime` to `true` to keep times, but only normalize zone ambiguity.
+// returns the original moments if no modifications are necessary.
 function commonlyAmbiguate(inputs, preserveTime) {
-	var outputs = [];
 	var anyAmbigTime = false;
 	var anyAmbigZone = false;
-	var i;
+	var len = inputs.length;
+	var moms = [];
+	var i, mom;
 
-	for (i=0; i<inputs.length; i++) {
-		outputs.push(fc.moment.parseZone(inputs[i]));
-		anyAmbigTime = anyAmbigTime || outputs[i]._ambigTime;
-		anyAmbigZone = anyAmbigZone || outputs[i]._ambigZone;
+	// parse inputs into real moments and query their ambig flags
+	for (i = 0; i < len; i++) {
+		mom = inputs[i];
+		if (!moment.isMoment(mom)) {
+			mom = fc.moment.parseZone(mom);
+		}
+		anyAmbigTime = anyAmbigTime || mom._ambigTime;
+		anyAmbigZone = anyAmbigZone || mom._ambigZone;
+		moms.push(mom);
 	}
 
-	for (i=0; i<outputs.length; i++) {
-		if (anyAmbigTime && !preserveTime) {
-			outputs[i].stripTime();
+	// strip each moment down to lowest common ambiguity
+	// use clones to avoid modifying the original moments
+	for (i = 0; i < len; i++) {
+		mom = moms[i];
+		if (!preserveTime && anyAmbigTime && !mom._ambigTime) {
+			moms[i] = mom.clone().stripTime();
 		}
-		else if (anyAmbigZone) {
-			outputs[i].stripZone();
+		else if (anyAmbigZone && !mom._ambigZone) {
+			moms[i] = mom.clone().stripZone();
 		}
 	}
 
-	return outputs;
+	return moms;
 }
 
 // Transfers all the flags related to ambiguous time/zone from the `src` moment to the `dest` moment
@@ -80364,6 +79684,47 @@ function chunkFormatString(formatStr) {
 
 ;;
 
+fc.Class = Class; // export
+
+// class that all other classes will inherit from
+function Class() { }
+
+// called upon a class to create a subclass
+Class.extend = function(members) {
+	var superClass = this;
+	var subClass;
+
+	members = members || {};
+
+	// ensure a constructor for the subclass, forwarding all arguments to the super-constructor if it doesn't exist
+	if (hasOwnProp(members, 'constructor')) {
+		subClass = members.constructor;
+	}
+	if (typeof subClass !== 'function') {
+		subClass = members.constructor = function() {
+			superClass.apply(this, arguments);
+		};
+	}
+
+	// build the base prototype for the subclass, which is an new object chained to the superclass's prototype
+	subClass.prototype = createObject(superClass.prototype);
+
+	// copy each member variable/method onto the the subclass's prototype
+	copyOwnProps(members, subClass.prototype);
+
+	// copy over all class variables/methods to the subclass, such as `extend` and `mixin`
+	copyOwnProps(superClass, subClass);
+
+	return subClass;
+};
+
+// adds new member variables/methods to the class's prototype.
+// can be called with another class, or a plain object hash containing new members.
+Class.mixin = function(members) {
+	copyOwnProps(members.prototype || members, this.prototype);
+};
+;;
+
 /* A rectangular panel that is absolutely positioned over other content
 ------------------------------------------------------------------------------------------------------------------------
 Options:
@@ -80378,18 +79739,18 @@ Options:
 	- hide (callback)
 */
 
-function Popover(options) {
-	this.options = options || {};
-}
-
-
-Popover.prototype = {
+var Popover = Class.extend({
 
 	isHidden: true,
 	options: null,
 	el: null, // the container element for the popover. generated by this object
 	documentMousedownProxy: null, // document mousedown handler bound to `this`
 	margin: 10, // the space required between the popover and the edges of the scroll container
+
+
+	constructor: function(options) {
+		this.options = options || {};
+	},
 
 
 	// Shows the popover on the specified position. Renders it if not already
@@ -80529,7 +79890,7 @@ Popover.prototype = {
 		}
 	}
 
-};
+});
 
 ;;
 
@@ -80547,16 +79908,11 @@ Common interface:
 /* Coordinate map for a grid component
 ----------------------------------------------------------------------------------------------------------------------*/
 
-function GridCoordMap(grid) {
-	this.grid = grid;
-}
-
-
-GridCoordMap.prototype = {
+var GridCoordMap = Class.extend({
 
 	grid: null, // reference to the Grid
-	rows: null, // the top-to-bottom y coordinates. including the bottom of the last item
-	cols: null, // the left-to-right x coordinates. including the right of the last item
+	rowCoords: null, // array of {top,bottom} objects
+	colCoords: null, // array of {left,right} objects
 
 	containerEl: null, // container element that all coordinates are constrained to. optionally assigned
 	minX: null,
@@ -80565,49 +79921,61 @@ GridCoordMap.prototype = {
 	maxY: null, // exclusive
 
 
+	constructor: function(grid) {
+		this.grid = grid;
+	},
+
+
 	// Queries the grid for the coordinates of all the cells
 	build: function() {
-		this.grid.buildCoords(
-			this.rows = [],
-			this.cols = []
-		);
+		this.rowCoords = this.grid.computeRowCoords();
+		this.colCoords = this.grid.computeColCoords();
 		this.computeBounds();
+	},
+
+
+	// Clears the coordinates data to free up memory
+	clear: function() {
+		this.rowCoords = null;
+		this.colCoords = null;
 	},
 
 
 	// Given a coordinate of the document, gets the associated cell. If no cell is underneath, returns null
 	getCell: function(x, y) {
-		var cell = null;
-		var rows = this.rows;
-		var cols = this.cols;
-		var r = -1;
-		var c = -1;
-		var i;
+		var rowCoords = this.rowCoords;
+		var colCoords = this.colCoords;
+		var hitRow = null;
+		var hitCol = null;
+		var i, coords;
+		var cell;
 
 		if (this.inBounds(x, y)) {
 
-			for (i = 0; i < rows.length; i++) {
-				if (y >= rows[i][0] && y < rows[i][1]) {
-					r = i;
+			for (i = 0; i < rowCoords.length; i++) {
+				coords = rowCoords[i];
+				if (y >= coords.top && y < coords.bottom) {
+					hitRow = i;
 					break;
 				}
 			}
 
-			for (i = 0; i < cols.length; i++) {
-				if (x >= cols[i][0] && x < cols[i][1]) {
-					c = i;
+			for (i = 0; i < colCoords.length; i++) {
+				coords = colCoords[i];
+				if (x >= coords.left && x < coords.right) {
+					hitCol = i;
 					break;
 				}
 			}
 
-			if (r >= 0 && c >= 0) {
-				cell = { row: r, col: c };
-				cell.grid = this.grid;
-				cell.date = this.grid.getCellDate(cell);
+			if (hitRow !== null && hitCol !== null) {
+				cell = this.grid.getCell(hitRow, hitCol);
+				cell.grid = this.grid; // for DragListener's isCellsEqual. dragging between grids
+				return cell;
 			}
 		}
 
-		return cell;
+		return null;
 	},
 
 
@@ -80633,20 +80001,20 @@ GridCoordMap.prototype = {
 		return true;
 	}
 
-};
+});
 
 
 /* Coordinate map that is a combination of multiple other coordinate maps
 ----------------------------------------------------------------------------------------------------------------------*/
 
-function ComboCoordMap(coordMaps) {
-	this.coordMaps = coordMaps;
-}
-
-
-ComboCoordMap.prototype = {
+var ComboCoordMap = Class.extend({
 
 	coordMaps: null, // an array of CoordMaps
+
+
+	constructor: function(coordMaps) {
+		this.coordMaps = coordMaps;
+	},
 
 
 	// Builds all coordMaps
@@ -80671,9 +80039,20 @@ ComboCoordMap.prototype = {
 		}
 
 		return cell;
+	},
+
+
+	// Clears all coordMaps
+	clear: function() {
+		var coordMaps = this.coordMaps;
+		var i;
+
+		for (i = 0; i < coordMaps.length; i++) {
+			coordMaps[i].clear();
+		}
 	}
 
-};
+});
 
 ;;
 
@@ -80681,13 +80060,7 @@ ComboCoordMap.prototype = {
 ----------------------------------------------------------------------------------------------------------------------*/
 // TODO: very useful to have a handler that gets called upon cellOut OR when dragging stops (for cleanup)
 
-function DragListener(coordMap, options) {
-	this.coordMap = coordMap;
-	this.options = options || {};
-}
-
-
-DragListener.prototype = {
+var DragListener = Class.extend({
 
 	coordMap: null,
 	options: null,
@@ -80695,13 +80068,11 @@ DragListener.prototype = {
 	isListening: false,
 	isDragging: false,
 
-	// the cell/date the mouse was over when listening started
+	// the cell the mouse was over when listening started
 	origCell: null,
-	origDate: null,
 
-	// the cell/date the mouse is over
+	// the cell the mouse is over
 	cell: null,
-	date: null,
 
 	// coordinates of the initial mousedown
 	mouseX0: null,
@@ -80721,6 +80092,12 @@ DragListener.prototype = {
 	scrollSensitivity: 30, // pixels from edge for scrolling to start
 	scrollSpeed: 200, // pixels per second, at maximum speed
 	scrollIntervalMs: 50, // millisecond wait between scroll increment
+
+
+	constructor: function(coordMap, options) {
+		this.coordMap = coordMap;
+		this.options = options || {};
+	},
 
 
 	// Call this when the user does a mousedown. Will probably lead to startListening
@@ -80760,11 +80137,10 @@ DragListener.prototype = {
 
 			this.computeCoords(); // relies on `scrollEl`
 
-			// get info on the initial cell, date, and coordinates
+			// get info on the initial cell and its coordinates
 			if (ev) {
 				cell = this.getCell(ev);
 				this.origCell = cell;
-				this.origDate = cell ? cell.date : null;
 
 				this.mouseX0 = ev.pageX;
 				this.mouseY0 = ev.pageY;
@@ -80822,9 +80198,10 @@ DragListener.prototype = {
 			this.trigger('dragStart', ev);
 
 			// report the initial cell the mouse is over
-			cell = this.getCell(ev);
+			// especially important if no min-distance and drag starts immediately
+			cell = this.getCell(ev); // this might be different from this.origCell if the min-distance is large
 			if (cell) {
-				this.cellOver(cell, true);
+				this.cellOver(cell);
 			}
 		}
 	},
@@ -80854,8 +80231,7 @@ DragListener.prototype = {
 	// Called when a the mouse has just moved over a new cell
 	cellOver: function(cell) {
 		this.cell = cell;
-		this.date = cell.date;
-		this.trigger('cellOver', cell, cell.date);
+		this.trigger('cellOver', cell, isCellsEqual(cell, this.origCell));
 	},
 
 
@@ -80864,7 +80240,6 @@ DragListener.prototype = {
 		if (this.cell) {
 			this.trigger('cellOut', this.cell);
 			this.cell = null;
-			this.date = null;
 		}
 	},
 
@@ -80909,7 +80284,7 @@ DragListener.prototype = {
 			this.trigger('listenStop', ev);
 
 			this.origCell = this.cell = null;
-			this.origDate = this.date = null;
+			this.coordMap.clear();
 		}
 	},
 
@@ -81083,7 +80458,7 @@ DragListener.prototype = {
 		}
 	}
 
-};
+});
 
 
 // Returns `true` if the cells are identically equal. `false` otherwise.
@@ -81109,14 +80484,7 @@ function isCellsEqual(cell1, cell2) {
 /* Creates a clone of an element and lets it track the mouse as it moves
 ----------------------------------------------------------------------------------------------------------------------*/
 
-function MouseFollower(sourceEl, options) {
-	this.options = options = options || {};
-	this.sourceEl = sourceEl;
-	this.parentEl = options.parentEl ? $(options.parentEl) : sourceEl.parent(); // default to sourceEl's parent
-}
-
-
-MouseFollower.prototype = {
+var MouseFollower = Class.extend({
 
 	options: null,
 
@@ -81141,6 +80509,12 @@ MouseFollower.prototype = {
 	isFollowing: false,
 	isHidden: false,
 	isAnimating: false, // doing the revert animation?
+
+	constructor: function(sourceEl, options) {
+		this.options = options = options || {};
+		this.sourceEl = sourceEl;
+		this.parentEl = options.parentEl ? $(options.parentEl) : sourceEl.parent(); // default to sourceEl's parent
+	},
 
 
 	// Causes the element to start following the mouse
@@ -81290,7 +80664,7 @@ MouseFollower.prototype = {
 		}
 	}
 
-};
+});
 
 ;;
 
@@ -81299,37 +80673,38 @@ MouseFollower.prototype = {
 // It leverages methods of the subclass and the View to determine custom rendering behavior for each row "type"
 // (such as highlight rows, day rows, helper rows, etc).
 
-function RowRenderer(view) {
-	this.view = view;
-}
-
-
-RowRenderer.prototype = {
+var RowRenderer = Class.extend({
 
 	view: null, // a View object
+	isRTL: null, // shortcut to the view's isRTL option
 	cellHtml: '<td/>', // plain default HTML used for a cell when no other is available
+
+
+	constructor: function(view) {
+		this.view = view;
+		this.isRTL = view.opt('isRTL');
+	},
 
 
 	// Renders the HTML for a row, leveraging custom cell-HTML-renderers based on the `rowType`.
 	// Also applies the "intro" and "outro" cells, which are specified by the subclass and views.
 	// `row` is an optional row number.
 	rowHtml: function(rowType, row) {
-		var view = this.view;
 		var renderCell = this.getHtmlRenderer('cell', rowType);
-		var cellHtml = '';
+		var rowCellHtml = '';
 		var col;
-		var date;
+		var cell;
 
 		row = row || 0;
 
-		for (col = 0; col < view.colCnt; col++) {
-			date = view.cellToDate(row, col);
-			cellHtml += renderCell(row, col, date);
+		for (col = 0; col < this.colCnt; col++) {
+			cell = this.getCell(row, col);
+			rowCellHtml += renderCell(cell);
 		}
 
-		cellHtml = this.bookendCells(cellHtml, rowType, row); // apply intro and outro
+		rowCellHtml = this.bookendCells(rowCellHtml, rowType, row); // apply intro and outro
 
-		return '<tr>' + cellHtml + '</tr>';
+		return '<tr>' + rowCellHtml + '</tr>';
 	},
 
 
@@ -81338,12 +80713,10 @@ RowRenderer.prototype = {
 	// `cells` can be an HTML string of <td>'s or a jQuery <tr> element
 	// `row` is an optional row number.
 	bookendCells: function(cells, rowType, row) {
-		var view = this.view;
 		var intro = this.getHtmlRenderer('intro', rowType)(row || 0);
 		var outro = this.getHtmlRenderer('outro', rowType)(row || 0);
-		var isRTL = view.opt('isRTL');
-		var prependHtml = isRTL ? outro : intro;
-		var appendHtml = isRTL ? intro : outro;
+		var prependHtml = this.isRTL ? outro : intro;
+		var appendHtml = this.isRTL ? intro : outro;
 
 		if (typeof cells === 'string') {
 			return prependHtml + cells + appendHtml;
@@ -81395,27 +80768,42 @@ RowRenderer.prototype = {
 		};
 	}
 
-};
+});
 
 ;;
 
 /* An abstract class comprised of a "grid" of cells that each represent a specific datetime
 ----------------------------------------------------------------------------------------------------------------------*/
 
-function Grid(view) {
-	RowRenderer.call(this, view); // call the super-constructor
-	this.coordMap = new GridCoordMap(this);
-	this.elsByFill = {};
-}
+var Grid = fc.Grid = RowRenderer.extend({
 
+	start: null, // the date of the first cell
+	end: null, // the date after the last cell
 
-Grid.prototype = createObject(RowRenderer.prototype); // declare the super-class
-$.extend(Grid.prototype, {
+	rowCnt: 0, // number of rows
+	colCnt: 0, // number of cols
+	rowData: null, // array of objects, holding misc data for each row
+	colData: null, // array of objects, holding misc data for each column
 
 	el: null, // the containing element
 	coordMap: null, // a GridCoordMap that converts pixel values to datetimes
-	cellDuration: null, // a cell's duration. subclasses must assign this ASAP
 	elsByFill: null, // a hash of jQuery element sets used for rendering each fill. Keyed by fill name.
+
+	documentDragStartProxy: null, // binds the Grid's scope to documentDragStart (in DayGrid.events)
+
+	// derived from options
+	colHeadFormat: null, // TODO: move to another class. not applicable to all Grids
+	eventTimeFormat: null,
+	displayEventEnd: null,
+
+
+	constructor: function() {
+		RowRenderer.apply(this, arguments); // call the super-constructor
+
+		this.coordMap = new GridCoordMap(this);
+		this.elsByFill = {};
+		this.documentDragStartProxy = $.proxy(this, 'documentDragStart');
+	},
 
 
 	// Renders the grid into the `el` element.
@@ -81427,35 +80815,183 @@ $.extend(Grid.prototype, {
 
 	// Called when the grid's resources need to be cleaned up
 	destroy: function() {
-		// subclasses can implement
+		this.unbindHandlers();
 	},
 
 
-	/* Coordinates & Cells
+	/* Options
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Populates the given empty arrays with the y and x coordinates of the cells
-	buildCoords: function(rows, cols) {
-		// subclasses must implement
+	// Generates the format string used for the text in column headers, if not explicitly defined by 'columnFormat'
+	// TODO: move to another class. not applicable to all Grids
+	computeColHeadFormat: function() {
+		// subclasses must implement if they want to use headHtml()
 	},
 
 
-	// Given a cell object, returns the date for that cell
-	getCellDate: function(cell) {
-		// subclasses must implement
+	// Generates the format string used for event time text, if not explicitly defined by 'timeFormat'
+	computeEventTimeFormat: function() {
+		return this.view.opt('smallTimeFormat');
 	},
 
 
-	// Given a cell object, returns the element that represents the cell's whole-day
-	getCellDayEl: function(cell) {
+	// Determines whether events should have their end times displayed, if not explicitly defined by 'displayEventEnd'
+	computeDisplayEventEnd: function() {
+		return false;
+	},
+
+
+	/* Dates
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Tells the grid about what period of time to display. Grid will subsequently compute dates for cell system.
+	setRange: function(range) {
+		var view = this.view;
+
+		this.start = range.start.clone();
+		this.end = range.end.clone();
+
+		this.rowData = [];
+		this.colData = [];
+		this.updateCells();
+
+		// Populate option-derived settings. Look for override first, then compute if necessary.
+		this.colHeadFormat = view.opt('columnFormat') || this.computeColHeadFormat();
+		this.eventTimeFormat = view.opt('timeFormat') || this.computeEventTimeFormat();
+		this.displayEventEnd = view.opt('displayEventEnd');
+		if (this.displayEventEnd == null) {
+			this.displayEventEnd = this.computeDisplayEventEnd();
+		}
+	},
+
+
+	// Responsible for setting rowCnt/colCnt and any other row/col data
+	updateCells: function() {
 		// subclasses must implement
 	},
 
 
 	// Converts a range with an inclusive `start` and an exclusive `end` into an array of segment objects
-	rangeToSegs: function(start, end) {
+	rangeToSegs: function(range) {
 		// subclasses must implement
+	},
+
+
+	/* Cells
+	------------------------------------------------------------------------------------------------------------------*/
+	// NOTE: columns are ordered left-to-right
+
+
+	// Gets an object containing row/col number, misc data, and range information about the cell.
+	// Accepts row/col values, an object with row/col properties, or a single-number offset from the first cell.
+	getCell: function(row, col) {
+		var cell;
+
+		if (col == null) {
+			if (typeof row === 'number') { // a single-number offset
+				col = row % this.colCnt;
+				row = Math.floor(row / this.colCnt);
+			}
+			else { // an object with row/col properties
+				col = row.col;
+				row = row.row;
+			}
+		}
+
+		cell = { row: row, col: col };
+
+		$.extend(cell, this.getRowData(row), this.getColData(col));
+		$.extend(cell, this.computeCellRange(cell));
+
+		return cell;
+	},
+
+
+	// Given a cell object with index and misc data, generates a range object
+	computeCellRange: function(cell) {
+		// subclasses must implement
+	},
+
+
+	// Retrieves misc data about the given row
+	getRowData: function(row) {
+		return this.rowData[row] || {};
+	},
+
+
+	// Retrieves misc data baout the given column
+	getColData: function(col) {
+		return this.colData[col] || {};
+	},
+
+
+	// Retrieves the element representing the given row
+	getRowEl: function(row) {
+		// subclasses should implement if leveraging the default getCellDayEl() or computeRowCoords()
+	},
+
+
+	// Retrieves the element representing the given column
+	getColEl: function(col) {
+		// subclasses should implement if leveraging the default getCellDayEl() or computeColCoords()
+	},
+
+
+	// Given a cell object, returns the element that represents the cell's whole-day
+	getCellDayEl: function(cell) {
+		return this.getColEl(cell.col) || this.getRowEl(cell.row);
+	},
+
+
+	/* Cell Coordinates
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Computes the top/bottom coordinates of all rows.
+	// By default, queries the dimensions of the element provided by getRowEl().
+	computeRowCoords: function() {
+		var items = [];
+		var i, el;
+		var item;
+
+		for (i = 0; i < this.rowCnt; i++) {
+			el = this.getRowEl(i);
+			item = {
+				top: el.offset().top
+			};
+			if (i > 0) {
+				items[i - 1].bottom = item.top;
+			}
+			items.push(item);
+		}
+		item.bottom = item.top + el.outerHeight();
+
+		return items;
+	},
+
+
+	// Computes the left/right coordinates of all rows.
+	// By default, queries the dimensions of the element provided by getColEl().
+	computeColCoords: function() {
+		var items = [];
+		var i, el;
+		var item;
+
+		for (i = 0; i < this.colCnt; i++) {
+			el = this.getColEl(i);
+			item = {
+				left: el.offset().left
+			};
+			if (i > 0) {
+				items[i - 1].right = item.left;
+			}
+			items.push(item);
+		}
+		item.right = item.left + el.outerWidth();
+
+		return items;
 	},
 
 
@@ -81463,12 +80999,13 @@ $.extend(Grid.prototype, {
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Attach handlers to `this.el`, using bubbling to listen to all ancestors.
-	// We don't need to undo any of this in a "destroy" method, because the view will simply remove `this.el` from the
-	// DOM and jQuery will be smart enough to garbage collect the handlers.
+	// Attaches handlers to DOM
 	bindHandlers: function() {
 		var _this = this;
 
+		// attach a handler to the grid's root element.
+		// we don't need to clean up in unbindHandlers or destroy, because when jQuery removes the element from the
+		// DOM it automatically unregisters the handlers.
 		this.el.on('mousedown', function(ev) {
 			if (
 				!$(ev.target).is('.fc-event-container *, .fc-more') && // not an an event element, or "more.." link
@@ -81478,7 +81015,17 @@ $.extend(Grid.prototype, {
 			}
 		});
 
-		this.bindSegHandlers(); // attach event-element-related handlers. in Grid.events.js
+		// attach event-element-related handlers. in Grid.events
+		// same garbage collection note as above.
+		this.bindSegHandlers();
+
+		$(document).on('dragstart', this.documentDragStartProxy); // jqui drag
+	},
+
+
+	// Unattaches handlers from the DOM
+	unbindHandlers: function() {
+		$(document).off('dragstart', this.documentDragStartProxy); // jqui drag
 	},
 
 
@@ -81486,12 +81033,9 @@ $.extend(Grid.prototype, {
 	dayMousedown: function(ev) {
 		var _this = this;
 		var view = this.view;
-		var calendar = view.calendar;
 		var isSelectable = view.opt('selectable');
-		var dates = null; // the inclusive dates of the selection. will be null if no selection
-		var start; // the inclusive start of the selection
-		var end; // the *exclusive* end of the selection
-		var dayEl;
+		var dayClickCell; // null if invalid dayClick
+		var selectionRange; // null if invalid selection
 
 		// this listener tracks a mousedown on a day element, and a subsequent drag.
 		// if the drag ends on the same day, it is a 'dayClick'.
@@ -81502,40 +81046,34 @@ $.extend(Grid.prototype, {
 			dragStart: function() {
 				view.unselect(); // since we could be rendering a new selection, we want to clear any old one
 			},
-			cellOver: function(cell, date) {
-				if (dragListener.origDate) { // click needs to have started on a cell
-
-					dayEl = _this.getCellDayEl(cell);
-
-					dates = [ date, dragListener.origDate ].sort(compareNumbers); // works with Moments
-					start = dates[0];
-					end = dates[1].clone().add(_this.cellDuration);
-
+			cellOver: function(cell, isOrig) {
+				var origCell = dragListener.origCell;
+				if (origCell) { // click needs to have started on a cell
+					dayClickCell = isOrig ? cell : null; // single-cell selection is a day click
 					if (isSelectable) {
-						if (calendar.isSelectionAllowedInRange(start, end)) { // allowed to select within this range?
-							_this.renderSelection(start, end);
+						selectionRange = _this.computeSelection(origCell, cell);
+						if (selectionRange) {
+							_this.renderSelection(selectionRange);
 						}
 						else {
-							dates = null; // flag for an invalid selection
 							disableCursor();
 						}
 					}
 				}
 			},
-			cellOut: function(cell, date) {
-				dates = null;
+			cellOut: function(cell) {
+				dayClickCell = null;
+				selectionRange = null;
 				_this.destroySelection();
 				enableCursor();
 			},
 			listenStop: function(ev) {
-				if (dates) { // started and ended on a cell?
-					if (dates[0].isSame(dates[1])) {
-						view.trigger('dayClick', dayEl[0], start, ev);
-					}
-					if (isSelectable) {
-						// the selection will already have been rendered. just report it
-						view.reportSelection(start, end, ev);
-					}
+				if (dayClickCell) {
+					view.trigger('dayClick', _this.getCellDayEl(dayClickCell), dayClickCell.start, ev);
+				}
+				if (selectionRange) {
+					// the selection will already have been rendered. just report it
+					view.reportSelection(selectionRange, ev);
 				}
 				enableCursor();
 			}
@@ -81545,61 +81083,22 @@ $.extend(Grid.prototype, {
 	},
 
 
-	/* Event Dragging
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Renders a visual indication of a event being dragged over the given date(s).
-	// `end` can be null, as well as `seg`. See View's documentation on renderDrag for more info.
-	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(start, end, seg) {
-		// subclasses must implement
-	},
-
-
-	// Unrenders a visual indication of an event being dragged
-	destroyDrag: function() {
-		// subclasses must implement
-	},
-
-
-	/* Event Resizing
-	------------------------------------------------------------------------------------------------------------------*/
-
-
-	// Renders a visual indication of an event being resized.
-	// `start` and `end` are the updated dates of the event. `seg` is the original segment object involved in the drag.
-	renderResize: function(start, end, seg) {
-		// subclasses must implement
-	},
-
-
-	// Unrenders a visual indication of an event being resized.
-	destroyResize: function() {
-		// subclasses must implement
-	},
-
-
 	/* Event Helper
 	------------------------------------------------------------------------------------------------------------------*/
+	// TODO: should probably move this to Grid.events, like we did event dragging / resizing
 
 
-	// Renders a mock event over the given date(s).
-	// `end` can be null, in which case the mock event that is rendered will have a null end time.
+	// Renders a mock event over the given range.
+	// The range's end can be null, in which case the mock event that is rendered will have a null end time.
 	// `sourceSeg` is the internal segment object involved in the drag. If null, something external is dragging.
-	renderRangeHelper: function(start, end, sourceSeg) {
-		var view = this.view;
+	renderRangeHelper: function(range, sourceSeg) {
 		var fakeEvent;
 
-		// compute the end time if forced to do so (this is what EventManager does)
-		if (!end && view.opt('forceEventDuration')) {
-			end = view.calendar.getDefaultEventEnd(!start.hasTime(), start);
-		}
-
 		fakeEvent = sourceSeg ? createObject(sourceSeg.event) : {}; // mask the original event object if possible
-		fakeEvent.start = start;
-		fakeEvent.end = end;
-		fakeEvent.allDay = !(start.hasTime() || (end && end.hasTime())); // freshly compute allDay
+		fakeEvent.start = range.start.clone();
+		fakeEvent.end = range.end ? range.end.clone() : null;
+		fakeEvent.allDay = null; // force it to be freshly computed by normalizeEventDateProps
+		this.view.calendar.normalizeEventDateProps(fakeEvent);
 
 		// this extra className will be useful for differentiating real events from mock events in CSS
 		fakeEvent.className = (fakeEvent.className || []).concat('fc-helper');
@@ -81630,8 +81129,8 @@ $.extend(Grid.prototype, {
 
 
 	// Renders a visual indication of a selection. Will highlight by default but can be overridden by subclasses.
-	renderSelection: function(start, end) {
-		this.renderHighlight(start, end);
+	renderSelection: function(range) {
+		this.renderHighlight(range);
 	},
 
 
@@ -81641,13 +81140,40 @@ $.extend(Grid.prototype, {
 	},
 
 
+	// Given the first and last cells of a selection, returns a range object.
+	// Will return something falsy if the selection is invalid (when outside of selectionConstraint for example).
+	// Subclasses can override and provide additional data in the range object. Will be passed to renderSelection().
+	computeSelection: function(firstCell, lastCell) {
+		var dates = [
+			firstCell.start,
+			firstCell.end,
+			lastCell.start,
+			lastCell.end
+		];
+		var range;
+
+		dates.sort(compareNumbers); // sorts chronologically. works with Moments
+
+		range = {
+			start: dates[0].clone(),
+			end: dates[3].clone()
+		};
+
+		if (!this.view.calendar.isSelectionRangeAllowed(range)) {
+			return null;
+		}
+
+		return range;
+	},
+
+
 	/* Highlight
 	------------------------------------------------------------------------------------------------------------------*/
 
 
 	// Renders an emphasis on the given date range. `start` is inclusive. `end` is exclusive.
-	renderHighlight: function(start, end) {
-		this.renderFill('highlight', this.rangeToSegs(start, end));
+	renderHighlight: function(range) {
+		this.renderFill('highlight', this.rangeToSegs(range));
 	},
 
 
@@ -81669,7 +81195,7 @@ $.extend(Grid.prototype, {
 
 	// Renders a set of rectangles over the given segments of time.
 	// Returns a subset of segs, the segs that were actually rendered.
-	// Responsible for populating this.elsByFill
+	// Responsible for populating this.elsByFill. TODO: better API for expressing this requirement
 	renderFill: function(type, segs) {
 		// subclasses must implement
 	},
@@ -81752,7 +81278,8 @@ $.extend(Grid.prototype, {
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders a day-of-week header row
+	// Renders a day-of-week header row.
+	// TODO: move to another class. not applicable to all Grids
 	headHtml: function() {
 		return '' +
 			'<div class="fc-row ' + this.view.widgetHeaderClass + '">' +
@@ -81766,26 +81293,29 @@ $.extend(Grid.prototype, {
 
 
 	// Used by the `headHtml` method, via RowRenderer, for rendering the HTML of a day-of-week header cell
-	headCellHtml: function(row, col, date) {
+	// TODO: move to another class. not applicable to all Grids
+	headCellHtml: function(cell) {
 		var view = this.view;
-		var calendar = view.calendar;
-		var colFormat = view.opt('columnFormat');
+		var date = cell.start;
 
 		return '' +
 			'<th class="fc-day-header ' + view.widgetHeaderClass + ' fc-' + dayIDs[date.day()] + '">' +
-				htmlEscape(calendar.formatDate(date, colFormat)) +
+				htmlEscape(date.format(this.colHeadFormat)) +
 			'</th>';
 	},
 
 
 	// Renders the HTML for a single-day background cell
-	bgCellHtml: function(row, col, date) {
+	bgCellHtml: function(cell) {
 		var view = this.view;
+		var date = cell.start;
 		var classes = this.getDayClasses(date);
 
 		classes.unshift('fc-day', view.widgetContentClass);
 
-		return '<td class="' + classes.join(' ') + '" data-date="' + date.format() + '"></td>';
+		return '<td class="' + classes.join(' ') + '"' +
+			' data-date="' + date.format('YYYY-MM-DD') + '"' + // if date has a time, won't format it
+			'></td>';
 	},
 
 
@@ -81825,7 +81355,7 @@ $.extend(Grid.prototype, {
 /* Event-rendering and event-interaction methods for the abstract Grid class
 ----------------------------------------------------------------------------------------------------------------------*/
 
-$.extend(Grid.prototype, {
+Grid.mixin({
 
 	mousedOverSeg: null, // the segment object the user's mouse is over. null if over nothing
 	isDraggingSeg: false, // is a segment being dragged? boolean
@@ -81872,7 +81402,7 @@ $.extend(Grid.prototype, {
 
 
 	// Retrieves all rendered segment objects currently rendered on the grid
-	getSegs: function() {
+	getEventSegs: function() {
 		return this.segs || [];
 	},
 
@@ -82067,7 +81597,7 @@ $.extend(Grid.prototype, {
 	},
 
 
-	/* Dragging
+	/* Event Dragging
 	------------------------------------------------------------------------------------------------------------------*/
 
 
@@ -82076,10 +81606,9 @@ $.extend(Grid.prototype, {
 	segDragMousedown: function(seg, ev) {
 		var _this = this;
 		var view = this.view;
-		var calendar = view.calendar;
 		var el = seg.el;
 		var event = seg.event;
-		var newStart, newEnd;
+		var dropLocation;
 
 		// A clone of the original element that will move with the mouse
 		var mouseFollower = new MouseFollower(seg.el, {
@@ -82104,48 +81633,45 @@ $.extend(Grid.prototype, {
 				view.hideEvent(event); // hide all event segments. our mouseFollower will take over
 				view.trigger('eventDragStart', el[0], event, ev, {}); // last argument is jqui dummy
 			},
-			cellOver: function(cell, date) {
-				var origDate = seg.cellDate || dragListener.origDate;
-				var res = _this.computeDraggedEventDates(seg, origDate, date);
-				newStart = res.start;
-				newEnd = res.end;
+			cellOver: function(cell, isOrig) {
+				var origCell = seg.cell || dragListener.origCell; // starting cell could be forced (DayGrid.limit)
 
-				if (calendar.isEventAllowedInRange(event, newStart, res.visibleEnd)) { // allowed to drop here?
-					if (view.renderDrag(newStart, newEnd, seg)) { // have the view render a visual indication
-						mouseFollower.hide(); // if the view is already using a mock event "helper", hide our own
+				dropLocation = _this.computeEventDrop(origCell, cell, event);
+				if (dropLocation) {
+					if (view.renderDrag(dropLocation, seg)) { // have the subclass render a visual indication
+						mouseFollower.hide(); // if the subclass is already using a mock event "helper", hide our own
 					}
 					else {
 						mouseFollower.show();
 					}
+					if (isOrig) {
+						dropLocation = null; // needs to have moved cells to be a valid drop
+					}
 				}
 				else {
 					// have the helper follow the mouse (no snapping) with a warning-style cursor
-					newStart = null; // mark an invalid drop date
 					mouseFollower.show();
 					disableCursor();
 				}
 			},
 			cellOut: function() { // called before mouse moves to a different cell OR moved out of all cells
-				newStart = null;
-				view.destroyDrag(); // unrender whatever was done in view.renderDrag
+				dropLocation = null;
+				view.destroyDrag(); // unrender whatever was done in renderDrag
 				mouseFollower.show(); // show in case we are moving out of all cells
 				enableCursor();
 			},
 			dragStop: function(ev) {
-				var hasChanged = newStart && !newStart.isSame(event.start);
-
 				// do revert animation if hasn't changed. calls a callback when finished (whether animation or not)
-				mouseFollower.stop(!hasChanged, function() {
+				mouseFollower.stop(!dropLocation, function() {
 					_this.isDraggingSeg = false;
 					view.destroyDrag();
 					view.showEvent(event);
 					view.trigger('eventDragStop', el[0], event, ev, {}); // last argument is jqui dummy
 
-					if (hasChanged) {
-						view.eventDrop(el[0], event, newStart, ev); // will rerender all events...
+					if (dropLocation) {
+						view.reportEventDrop(event, dropLocation, el, ev);
 					}
 				});
-
 				enableCursor();
 			},
 			listenStop: function() {
@@ -82157,41 +81683,156 @@ $.extend(Grid.prototype, {
 	},
 
 
-	// Given a segment, the dates where a drag began and ended, calculates the Event Object's new start and end dates.
-	// Might return a `null` end (even when forceEventDuration is on).
-	computeDraggedEventDates: function(seg, dragStartDate, dropDate) {
-		var view = this.view;
-		var event = seg.event;
-		var start = event.start;
-		var end = view.calendar.getEventEnd(event);
+	// Given the cell an event drag began, and the cell event was dropped, calculates the new start/end/allDay
+	// values for the event. Subclasses may override and set additional properties to be used by renderDrag.
+	// A falsy returned value indicates an invalid drop.
+	computeEventDrop: function(startCell, endCell, event) {
+		var dragStart = startCell.start;
+		var dragEnd = endCell.start;
 		var delta;
 		var newStart;
 		var newEnd;
 		var newAllDay;
-		var visibleEnd;
+		var dropLocation;
 
-		if (dropDate.hasTime() === dragStartDate.hasTime()) {
-			delta = dayishDiff(dropDate, dragStartDate);
-			newStart = start.clone().add(delta);
+		if (dragStart.hasTime() === dragEnd.hasTime()) {
+			delta = diffDayTime(dragEnd, dragStart);
+			newStart = event.start.clone().add(delta);
 			if (event.end === null) { // do we need to compute an end?
 				newEnd = null;
 			}
 			else {
-				newEnd = end.clone().add(delta);
+				newEnd = event.end.clone().add(delta);
 			}
 			newAllDay = event.allDay; // keep it the same
 		}
 		else {
 			// if switching from day <-> timed, start should be reset to the dropped date, and the end cleared
-			newStart = dropDate;
+			newStart = dragEnd.clone();
 			newEnd = null; // end should be cleared
-			newAllDay = !dropDate.hasTime();
+			newAllDay = !dragEnd.hasTime();
 		}
 
-		// compute what the end date will appear to be
-		visibleEnd = newEnd || view.calendar.getDefaultEventEnd(newAllDay, newStart);
+		dropLocation = {
+			start: newStart,
+			end: newEnd,
+			allDay: newAllDay
+		};
 
-		return { start: newStart, end: newEnd, visibleEnd: visibleEnd };
+		if (!this.view.calendar.isEventRangeAllowed(dropLocation, event)) {
+			return null;
+		}
+
+		return dropLocation;
+	},
+
+
+	/* External Element Dragging
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Called when a jQuery UI drag is initiated anywhere in the DOM
+	documentDragStart: function(ev, ui) {
+		var view = this.view;
+		var el;
+		var accept;
+
+		if (view.opt('droppable')) { // only listen if this setting is on
+			el = $(ev.target);
+
+			// Test that the dragged element passes the dropAccept selector or filter function.
+			// FYI, the default is "*" (matches all)
+			accept = view.opt('dropAccept');
+			if ($.isFunction(accept) ? accept.call(el[0], el) : el.is(accept)) {
+
+				this.startExternalDrag(el, ev, ui);
+			}
+		}
+	},
+
+
+	// Called when a jQuery UI drag starts and it needs to be monitored for cell dropping
+	startExternalDrag: function(el, ev, ui) {
+		var _this = this;
+		var meta = getDraggedElMeta(el); // extra data about event drop, including possible event to create
+		var dragListener;
+		var dropLocation; // a null value signals an unsuccessful drag
+
+		// listener that tracks mouse movement over date-associated pixel regions
+		dragListener = new DragListener(this.coordMap, {
+			cellOver: function(cell) {
+				dropLocation = _this.computeExternalDrop(cell, meta);
+				if (dropLocation) {
+					_this.renderDrag(dropLocation); // called without a seg parameter
+				}
+				else { // invalid drop cell
+					disableCursor();
+				}
+			},
+			cellOut: function() {
+				dropLocation = null; // signal unsuccessful
+				_this.destroyDrag();
+				enableCursor();
+			}
+		});
+
+		// gets called, only once, when jqui drag is finished
+		$(document).one('dragstop', function(ev, ui) {
+			_this.destroyDrag();
+			enableCursor();
+
+			if (dropLocation) { // element was dropped on a valid date/time cell
+				_this.view.reportExternalDrop(meta, dropLocation, el, ev, ui);
+			}
+		});
+
+		dragListener.startDrag(ev); // start listening immediately
+	},
+
+
+	// Given a cell to be dropped upon, and misc data associated with the jqui drag (guaranteed to be a plain object),
+	// returns start/end dates for the event that would result from the hypothetical drop. end might be null.
+	// Returning a null value signals an invalid drop cell.
+	computeExternalDrop: function(cell, meta) {
+		var dropLocation = {
+			start: cell.start.clone(),
+			end: null
+		};
+
+		// if dropped on an all-day cell, and element's metadata specified a time, set it
+		if (meta.startTime && !dropLocation.start.hasTime()) {
+			dropLocation.start.time(meta.startTime);
+		}
+
+		if (meta.duration) {
+			dropLocation.end = dropLocation.start.clone().add(meta.duration);
+		}
+
+		if (!this.view.calendar.isExternalDropRangeAllowed(dropLocation, meta.eventProps)) {
+			return null;
+		}
+
+		return dropLocation;
+	},
+
+
+
+	/* Drag Rendering (for both events and an external elements)
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Renders a visual indication of an event or external element being dragged.
+	// `dropLocation` contains hypothetical start/end/allDay values the event would have if dropped. end can be null.
+	// `seg` is the internal segment object that is being dragged. If dragging an external element, `seg` is null.
+	// A truthy returned value indicates this method has rendered a helper element.
+	renderDrag: function(dropLocation, seg) {
+		// subclasses must implement
+	},
+
+
+	// Unrenders a visual indication of an event or external element being dragged
+	destroyDrag: function() {
+		// subclasses must implement
 	},
 
 
@@ -82208,13 +81849,14 @@ $.extend(Grid.prototype, {
 		var el = seg.el;
 		var event = seg.event;
 		var start = event.start;
-		var end = view.calendar.getEventEnd(event);
-		var newEnd = null;
+		var oldEnd = calendar.getEventEnd(event);
+		var newEnd; // falsy if invalid resize
 		var dragListener;
 
 		function destroy() { // resets the rendering to show the original event
-			_this.destroyResize();
+			_this.destroyEventResize();
 			view.showEvent(event);
+			enableCursor();
 		}
 
 		// Tracks mouse movement over the *grid's* coordinate map
@@ -82226,42 +81868,38 @@ $.extend(Grid.prototype, {
 				_this.isResizingSeg = true;
 				view.trigger('eventResizeStart', el[0], event, ev, {}); // last argument is jqui dummy
 			},
-			cellOver: function(cell, date) {
-				// compute the new end. don't allow it to go before the event's start
-				if (date.isBefore(start)) { // allows comparing ambig to non-ambig
-					date = start;
-				}
-				newEnd = date.clone().add(_this.cellDuration); // make it an exclusive end
+			cellOver: function(cell) {
+				newEnd = cell.end;
 
-				if (calendar.isEventAllowedInRange(event, start, newEnd)) { // allowed to be resized here?
-					if (newEnd.isSame(end)) {
-						newEnd = null; // mark an invalid resize
-						destroy();
-					}
-					else {
-						_this.renderResize(start, newEnd, seg);
-						view.hideEvent(event);
-					}
+				if (!newEnd.isAfter(start)) { // was end moved before start?
+					newEnd = start.clone().add( // make the event span a single slot
+						diffDayTime(cell.end, cell.start) // assumes all slot durations are the same
+					);
+				}
+
+				if (newEnd.isSame(oldEnd)) {
+					newEnd = null;
+				}
+				else if (!calendar.isEventRangeAllowed({ start: start, end: newEnd }, event)) {
+					newEnd = null;
+					disableCursor();
 				}
 				else {
-					newEnd = null; // mark an invalid resize
-					destroy();
-					disableCursor();
+					_this.renderEventResize({ start: start, end: newEnd }, seg);
+					view.hideEvent(event);
 				}
 			},
 			cellOut: function() { // called before mouse moves to a different cell OR moved out of all cells
 				newEnd = null;
 				destroy();
-				enableCursor();
 			},
 			dragStop: function(ev) {
 				_this.isResizingSeg = false;
 				destroy();
-				enableCursor();
 				view.trigger('eventResizeStop', el[0], event, ev, {}); // last argument is jqui dummy
 
-				if (newEnd) {
-					view.eventResize(el[0], event, newEnd, ev); // will rerender all events...
+				if (newEnd) { // valid date to resize to?
+					view.reportEventResize(event, newEnd, el, ev);
 				}
 			}
 		});
@@ -82270,8 +81908,37 @@ $.extend(Grid.prototype, {
 	},
 
 
+	// Renders a visual indication of an event being resized.
+	// `range` has the updated dates of the event. `seg` is the original segment object involved in the drag.
+	renderEventResize: function(range, seg) {
+		// subclasses must implement
+	},
+
+
+	// Unrenders a visual indication of an event being resized.
+	destroyEventResize: function() {
+		// subclasses must implement
+	},
+
+
 	/* Rendering Utils
 	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Compute the text that should be displayed on an event's element.
+	// `range` can be the Event object itself, or something range-like, with at least a `start`.
+	// The `timeFormat` options and the grid's default format is used, but `formatStr` can override.
+	getEventTimeText: function(range, formatStr) {
+
+		formatStr = formatStr || this.eventTimeFormat;
+
+		if (range.end && this.displayEventEnd) {
+			return this.view.formatRange(range, formatStr);
+		}
+		else {
+			return range.start.format(formatStr);
+		}
+	},
 
 
 	// Generic utility for generating the HTML classNames for an event segment's element
@@ -82460,10 +82127,10 @@ $.extend(Grid.prototype, {
 		var i, seg;
 
 		if (rangeToSegsFunc) {
-			segs = rangeToSegsFunc(eventRange.start, eventRange.end);
+			segs = rangeToSegsFunc(eventRange);
 		}
 		else {
-			segs = this.rangeToSegs(eventRange.start, eventRange.end); // defined by the subclass
+			segs = this.rangeToSegs(eventRange); // defined by the subclass
 		}
 
 		for (i = 0; i < segs.length; i++) {
@@ -82527,23 +82194,76 @@ function compareSegs(seg1, seg2) {
 		(seg1.event.title || '').localeCompare(seg2.event.title); // tie? alphabetically by title
 }
 
+fc.compareSegs = compareSegs; // export
+
+
+/* External-Dragging-Element Data
+----------------------------------------------------------------------------------------------------------------------*/
+
+// Require all HTML5 data-* attributes used by FullCalendar to have this prefix.
+// A value of '' will query attributes like data-event. A value of 'fc' will query attributes like data-fc-event.
+fc.dataAttrPrefix = '';
+
+// Given a jQuery element that might represent a dragged FullCalendar event, returns an intermediate data structure
+// to be used for Event Object creation.
+// A defined `.eventProps`, even when empty, indicates that an event should be created.
+function getDraggedElMeta(el) {
+	var prefix = fc.dataAttrPrefix;
+	var eventProps; // properties for creating the event, not related to date/time
+	var startTime; // a Duration
+	var duration;
+	var stick;
+
+	if (prefix) { prefix += '-'; }
+	eventProps = el.data(prefix + 'event') || null;
+
+	if (eventProps) {
+		if (typeof eventProps === 'object') {
+			eventProps = $.extend({}, eventProps); // make a copy
+		}
+		else { // something like 1 or true. still signal event creation
+			eventProps = {};
+		}
+
+		// pluck special-cased date/time properties
+		startTime = eventProps.start;
+		if (startTime == null) { startTime = eventProps.time; } // accept 'time' as well
+		duration = eventProps.duration;
+		stick = eventProps.stick;
+		delete eventProps.start;
+		delete eventProps.time;
+		delete eventProps.duration;
+		delete eventProps.stick;
+	}
+
+	// fallback to standalone attribute values for each of the date/time properties
+	if (startTime == null) { startTime = el.data(prefix + 'start'); }
+	if (startTime == null) { startTime = el.data(prefix + 'time'); } // accept 'time' as well
+	if (duration == null) { duration = el.data(prefix + 'duration'); }
+	if (stick == null) { stick = el.data(prefix + 'stick'); }
+
+	// massage into correct data types
+	startTime = startTime != null ? moment.duration(startTime) : null;
+	duration = duration != null ? moment.duration(duration) : null;
+	stick = Boolean(stick);
+
+	return { eventProps: eventProps, startTime: startTime, duration: duration, stick: stick };
+}
+
 
 ;;
 
 /* A component that renders a grid of whole-days that runs horizontally. There can be multiple rows, one per week.
 ----------------------------------------------------------------------------------------------------------------------*/
 
-function DayGrid(view) {
-	Grid.call(this, view); // call the super-constructor
-}
+var DayGrid = Grid.extend({
 
-
-DayGrid.prototype = createObject(Grid.prototype); // declare the super-class
-$.extend(DayGrid.prototype, {
-
-	numbersVisible: false, // should render a row for day/week numbers? manually set by the view
-	cellDuration: moment.duration({ days: 1 }), // required for Grid.event.js. Each cell is always a single day
+	numbersVisible: false, // should render a row for day/week numbers? set by outside view. TODO: make internal
 	bottomCoordPadding: 0, // hack for extending the hit area for the last row of the coordinate grid
+	breakOnWeeks: null, // should create a new row for each week? set by outside view
+
+	cellDates: null, // flat chronological array of each cell's dates
+	dayToCellOffsets: null, // maps days offsets from grid's start date, to cell offsets
 
 	rowEls: null, // set of fake row elements
 	dayEls: null, // set of whole-day elements comprising the row's background
@@ -82555,10 +82275,14 @@ $.extend(DayGrid.prototype, {
 	// Relies on the view's colCnt and rowCnt. In the future, this component should probably be self-sufficient.
 	render: function(isRigid) {
 		var view = this.view;
+		var rowCnt = this.rowCnt;
+		var colCnt = this.colCnt;
+		var cellCnt = rowCnt * colCnt;
 		var html = '';
 		var row;
+		var i, cell;
 
-		for (row = 0; row < view.rowCnt; row++) {
+		for (row = 0; row < rowCnt; row++) {
 			html += this.dayRowHtml(row, isRigid);
 		}
 		this.el.html(html);
@@ -82566,11 +82290,11 @@ $.extend(DayGrid.prototype, {
 		this.rowEls = this.el.find('.fc-row');
 		this.dayEls = this.el.find('.fc-day');
 
-		// run all the day cells through the dayRender callback
-		this.dayEls.each(function(i, node) {
-			var date = view.cellToDate(Math.floor(i / view.colCnt), i % view.colCnt);
-			view.trigger('dayRender', null, date, $(node));
-		});
+		// trigger dayRender with each cell's element
+		for (i = 0; i < cellCnt; i++) {
+			cell = this.getCell(i);
+			view.trigger('dayRender', null, cell.start, this.dayEls.eq(i));
+		}
 
 		Grid.prototype.render.call(this); // call the super-method
 	},
@@ -82578,6 +82302,7 @@ $.extend(DayGrid.prototype, {
 
 	destroy: function() {
 		this.destroySegPopover();
+		Grid.prototype.destroy.call(this); // call the super-method
 	},
 
 
@@ -82614,82 +82339,240 @@ $.extend(DayGrid.prototype, {
 	// Renders the HTML for a whole-day cell. Will eventually end up in the day-row's background.
 	// We go through a 'day' row type instead of just doing a 'bg' row type so that the View can do custom rendering
 	// specifically for whole-day rows, whereas a 'bg' might also be used for other purposes (TimeGrid bg for example).
-	dayCellHtml: function(row, col, date) {
-		return this.bgCellHtml(row, col, date);
+	dayCellHtml: function(cell) {
+		return this.bgCellHtml(cell);
 	},
 
 
-	/* Coordinates & Cells
+	/* Options
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Populates the empty `rows` and `cols` arrays with coordinates of the cells. For CoordGrid.
-	buildCoords: function(rows, cols) {
-		var colCnt = this.view.colCnt;
-		var e, n, p;
-
-		this.dayEls.slice(0, colCnt).each(function(i, _e) { // iterate the first row of day elements
-			e = $(_e);
-			n = e.offset().left;
-			if (i) {
-				p[1] = n;
-			}
-			p = [ n ];
-			cols[i] = p;
-		});
-		p[1] = n + e.outerWidth();
-
-		this.rowEls.each(function(i, _e) {
-			e = $(_e);
-			n = e.offset().top;
-			if (i) {
-				p[1] = n;
-			}
-			p = [ n ];
-			rows[i] = p;
-		});
-		p[1] = n + e.outerHeight() + this.bottomCoordPadding; // hack to extend hit area of last row
+	// Computes a default column header formatting string if `colFormat` is not explicitly defined
+	computeColHeadFormat: function() {
+		if (this.rowCnt > 1) { // more than one week row. day numbers will be in each cell
+			return 'ddd'; // "Sat"
+		}
+		else if (this.colCnt > 1) { // multiple days, so full single date string WON'T be in title text
+			return this.view.opt('dayOfMonthFormat'); // "Sat 12/10"
+		}
+		else { // single day, so full single date string will probably be in title text
+			return 'dddd'; // "Saturday"
+		}
 	},
 
 
-	// Converts a cell to a date
-	getCellDate: function(cell) {
-		return this.view.cellToDate(cell); // leverages the View's cell system
+	// Computes a default event time formatting string if `timeFormat` is not explicitly defined
+	computeEventTimeFormat: function() {
+		return this.view.opt('extraSmallTimeFormat'); // like "6p" or "6:30p"
+	},
+
+
+	// Computes a default `displayEventEnd` value if one is not expliclty defined
+	computeDisplayEventEnd: function() {
+		return this.colCnt == 1; // we'll likely have space if there's only one day
+	},
+
+
+	/* Cell System
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Initializes row/col information
+	updateCells: function() {
+		var cellDates;
+		var firstDay;
+		var rowCnt;
+		var colCnt;
+
+		this.updateCellDates(); // populates cellDates and dayToCellOffsets
+		cellDates = this.cellDates;
+
+		if (this.breakOnWeeks) {
+			// count columns until the day-of-week repeats
+			firstDay = cellDates[0].day();
+			for (colCnt = 1; colCnt < cellDates.length; colCnt++) {
+				if (cellDates[colCnt].day() == firstDay) {
+					break;
+				}
+			}
+			rowCnt = Math.ceil(cellDates.length / colCnt);
+		}
+		else {
+			rowCnt = 1;
+			colCnt = cellDates.length;
+		}
+
+		this.rowCnt = rowCnt;
+		this.colCnt = colCnt;
+	},
+
+
+	// Populates cellDates and dayToCellOffsets
+	updateCellDates: function() {
+		var view = this.view;
+		var date = this.start.clone();
+		var dates = [];
+		var offset = -1;
+		var offsets = [];
+
+		while (date.isBefore(this.end)) { // loop each day from start to end
+			if (view.isHiddenDay(date)) {
+				offsets.push(offset + 0.5); // mark that it's between offsets
+			}
+			else {
+				offset++;
+				offsets.push(offset);
+				dates.push(date.clone());
+			}
+			date.add(1, 'days');
+		}
+
+		this.cellDates = dates;
+		this.dayToCellOffsets = offsets;
+	},
+
+
+	// Given a cell object, generates a range object
+	computeCellRange: function(cell) {
+		var colCnt = this.colCnt;
+		var index = cell.row * colCnt + (this.isRTL ? colCnt - cell.col - 1 : cell.col);
+		var start = this.cellDates[index].clone();
+		var end = start.clone().add(1, 'day');
+
+		return { start: start, end: end };
+	},
+
+
+	// Retrieves the element representing the given row
+	getRowEl: function(row) {
+		return this.rowEls.eq(row);
+	},
+
+
+	// Retrieves the element representing the given column
+	getColEl: function(col) {
+		return this.dayEls.eq(col);
 	},
 
 
 	// Gets the whole-day element associated with the cell
 	getCellDayEl: function(cell) {
-		return this.dayEls.eq(cell.row * this.view.colCnt + cell.col);
+		return this.dayEls.eq(cell.row * this.colCnt + cell.col);
 	},
 
 
-	// Converts a range with an inclusive `start` and an exclusive `end` into an array of segment objects
-	rangeToSegs: function(start, end) {
-		return this.view.rangeToSegments(start, end); // leverages the View's cell system
+	// Overrides Grid's method for when row coordinates are computed
+	computeRowCoords: function() {
+		var rowCoords = Grid.prototype.computeRowCoords.call(this); // call the super-method
+
+		// hack for extending last row (used by AgendaView)
+		rowCoords[rowCoords.length - 1].bottom += this.bottomCoordPadding;
+
+		return rowCoords;
+	},
+
+
+	/* Dates
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Slices up a date range by row into an array of segments
+	rangeToSegs: function(range) {
+		var isRTL = this.isRTL;
+		var rowCnt = this.rowCnt;
+		var colCnt = this.colCnt;
+		var segs = [];
+		var first, last; // inclusive cell-offset range for given range
+		var row;
+		var rowFirst, rowLast; // inclusive cell-offset range for current row
+		var isStart, isEnd;
+		var segFirst, segLast; // inclusive cell-offset range for segment
+		var seg;
+
+		range = this.view.computeDayRange(range); // make whole-day range, considering nextDayThreshold
+		first = this.dateToCellOffset(range.start);
+		last = this.dateToCellOffset(range.end.subtract(1, 'days')); // offset of inclusive end date
+
+		for (row = 0; row < rowCnt; row++) {
+			rowFirst = row * colCnt;
+			rowLast = rowFirst + colCnt - 1;
+
+			// intersect segment's offset range with the row's
+			segFirst = Math.max(rowFirst, first);
+			segLast = Math.min(rowLast, last);
+
+			// deal with in-between indices
+			segFirst = Math.ceil(segFirst); // in-between starts round to next cell
+			segLast = Math.floor(segLast); // in-between ends round to prev cell
+
+			if (segFirst <= segLast) { // was there any intersection with the current row?
+
+				// must be matching integers to be the segment's start/end
+				isStart = segFirst === first;
+				isEnd = segLast === last;
+
+				// translate offsets to be relative to start-of-row
+				segFirst -= rowFirst;
+				segLast -= rowFirst;
+
+				seg = { row: row, isStart: isStart, isEnd: isEnd };
+				if (isRTL) {
+					seg.leftCol = colCnt - segLast - 1;
+					seg.rightCol = colCnt - segFirst - 1;
+				}
+				else {
+					seg.leftCol = segFirst;
+					seg.rightCol = segLast;
+				}
+				segs.push(seg);
+			}
+		}
+
+		return segs;
+	},
+
+
+	// Given a date, returns its chronolocial cell-offset from the first cell of the grid.
+	// If the date lies between cells (because of hiddenDays), returns a floating-point value between offsets.
+	// If before the first offset, returns a negative number.
+	// If after the last offset, returns an offset past the last cell offset.
+	// Only works for *start* dates of cells. Will not work for exclusive end dates for cells.
+	dateToCellOffset: function(date) {
+		var offsets = this.dayToCellOffsets;
+		var day = date.diff(this.start, 'days');
+
+		if (day < 0) {
+			return offsets[0] - 1;
+		}
+		else if (day >= offsets.length) {
+			return offsets[offsets.length - 1] + 1;
+		}
+		else {
+			return offsets[day];
+		}
 	},
 
 
 	/* Event Drag Visualization
 	------------------------------------------------------------------------------------------------------------------*/
+	// TODO: move to DayGrid.event, similar to what we did with Grid's drag methods
 
 
-	// Renders a visual indication of an event hovering over the given date(s).
-	// `end` can be null, as well as `seg`. See View's documentation on renderDrag for more info.
-	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(start, end, seg) {
+	// Renders a visual indication of an event or external element being dragged.
+	// The dropLocation's end can be null. seg can be null. See Grid::renderDrag for more info.
+	renderDrag: function(dropLocation, seg) {
 		var opacity;
 
 		// always render a highlight underneath
 		this.renderHighlight(
-			start,
-			end || this.view.calendar.getDefaultEventEnd(true, start)
+			this.view.calendar.ensureVisibleEventRange(dropLocation) // needs to be a proper range
 		);
 
 		// if a segment from the same calendar but another component is being dragged, render a helper event
 		if (seg && !seg.el.closest(this.el).length) {
 
-			this.renderRangeHelper(start, end, seg);
+			this.renderRangeHelper(dropLocation, seg);
 
 			opacity = this.view.opt('dragOpacity');
 			if (opacity !== undefined) {
@@ -82713,14 +82596,14 @@ $.extend(DayGrid.prototype, {
 
 
 	// Renders a visual indication of an event being resized
-	renderResize: function(start, end, seg) {
-		this.renderHighlight(start, end);
-		this.renderRangeHelper(start, end, seg);
+	renderEventResize: function(range, seg) {
+		this.renderHighlight(range);
+		this.renderRangeHelper(range, seg);
 	},
 
 
 	// Unrenders a visual indication of an event being resized
-	destroyResize: function() {
+	destroyEventResize: function() {
 		this.destroyHighlight();
 		this.destroyHelper();
 	},
@@ -82805,7 +82688,7 @@ $.extend(DayGrid.prototype, {
 
 	// Generates the HTML needed for one row of a fill. Requires the seg's el to be rendered.
 	renderFillRow: function(type, seg) {
-		var colCnt = this.view.colCnt;
+		var colCnt = this.colCnt;
 		var startCol = seg.leftCol;
 		var endCol = seg.rightCol + 1;
 		var skeletonEl;
@@ -82842,7 +82725,7 @@ $.extend(DayGrid.prototype, {
 /* Event-rendering methods for the DayGrid class
 ----------------------------------------------------------------------------------------------------------------------*/
 
-$.extend(DayGrid.prototype, {
+DayGrid.mixin({
 
 	rowStructs: null, // an array of objects, each holding information about a row's foreground event-rendering
 
@@ -82855,8 +82738,8 @@ $.extend(DayGrid.prototype, {
 
 
 	// Retrieves all rendered segment objects currently rendered on the grid
-	getSegs: function() {
-		return Grid.prototype.getSegs.call(this) // get the segments from the super-method
+	getEventSegs: function() {
+		return Grid.prototype.getEventSegs.call(this) // get the segments from the super-method
 			.concat(this.popoverSegs || []); // append the segments from the "more..." popover
 	},
 
@@ -82931,7 +82814,6 @@ $.extend(DayGrid.prototype, {
 	// Builds the HTML to be used for the default element for an individual segment
 	fgSegHtml: function(seg, disableResizing) {
 		var view = this.view;
-		var isRTL = view.opt('isRTL');
 		var event = seg.event;
 		var isDraggable = view.isEventDraggable(event);
 		var isResizable = !disableResizing && event.allDay && seg.isEnd && view.isEventResizable(event);
@@ -82944,7 +82826,7 @@ $.extend(DayGrid.prototype, {
 
 		// Only display a timed events time if it is the starting segment
 		if (!event.allDay && seg.isStart) {
-			timeHtml = '<span class="fc-time">' + htmlEscape(view.getEventTimeText(event)) + '</span>';
+			timeHtml = '<span class="fc-time">' + htmlEscape(this.getEventTimeText(event)) + '</span>';
 		}
 
 		titleHtml =
@@ -82963,7 +82845,7 @@ $.extend(DayGrid.prototype, {
 					) +
 			'>' +
 				'<div class="fc-content">' +
-					(isRTL ?
+					(this.isRTL ?
 						titleHtml + ' ' + timeHtml : // put a natural space in between
 						timeHtml + ' ' + titleHtml   //
 						) +
@@ -82979,8 +82861,7 @@ $.extend(DayGrid.prototype, {
 	// Given a row # and an array of segments all in the same row, render a <tbody> element, a skeleton that contains
 	// the segments. Returns object with a bunch of internal data about how the render was calculated.
 	renderSegRow: function(row, rowSegs) {
-		var view = this.view;
-		var colCnt = view.colCnt;
+		var colCnt = this.colCnt;
 		var segLevels = this.buildSegLevels(rowSegs); // group into sub-arrays of levels
 		var levelCnt = Math.max(1, segLevels.length); // ensure at least one level
 		var tbody = $('<tbody/>');
@@ -83103,11 +82984,10 @@ $.extend(DayGrid.prototype, {
 
 	// Given a flat array of segments, return an array of sub-arrays, grouped by each segment's row
 	groupSegRows: function(segs) {
-		var view = this.view;
 		var segRows = [];
 		var i;
 
-		for (i = 0; i < view.rowCnt; i++) {
+		for (i = 0; i < this.rowCnt; i++) {
 			segRows.push([]);
 		}
 
@@ -83151,8 +83031,7 @@ function compareDaySegCols(a, b) {
 ----------------------------------------------------------------------------------------------------------------------*/
 // NOTE: all the segs being passed around in here are foreground segs
 
-$.extend(DayGrid.prototype, {
-
+DayGrid.mixin({
 
 	segPopover: null, // the Popover that holds events that can't fit in a cell. null when not visible
 	popoverSegs: null, // an array of segment objects that the segPopover holds. null when not visible
@@ -83218,10 +83097,9 @@ $.extend(DayGrid.prototype, {
 	// `levelLimit` is a number for the maximum (inclusive) number of levels allowed.
 	limitRow: function(row, levelLimit) {
 		var _this = this;
-		var view = this.view;
 		var rowStruct = this.rowStructs[row];
 		var moreNodes = []; // array of "more" <a> links and <td> DOM nodes
-		var col = 0; // col #
+		var col = 0; // col #, left-to-right (not chronologically)
 		var cell;
 		var levelSegs; // array of segment objects in the last allowable level, ordered left-to-right
 		var cellMatrix; // a matrix (by level, then column) of all <td> jQuery elements in the row
@@ -83238,7 +83116,7 @@ $.extend(DayGrid.prototype, {
 		// Iterates through empty level cells and places "more" links inside if need be
 		function emptyCellsUntil(endCol) { // goes from current `col` to `endCol`
 			while (col < endCol) {
-				cell = { row: row, col: col };
+				cell = _this.getCell(row, col);
 				segsBelow = _this.getCellSegs(cell, levelLimit);
 				if (segsBelow.length) {
 					td = cellMatrix[levelLimit - 1][col];
@@ -83267,7 +83145,7 @@ $.extend(DayGrid.prototype, {
 				colSegsBelow = [];
 				totalSegsBelow = 0;
 				while (col <= seg.rightCol) {
-					cell = { row: row, col: col };
+					cell = this.getCell(row, col);
 					segsBelow = this.getCellSegs(cell, levelLimit);
 					colSegsBelow.push(segsBelow);
 					totalSegsBelow += segsBelow.length;
@@ -83283,7 +83161,7 @@ $.extend(DayGrid.prototype, {
 					for (j = 0; j < colSegsBelow.length; j++) {
 						moreTd = $('<td class="fc-more-cell"/>').attr('rowspan', rowspan);
 						segsBelow = colSegsBelow[j];
-						cell = { row: row, col: seg.leftCol + j };
+						cell = this.getCell(row, seg.leftCol + j);
 						moreLink = this.renderMoreLink(cell, [ seg ].concat(segsBelow)); // count seg as hidden too
 						moreWrap = $('<div/>').append(moreLink);
 						moreTd.append(moreWrap);
@@ -83296,7 +83174,7 @@ $.extend(DayGrid.prototype, {
 				}
 			}
 
-			emptyCellsUntil(view.colCnt); // finish off the level
+			emptyCellsUntil(this.colCnt); // finish off the level
 			rowStruct.moreEls = $(moreNodes); // for easy undoing later
 			rowStruct.limitedEls = $(limitedNodes); // for easy undoing later
 		}
@@ -83332,7 +83210,7 @@ $.extend(DayGrid.prototype, {
 			)
 			.on('click', function(ev) {
 				var clickOption = view.opt('eventLimitClick');
-				var date = view.cellToDate(cell);
+				var date = cell.start;
 				var moreEl = $(this);
 				var dayEl = _this.getCellDayEl(cell);
 				var allSegs = _this.getCellSegs(cell);
@@ -83353,7 +83231,7 @@ $.extend(DayGrid.prototype, {
 				}
 
 				if (clickOption === 'popover') {
-					_this.showSegPopover(date, cell, moreEl, reslicedAllSegs);
+					_this.showSegPopover(cell, moreEl, reslicedAllSegs);
 				}
 				else if (typeof clickOption === 'string') { // a view name
 					view.calendar.zoomTo(date, clickOption);
@@ -83363,15 +83241,15 @@ $.extend(DayGrid.prototype, {
 
 
 	// Reveals the popover that displays all events within a cell
-	showSegPopover: function(date, cell, moreLink, segs) {
+	showSegPopover: function(cell, moreLink, segs) {
 		var _this = this;
 		var view = this.view;
 		var moreWrap = moreLink.parent(); // the <div> wrapper around the <a>
 		var topEl; // the element we want to match the top coordinate of
 		var options;
 
-		if (view.rowCnt == 1) {
-			topEl = this.view.el; // will cause the popover to cover any sort of header
+		if (this.rowCnt == 1) {
+			topEl = view.el; // will cause the popover to cover any sort of header
 		}
 		else {
 			topEl = this.rowEls.eq(cell.row); // will align with top of row
@@ -83379,7 +83257,7 @@ $.extend(DayGrid.prototype, {
 
 		options = {
 			className: 'fc-more-popover',
-			content: this.renderSegPopoverContent(date, segs),
+			content: this.renderSegPopoverContent(cell, segs),
 			parentEl: this.el,
 			top: topEl.offset().top,
 			autoHide: true, // when the user clicks elsewhere, hide the popover
@@ -83394,7 +83272,7 @@ $.extend(DayGrid.prototype, {
 
 		// Determine horizontal coordinate.
 		// We use the moreWrap instead of the <td> to avoid border confusion.
-		if (view.opt('isRTL')) {
+		if (this.isRTL) {
 			options.right = moreWrap.offset().left + moreWrap.outerWidth() + 1; // +1 to be over cell border
 		}
 		else {
@@ -83407,10 +83285,10 @@ $.extend(DayGrid.prototype, {
 
 
 	// Builds the inner DOM contents of the segment popover
-	renderSegPopoverContent: function(date, segs) {
+	renderSegPopoverContent: function(cell, segs) {
 		var view = this.view;
 		var isTheme = view.opt('theme');
-		var title = date.format(view.opt('dayPopoverFormat'));
+		var title = cell.start.format(view.opt('dayPopoverFormat'));
 		var content = $(
 			'<div class="fc-header ' + view.widgetHeaderClass + '">' +
 				'<span class="fc-close ' +
@@ -83436,7 +83314,7 @@ $.extend(DayGrid.prototype, {
 
 			// because segments in the popover are not part of a grid coordinate system, provide a hint to any
 			// grids that want to do drag-n-drop about which cell it came from
-			segs[i].cellDate = date;
+			segs[i].cell = cell;
 
 			segContainer.append(segs[i].el);
 		}
@@ -83455,12 +83333,13 @@ $.extend(DayGrid.prototype, {
 
 		var dayStart = dayDate.clone().stripTime();
 		var dayEnd = dayStart.clone().add(1, 'days');
+		var dayRange = { start: dayStart, end: dayEnd };
 
 		// slice the events with a custom slicing function
 		return this.eventsToSegs(
 			events,
-			function(rangeStart, rangeEnd) {
-				var seg = intersectionToSeg(rangeStart, rangeEnd, dayStart, dayEnd); // if no intersection, undefined
+			function(range) {
+				var seg = intersectionToSeg(range, dayRange); // undefind if no intersection
 				return seg ? [ seg ] : []; // must return an array of segments
 			}
 		);
@@ -83469,8 +83348,7 @@ $.extend(DayGrid.prototype, {
 
 	// Generates the text that should be inside a "more" link, given the number of events it represents
 	getMoreLinkText: function(num) {
-		var view = this.view;
-		var opt = view.opt('eventLimitText');
+		var opt = this.view.opt('eventLimitText');
 
 		if (typeof opt === 'function') {
 			return opt(num);
@@ -83507,19 +83385,15 @@ $.extend(DayGrid.prototype, {
 /* A component that renders one or more columns of vertical time slots
 ----------------------------------------------------------------------------------------------------------------------*/
 
-function TimeGrid(view) {
-	Grid.call(this, view); // call the super-constructor
-}
-
-
-TimeGrid.prototype = createObject(Grid.prototype); // define the super-class
-$.extend(TimeGrid.prototype, {
+var TimeGrid = Grid.extend({
 
 	slotDuration: null, // duration of a "slot", a distinct time segment on given day, visualized by lines
 	snapDuration: null, // granularity of time for dragging and selecting
 
 	minTime: null, // Duration object that denotes the first visible time of any given day
 	maxTime: null, // Duration object that denotes the exclusive visible end time of any given day
+
+	axisFormat: null, // formatting string for times running along vertical axis
 
 	dayEls: null, // cells elements in the day-row background
 	slatEls: null, // elements running horizontally across all columns
@@ -83531,20 +83405,21 @@ $.extend(TimeGrid.prototype, {
 	businessHourSegs: null,
 
 
+	constructor: function() {
+		Grid.apply(this, arguments); // call the super-constructor
+		this.processOptions();
+	},
+
+
 	// Renders the time grid into `this.el`, which should already be assigned.
 	// Relies on the view's colCnt. In the future, this component should probably be self-sufficient.
 	render: function() {
-		this.processOptions();
-
 		this.el.html(this.renderHtml());
-
 		this.dayEls = this.el.find('.fc-day');
 		this.slatEls = this.el.find('.fc-slats tr');
 
 		this.computeSlatTops();
-
 		this.renderBusinessHours();
-
 		Grid.prototype.render.call(this); // call the super-method
 	},
 
@@ -83573,16 +83448,15 @@ $.extend(TimeGrid.prototype, {
 
 	// Renders the HTML for a vertical background cell behind the slots.
 	// This method is distinct from 'bg' because we wanted a new `rowType` so the View could customize the rendering.
-	slotBgCellHtml: function(row, col, date) {
-		return this.bgCellHtml(row, col, date);
+	slotBgCellHtml: function(cell) {
+		return this.bgCellHtml(cell);
 	},
 
 
 	// Generates the HTML for the horizontal "slats" that run width-wise. Has a time axis on a side. Depends on RTL.
 	slatRowHtml: function() {
 		var view = this.view;
-		var calendar = view.calendar;
-		var isRTL = view.opt('isRTL');
+		var isRTL = this.isRTL;
 		var html = '';
 		var slotNormal = this.slotDuration.asMinutes() % 15 === 0;
 		var slotTime = moment.duration(+this.minTime); // wish there was .clone() for durations
@@ -83592,14 +83466,14 @@ $.extend(TimeGrid.prototype, {
 
 		// Calculate the time for each slot
 		while (slotTime < this.maxTime) {
-			slotDate = view.start.clone().time(slotTime); // will be in UTC but that's good. to avoid DST issues
+			slotDate = this.start.clone().time(slotTime); // will be in UTC but that's good. to avoid DST issues
 			minutes = slotDate.minutes();
 
 			axisHtml =
 				'<td class="fc-axis fc-time ' + view.widgetContentClass + '" ' + view.axisStyleAttr() + '>' +
 					((!slotNormal || !minutes) ? // if irregular slot duration, or on the hour, then display the time
 						'<span>' + // for matchCellWidths
-							htmlEscape(calendar.formatDate(slotDate, view.opt('axisFormat'))) +
+							htmlEscape(slotDate.format(this.axisFormat)) +
 						'</span>' :
 						''
 						) +
@@ -83619,6 +83493,10 @@ $.extend(TimeGrid.prototype, {
 	},
 
 
+	/* Options
+	------------------------------------------------------------------------------------------------------------------*/
+
+
 	// Parses various options into properties of this object
 	processOptions: function() {
 		var view = this.view;
@@ -83630,31 +83508,114 @@ $.extend(TimeGrid.prototype, {
 
 		this.slotDuration = slotDuration;
 		this.snapDuration = snapDuration;
-		this.cellDuration = snapDuration; // important to assign this for Grid.events.js
 
 		this.minTime = moment.duration(view.opt('minTime'));
 		this.maxTime = moment.duration(view.opt('maxTime'));
+
+		this.axisFormat = view.opt('axisFormat') || view.opt('smallTimeFormat');
 	},
 
 
-	// Slices up a date range into a segment for each column
-	rangeToSegs: function(rangeStart, rangeEnd) {
+	// Computes a default column header formatting string if `colFormat` is not explicitly defined
+	computeColHeadFormat: function() {
+		if (this.colCnt > 1) { // multiple days, so full single date string WON'T be in title text
+			return this.view.opt('dayOfMonthFormat'); // "Sat 12/10"
+		}
+		else { // single day, so full single date string will probably be in title text
+			return 'dddd'; // "Saturday"
+		}
+	},
+
+
+	// Computes a default event time formatting string if `timeFormat` is not explicitly defined
+	computeEventTimeFormat: function() {
+		return this.view.opt('noMeridiemTimeFormat'); // like "6:30" (no AM/PM)
+	},
+
+
+	// Computes a default `displayEventEnd` value if one is not expliclty defined
+	computeDisplayEventEnd: function() {
+		return true;
+	},
+
+
+	/* Cell System
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Initializes row/col information
+	updateCells: function() {
 		var view = this.view;
+		var colData = [];
+		var date;
+
+		date = this.start.clone();
+		while (date.isBefore(this.end)) {
+			colData.push({
+				day: date.clone()
+			});
+			date.add(1, 'day');
+			date = view.skipHiddenDays(date);
+		}
+
+		if (this.isRTL) {
+			colData.reverse();
+		}
+
+		this.colData = colData;
+		this.colCnt = colData.length;
+		this.rowCnt = Math.ceil((this.maxTime - this.minTime) / this.snapDuration); // # of vertical snaps
+	},
+
+
+	// Given a cell object, generates a range object
+	computeCellRange: function(cell) {
+		var time = this.computeSnapTime(cell.row);
+		var start = this.view.calendar.rezoneDate(cell.day).time(time);
+		var end = start.clone().add(this.snapDuration);
+
+		return { start: start, end: end };
+	},
+
+
+	// Retrieves the element representing the given column
+	getColEl: function(col) {
+		return this.dayEls.eq(col);
+	},
+
+
+	/* Dates
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Given a row number of the grid, representing a "snap", returns a time (Duration) from its start-of-day
+	computeSnapTime: function(row) {
+		return moment.duration(this.minTime + this.snapDuration * row);
+	},
+
+
+	// Slices up a date range by column into an array of segments
+	rangeToSegs: function(range) {
+		var colCnt = this.colCnt;
 		var segs = [];
 		var seg;
 		var col;
-		var cellDate;
-		var colStart, colEnd;
+		var colDate;
+		var colRange;
 
-		// normalize
-		rangeStart = rangeStart.clone().stripZone();
-		rangeEnd = rangeEnd.clone().stripZone();
+		// normalize :(
+		range = {
+			start: range.start.clone().stripZone(),
+			end: range.end.clone().stripZone()
+		};
 
-		for (col = 0; col < view.colCnt; col++) {
-			cellDate = view.cellToDate(0, col); // use the View's cell system for this
-			colStart = cellDate.clone().time(this.minTime);
-			colEnd = cellDate.clone().time(this.maxTime);
-			seg = intersectionToSeg(rangeStart, rangeEnd, colStart, colEnd);
+		for (col = 0; col < colCnt; col++) {
+			colDate = this.colData[col].day; // will be ambig time/timezone
+			colRange = {
+				start: colDate.clone().time(this.minTime),
+				end: colDate.clone().time(this.maxTime)
+			};
+			seg = intersectionToSeg(range, colRange); // both will be ambig timezone
 			if (seg) {
 				seg.col = col;
 				segs.push(seg);
@@ -83676,55 +83637,25 @@ $.extend(TimeGrid.prototype, {
 	},
 
 
-	// Populates the given empty `rows` and `cols` arrays with offset positions of the "snap" cells.
-	// "Snap" cells are different the slots because they might have finer granularity.
-	buildCoords: function(rows, cols) {
-		var colCnt = this.view.colCnt;
+	// Computes the top/bottom coordinates of each "snap" rows
+	computeRowCoords: function() {
 		var originTop = this.el.offset().top;
-		var snapTime = moment.duration(+this.minTime);
-		var p = null;
-		var e, n;
+		var items = [];
+		var i;
+		var item;
 
-		this.dayEls.slice(0, colCnt).each(function(i, _e) {
-			e = $(_e);
-			n = e.offset().left;
-			if (p) {
-				p[1] = n;
+		for (i = 0; i < this.rowCnt; i++) {
+			item = {
+				top: originTop + this.computeTimeTop(this.computeSnapTime(i))
+			};
+			if (i > 0) {
+				items[i - 1].bottom = item.top;
 			}
-			p = [ n ];
-			cols[i] = p;
-		});
-		p[1] = n + e.outerWidth();
-
-		p = null;
-		while (snapTime < this.maxTime) {
-			n = originTop + this.computeTimeTop(snapTime);
-			if (p) {
-				p[1] = n;
-			}
-			p = [ n ];
-			rows.push(p);
-			snapTime.add(this.snapDuration);
+			items.push(item);
 		}
-		p[1] = originTop + this.computeTimeTop(snapTime); // the position of the exclusive end
-	},
+		item.bottom = item.top + this.computeTimeTop(this.computeSnapTime(i));
 
-
-	// Gets the datetime for the given slot cell
-	getCellDate: function(cell) {
-		var view = this.view;
-		var calendar = view.calendar;
-
-		return calendar.rezoneDate( // since we are adding a time, it needs to be in the calendar's timezone
-			view.cellToDate(0, cell.col) // View's coord system only accounts for start-of-day for column
-				.time(this.minTime + this.snapDuration * cell.row)
-		);
-	},
-
-
-	// Gets the element that represents the whole-day the cell resides on
-	getCellDayEl: function(cell) {
-		return this.dayEls.eq(cell.col);
+		return items;
 	},
 
 
@@ -83787,12 +83718,13 @@ $.extend(TimeGrid.prototype, {
 
 
 	// Renders a visual indication of an event being dragged over the specified date(s).
-	// `end` and `seg` can be null. See View's documentation on renderDrag for more info.
-	renderDrag: function(start, end, seg) {
+	// dropLocation's end might be null, as well as `seg`. See Grid::renderDrag for more info.
+	// A returned value of `true` signals that a mock "helper" event has been rendered.
+	renderDrag: function(dropLocation, seg) {
 		var opacity;
 
 		if (seg) { // if there is event information for this drag, render a helper event
-			this.renderRangeHelper(start, end, seg);
+			this.renderRangeHelper(dropLocation, seg);
 
 			opacity = this.view.opt('dragOpacity');
 			if (opacity !== undefined) {
@@ -83804,8 +83736,7 @@ $.extend(TimeGrid.prototype, {
 		else {
 			// otherwise, just render a highlight
 			this.renderHighlight(
-				start,
-				end || this.view.calendar.getDefaultEventEnd(false, start)
+				this.view.calendar.ensureVisibleEventRange(dropLocation) // needs to be a proper range
 			);
 		}
 	},
@@ -83823,13 +83754,13 @@ $.extend(TimeGrid.prototype, {
 
 
 	// Renders a visual indication of an event being resized
-	renderResize: function(start, end, seg) {
-		this.renderRangeHelper(start, end, seg);
+	renderEventResize: function(range, seg) {
+		this.renderRangeHelper(range, seg);
 	},
 
 
 	// Unrenders any visual indication of an event being resized
-	destroyResize: function() {
+	destroyEventResize: function() {
 		this.destroyHelper();
 	},
 
@@ -83882,12 +83813,12 @@ $.extend(TimeGrid.prototype, {
 
 
 	// Renders a visual indication of a selection. Overrides the default, which was to simply render a highlight.
-	renderSelection: function(start, end) {
+	renderSelection: function(range) {
 		if (this.view.opt('selectHelper')) { // this setting signals that a mock helper event should be rendered
-			this.renderRangeHelper(start, end);
+			this.renderRangeHelper(range);
 		}
 		else {
-			this.renderHighlight(start, end);
+			this.renderHighlight(range);
 		}
 	},
 
@@ -83906,7 +83837,6 @@ $.extend(TimeGrid.prototype, {
 	// Renders a set of rectangles over the given time segments.
 	// Only returns segments that successfully rendered.
 	renderFill: function(type, segs, className) {
-		var view = this.view;
 		var segCols;
 		var skeletonEl;
 		var trEl;
@@ -83935,7 +83865,7 @@ $.extend(TimeGrid.prototype, {
 
 				if (colSegs.length) {
 					containerEl = $('<div class="fc-' + className + '-container"/>').appendTo(tdEl);
-					dayDate = view.cellToDate(0, col);
+					dayDate = this.colData[col].day;
 
 					for (i = 0; i < colSegs.length; i++) {
 						seg = colSegs[i];
@@ -83965,7 +83895,7 @@ $.extend(TimeGrid.prototype, {
 /* Event-rendering methods for the TimeGrid class
 ----------------------------------------------------------------------------------------------------------------------*/
 
-$.extend(TimeGrid.prototype, {
+TimeGrid.mixin({
 
 	eventSkeletonEl: null, // has cells with event-containers, which contain absolutely positioned event elements
 
@@ -84081,15 +84011,15 @@ $.extend(TimeGrid.prototype, {
 			// That would appear as midnight-midnight and would look dumb.
 			// Otherwise, display the time text for the *segment's* times (like 6pm-midnight or midnight-10am)
 			if (seg.isStart || seg.isEnd) {
-				timeText = view.getEventTimeText(seg.start, seg.end);
-				fullTimeText = view.getEventTimeText(seg.start, seg.end, 'LT');
-				startTimeText = view.getEventTimeText(seg.start, null);
+				timeText = this.getEventTimeText(seg);
+				fullTimeText = this.getEventTimeText(seg, 'LT');
+				startTimeText = this.getEventTimeText({ start: seg.start });
 			}
 		} else {
 			// Display the normal time text for the *event's* times
-			timeText = view.getEventTimeText(event);
-			fullTimeText = view.getEventTimeText(event, 'LT');
-			startTimeText = view.getEventTimeText(event.start, null);
+			timeText = this.getEventTimeText(event);
+			fullTimeText = this.getEventTimeText(event, 'LT');
+			startTimeText = this.getEventTimeText({ start: event.start });
 		}
 
 		return '<a class="' + classes.join(' ') + '"' +
@@ -84131,9 +84061,7 @@ $.extend(TimeGrid.prototype, {
 	// Generates an object with CSS properties/values that should be applied to an event segment element.
 	// Contains important positioning-related properties that should be applied to any event element, customized or not.
 	generateSegPositionCss: function(seg) {
-		var view = this.view;
-		var isRTL = view.opt('isRTL');
-		var shouldOverlap = view.opt('slotEventOverlap');
+		var shouldOverlap = this.view.opt('slotEventOverlap');
 		var backwardCoord = seg.backwardCoord; // the left side if LTR. the right side if RTL. floating-point
 		var forwardCoord = seg.forwardCoord; // the right side if LTR. the left side if RTL. floating-point
 		var props = this.generateSegVerticalCss(seg); // get top/bottom first
@@ -84145,7 +84073,7 @@ $.extend(TimeGrid.prototype, {
 			forwardCoord = Math.min(1, backwardCoord + (forwardCoord - backwardCoord) * 2);
 		}
 
-		if (isRTL) {
+		if (this.isRTL) {
 			left = 1 - forwardCoord;
 			right = backwardCoord;
 		}
@@ -84160,7 +84088,7 @@ $.extend(TimeGrid.prototype, {
 
 		if (shouldOverlap && seg.forwardPressure) {
 			// add padding to the edge so that forward stacked events don't cover the resizer's icon
-			props[isRTL ? 'marginLeft' : 'marginRight'] = 10 * 2; // 10 is a guesstimate of the icon's width 
+			props[this.isRTL ? 'marginLeft' : 'marginRight'] = 10 * 2; // 10 is a guesstimate of the icon's width
 		}
 
 		return props;
@@ -84178,11 +84106,10 @@ $.extend(TimeGrid.prototype, {
 
 	// Given a flat array of segments, return an array of sub-arrays, grouped by each segment's col
 	groupSegCols: function(segs) {
-		var view = this.view;
 		var segCols = [];
 		var i;
 
-		for (i = 0; i < view.colCnt; i++) {
+		for (i = 0; i < this.colCnt; i++) {
 			segCols.push([]);
 		}
 
@@ -84375,25 +84302,30 @@ function compareForwardSlotSegs(seg1, seg2) {
 
 /* An abstract class from which other views inherit from
 ----------------------------------------------------------------------------------------------------------------------*/
-// Newer methods should be written as prototype methods, not in the monster `View` function at the bottom.
 
-View.prototype = {
+var View = fc.View = Class.extend({
+
+	type: null, // subclass' view name (string)
+	name: null, // deprecated. use `type` instead
 
 	calendar: null, // owner Calendar object
+	options: null, // view-specific options
 	coordMap: null, // a CoordMap object for converting pixel regions to dates
 	el: null, // the view's containing element. set by Calendar
 
-	// important Moments
-	start: null, // the date of the very first cell
-	end: null, // the date after the very last cell
-	intervalStart: null, // the start of the interval of time the view represents (1st of month for month view)
-	intervalEnd: null, // the exclusive end of the interval of time the view represents
+	// range the view is actually displaying (moments)
+	start: null,
+	end: null, // exclusive
 
-	// used for cell-to-date and date-to-cell calculations
-	rowCnt: null, // # of weeks
-	colCnt: null, // # of days displayed in a week
+	// range the view is formally responsible for (moments)
+	// may be different from start/end. for example, a month view might have 1st-31st, excluding padded dates
+	intervalStart: null,
+	intervalEnd: null, // exclusive
 
-	isSelected: false, // boolean whether cells are user-selected or not
+	intervalDuration: null, // the whole-unit duration that is being displayed
+	intervalUnit: null, // name of largest unit being displayed, like "month" or "week"
+
+	isSelected: false, // boolean whether a range of time is user-selected or not
 
 	// subclasses can optionally use a scroll container
 	scrollerEl: null, // the element that will most likely scroll when content is too tall
@@ -84404,55 +84336,230 @@ View.prototype = {
 	widgetContentClass: null,
 	highlightStateClass: null,
 
+	// for date utils, computed from options
+	nextDayThreshold: null,
+	isHiddenDayHash: null,
+
 	// document handlers, bound to `this` object
-	documentMousedownProxy: null,
-	documentDragStartProxy: null,
+	documentMousedownProxy: null, // TODO: doesn't work with touch
 
 
-	// Serves as a "constructor" to suppliment the monster `View` constructor below
-	init: function() {
+	constructor: function(calendar, viewOptions, viewType) {
+		this.calendar = calendar;
+		this.options = viewOptions;
+		this.type = this.name = viewType; // .name is deprecated
+
+		this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'));
+		this.initTheming();
+		this.initHiddenDays();
+
+		this.documentMousedownProxy = $.proxy(this, 'documentMousedown');
+
+		this.initialize();
+	},
+
+
+	// A good place for subclasses to initialize member variables
+	initialize: function() {
+		// subclasses can implement
+	},
+
+
+	// Retrieves an option with the given name
+	opt: function(name) {
+		var val;
+
+		val = this.options[name]; // look at view-specific options first
+		if (val !== undefined) {
+			return val;
+		}
+
+		val = this.calendar.options[name];
+		if ($.isPlainObject(val) && !isForcedAtomicOption(name)) { // view-option-hashes are deprecated
+			return smartProperty(val, this.type);
+		}
+
+		return val;
+	},
+
+
+	// Triggers handlers that are view-related. Modifies args before passing to calendar.
+	trigger: function(name, thisObj) { // arguments beyond thisObj are passed along
+		var calendar = this.calendar;
+
+		return calendar.trigger.apply(
+			calendar,
+			[name, thisObj || this].concat(
+				Array.prototype.slice.call(arguments, 2), // arguments beyond thisObj
+				[ this ] // always make the last argument a reference to the view. TODO: deprecate
+			)
+		);
+	},
+
+
+	/* Dates
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Updates all internal dates to center around the given current date
+	setDate: function(date) {
+		this.setRange(this.computeRange(date));
+	},
+
+
+	// Updates all internal dates for displaying the given range.
+	// Expects all values to be normalized (like what computeRange does).
+	setRange: function(range) {
+		$.extend(this, range);
+	},
+
+
+	// Given a single current date, produce information about what range to display.
+	// Subclasses can override. Must return all properties.
+	computeRange: function(date) {
+		var intervalDuration = moment.duration(this.opt('duration') || this.constructor.duration || { days: 1 });
+		var intervalUnit = computeIntervalUnit(intervalDuration);
+		var intervalStart = date.clone().startOf(intervalUnit);
+		var intervalEnd = intervalStart.clone().add(intervalDuration);
+		var start, end;
+
+		// normalize the range's time-ambiguity
+		if (computeIntervalAs('days', intervalDuration)) { // whole-days?
+			intervalStart.stripTime();
+			intervalEnd.stripTime();
+		}
+		else { // needs to have a time?
+			if (!intervalStart.hasTime()) {
+				intervalStart = this.calendar.rezoneDate(intervalStart); // convert to current timezone, with 00:00
+			}
+			if (!intervalEnd.hasTime()) {
+				intervalEnd = this.calendar.rezoneDate(intervalEnd); // convert to current timezone, with 00:00
+			}
+		}
+
+		start = intervalStart.clone();
+		start = this.skipHiddenDays(start);
+		end = intervalEnd.clone();
+		end = this.skipHiddenDays(end, -1, true); // exclusively move backwards
+
+		return {
+			intervalDuration: intervalDuration,
+			intervalUnit: intervalUnit,
+			intervalStart: intervalStart,
+			intervalEnd: intervalEnd,
+			start: start,
+			end: end
+		};
+	},
+
+
+	// Computes the new date when the user hits the prev button, given the current date
+	computePrevDate: function(date) {
+		return this.skipHiddenDays(
+			date.clone().startOf(this.intervalUnit).subtract(this.intervalDuration), -1
+		);
+	},
+
+
+	// Computes the new date when the user hits the next button, given the current date
+	computeNextDate: function(date) {
+		return this.skipHiddenDays(
+			date.clone().startOf(this.intervalUnit).add(this.intervalDuration)
+		);
+	},
+
+
+	/* Title and Date Formatting
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Computes what the title at the top of the calendar should be for this view
+	computeTitle: function() {
+		return this.formatRange(
+			{ start: this.intervalStart, end: this.intervalEnd },
+			this.opt('titleFormat') || this.computeTitleFormat(),
+			this.opt('titleRangeSeparator')
+		);
+	},
+
+
+	// Generates the format string that should be used to generate the title for the current date range.
+	// Attempts to compute the most appropriate format if not explicitly specified with `titleFormat`.
+	computeTitleFormat: function() {
+		if (this.intervalUnit == 'year') {
+			return 'YYYY';
+		}
+		else if (this.intervalUnit == 'month') {
+			return this.opt('monthYearFormat'); // like "September 2014"
+		}
+		else if (this.intervalDuration.as('days') > 1) {
+			return 'll'; // multi-day range. shorter, like "Sep 9 - 10 2014"
+		}
+		else {
+			return 'LL'; // one day. longer, like "September 9 2014"
+		}
+	},
+
+
+	// Utility for formatting a range. Accepts a range object, formatting string, and optional separator.
+	// Displays all-day ranges naturally, with an inclusive end. Takes the current isRTL into account.
+	formatRange: function(range, formatStr, separator) {
+		var end = range.end;
+
+		if (!end.hasTime()) { // all-day?
+			end = end.clone().subtract(1); // convert to inclusive. last ms of previous day
+		}
+
+		return formatRange(range.start, end, formatStr, separator, this.opt('isRTL'));
+	},
+
+
+	/* Rendering
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Wraps the basic render() method with more View-specific logic. Called by the owner Calendar.
+	renderView: function() {
+		this.render();
+		this.updateSize();
+		this.initializeScroll();
+		this.trigger('viewRender', this, this, this.el);
+
+		// attach handlers to document. do it here to allow for destroy/rerender
+		$(document).on('mousedown', this.documentMousedownProxy);
+	},
+
+
+	// Renders the view inside an already-defined `this.el`
+	render: function() {
+		// subclasses should implement
+	},
+
+
+	// Wraps the basic destroy() method with more View-specific logic. Called by the owner Calendar.
+	destroyView: function() {
+		this.unselect();
+		this.destroyViewEvents();
+		this.destroy();
+		this.trigger('viewDestroy', this, this, this.el);
+
+		$(document).off('mousedown', this.documentMousedownProxy);
+	},
+
+
+	// Clears the view's rendering
+	destroy: function() {
+		this.el.empty(); // removes inner contents but leaves the element intact
+	},
+
+
+	// Initializes internal variables related to theming
+	initTheming: function() {
 		var tm = this.opt('theme') ? 'ui' : 'fc';
 
 		this.widgetHeaderClass = tm + '-widget-header';
 		this.widgetContentClass = tm + '-widget-content';
 		this.highlightStateClass = tm + '-state-highlight';
-
-		// save references to `this`-bound handlers
-		this.documentMousedownProxy = $.proxy(this, 'documentMousedown');
-		this.documentDragStartProxy = $.proxy(this, 'documentDragStart');
-	},
-
-
-	// Renders the view inside an already-defined `this.el`.
-	// Subclasses should override this and then call the super method afterwards.
-	render: function() {
-		this.updateSize();
-		this.trigger('viewRender', this, this, this.el);
-
-		// attach handlers to document. do it here to allow for destroy/rerender
-		$(document)
-			.on('mousedown', this.documentMousedownProxy)
-			.on('dragstart', this.documentDragStartProxy); // jqui drag
-	},
-
-
-	// Clears all view rendering, event elements, and unregisters handlers
-	destroy: function() {
-		this.unselect();
-		this.trigger('viewDestroy', this, this, this.el);
-		this.destroyEvents();
-		this.el.empty(); // removes inner contents but leaves the element intact
-
-		$(document)
-			.off('mousedown', this.documentMousedownProxy)
-			.off('dragstart', this.documentDragStartProxy);
-	},
-
-
-	// Used to determine what happens when the users clicks next/prev. Given -1 for prev, 1 for next.
-	// Should apply the delta to `date` (a Moment) and return it.
-	incrementDate: function(date, delta) {
-		// subclasses should implement
 	},
 
 
@@ -84494,21 +84601,34 @@ View.prototype = {
 	},
 
 
+	/* Scroller
+	------------------------------------------------------------------------------------------------------------------*/
+
+
 	// Given the total height of the view, return the number of pixels that should be used for the scroller.
+	// By default, uses this.scrollerEl, but can pass this in as well.
 	// Utility for subclasses.
-	computeScrollerHeight: function(totalHeight) {
-		var both = this.el.add(this.scrollerEl);
+	computeScrollerHeight: function(totalHeight, scrollerEl) {
+		var both;
 		var otherHeight; // cumulative height of everything that is not the scrollerEl in the view (header+borders)
+
+		scrollerEl = scrollerEl || this.scrollerEl;
+		both = this.el.add(scrollerEl);
 
 		// fuckin IE8/9/10/11 sometimes returns 0 for dimensions. this weird hack was the only thing that worked
 		both.css({
 			position: 'relative', // cause a reflow, which will force fresh dimension recalculation
 			left: -1 // ensure reflow in case the el was already relative. negative is less likely to cause new scroll
 		});
-		otherHeight = this.el.outerHeight() - this.scrollerEl.height(); // grab the dimensions
+		otherHeight = this.el.outerHeight() - scrollerEl.height(); // grab the dimensions
 		both.css({ position: '', left: '' }); // undo hack
 
 		return totalHeight - otherHeight;
+	},
+
+
+	// Sets the scroll value of the scroller to the initial pre-configured state prior to allowing the user to change it
+	initializeScroll: function() {
 	},
 
 
@@ -84532,26 +84652,40 @@ View.prototype = {
 	},
 
 
-	/* Events
+	/* Event Elements / Segments
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders the events onto the view.
-	// Should be overriden by subclasses. Subclasses should call the super-method afterwards.
-	renderEvents: function(events) {
-		this.segEach(function(seg) {
+	// Wraps the basic renderEvents() method with more View-specific logic
+	renderViewEvents: function(events) {
+		this.renderEvents(events);
+
+		this.eventSegEach(function(seg) {
 			this.trigger('eventAfterRender', seg.event, seg.event, seg.el);
 		});
 		this.trigger('eventAfterAllRender');
 	},
 
 
-	// Removes event elements from the view.
-	// Should be overridden by subclasses. Should call this super-method FIRST, then subclass DOM destruction.
-	destroyEvents: function() {
-		this.segEach(function(seg) {
+	// Renders the events onto the view.
+	renderEvents: function() {
+		// subclasses should implement
+	},
+
+
+	// Wraps the basic destroyEvents() method with more View-specific logic
+	destroyViewEvents: function() {
+		this.eventSegEach(function(seg) {
 			this.trigger('eventDestroy', seg.event, seg.event, seg.el);
 		});
+
+		this.destroyEvents();
+	},
+
+
+	// Removes event elements from the view.
+	destroyEvents: function() {
+		// subclasses should implement
 	},
 
 
@@ -84573,7 +84707,7 @@ View.prototype = {
 
 	// Hides all rendered event segments linked to the given event
 	showEvent: function(event) {
-		this.segEach(function(seg) {
+		this.eventSegEach(function(seg) {
 			seg.el.css('visibility', '');
 		}, event);
 	},
@@ -84581,7 +84715,7 @@ View.prototype = {
 
 	// Shows all rendered event segments linked to the given event
 	hideEvent: function(event) {
-		this.segEach(function(seg) {
+		this.eventSegEach(function(seg) {
 			seg.el.css('visibility', 'hidden');
 		}, event);
 	},
@@ -84590,8 +84724,8 @@ View.prototype = {
 	// Iterates through event segments. Goes through all by default.
 	// If the optional `event` argument is specified, only iterates through segments linked to that event.
 	// The `this` value of the callback function will be the view.
-	segEach: function(func, event) {
-		var segs = this.getSegs();
+	eventSegEach: function(func, event) {
+		var segs = this.getEventSegs();
 		var i;
 
 		for (i = 0; i < segs.length; i++) {
@@ -84603,110 +84737,139 @@ View.prototype = {
 
 
 	// Retrieves all the rendered segment objects for the view
-	getSegs: function() {
+	getEventSegs: function() {
+		// subclasses must implement
+		return [];
+	},
+
+
+	/* Event Drag-n-Drop
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Computes if the given event is allowed to be dragged by the user
+	isEventDraggable: function(event) {
+		var source = event.source || {};
+
+		return firstDefined(
+			event.startEditable,
+			source.startEditable,
+			this.opt('eventStartEditable'),
+			event.editable,
+			source.editable,
+			this.opt('editable')
+		);
+	},
+
+
+	// Must be called when an event in the view is dropped onto new location.
+	// `dropLocation` is an object that contains the new start/end/allDay values for the event.
+	reportEventDrop: function(event, dropLocation, el, ev) {
+		var calendar = this.calendar;
+		var mutateResult = calendar.mutateEvent(event, dropLocation);
+		var undoFunc = function() {
+			mutateResult.undo();
+			calendar.reportEventChange();
+		};
+
+		this.triggerEventDrop(event, mutateResult.dateDelta, undoFunc, el, ev);
+		calendar.reportEventChange(); // will rerender events
+	},
+
+
+	// Triggers event-drop handlers that have subscribed via the API
+	triggerEventDrop: function(event, dateDelta, undoFunc, el, ev) {
+		this.trigger('eventDrop', el[0], event, dateDelta, undoFunc, ev, {}); // {} = jqui dummy
+	},
+
+
+	/* External Element Drag-n-Drop
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Must be called when an external element, via jQuery UI, has been dropped onto the calendar.
+	// `meta` is the parsed data that has been embedded into the dragging event.
+	// `dropLocation` is an object that contains the new start/end/allDay values for the event.
+	reportExternalDrop: function(meta, dropLocation, el, ev, ui) {
+		var eventProps = meta.eventProps;
+		var eventInput;
+		var event;
+
+		// Try to build an event object and render it. TODO: decouple the two
+		if (eventProps) {
+			eventInput = $.extend({}, eventProps, dropLocation);
+			event = this.calendar.renderEvent(eventInput, meta.stick)[0]; // renderEvent returns an array
+		}
+
+		this.triggerExternalDrop(event, dropLocation, el, ev, ui);
+	},
+
+
+	// Triggers external-drop handlers that have subscribed via the API
+	triggerExternalDrop: function(event, dropLocation, el, ev, ui) {
+
+		// trigger 'drop' regardless of whether element represents an event
+		this.trigger('drop', el[0], dropLocation.start, ev, ui);
+
+		if (event) {
+			this.trigger('eventReceive', null, event); // signal an external event landed
+		}
+	},
+
+
+	/* Drag-n-Drop Rendering (for both events and external elements)
+	------------------------------------------------------------------------------------------------------------------*/
+
+
+	// Renders a visual indication of a event or external-element drag over the given drop zone.
+	// If an external-element, seg will be `null`
+	renderDrag: function(dropLocation, seg) {
 		// subclasses must implement
 	},
 
 
-	/* Event Drag Visualization
+	// Unrenders a visual indication of an event or external-element being dragged.
+	destroyDrag: function() {
+		// subclasses must implement
+	},
+
+
+	/* Event Resizing
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders a visual indication of an event hovering over the specified date.
-	// `end` is a Moment and might be null.
-	// `seg` might be null. if specified, it is the segment object of the event being dragged.
-	//       otherwise, an external event from outside the calendar is being dragged.
-	renderDrag: function(start, end, seg) {
-		// subclasses should implement
+	// Computes if the given event is allowed to be resize by the user
+	isEventResizable: function(event) {
+		var source = event.source || {};
+
+		return firstDefined(
+			event.durationEditable,
+			source.durationEditable,
+			this.opt('eventDurationEditable'),
+			event.editable,
+			source.editable,
+			this.opt('editable')
+		);
 	},
 
 
-	// Unrenders a visual indication of event hovering
-	destroyDrag: function() {
-		// subclasses should implement
-	},
-
-
-	// Handler for accepting externally dragged events being dropped in the view.
-	// Gets called when jqui's 'dragstart' is fired.
-	documentDragStart: function(ev, ui) {
-		var _this = this;
+	// Must be called when an event in the view has been resized to a new length
+	reportEventResize: function(event, newEnd, el, ev) {
 		var calendar = this.calendar;
-		var eventStart = null; // a null value signals an unsuccessful drag
-		var eventEnd = null;
-		var visibleEnd = null; // will be calculated event when no eventEnd
-		var el;
-		var accept;
-		var meta;
-		var eventProps; // if an object, signals an event should be created upon drop
-		var dragListener;
+		var mutateResult = calendar.mutateEvent(event, { end: newEnd });
+		var undoFunc = function() {
+			mutateResult.undo();
+			calendar.reportEventChange();
+		};
 
-		if (this.opt('droppable')) { // only listen if this setting is on
-			el = $(ev.target);
+		this.triggerEventResize(event, mutateResult.durationDelta, undoFunc, el, ev);
+		calendar.reportEventChange(); // will rerender events
+	},
 
-			// Test that the dragged element passes the dropAccept selector or filter function.
-			// FYI, the default is "*" (matches all)
-			accept = this.opt('dropAccept');
-			if ($.isFunction(accept) ? accept.call(el[0], el) : el.is(accept)) {
 
-				meta = getDraggedElMeta(el); // data for possibly creating an event
-				eventProps = meta.eventProps;
-
-				// listener that tracks mouse movement over date-associated pixel regions
-				dragListener = new DragListener(this.coordMap, {
-					cellOver: function(cell, cellDate) {
-						eventStart = cellDate;
-						eventEnd = meta.duration ? eventStart.clone().add(meta.duration) : null;
-						visibleEnd = eventEnd || calendar.getDefaultEventEnd(!eventStart.hasTime(), eventStart);
-
-						// keep the start/end up to date when dragging
-						if (eventProps) {
-							$.extend(eventProps, { start: eventStart, end: eventEnd });
-						}
-
-						if (calendar.isExternalDragAllowedInRange(eventStart, visibleEnd, eventProps)) {
-							_this.renderDrag(eventStart, visibleEnd);
-						}
-						else {
-							eventStart = null; // signal unsuccessful
-							disableCursor();
-						}
-					},
-					cellOut: function() {
-						eventStart = null;
-						_this.destroyDrag();
-						enableCursor();
-					}
-				});
-
-				// gets called, only once, when jqui drag is finished
-				$(document).one('dragstop', function(ev, ui) {
-					var renderedEvents;
-
-					_this.destroyDrag();
-					enableCursor();
-
-					if (eventStart) { // element was dropped on a valid date/time cell
-
-						// if dropped on an all-day cell, and element's metadata specified a time, set it
-						if (meta.startTime && !eventStart.hasTime()) {
-							eventStart.time(meta.startTime);
-						}
-
-						// trigger 'drop' regardless of whether element represents an event
-						_this.trigger('drop', el[0], eventStart, ev, ui);
-
-						// create an event from the given properties and the latest dates
-						if (eventProps) {
-							renderedEvents = calendar.renderEvent(eventProps, meta.stick);
-							_this.trigger('eventReceive', null, renderedEvents[0]); // signal an external event landed
-						}
-					}
-				});
-
-				dragListener.startDrag(ev); // start listening immediately
-			}
-		}
+	// Triggers event-resize handlers that have subscribed via the API
+	triggerEventResize: function(event, durationDelta, undoFunc, el, ev) {
+		this.trigger('eventResize', el[0], event, durationDelta, undoFunc, ev, {}); // {} = jqui dummy
 	},
 
 
@@ -84716,23 +84879,23 @@ View.prototype = {
 
 	// Selects a date range on the view. `start` and `end` are both Moments.
 	// `ev` is the native mouse event that begin the interaction.
-	select: function(start, end, ev) {
+	select: function(range, ev) {
 		this.unselect(ev);
-		this.renderSelection(start, end);
-		this.reportSelection(start, end, ev);
+		this.renderSelection(range);
+		this.reportSelection(range, ev);
 	},
 
 
 	// Renders a visual indication of the selection
-	renderSelection: function(start, end) {
+	renderSelection: function(range) {
 		// subclasses should implement
 	},
 
 
 	// Called when a new selection is made. Updates internal state and triggers handlers.
-	reportSelection: function(start, end, ev) {
+	reportSelection: function(range, ev) {
 		this.isSelected = true;
-		this.trigger('select', null, start, end, ev);
+		this.trigger('select', null, range.start, range.end, ev);
 	},
 
 
@@ -84766,443 +84929,72 @@ View.prototype = {
 				this.unselect(ev);
 			}
 		}
-	}
-
-};
+	},
 
 
-// We are mixing JavaScript OOP design patterns here by putting methods and member variables in the closed scope of the
-// constructor. Going forward, methods should be part of the prototype.
-function View(calendar) {
-	var t = this;
-	
-	// exports
-	t.calendar = calendar;
-	t.opt = opt;
-	t.trigger = trigger;
-	t.isEventDraggable = isEventDraggable;
-	t.isEventResizable = isEventResizable;
-	t.eventDrop = eventDrop;
-	t.eventResize = eventResize;
-	
-	// imports
-	var reportEventChange = calendar.reportEventChange;
-	
-	// locals
-	var options = calendar.options;
-	var nextDayThreshold = moment.duration(options.nextDayThreshold);
+	/* Date Utils
+	------------------------------------------------------------------------------------------------------------------*/
 
 
-	t.init(); // the "constructor" that concerns the prototype methods
-	
-	
-	function opt(name) {
-		var v = options[name];
-		if ($.isPlainObject(v) && !isForcedAtomicOption(name)) {
-			return smartProperty(v, t.name);
-		}
-		return v;
-	}
+	// Initializes internal variables related to calculating hidden days-of-week
+	initHiddenDays: function() {
+		var hiddenDays = this.opt('hiddenDays') || []; // array of day-of-week indices that are hidden
+		var isHiddenDayHash = []; // is the day-of-week hidden? (hash with day-of-week-index -> bool)
+		var dayCnt = 0;
+		var i;
 
-	
-	function trigger(name, thisObj) {
-		return calendar.trigger.apply(
-			calendar,
-			[name, thisObj || t].concat(Array.prototype.slice.call(arguments, 2), [t])
-		);
-	}
-	
-
-
-	/* Event Editable Boolean Calculations
-	------------------------------------------------------------------------------*/
-
-	
-	function isEventDraggable(event) {
-		var source = event.source || {};
-
-		return firstDefined(
-			event.startEditable,
-			source.startEditable,
-			opt('eventStartEditable'),
-			event.editable,
-			source.editable,
-			opt('editable')
-		);
-	}
-	
-	
-	function isEventResizable(event) {
-		var source = event.source || {};
-
-		return firstDefined(
-			event.durationEditable,
-			source.durationEditable,
-			opt('eventDurationEditable'),
-			event.editable,
-			source.editable,
-			opt('editable')
-		);
-	}
-	
-	
-	
-	/* Event Elements
-	------------------------------------------------------------------------------*/
-
-
-	// Compute the text that should be displayed on an event's element.
-	// Based off the settings of the view. Possible signatures:
-	//   .getEventTimeText(event, formatStr)
-	//   .getEventTimeText(startMoment, endMoment, formatStr)
-	//   .getEventTimeText(startMoment, null, formatStr)
-	// `timeFormat` is used but the `formatStr` argument can be used to override.
-	t.getEventTimeText = function(event, formatStr) {
-		var start;
-		var end;
-
-		if (typeof event === 'object' && typeof formatStr === 'object') {
-			// first two arguments are actually moments (or null). shift arguments.
-			start = event;
-			end = formatStr;
-			formatStr = arguments[2];
-		}
-		else {
-			// otherwise, an event object was the first argument
-			start = event.start;
-			end = event.end;
-		}
-
-		formatStr = formatStr || opt('timeFormat');
-
-		if (end && opt('displayEventEnd')) {
-			return calendar.formatRange(start, end, formatStr);
-		}
-		else {
-			return calendar.formatDate(start, formatStr);
-		}
-	};
-
-	
-	
-	/* Event Modification Reporting
-	---------------------------------------------------------------------------------*/
-
-	
-	function eventDrop(el, event, newStart, ev) {
-		var mutateResult = calendar.mutateEvent(event, newStart, null);
-
-		trigger(
-			'eventDrop',
-			el,
-			event,
-			mutateResult.dateDelta,
-			function() {
-				mutateResult.undo();
-				reportEventChange();
-			},
-			ev,
-			{} // jqui dummy
-		);
-
-		reportEventChange();
-	}
-
-
-	function eventResize(el, event, newEnd, ev) {
-		var mutateResult = calendar.mutateEvent(event, null, newEnd);
-
-		trigger(
-			'eventResize',
-			el,
-			event,
-			mutateResult.durationDelta,
-			function() {
-				mutateResult.undo();
-				reportEventChange();
-			},
-			ev,
-			{} // jqui dummy
-		);
-
-		reportEventChange();
-	}
-
-
-	// ====================================================================================================
-	// Utilities for day "cells"
-	// ====================================================================================================
-	// The "basic" views are completely made up of day cells.
-	// The "agenda" views have day cells at the top "all day" slot.
-	// This was the obvious common place to put these utilities, but they should be abstracted out into
-	// a more meaningful class (like DayEventRenderer).
-	// ====================================================================================================
-
-
-	// For determining how a given "cell" translates into a "date":
-	//
-	// 1. Convert the "cell" (row and column) into a "cell offset" (the # of the cell, cronologically from the first).
-	//    Keep in mind that column indices are inverted with isRTL. This is taken into account.
-	//
-	// 2. Convert the "cell offset" to a "day offset" (the # of days since the first visible day in the view).
-	//
-	// 3. Convert the "day offset" into a "date" (a Moment).
-	//
-	// The reverse transformation happens when transforming a date into a cell.
-
-
-	// exports
-	t.isHiddenDay = isHiddenDay;
-	t.skipHiddenDays = skipHiddenDays;
-	t.getCellsPerWeek = getCellsPerWeek;
-	t.dateToCell = dateToCell;
-	t.dateToDayOffset = dateToDayOffset;
-	t.dayOffsetToCellOffset = dayOffsetToCellOffset;
-	t.cellOffsetToCell = cellOffsetToCell;
-	t.cellToDate = cellToDate;
-	t.cellToCellOffset = cellToCellOffset;
-	t.cellOffsetToDayOffset = cellOffsetToDayOffset;
-	t.dayOffsetToDate = dayOffsetToDate;
-	t.rangeToSegments = rangeToSegments;
-	t.isMultiDayEvent = isMultiDayEvent;
-
-
-	// internals
-	var hiddenDays = opt('hiddenDays') || []; // array of day-of-week indices that are hidden
-	var isHiddenDayHash = []; // is the day-of-week hidden? (hash with day-of-week-index -> bool)
-	var cellsPerWeek;
-	var dayToCellMap = []; // hash from dayIndex -> cellIndex, for one week
-	var cellToDayMap = []; // hash from cellIndex -> dayIndex, for one week
-	var isRTL = opt('isRTL');
-
-
-	// initialize important internal variables
-	(function() {
-
-		if (opt('weekends') === false) {
+		if (this.opt('weekends') === false) {
 			hiddenDays.push(0, 6); // 0=sunday, 6=saturday
 		}
 
-		// Loop through a hypothetical week and determine which
-		// days-of-week are hidden. Record in both hashes (one is the reverse of the other).
-		for (var dayIndex=0, cellIndex=0; dayIndex<7; dayIndex++) {
-			dayToCellMap[dayIndex] = cellIndex;
-			isHiddenDayHash[dayIndex] = $.inArray(dayIndex, hiddenDays) != -1;
-			if (!isHiddenDayHash[dayIndex]) {
-				cellToDayMap[cellIndex] = dayIndex;
-				cellIndex++;
+		for (i = 0; i < 7; i++) {
+			if (
+				!(isHiddenDayHash[i] = $.inArray(i, hiddenDays) !== -1)
+			) {
+				dayCnt++;
 			}
 		}
 
-		cellsPerWeek = cellIndex;
-		if (!cellsPerWeek) {
+		if (!dayCnt) {
 			throw 'invalid hiddenDays'; // all days were hidden? bad.
 		}
 
-	})();
+		this.isHiddenDayHash = isHiddenDayHash;
+	},
 
 
 	// Is the current day hidden?
 	// `day` is a day-of-week index (0-6), or a Moment
-	function isHiddenDay(day) {
+	isHiddenDay: function(day) {
 		if (moment.isMoment(day)) {
 			day = day.day();
 		}
-		return isHiddenDayHash[day];
-	}
-
-
-	function getCellsPerWeek() {
-		return cellsPerWeek;
-	}
+		return this.isHiddenDayHash[day];
+	},
 
 
 	// Incrementing the current day until it is no longer a hidden day, returning a copy.
 	// If the initial value of `date` is not a hidden day, don't do anything.
 	// Pass `isExclusive` as `true` if you are dealing with an end date.
 	// `inc` defaults to `1` (increment one day forward each time)
-	function skipHiddenDays(date, inc, isExclusive) {
+	skipHiddenDays: function(date, inc, isExclusive) {
 		var out = date.clone();
 		inc = inc || 1;
 		while (
-			isHiddenDayHash[(out.day() + (isExclusive ? inc : 0) + 7) % 7]
+			this.isHiddenDayHash[(out.day() + (isExclusive ? inc : 0) + 7) % 7]
 		) {
 			out.add(inc, 'days');
 		}
 		return out;
-	}
-
-
-	//
-	// TRANSFORMATIONS: cell -> cell offset -> day offset -> date
-	//
-
-	// cell -> date (combines all transformations)
-	// Possible arguments:
-	// - row, col
-	// - { row:#, col: # }
-	function cellToDate() {
-		var cellOffset = cellToCellOffset.apply(null, arguments);
-		var dayOffset = cellOffsetToDayOffset(cellOffset);
-		var date = dayOffsetToDate(dayOffset);
-		return date;
-	}
-
-	// cell -> cell offset
-	// Possible arguments:
-	// - row, col
-	// - { row:#, col:# }
-	function cellToCellOffset(row, col) {
-		var colCnt = t.colCnt;
-
-		// rtl variables. wish we could pre-populate these. but where?
-		var dis = isRTL ? -1 : 1;
-		var dit = isRTL ? colCnt - 1 : 0;
-
-		if (typeof row == 'object') {
-			col = row.col;
-			row = row.row;
-		}
-		var cellOffset = row * colCnt + (col * dis + dit); // column, adjusted for RTL (dis & dit)
-
-		return cellOffset;
-	}
-
-	// cell offset -> day offset
-	function cellOffsetToDayOffset(cellOffset) {
-		var day0 = t.start.day(); // first date's day of week
-		cellOffset += dayToCellMap[day0]; // normlize cellOffset to beginning-of-week
-		return Math.floor(cellOffset / cellsPerWeek) * 7 + // # of days from full weeks
-			cellToDayMap[ // # of days from partial last week
-				(cellOffset % cellsPerWeek + cellsPerWeek) % cellsPerWeek // crazy math to handle negative cellOffsets
-			] -
-			day0; // adjustment for beginning-of-week normalization
-	}
-
-	// day offset -> date
-	function dayOffsetToDate(dayOffset) {
-		return t.start.clone().add(dayOffset, 'days');
-	}
-
-
-	//
-	// TRANSFORMATIONS: date -> day offset -> cell offset -> cell
-	//
-
-	// date -> cell (combines all transformations)
-	function dateToCell(date) {
-		var dayOffset = dateToDayOffset(date);
-		var cellOffset = dayOffsetToCellOffset(dayOffset);
-		var cell = cellOffsetToCell(cellOffset);
-		return cell;
-	}
-
-	// date -> day offset
-	function dateToDayOffset(date) {
-		return date.clone().stripTime().diff(t.start, 'days');
-	}
-
-	// day offset -> cell offset
-	function dayOffsetToCellOffset(dayOffset) {
-		var day0 = t.start.day(); // first date's day of week
-		dayOffset += day0; // normalize dayOffset to beginning-of-week
-		return Math.floor(dayOffset / 7) * cellsPerWeek + // # of cells from full weeks
-			dayToCellMap[ // # of cells from partial last week
-				(dayOffset % 7 + 7) % 7 // crazy math to handle negative dayOffsets
-			] -
-			dayToCellMap[day0]; // adjustment for beginning-of-week normalization
-	}
-
-	// cell offset -> cell (object with row & col keys)
-	function cellOffsetToCell(cellOffset) {
-		var colCnt = t.colCnt;
-
-		// rtl variables. wish we could pre-populate these. but where?
-		var dis = isRTL ? -1 : 1;
-		var dit = isRTL ? colCnt - 1 : 0;
-
-		var row = Math.floor(cellOffset / colCnt);
-		var col = ((cellOffset % colCnt + colCnt) % colCnt) * dis + dit; // column, adjusted for RTL (dis & dit)
-		return {
-			row: row,
-			col: col
-		};
-	}
-
-
-	//
-	// Converts a date range into an array of segment objects.
-	// "Segments" are horizontal stretches of time, sliced up by row.
-	// A segment object has the following properties:
-	// - row
-	// - cols
-	// - isStart
-	// - isEnd
-	//
-	function rangeToSegments(start, end) {
-
-		var rowCnt = t.rowCnt;
-		var colCnt = t.colCnt;
-		var segments = []; // array of segments to return
-
-		// day offset for given date range
-		var dayRange = computeDayRange(start, end); // convert to a whole-day range
-		var rangeDayOffsetStart = dateToDayOffset(dayRange.start);
-		var rangeDayOffsetEnd = dateToDayOffset(dayRange.end); // an exclusive value
-
-		// first and last cell offset for the given date range
-		// "last" implies inclusivity
-		var rangeCellOffsetFirst = dayOffsetToCellOffset(rangeDayOffsetStart);
-		var rangeCellOffsetLast = dayOffsetToCellOffset(rangeDayOffsetEnd) - 1;
-
-		// loop through all the rows in the view
-		for (var row=0; row<rowCnt; row++) {
-
-			// first and last cell offset for the row
-			var rowCellOffsetFirst = row * colCnt;
-			var rowCellOffsetLast = rowCellOffsetFirst + colCnt - 1;
-
-			// get the segment's cell offsets by constraining the range's cell offsets to the bounds of the row
-			var segmentCellOffsetFirst = Math.max(rangeCellOffsetFirst, rowCellOffsetFirst);
-			var segmentCellOffsetLast = Math.min(rangeCellOffsetLast, rowCellOffsetLast);
-
-			// make sure segment's offsets are valid and in view
-			if (segmentCellOffsetFirst <= segmentCellOffsetLast) {
-
-				// translate to cells
-				var segmentCellFirst = cellOffsetToCell(segmentCellOffsetFirst);
-				var segmentCellLast = cellOffsetToCell(segmentCellOffsetLast);
-
-				// view might be RTL, so order by leftmost column
-				var cols = [ segmentCellFirst.col, segmentCellLast.col ].sort(compareNumbers);
-
-				// Determine if segment's first/last cell is the beginning/end of the date range.
-				// We need to compare "day offset" because "cell offsets" are often ambiguous and
-				// can translate to multiple days, and an edge case reveals itself when we the
-				// range's first cell is hidden (we don't want isStart to be true).
-				var isStart = cellOffsetToDayOffset(segmentCellOffsetFirst) == rangeDayOffsetStart;
-				var isEnd = cellOffsetToDayOffset(segmentCellOffsetLast) + 1 == rangeDayOffsetEnd;
-				                                                   // +1 for comparing exclusively
-
-				segments.push({
-					row: row,
-					leftCol: cols[0],
-					rightCol: cols[1],
-					isStart: isStart,
-					isEnd: isEnd
-				});
-			}
-		}
-
-		return segments;
-	}
+	},
 
 
 	// Returns the date range of the full days the given range visually appears to occupy.
-	// Returns object with properties `start` (moment) and `end` (moment, exclusive end).
-	function computeDayRange(start, end) {
-		var startDay = start.clone().stripTime(); // the beginning of the day the range starts
-		var endDay;
+	// Returns a new range object.
+	computeDayRange: function(range) {
+		var startDay = range.start.clone().stripTime(); // the beginning of the day the range starts
+		var end = range.end;
+		var endDay = null;
 		var endTimeMS;
 
 		if (end) {
@@ -85212,7 +85004,7 @@ function View(calendar) {
 			// If the end time is actually inclusively part of the next day and is equal to or
 			// beyond the next day threshold, adjust the end to be the exclusive end of `endDay`.
 			// Otherwise, leaving it as inclusive will cause it to exclude `endDay`.
-			if (endTimeMS && endTimeMS >= nextDayThreshold) {
+			if (endTimeMS && endTimeMS >= this.nextDayThreshold) {
 				endDay.add(1, 'days');
 			}
 		}
@@ -85224,70 +85016,2137 @@ function View(calendar) {
 		}
 
 		return { start: startDay, end: endDay };
-	}
+	},
 
 
 	// Does the given event visually appear to occupy more than one day?
-	function isMultiDayEvent(event) {
-		var range = computeDayRange(event.start, event.end);
+	isMultiDayEvent: function(event) {
+		var range = this.computeDayRange(event); // event is range-ish
 
 		return range.end.diff(range.start, 'days') > 1;
+	}
+
+});
+
+;;
+
+ 
+function Calendar(element, instanceOptions) {
+	var t = this;
+
+
+
+	// Build options object
+	// -----------------------------------------------------------------------------------
+	// Precedence (lowest to highest): defaults, rtlDefaults, langOptions, instanceOptions
+
+	instanceOptions = instanceOptions || {};
+
+	var options = mergeOptions({}, defaults, instanceOptions);
+	var langOptions;
+
+	// determine language options
+	if (options.lang in langOptionHash) {
+		langOptions = langOptionHash[options.lang];
+	}
+	else {
+		langOptions = langOptionHash[defaults.lang];
+	}
+
+	if (langOptions) { // if language options exist, rebuild...
+		options = mergeOptions({}, defaults, langOptions, instanceOptions);
+	}
+
+	if (options.isRTL) { // is isRTL, rebuild...
+		options = mergeOptions({}, defaults, rtlDefaults, langOptions || {}, instanceOptions);
+	}
+
+
+	
+	// Exports
+	// -----------------------------------------------------------------------------------
+
+	t.options = options;
+	t.render = render;
+	t.destroy = destroy;
+	t.refetchEvents = refetchEvents;
+	t.reportEvents = reportEvents;
+	t.reportEventChange = reportEventChange;
+	t.rerenderEvents = renderEvents; // `renderEvents` serves as a rerender. an API method
+	t.changeView = changeView;
+	t.select = select;
+	t.unselect = unselect;
+	t.prev = prev;
+	t.next = next;
+	t.prevYear = prevYear;
+	t.nextYear = nextYear;
+	t.today = today;
+	t.gotoDate = gotoDate;
+	t.incrementDate = incrementDate;
+	t.zoomTo = zoomTo;
+	t.getDate = getDate;
+	t.getCalendar = getCalendar;
+	t.getView = getView;
+	t.option = option;
+	t.trigger = trigger;
+	t.isValidViewType = isValidViewType;
+	t.getViewButtonText = getViewButtonText;
+
+
+
+	// Language-data Internals
+	// -----------------------------------------------------------------------------------
+	// Apply overrides to the current language's data
+
+
+	var localeData = createObject( // make a cheap copy
+		getMomentLocaleData(options.lang) // will fall back to en
+	);
+
+	if (options.monthNames) {
+		localeData._months = options.monthNames;
+	}
+	if (options.monthNamesShort) {
+		localeData._monthsShort = options.monthNamesShort;
+	}
+	if (options.dayNames) {
+		localeData._weekdays = options.dayNames;
+	}
+	if (options.dayNamesShort) {
+		localeData._weekdaysShort = options.dayNamesShort;
+	}
+	if (options.firstDay != null) {
+		var _week = createObject(localeData._week); // _week: { dow: # }
+		_week.dow = options.firstDay;
+		localeData._week = _week;
+	}
+
+
+
+	// Calendar-specific Date Utilities
+	// -----------------------------------------------------------------------------------
+
+
+	t.defaultAllDayEventDuration = moment.duration(options.defaultAllDayEventDuration);
+	t.defaultTimedEventDuration = moment.duration(options.defaultTimedEventDuration);
+
+
+	// Builds a moment using the settings of the current calendar: timezone and language.
+	// Accepts anything the vanilla moment() constructor accepts.
+	t.moment = function() {
+		var mom;
+
+		if (options.timezone === 'local') {
+			mom = fc.moment.apply(null, arguments);
+
+			// Force the moment to be local, because fc.moment doesn't guarantee it.
+			if (mom.hasTime()) { // don't give ambiguously-timed moments a local zone
+				mom.local();
+			}
+		}
+		else if (options.timezone === 'UTC') {
+			mom = fc.moment.utc.apply(null, arguments); // process as UTC
+		}
+		else {
+			mom = fc.moment.parseZone.apply(null, arguments); // let the input decide the zone
+		}
+
+		if ('_locale' in mom) { // moment 2.8 and above
+			mom._locale = localeData;
+		}
+		else { // pre-moment-2.8
+			mom._lang = localeData;
+		}
+
+		return mom;
+	};
+
+
+	// Returns a boolean about whether or not the calendar knows how to calculate
+	// the timezone offset of arbitrary dates in the current timezone.
+	t.getIsAmbigTimezone = function() {
+		return options.timezone !== 'local' && options.timezone !== 'UTC';
+	};
+
+
+	// Returns a copy of the given date in the current timezone of it is ambiguously zoned.
+	// This will also give the date an unambiguous time.
+	t.rezoneDate = function(date) {
+		return t.moment(date.toArray());
+	};
+
+
+	// Returns a moment for the current date, as defined by the client's computer,
+	// or overridden by the `now` option.
+	t.getNow = function() {
+		var now = options.now;
+		if (typeof now === 'function') {
+			now = now();
+		}
+		return t.moment(now);
+	};
+
+
+	// Calculates the week number for a moment according to the calendar's
+	// `weekNumberCalculation` setting.
+	t.calculateWeekNumber = function(mom) {
+		var calc = options.weekNumberCalculation;
+
+		if (typeof calc === 'function') {
+			return calc(mom);
+		}
+		else if (calc === 'local') {
+			return mom.week();
+		}
+		else if (calc.toUpperCase() === 'ISO') {
+			return mom.isoWeek();
+		}
+	};
+
+
+	// Get an event's normalized end date. If not present, calculate it from the defaults.
+	t.getEventEnd = function(event) {
+		if (event.end) {
+			return event.end.clone();
+		}
+		else {
+			return t.getDefaultEventEnd(event.allDay, event.start);
+		}
+	};
+
+
+	// Given an event's allDay status and start date, return swhat its fallback end date should be.
+	t.getDefaultEventEnd = function(allDay, start) { // TODO: rename to computeDefaultEventEnd
+		var end = start.clone();
+
+		if (allDay) {
+			end.stripTime().add(t.defaultAllDayEventDuration);
+		}
+		else {
+			end.add(t.defaultTimedEventDuration);
+		}
+
+		if (t.getIsAmbigTimezone()) {
+			end.stripZone(); // we don't know what the tzo should be
+		}
+
+		return end;
+	};
+
+
+	// Produces a human-readable string for the given duration.
+	// Side-effect: changes the locale of the given duration.
+	function humanizeDuration(duration) {
+		return (duration.locale || duration.lang).call(duration, options.lang) // works moment-pre-2.8
+			.humanize();
+	}
+
+
+	
+	// Imports
+	// -----------------------------------------------------------------------------------
+
+
+	EventManager.call(t, options);
+	var isFetchNeeded = t.isFetchNeeded;
+	var fetchEvents = t.fetchEvents;
+
+
+
+	// Locals
+	// -----------------------------------------------------------------------------------
+
+
+	var _element = element[0];
+	var header;
+	var headerElement;
+	var content;
+	var tm; // for making theme classes
+	var viewSpecCache = {};
+	var currentView;
+	var suggestedViewHeight;
+	var windowResizeProxy; // wraps the windowResize function
+	var ignoreWindowResize = 0;
+	var date;
+	var events = [];
+	
+	
+	
+	// Main Rendering
+	// -----------------------------------------------------------------------------------
+
+
+	if (options.defaultDate != null) {
+		date = t.moment(options.defaultDate);
+	}
+	else {
+		date = t.getNow();
+	}
+	
+	
+	function render(inc) {
+		if (!content) {
+			initialRender();
+		}
+		else if (elementVisible()) {
+			// mainly for the public API
+			calcSize();
+			renderView(inc);
+		}
+	}
+	
+	
+	function initialRender() {
+		tm = options.theme ? 'ui' : 'fc';
+		element.addClass('fc');
+
+		if (options.isRTL) {
+			element.addClass('fc-rtl');
+		}
+		else {
+			element.addClass('fc-ltr');
+		}
+
+		if (options.theme) {
+			element.addClass('ui-widget');
+		}
+		else {
+			element.addClass('fc-unthemed');
+		}
+
+		content = $("<div class='fc-view-container'/>").prependTo(element);
+
+		header = new Header(t, options);
+		headerElement = header.render();
+		if (headerElement) {
+			element.prepend(headerElement);
+		}
+
+		changeView(options.defaultView);
+
+		if (options.handleWindowResize) {
+			windowResizeProxy = debounce(windowResize, options.windowResizeDelay); // prevents rapid calls
+			$(window).resize(windowResizeProxy);
+		}
+	}
+	
+	
+	function destroy() {
+
+		if (currentView) {
+			currentView.destroyView();
+		}
+
+		header.destroy();
+		content.remove();
+		element.removeClass('fc fc-ltr fc-rtl fc-unthemed ui-widget');
+
+		$(window).unbind('resize', windowResizeProxy);
+	}
+	
+	
+	function elementVisible() {
+		return element.is(':visible');
+	}
+	
+	
+
+	// View Rendering
+	// -----------------------------------------------------------------------------------
+
+
+	function changeView(viewType) {
+		renderView(0, viewType);
+	}
+
+
+	// Renders a view because of a date change, view-type change, or for the first time
+	function renderView(delta, viewType) {
+		ignoreWindowResize++;
+
+		// if viewType is changing, destroy the old view
+		if (currentView && viewType && currentView.type !== viewType) {
+			header.deactivateButton(currentView.type);
+			freezeContentHeight(); // prevent a scroll jump when view element is removed
+			if (currentView.start) { // rendered before?
+				currentView.destroyView();
+			}
+			currentView.el.remove();
+			currentView = null;
+		}
+
+		// if viewType changed, or the view was never created, create a fresh view
+		if (!currentView && viewType) {
+			currentView = instantiateView(viewType);
+			currentView.el =  $("<div class='fc-view fc-" + viewType + "-view' />").appendTo(content);
+			header.activateButton(viewType);
+		}
+
+		if (currentView) {
+
+			// let the view determine what the delta means
+			if (delta < 0) {
+				date = currentView.computePrevDate(date);
+			}
+			else if (delta > 0) {
+				date = currentView.computeNextDate(date);
+			}
+
+			// render or rerender the view
+			if (
+				!currentView.start || // never rendered before
+				delta || // explicit date window change
+				!date.isWithin(currentView.intervalStart, currentView.intervalEnd) // implicit date window change
+			) {
+				if (elementVisible()) {
+
+					freezeContentHeight();
+					if (currentView.start) { // rendered before?
+						currentView.destroyView();
+					}
+					currentView.setDate(date);
+					currentView.renderView();
+					unfreezeContentHeight();
+
+					// need to do this after View::render, so dates are calculated
+					updateTitle();
+					updateTodayButton();
+
+					getAndRenderEvents();
+				}
+			}
+		}
+
+		unfreezeContentHeight(); // undo any lone freezeContentHeight calls
+		ignoreWindowResize--;
+	}
+
+
+
+	// View Instantiation
+	// -----------------------------------------------------------------------------------
+
+
+	// Given a view name for a custom view or a standard view, creates a ready-to-go View object
+	function instantiateView(viewType) {
+		var spec = getViewSpec(viewType);
+
+		return new spec['class'](t, spec.options, viewType);
+	}
+
+
+	// Gets information about how to create a view
+	function getViewSpec(requestedViewType) {
+		var allDefaultButtonText = options.defaultButtonText || {};
+		var allButtonText = options.buttonText || {};
+		var hash = options.views || {}; // the `views` option object
+		var viewType = requestedViewType;
+		var viewOptionsChain = [];
+		var viewOptions;
+		var viewClass;
+		var duration, unit, unitIsSingle = false;
+		var buttonText;
+
+		if (viewSpecCache[requestedViewType]) {
+			return viewSpecCache[requestedViewType];
+		}
+
+		function processSpecInput(input) {
+			if (typeof input === 'function') {
+				viewClass = input;
+			}
+			else if (typeof input === 'object') {
+				$.extend(viewOptions, input);
+			}
+		}
+
+		// iterate up a view's spec ancestor chain util we find a class to instantiate
+		while (viewType && !viewClass) {
+			viewOptions = {}; // only for this specific view in the ancestry
+			processSpecInput(fcViews[viewType]); // $.fullCalendar.views, lower precedence
+			processSpecInput(hash[viewType]); // options at initialization, higher precedence
+			viewOptionsChain.unshift(viewOptions); // record older ancestors first
+			viewType = viewOptions.type;
+		}
+
+		viewOptionsChain.unshift({}); // jQuery's extend needs at least one arg
+		viewOptions = $.extend.apply($, viewOptionsChain); // combine all, newer ancestors overwritting old
+
+		if (viewClass) {
+
+			duration = viewOptions.duration || viewClass.duration;
+			if (duration) {
+				duration = moment.duration(duration);
+				unit = computeIntervalUnit(duration);
+				unitIsSingle = computeIntervalAs(unit, duration) === 1;
+			}
+
+			// options that are specified per the view's duration, like "week" or "day"
+			if (unitIsSingle && hash[unit]) {
+				viewOptions = $.extend({}, hash[unit], viewOptions); // lowest priority
+			}
+
+			// compute the final text for the button representing this view
+			buttonText =
+				allButtonText[requestedViewType] || // init options, like "agendaWeek"
+				(unitIsSingle ? allButtonText[unit] : null) || // init options, like "week"
+				allDefaultButtonText[requestedViewType] || // lang data, like "agendaWeek"
+				(unitIsSingle ? allDefaultButtonText[unit] : null) || // lang data, like "week"
+				viewOptions.buttonText ||
+				viewClass.buttonText ||
+				(duration ? humanizeDuration(duration) : null) ||
+				requestedViewType;
+
+			return (viewSpecCache[requestedViewType] = {
+				'class': viewClass,
+				options: viewOptions,
+				buttonText: buttonText
+			});
+		}
+	}
+
+
+	// Returns a boolean about whether the view is okay to instantiate at some point
+	function isValidViewType(viewType) {
+		return Boolean(getViewSpec(viewType));
+	}
+
+
+	// Gets the text that should be displayed on a view's button in the header
+	function getViewButtonText(viewType) {
+		var spec = getViewSpec(viewType);
+
+		if (spec) {
+			return spec.buttonText;
+		}
+	}
+	
+	
+
+	// Resizing
+	// -----------------------------------------------------------------------------------
+
+
+	t.getSuggestedViewHeight = function() {
+		if (suggestedViewHeight === undefined) {
+			calcSize();
+		}
+		return suggestedViewHeight;
+	};
+
+
+	t.isHeightAuto = function() {
+		return options.contentHeight === 'auto' || options.height === 'auto';
+	};
+	
+	
+	function updateSize(shouldRecalc) {
+		if (elementVisible()) {
+
+			if (shouldRecalc) {
+				_calcSize();
+			}
+
+			ignoreWindowResize++;
+			currentView.updateSize(true); // isResize=true. will poll getSuggestedViewHeight() and isHeightAuto()
+			ignoreWindowResize--;
+
+			return true; // signal success
+		}
+	}
+
+
+	function calcSize() {
+		if (elementVisible()) {
+			_calcSize();
+		}
+	}
+	
+	
+	function _calcSize() { // assumes elementVisible
+		if (typeof options.contentHeight === 'number') { // exists and not 'auto'
+			suggestedViewHeight = options.contentHeight;
+		}
+		else if (typeof options.height === 'number') { // exists and not 'auto'
+			suggestedViewHeight = options.height - (headerElement ? headerElement.outerHeight(true) : 0);
+		}
+		else {
+			suggestedViewHeight = Math.round(content.width() / Math.max(options.aspectRatio, .5));
+		}
+	}
+	
+	
+	function windowResize(ev) {
+		if (
+			!ignoreWindowResize &&
+			ev.target === window && // so we don't process jqui "resize" events that have bubbled up
+			currentView.start // view has already been rendered
+		) {
+			if (updateSize(true)) {
+				currentView.trigger('windowResize', _element);
+			}
+		}
+	}
+	
+	
+	
+	/* Event Fetching/Rendering
+	-----------------------------------------------------------------------------*/
+	// TODO: going forward, most of this stuff should be directly handled by the view
+
+
+	function refetchEvents() { // can be called as an API method
+		destroyEvents(); // so that events are cleared before user starts waiting for AJAX
+		fetchAndRenderEvents();
+	}
+
+
+	function renderEvents() { // destroys old events if previously rendered
+		if (elementVisible()) {
+			freezeContentHeight();
+			currentView.destroyViewEvents(); // no performance cost if never rendered
+			currentView.renderViewEvents(events);
+			unfreezeContentHeight();
+		}
+	}
+
+
+	function destroyEvents() {
+		freezeContentHeight();
+		currentView.destroyViewEvents();
+		unfreezeContentHeight();
+	}
+	
+
+	function getAndRenderEvents() {
+		if (!options.lazyFetching || isFetchNeeded(currentView.start, currentView.end)) {
+			fetchAndRenderEvents();
+		}
+		else {
+			renderEvents();
+		}
+	}
+
+
+	function fetchAndRenderEvents() {
+		fetchEvents(currentView.start, currentView.end);
+			// ... will call reportEvents
+			// ... which will call renderEvents
+	}
+
+	
+	// called when event data arrives
+	function reportEvents(_events) {
+		events = _events;
+		renderEvents();
+	}
+
+
+	// called when a single event's data has been changed
+	function reportEventChange() {
+		renderEvents();
+	}
+
+
+
+	/* Header Updating
+	-----------------------------------------------------------------------------*/
+
+
+	function updateTitle() {
+		header.updateTitle(currentView.computeTitle());
+	}
+
+
+	function updateTodayButton() {
+		var now = t.getNow();
+		if (now.isWithin(currentView.intervalStart, currentView.intervalEnd)) {
+			header.disableButton('today');
+		}
+		else {
+			header.enableButton('today');
+		}
+	}
+	
+
+
+	/* Selection
+	-----------------------------------------------------------------------------*/
+	
+
+	function select(start, end) {
+
+		start = t.moment(start);
+		if (end) {
+			end = t.moment(end);
+		}
+		else if (start.hasTime()) {
+			end = start.clone().add(t.defaultTimedEventDuration);
+		}
+		else {
+			end = start.clone().add(t.defaultAllDayEventDuration);
+		}
+
+		currentView.select({ start: start, end: end }); // accepts a range
+	}
+	
+
+	function unselect() { // safe to be called before renderView
+		if (currentView) {
+			currentView.unselect();
+		}
+	}
+	
+	
+	
+	/* Date
+	-----------------------------------------------------------------------------*/
+	
+	
+	function prev() {
+		renderView(-1);
+	}
+	
+	
+	function next() {
+		renderView(1);
+	}
+	
+	
+	function prevYear() {
+		date.add(-1, 'years');
+		renderView();
+	}
+	
+	
+	function nextYear() {
+		date.add(1, 'years');
+		renderView();
+	}
+	
+	
+	function today() {
+		date = t.getNow();
+		renderView();
+	}
+	
+	
+	function gotoDate(dateInput) {
+		date = t.moment(dateInput);
+		renderView();
+	}
+	
+	
+	function incrementDate(delta) {
+		date.add(moment.duration(delta));
+		renderView();
+	}
+
+
+	// Forces navigation to a view for the given date.
+	// `viewType` can be a specific view name or a generic one like "week" or "day".
+	function zoomTo(newDate, viewType) {
+		var viewStr;
+		var match;
+
+		if (!viewType || !isValidViewType(viewType)) { // a general view name, or "auto"
+			viewType = viewType || 'day';
+			viewStr = header.getViewsWithButtons().join(' '); // space-separated string of all the views in the header
+
+			// try to match a general view name, like "week", against a specific one, like "agendaWeek"
+			match = viewStr.match(new RegExp('\\w+' + capitaliseFirstLetter(viewType)));
+
+			// fall back to the day view being used in the header
+			if (!match) {
+				match = viewStr.match(/\w+Day/);
+			}
+
+			viewType = match ? match[0] : 'agendaDay'; // fall back to agendaDay
+		}
+
+		date = newDate;
+		changeView(viewType);
+	}
+	
+	
+	function getDate() {
+		return date.clone();
+	}
+
+
+
+	/* Height "Freezing"
+	-----------------------------------------------------------------------------*/
+
+
+	function freezeContentHeight() {
+		content.css({
+			width: '100%',
+			height: content.height(),
+			overflow: 'hidden'
+		});
+	}
+
+
+	function unfreezeContentHeight() {
+		content.css({
+			width: '',
+			height: '',
+			overflow: ''
+		});
+	}
+	
+	
+	
+	/* Misc
+	-----------------------------------------------------------------------------*/
+	
+
+	function getCalendar() {
+		return t;
+	}
+
+	
+	function getView() {
+		return currentView;
+	}
+	
+	
+	function option(name, value) {
+		if (value === undefined) {
+			return options[name];
+		}
+		if (name == 'height' || name == 'contentHeight' || name == 'aspectRatio') {
+			options[name] = value;
+			updateSize(true); // true = allow recalculation of height
+		}
+	}
+	
+	
+	function trigger(name, thisObj) {
+		if (options[name]) {
+			return options[name].apply(
+				thisObj || _element,
+				Array.prototype.slice.call(arguments, 2)
+			);
+		}
+	}
+
+}
+
+;;
+
+/* Top toolbar area with buttons and title
+----------------------------------------------------------------------------------------------------------------------*/
+// TODO: rename all header-related things to "toolbar"
+
+function Header(calendar, options) {
+	var t = this;
+	
+	// exports
+	t.render = render;
+	t.destroy = destroy;
+	t.updateTitle = updateTitle;
+	t.activateButton = activateButton;
+	t.deactivateButton = deactivateButton;
+	t.disableButton = disableButton;
+	t.enableButton = enableButton;
+	t.getViewsWithButtons = getViewsWithButtons;
+	
+	// locals
+	var el = $();
+	var viewsWithButtons = [];
+	var tm;
+
+
+	function render() {
+		var sections = options.header;
+
+		tm = options.theme ? 'ui' : 'fc';
+
+		if (sections) {
+			el = $("<div class='fc-toolbar'/>")
+				.append(renderSection('left'))
+				.append(renderSection('right'))
+				.append(renderSection('center'))
+				.append('<div class="fc-clear"/>');
+
+			return el;
+		}
+	}
+	
+	
+	function destroy() {
+		el.remove();
+	}
+	
+	
+	function renderSection(position) {
+		var sectionEl = $('<div class="fc-' + position + '"/>');
+		var buttonStr = options.header[position];
+
+		if (buttonStr) {
+			$.each(buttonStr.split(' '), function(i) {
+				var groupChildren = $();
+				var isOnlyButtons = true;
+				var groupEl;
+
+				$.each(this.split(','), function(j, buttonName) {
+					var buttonClick;
+					var themeIcon;
+					var normalIcon;
+					var defaultText;
+					var viewText; // highest priority
+					var customText;
+					var innerHtml;
+					var classes;
+					var button;
+
+					if (buttonName == 'title') {
+						groupChildren = groupChildren.add($('<h2>&nbsp;</h2>')); // we always want it to take up height
+						isOnlyButtons = false;
+					}
+					else {
+						if (calendar[buttonName]) { // a calendar method
+							buttonClick = function() {
+								calendar[buttonName]();
+							};
+						}
+						else if (calendar.isValidViewType(buttonName)) { // a view type
+							buttonClick = function() {
+								calendar.changeView(buttonName);
+							};
+							viewsWithButtons.push(buttonName);
+							viewText = calendar.getViewButtonText(buttonName);
+						}
+						if (buttonClick) {
+
+							// smartProperty allows different text per view button (ex: "Agenda Week" vs "Basic Week")
+							themeIcon = smartProperty(options.themeButtonIcons, buttonName);
+							normalIcon = smartProperty(options.buttonIcons, buttonName);
+							defaultText = smartProperty(options.defaultButtonText, buttonName); // from languages
+							customText = smartProperty(options.buttonText, buttonName);
+
+							if (viewText || customText) {
+								innerHtml = htmlEscape(viewText || customText);
+							}
+							else if (themeIcon && options.theme) {
+								innerHtml = "<span class='ui-icon ui-icon-" + themeIcon + "'></span>";
+							}
+							else if (normalIcon && !options.theme) {
+								innerHtml = "<span class='fc-icon fc-icon-" + normalIcon + "'></span>";
+							}
+							else {
+								innerHtml = htmlEscape(defaultText || buttonName);
+							}
+
+							classes = [
+								'fc-' + buttonName + '-button',
+								tm + '-button',
+								tm + '-state-default'
+							];
+
+							button = $( // type="button" so that it doesn't submit a form
+								'<button type="button" class="' + classes.join(' ') + '">' +
+									innerHtml +
+								'</button>'
+								)
+								.click(function() {
+									// don't process clicks for disabled buttons
+									if (!button.hasClass(tm + '-state-disabled')) {
+
+										buttonClick();
+
+										// after the click action, if the button becomes the "active" tab, or disabled,
+										// it should never have a hover class, so remove it now.
+										if (
+											button.hasClass(tm + '-state-active') ||
+											button.hasClass(tm + '-state-disabled')
+										) {
+											button.removeClass(tm + '-state-hover');
+										}
+									}
+								})
+								.mousedown(function() {
+									// the *down* effect (mouse pressed in).
+									// only on buttons that are not the "active" tab, or disabled
+									button
+										.not('.' + tm + '-state-active')
+										.not('.' + tm + '-state-disabled')
+										.addClass(tm + '-state-down');
+								})
+								.mouseup(function() {
+									// undo the *down* effect
+									button.removeClass(tm + '-state-down');
+								})
+								.hover(
+									function() {
+										// the *hover* effect.
+										// only on buttons that are not the "active" tab, or disabled
+										button
+											.not('.' + tm + '-state-active')
+											.not('.' + tm + '-state-disabled')
+											.addClass(tm + '-state-hover');
+									},
+									function() {
+										// undo the *hover* effect
+										button
+											.removeClass(tm + '-state-hover')
+											.removeClass(tm + '-state-down'); // if mouseleave happens before mouseup
+									}
+								);
+
+							groupChildren = groupChildren.add(button);
+						}
+					}
+				});
+
+				if (isOnlyButtons) {
+					groupChildren
+						.first().addClass(tm + '-corner-left').end()
+						.last().addClass(tm + '-corner-right').end();
+				}
+
+				if (groupChildren.length > 1) {
+					groupEl = $('<div/>');
+					if (isOnlyButtons) {
+						groupEl.addClass('fc-button-group');
+					}
+					groupEl.append(groupChildren);
+					sectionEl.append(groupEl);
+				}
+				else {
+					sectionEl.append(groupChildren); // 1 or 0 children
+				}
+			});
+		}
+
+		return sectionEl;
+	}
+	
+	
+	function updateTitle(text) {
+		el.find('h2').text(text);
+	}
+	
+	
+	function activateButton(buttonName) {
+		el.find('.fc-' + buttonName + '-button')
+			.addClass(tm + '-state-active');
+	}
+	
+	
+	function deactivateButton(buttonName) {
+		el.find('.fc-' + buttonName + '-button')
+			.removeClass(tm + '-state-active');
+	}
+	
+	
+	function disableButton(buttonName) {
+		el.find('.fc-' + buttonName + '-button')
+			.attr('disabled', 'disabled')
+			.addClass(tm + '-state-disabled');
+	}
+	
+	
+	function enableButton(buttonName) {
+		el.find('.fc-' + buttonName + '-button')
+			.removeAttr('disabled')
+			.removeClass(tm + '-state-disabled');
+	}
+
+
+	function getViewsWithButtons() {
+		return viewsWithButtons;
+	}
+
+}
+
+;;
+
+fc.sourceNormalizers = [];
+fc.sourceFetchers = [];
+
+var ajaxDefaults = {
+	dataType: 'json',
+	cache: false
+};
+
+var eventGUID = 1;
+
+
+function EventManager(options) { // assumed to be a calendar
+	var t = this;
+	
+	
+	// exports
+	t.isFetchNeeded = isFetchNeeded;
+	t.fetchEvents = fetchEvents;
+	t.addEventSource = addEventSource;
+	t.removeEventSource = removeEventSource;
+	t.updateEvent = updateEvent;
+	t.renderEvent = renderEvent;
+	t.removeEvents = removeEvents;
+	t.clientEvents = clientEvents;
+	t.mutateEvent = mutateEvent;
+	t.normalizeEventDateProps = normalizeEventDateProps;
+	t.ensureVisibleEventRange = ensureVisibleEventRange;
+	
+	
+	// imports
+	var trigger = t.trigger;
+	var getView = t.getView;
+	var reportEvents = t.reportEvents;
+	
+	
+	// locals
+	var stickySource = { events: [] };
+	var sources = [ stickySource ];
+	var rangeStart, rangeEnd;
+	var currentFetchID = 0;
+	var pendingSourceCnt = 0;
+	var loadingLevel = 0;
+	var cache = []; // holds events that have already been expanded
+
+
+	$.each(
+		(options.events ? [ options.events ] : []).concat(options.eventSources || []),
+		function(i, sourceInput) {
+			var source = buildEventSource(sourceInput);
+			if (source) {
+				sources.push(source);
+			}
+		}
+	);
+	
+	
+	
+	/* Fetching
+	-----------------------------------------------------------------------------*/
+	
+	
+	function isFetchNeeded(start, end) {
+		return !rangeStart || // nothing has been fetched yet?
+			// or, a part of the new range is outside of the old range? (after normalizing)
+			start.clone().stripZone() < rangeStart.clone().stripZone() ||
+			end.clone().stripZone() > rangeEnd.clone().stripZone();
+	}
+	
+	
+	function fetchEvents(start, end) {
+		rangeStart = start;
+		rangeEnd = end;
+		cache = [];
+		var fetchID = ++currentFetchID;
+		var len = sources.length;
+		pendingSourceCnt = len;
+		for (var i=0; i<len; i++) {
+			fetchEventSource(sources[i], fetchID);
+		}
+	}
+	
+	
+	function fetchEventSource(source, fetchID) {
+		_fetchEventSource(source, function(eventInputs) {
+			var isArraySource = $.isArray(source.events);
+			var i, eventInput;
+			var abstractEvent;
+
+			if (fetchID == currentFetchID) {
+
+				if (eventInputs) {
+					for (i = 0; i < eventInputs.length; i++) {
+						eventInput = eventInputs[i];
+
+						if (isArraySource) { // array sources have already been convert to Event Objects
+							abstractEvent = eventInput;
+						}
+						else {
+							abstractEvent = buildEventFromInput(eventInput, source);
+						}
+
+						if (abstractEvent) { // not false (an invalid event)
+							cache.push.apply(
+								cache,
+								expandEvent(abstractEvent) // add individual expanded events to the cache
+							);
+						}
+					}
+				}
+
+				pendingSourceCnt--;
+				if (!pendingSourceCnt) {
+					reportEvents(cache);
+				}
+			}
+		});
+	}
+	
+	
+	function _fetchEventSource(source, callback) {
+		var i;
+		var fetchers = fc.sourceFetchers;
+		var res;
+
+		for (i=0; i<fetchers.length; i++) {
+			res = fetchers[i].call(
+				t, // this, the Calendar object
+				source,
+				rangeStart.clone(),
+				rangeEnd.clone(),
+				options.timezone,
+				callback
+			);
+
+			if (res === true) {
+				// the fetcher is in charge. made its own async request
+				return;
+			}
+			else if (typeof res == 'object') {
+				// the fetcher returned a new source. process it
+				_fetchEventSource(res, callback);
+				return;
+			}
+		}
+
+		var events = source.events;
+		if (events) {
+			if ($.isFunction(events)) {
+				pushLoading();
+				events.call(
+					t, // this, the Calendar object
+					rangeStart.clone(),
+					rangeEnd.clone(),
+					options.timezone,
+					function(events) {
+						callback(events);
+						popLoading();
+					}
+				);
+			}
+			else if ($.isArray(events)) {
+				callback(events);
+			}
+			else {
+				callback();
+			}
+		}else{
+			var url = source.url;
+			if (url) {
+				var success = source.success;
+				var error = source.error;
+				var complete = source.complete;
+
+				// retrieve any outbound GET/POST $.ajax data from the options
+				var customData;
+				if ($.isFunction(source.data)) {
+					// supplied as a function that returns a key/value object
+					customData = source.data();
+				}
+				else {
+					// supplied as a straight key/value object
+					customData = source.data;
+				}
+
+				// use a copy of the custom data so we can modify the parameters
+				// and not affect the passed-in object.
+				var data = $.extend({}, customData || {});
+
+				var startParam = firstDefined(source.startParam, options.startParam);
+				var endParam = firstDefined(source.endParam, options.endParam);
+				var timezoneParam = firstDefined(source.timezoneParam, options.timezoneParam);
+
+				if (startParam) {
+					data[startParam] = rangeStart.format();
+				}
+				if (endParam) {
+					data[endParam] = rangeEnd.format();
+				}
+				if (options.timezone && options.timezone != 'local') {
+					data[timezoneParam] = options.timezone;
+				}
+
+				pushLoading();
+				$.ajax($.extend({}, ajaxDefaults, source, {
+					data: data,
+					success: function(events) {
+						events = events || [];
+						var res = applyAll(success, this, arguments);
+						if ($.isArray(res)) {
+							events = res;
+						}
+						callback(events);
+					},
+					error: function() {
+						applyAll(error, this, arguments);
+						callback();
+					},
+					complete: function() {
+						applyAll(complete, this, arguments);
+						popLoading();
+					}
+				}));
+			}else{
+				callback();
+			}
+		}
+	}
+	
+	
+	
+	/* Sources
+	-----------------------------------------------------------------------------*/
+	
+
+	function addEventSource(sourceInput) {
+		var source = buildEventSource(sourceInput);
+		if (source) {
+			sources.push(source);
+			pendingSourceCnt++;
+			fetchEventSource(source, currentFetchID); // will eventually call reportEvents
+		}
+	}
+
+
+	function buildEventSource(sourceInput) { // will return undefined if invalid source
+		var normalizers = fc.sourceNormalizers;
+		var source;
+		var i;
+
+		if ($.isFunction(sourceInput) || $.isArray(sourceInput)) {
+			source = { events: sourceInput };
+		}
+		else if (typeof sourceInput === 'string') {
+			source = { url: sourceInput };
+		}
+		else if (typeof sourceInput === 'object') {
+			source = $.extend({}, sourceInput); // shallow copy
+		}
+
+		if (source) {
+
+			// TODO: repeat code, same code for event classNames
+			if (source.className) {
+				if (typeof source.className === 'string') {
+					source.className = source.className.split(/\s+/);
+				}
+				// otherwise, assumed to be an array
+			}
+			else {
+				source.className = [];
+			}
+
+			// for array sources, we convert to standard Event Objects up front
+			if ($.isArray(source.events)) {
+				source.origArray = source.events; // for removeEventSource
+				source.events = $.map(source.events, function(eventInput) {
+					return buildEventFromInput(eventInput, source);
+				});
+			}
+
+			for (i=0; i<normalizers.length; i++) {
+				normalizers[i].call(t, source);
+			}
+
+			return source;
+		}
+	}
+
+
+	function removeEventSource(source) {
+		sources = $.grep(sources, function(src) {
+			return !isSourcesEqual(src, source);
+		});
+		// remove all client events from that source
+		cache = $.grep(cache, function(e) {
+			return !isSourcesEqual(e.source, source);
+		});
+		reportEvents(cache);
+	}
+
+
+	function isSourcesEqual(source1, source2) {
+		return source1 && source2 && getSourcePrimitive(source1) == getSourcePrimitive(source2);
+	}
+
+
+	function getSourcePrimitive(source) {
+		return (
+			(typeof source === 'object') ? // a normalized event source?
+				(source.origArray || source.googleCalendarId || source.url || source.events) : // get the primitive
+				null
+		) ||
+		source; // the given argument *is* the primitive
+	}
+	
+	
+	
+	/* Manipulation
+	-----------------------------------------------------------------------------*/
+
+
+	// Only ever called from the externally-facing API
+	function updateEvent(event) {
+
+		// massage start/end values, even if date string values
+		event.start = t.moment(event.start);
+		if (event.end) {
+			event.end = t.moment(event.end);
+		}
+		else {
+			event.end = null;
+		}
+
+		mutateEvent(event, getMiscEventProps(event)); // will handle start/end/allDay normalization
+		reportEvents(cache); // reports event modifications (so we can redraw)
+	}
+
+
+	// Returns a hash of misc event properties that should be copied over to related events.
+	function getMiscEventProps(event) {
+		var props = {};
+
+		$.each(event, function(name, val) {
+			if (isMiscEventPropName(name)) {
+				if (val !== undefined && isAtomic(val)) { // a defined non-object
+					props[name] = val;
+				}
+			}
+		});
+
+		return props;
+	}
+
+	// non-date-related, non-id-related, non-secret
+	function isMiscEventPropName(name) {
+		return !/^_|^(id|allDay|start|end)$/.test(name);
+	}
+
+	
+	// returns the expanded events that were created
+	function renderEvent(eventInput, stick) {
+		var abstractEvent = buildEventFromInput(eventInput);
+		var events;
+		var i, event;
+
+		if (abstractEvent) { // not false (a valid input)
+			events = expandEvent(abstractEvent);
+
+			for (i = 0; i < events.length; i++) {
+				event = events[i];
+
+				if (!event.source) {
+					if (stick) {
+						stickySource.events.push(event);
+						event.source = stickySource;
+					}
+					cache.push(event);
+				}
+			}
+
+			reportEvents(cache);
+
+			return events;
+		}
+
+		return [];
+	}
+	
+	
+	function removeEvents(filter) {
+		var eventID;
+		var i;
+
+		if (filter == null) { // null or undefined. remove all events
+			filter = function() { return true; }; // will always match
+		}
+		else if (!$.isFunction(filter)) { // an event ID
+			eventID = filter + '';
+			filter = function(event) {
+				return event._id == eventID;
+			};
+		}
+
+		// Purge event(s) from our local cache
+		cache = $.grep(cache, filter, true); // inverse=true
+
+		// Remove events from array sources.
+		// This works because they have been converted to official Event Objects up front.
+		// (and as a result, event._id has been calculated).
+		for (i=0; i<sources.length; i++) {
+			if ($.isArray(sources[i].events)) {
+				sources[i].events = $.grep(sources[i].events, filter, true);
+			}
+		}
+
+		reportEvents(cache);
+	}
+	
+	
+	function clientEvents(filter) {
+		if ($.isFunction(filter)) {
+			return $.grep(cache, filter);
+		}
+		else if (filter != null) { // not null, not undefined. an event ID
+			filter += '';
+			return $.grep(cache, function(e) {
+				return e._id == filter;
+			});
+		}
+		return cache; // else, return all
+	}
+	
+	
+	
+	/* Loading State
+	-----------------------------------------------------------------------------*/
+	
+	
+	function pushLoading() {
+		if (!(loadingLevel++)) {
+			trigger('loading', null, true, getView());
+		}
+	}
+	
+	
+	function popLoading() {
+		if (!(--loadingLevel)) {
+			trigger('loading', null, false, getView());
+		}
+	}
+	
+	
+	
+	/* Event Normalization
+	-----------------------------------------------------------------------------*/
+
+
+	// Given a raw object with key/value properties, returns an "abstract" Event object.
+	// An "abstract" event is an event that, if recurring, will not have been expanded yet.
+	// Will return `false` when input is invalid.
+	// `source` is optional
+	function buildEventFromInput(input, source) {
+		var out = {};
+		var start, end;
+		var allDay;
+
+		if (options.eventDataTransform) {
+			input = options.eventDataTransform(input);
+		}
+		if (source && source.eventDataTransform) {
+			input = source.eventDataTransform(input);
+		}
+
+		// Copy all properties over to the resulting object.
+		// The special-case properties will be copied over afterwards.
+		$.extend(out, input);
+
+		if (source) {
+			out.source = source;
+		}
+
+		out._id = input._id || (input.id === undefined ? '_fc' + eventGUID++ : input.id + '');
+
+		if (input.className) {
+			if (typeof input.className == 'string') {
+				out.className = input.className.split(/\s+/);
+			}
+			else { // assumed to be an array
+				out.className = input.className;
+			}
+		}
+		else {
+			out.className = [];
+		}
+
+		start = input.start || input.date; // "date" is an alias for "start"
+		end = input.end;
+
+		// parse as a time (Duration) if applicable
+		if (isTimeString(start)) {
+			start = moment.duration(start);
+		}
+		if (isTimeString(end)) {
+			end = moment.duration(end);
+		}
+
+		if (input.dow || moment.isDuration(start) || moment.isDuration(end)) {
+
+			// the event is "abstract" (recurring) so don't calculate exact start/end dates just yet
+			out.start = start ? moment.duration(start) : null; // will be a Duration or null
+			out.end = end ? moment.duration(end) : null; // will be a Duration or null
+			out._recurring = true; // our internal marker
+		}
+		else {
+
+			if (start) {
+				start = t.moment(start);
+				if (!start.isValid()) {
+					return false;
+				}
+			}
+
+			if (end) {
+				end = t.moment(end);
+				if (!end.isValid()) {
+					end = null; // let defaults take over
+				}
+			}
+
+			allDay = input.allDay;
+			if (allDay === undefined) { // still undefined? fallback to default
+				allDay = firstDefined(
+					source ? source.allDayDefault : undefined,
+					options.allDayDefault
+				);
+				// still undefined? normalizeEventDateProps will calculate it
+			}
+
+			assignDatesToEvent(start, end, allDay, out);
+		}
+
+		return out;
+	}
+
+
+	// Normalizes and assigns the given dates to the given partially-formed event object.
+	// NOTE: mutates the given start/end moments. does not make a copy.
+	function assignDatesToEvent(start, end, allDay, event) {
+		event.start = start;
+		event.end = end;
+		event.allDay = allDay;
+		normalizeEventDateProps(event);
+		backupEventDates(event);
+	}
+
+
+	// Ensures the allDay property exists.
+	// Ensures the start/end dates are consistent with allDay and forceEventDuration.
+	// Accepts an Event object, or a plain object with event-ish properties.
+	// NOTE: Will modify the given object.
+	function normalizeEventDateProps(props) {
+
+		if (props.allDay == null) {
+			props.allDay = !(props.start.hasTime() || (props.end && props.end.hasTime()));
+		}
+
+		if (props.allDay) {
+			props.start.stripTime();
+			if (props.end) {
+				props.end.stripTime();
+			}
+		}
+		else {
+			if (!props.start.hasTime()) {
+				props.start = t.rezoneDate(props.start); // will also give it a 00:00 time
+			}
+			if (props.end && !props.end.hasTime()) {
+				props.end = t.rezoneDate(props.end); // will also give it a 00:00 time
+			}
+		}
+
+		if (props.end && !props.end.isAfter(props.start)) {
+			props.end = null;
+		}
+
+		if (!props.end) {
+			if (options.forceEventDuration) {
+				props.end = t.getDefaultEventEnd(props.allDay, props.start);
+			}
+			else {
+				props.end = null;
+			}
+		}
+	}
+
+
+	// If `range` is a proper range with a start and end, returns the original object.
+	// If missing an end, computes a new range with an end, computing it as if it were an event.
+	// TODO: make this a part of the event -> eventRange system
+	function ensureVisibleEventRange(range) {
+		var allDay;
+
+		if (!range.end) {
+
+			allDay = range.allDay; // range might be more event-ish than we think
+			if (allDay == null) {
+				allDay = !range.start.hasTime();
+			}
+
+			range = {
+				start: range.start,
+				end: t.getDefaultEventEnd(allDay, range.start)
+			};
+		}
+		return range;
+	}
+
+
+	// If the given event is a recurring event, break it down into an array of individual instances.
+	// If not a recurring event, return an array with the single original event.
+	// If given a falsy input (probably because of a failed buildEventFromInput call), returns an empty array.
+	// HACK: can override the recurring window by providing custom rangeStart/rangeEnd (for businessHours).
+	function expandEvent(abstractEvent, _rangeStart, _rangeEnd) {
+		var events = [];
+		var dowHash;
+		var dow;
+		var i;
+		var date;
+		var startTime, endTime;
+		var start, end;
+		var event;
+
+		_rangeStart = _rangeStart || rangeStart;
+		_rangeEnd = _rangeEnd || rangeEnd;
+
+		if (abstractEvent) {
+			if (abstractEvent._recurring) {
+
+				// make a boolean hash as to whether the event occurs on each day-of-week
+				if ((dow = abstractEvent.dow)) {
+					dowHash = {};
+					for (i = 0; i < dow.length; i++) {
+						dowHash[dow[i]] = true;
+					}
+				}
+
+				// iterate through every day in the current range
+				date = _rangeStart.clone().stripTime(); // holds the date of the current day
+				while (date.isBefore(_rangeEnd)) {
+
+					if (!dowHash || dowHash[date.day()]) { // if everyday, or this particular day-of-week
+
+						startTime = abstractEvent.start; // the stored start and end properties are times (Durations)
+						endTime = abstractEvent.end; // "
+						start = date.clone();
+						end = null;
+
+						if (startTime) {
+							start = start.time(startTime);
+						}
+						if (endTime) {
+							end = date.clone().time(endTime);
+						}
+
+						event = $.extend({}, abstractEvent); // make a copy of the original
+						assignDatesToEvent(
+							start, end,
+							!startTime && !endTime, // allDay?
+							event
+						);
+						events.push(event);
+					}
+
+					date.add(1, 'days');
+				}
+			}
+			else {
+				events.push(abstractEvent); // return the original event. will be a one-item array
+			}
+		}
+
+		return events;
+	}
+
+
+
+	/* Event Modification Math
+	-----------------------------------------------------------------------------------------*/
+
+
+	// Modifies an event and all related events by applying the given properties.
+	// Special date-diffing logic is used for manipulation of dates.
+	// If `props` does not contain start/end dates, the updated values are assumed to be the event's current start/end.
+	// All date comparisons are done against the event's pristine _start and _end dates.
+	// Returns an object with delta information and a function to undo all operations.
+	//
+	function mutateEvent(event, props) {
+		var miscProps = {};
+		var clearEnd;
+		var dateDelta;
+		var durationDelta;
+		var undoFunc;
+
+		props = props || {};
+
+		// ensure new date-related values to compare against
+		if (!props.start) {
+			props.start = event.start.clone();
+		}
+		if (props.end === undefined) {
+			props.end = event.end ? event.end.clone() : null;
+		}
+		if (props.allDay == null) { // is null or undefined?
+			props.allDay = event.allDay;
+		}
+
+		normalizeEventDateProps(props); // massages start/end/allDay
+
+		// clear the end date if explicitly changed to null
+		clearEnd = event._end !== null && props.end === null;
+
+		// compute the delta for moving the start and end dates together
+		if (props.allDay) {
+			dateDelta = diffDay(props.start, event._start); // whole-day diff from start-of-day
+		}
+		else {
+			dateDelta = diffDayTime(props.start, event._start);
+		}
+
+		// compute the delta for moving the end date (after applying dateDelta)
+		if (!clearEnd && props.end) {
+			durationDelta = diffDayTime(
+				// new duration
+				props.end,
+				props.start
+			).subtract(diffDayTime(
+				// subtract old duration
+				event._end || t.getDefaultEventEnd(event._allDay, event._start),
+				event._start
+			));
+		}
+
+		// gather all non-date-related properties
+		$.each(props, function(name, val) {
+			if (isMiscEventPropName(name)) {
+				if (val !== undefined) {
+					miscProps[name] = val;
+				}
+			}
+		});
+
+		// apply the operations to the event and all related events
+		undoFunc = mutateEvents(
+			clientEvents(event._id), // get events with this ID
+			clearEnd,
+			props.allDay,
+			dateDelta,
+			durationDelta,
+			miscProps
+		);
+
+		return {
+			dateDelta: dateDelta,
+			durationDelta: durationDelta,
+			undo: undoFunc
+		};
+	}
+
+
+	// Modifies an array of events in the following ways (operations are in order):
+	// - clear the event's `end`
+	// - convert the event to allDay
+	// - add `dateDelta` to the start and end
+	// - add `durationDelta` to the event's duration
+	// - assign `miscProps` to the event
+	//
+	// Returns a function that can be called to undo all the operations.
+	//
+	// TODO: don't use so many closures. possible memory issues when lots of events with same ID.
+	//
+	function mutateEvents(events, clearEnd, allDay, dateDelta, durationDelta, miscProps) {
+		var isAmbigTimezone = t.getIsAmbigTimezone();
+		var undoFunctions = [];
+
+		// normalize zero-length deltas to be null
+		if (dateDelta && !dateDelta.valueOf()) { dateDelta = null; }
+		if (durationDelta && !durationDelta.valueOf()) { durationDelta = null; }
+
+		$.each(events, function(i, event) {
+			var oldProps;
+			var newProps;
+
+			// build an object holding all the old values, both date-related and misc.
+			// for the undo function.
+			oldProps = {
+				start: event.start.clone(),
+				end: event.end ? event.end.clone() : null,
+				allDay: event.allDay
+			};
+			$.each(miscProps, function(name) {
+				oldProps[name] = event[name];
+			});
+
+			// new date-related properties. work off the original date snapshot.
+			// ok to use references because they will be thrown away when backupEventDates is called.
+			newProps = {
+				start: event._start,
+				end: event._end,
+				allDay: event._allDay
+			};
+
+			if (clearEnd) {
+				newProps.end = null;
+			}
+
+			newProps.allDay = allDay;
+
+			normalizeEventDateProps(newProps); // massages start/end/allDay
+
+			if (dateDelta) {
+				newProps.start.add(dateDelta);
+				if (newProps.end) {
+					newProps.end.add(dateDelta);
+				}
+			}
+
+			if (durationDelta) {
+				if (!newProps.end) {
+					newProps.end = t.getDefaultEventEnd(newProps.allDay, newProps.start);
+				}
+				newProps.end.add(durationDelta);
+			}
+
+			// if the dates have changed, and we know it is impossible to recompute the
+			// timezone offsets, strip the zone.
+			if (
+				isAmbigTimezone &&
+				!newProps.allDay &&
+				(dateDelta || durationDelta)
+			) {
+				newProps.start.stripZone();
+				if (newProps.end) {
+					newProps.end.stripZone();
+				}
+			}
+
+			$.extend(event, miscProps, newProps); // copy over misc props, then date-related props
+			backupEventDates(event); // regenerate internal _start/_end/_allDay
+
+			undoFunctions.push(function() {
+				$.extend(event, oldProps);
+				backupEventDates(event); // regenerate internal _start/_end/_allDay
+			});
+		});
+
+		return function() {
+			for (var i = 0; i < undoFunctions.length; i++) {
+				undoFunctions[i]();
+			}
+		};
+	}
+
+
+	/* Business Hours
+	-----------------------------------------------------------------------------------------*/
+
+	t.getBusinessHoursEvents = getBusinessHoursEvents;
+
+
+	// Returns an array of events as to when the business hours occur in the given view.
+	// Abuse of our event system :(
+	function getBusinessHoursEvents() {
+		var optionVal = options.businessHours;
+		var defaultVal = {
+			className: 'fc-nonbusiness',
+			start: '09:00',
+			end: '17:00',
+			dow: [ 1, 2, 3, 4, 5 ], // monday - friday
+			rendering: 'inverse-background'
+		};
+		var view = t.getView();
+		var eventInput;
+
+		if (optionVal) {
+			if (typeof optionVal === 'object') {
+				// option value is an object that can override the default business hours
+				eventInput = $.extend({}, defaultVal, optionVal);
+			}
+			else {
+				// option value is `true`. use default business hours
+				eventInput = defaultVal;
+			}
+		}
+
+		if (eventInput) {
+			return expandEvent(
+				buildEventFromInput(eventInput),
+				view.start,
+				view.end
+			);
+		}
+
+		return [];
+	}
+
+
+	/* Overlapping / Constraining
+	-----------------------------------------------------------------------------------------*/
+
+	t.isEventRangeAllowed = isEventRangeAllowed;
+	t.isSelectionRangeAllowed = isSelectionRangeAllowed;
+	t.isExternalDropRangeAllowed = isExternalDropRangeAllowed;
+
+
+	function isEventRangeAllowed(range, event) {
+		var source = event.source || {};
+		var constraint = firstDefined(
+			event.constraint,
+			source.constraint,
+			options.eventConstraint
+		);
+		var overlap = firstDefined(
+			event.overlap,
+			source.overlap,
+			options.eventOverlap
+		);
+
+		range = ensureVisibleEventRange(range); // ensure a proper range with an end for isRangeAllowed
+
+		return isRangeAllowed(range, constraint, overlap, event);
+	}
+
+
+	function isSelectionRangeAllowed(range) {
+		return isRangeAllowed(range, options.selectConstraint, options.selectOverlap);
+	}
+
+
+	// when `eventProps` is defined, consider this an event.
+	// `eventProps` can contain misc non-date-related info about the event.
+	function isExternalDropRangeAllowed(range, eventProps) {
+		var eventInput;
+		var event;
+
+		// note: very similar logic is in View's reportExternalDrop
+		if (eventProps) {
+			eventInput = $.extend({}, eventProps, range);
+			event = expandEvent(buildEventFromInput(eventInput))[0];
+		}
+
+		if (event) {
+			return isEventRangeAllowed(range, event);
+		}
+		else { // treat it as a selection
+
+			range = ensureVisibleEventRange(range); // ensure a proper range with an end for isSelectionRangeAllowed
+
+			return isSelectionRangeAllowed(range);
+		}
+	}
+
+
+	// Returns true if the given range (caused by an event drop/resize or a selection) is allowed to exist
+	// according to the constraint/overlap settings.
+	// `event` is not required if checking a selection.
+	function isRangeAllowed(range, constraint, overlap, event) {
+		var constraintEvents;
+		var anyContainment;
+		var i, otherEvent;
+		var otherOverlap;
+
+		// normalize. fyi, we're normalizing in too many places :(
+		range = {
+			start: range.start.clone().stripZone(),
+			end: range.end.clone().stripZone()
+		};
+
+		// the range must be fully contained by at least one of produced constraint events
+		if (constraint != null) {
+
+			// not treated as an event! intermediate data structure
+			// TODO: use ranges in the future
+			constraintEvents = constraintToEvents(constraint);
+
+			anyContainment = false;
+			for (i = 0; i < constraintEvents.length; i++) {
+				if (eventContainsRange(constraintEvents[i], range)) {
+					anyContainment = true;
+					break;
+				}
+			}
+
+			if (!anyContainment) {
+				return false;
+			}
+		}
+
+		for (i = 0; i < cache.length; i++) { // loop all events and detect overlap
+			otherEvent = cache[i];
+
+			// don't compare the event to itself or other related [repeating] events
+			if (event && event._id === otherEvent._id) {
+				continue;
+			}
+
+			// there needs to be an actual intersection before disallowing anything
+			if (eventIntersectsRange(otherEvent, range)) {
+
+				// evaluate overlap for the given range and short-circuit if necessary
+				if (overlap === false) {
+					return false;
+				}
+				else if (typeof overlap === 'function' && !overlap(otherEvent, event)) {
+					return false;
+				}
+
+				// if we are computing if the given range is allowable for an event, consider the other event's
+				// EventObject-specific or Source-specific `overlap` property
+				if (event) {
+					otherOverlap = firstDefined(
+						otherEvent.overlap,
+						(otherEvent.source || {}).overlap
+						// we already considered the global `eventOverlap`
+					);
+					if (otherOverlap === false) {
+						return false;
+					}
+					if (typeof otherOverlap === 'function' && !otherOverlap(event, otherEvent)) {
+						return false;
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+
+
+	// Given an event input from the API, produces an array of event objects. Possible event inputs:
+	// 'businessHours'
+	// An event ID (number or string)
+	// An object with specific start/end dates or a recurring event (like what businessHours accepts)
+	function constraintToEvents(constraintInput) {
+
+		if (constraintInput === 'businessHours') {
+			return getBusinessHoursEvents();
+		}
+
+		if (typeof constraintInput === 'object') {
+			return expandEvent(buildEventFromInput(constraintInput));
+		}
+
+		return clientEvents(constraintInput); // probably an ID
+	}
+
+
+	// Does the event's date range fully contain the given range?
+	// start/end already assumed to have stripped zones :(
+	function eventContainsRange(event, range) {
+		var eventStart = event.start.clone().stripZone();
+		var eventEnd = t.getEventEnd(event).stripZone();
+
+		return range.start >= eventStart && range.end <= eventEnd;
+	}
+
+
+	// Does the event's date range intersect with the given range?
+	// start/end already assumed to have stripped zones :(
+	function eventIntersectsRange(event, range) {
+		var eventStart = event.start.clone().stripZone();
+		var eventEnd = t.getEventEnd(event).stripZone();
+
+		return range.start < eventEnd && range.end > eventStart;
 	}
 
 }
 
 
-/* Utils
-----------------------------------------------------------------------------------------------------------------------*/
-
-// Require all HTML5 data-* attributes used by FullCalendar to have this prefix.
-// A value of '' will query attributes like data-event. A value of 'fc' will query attributes like data-fc-event.
-fc.dataAttrPrefix = '';
-
-// Given a jQuery element that might represent a dragged FullCalendar event, returns an intermediate data structure
-// to be used for Event Object creation.
-// A defined `.eventProps`, even when empty, indicates that an event should be created.
-function getDraggedElMeta(el) {
-	var prefix = fc.dataAttrPrefix;
-	var eventProps; // properties for creating the event, not related to date/time
-	var startTime; // a Duration
-	var duration;
-	var stick;
-
-	if (prefix) { prefix += '-'; }
-	eventProps = el.data(prefix + 'event') || null;
-
-	if (eventProps) {
-		if (typeof eventProps === 'object') {
-			eventProps = $.extend({}, eventProps); // make a copy
-		}
-		else { // something like 1 or true. still signal event creation
-			eventProps = {};
-		}
-
-		// pluck special-cased date/time properties
-		startTime = eventProps.start;
-		if (startTime == null) { startTime = eventProps.time; } // accept 'time' as well
-		duration = eventProps.duration;
-		stick = eventProps.stick;
-		delete eventProps.start;
-		delete eventProps.time;
-		delete eventProps.duration;
-		delete eventProps.stick;
-	}
-
-	// fallback to standalone attribute values for each of the date/time properties
-	if (startTime == null) { startTime = el.data(prefix + 'start'); }
-	if (startTime == null) { startTime = el.data(prefix + 'time'); } // accept 'time' as well
-	if (duration == null) { duration = el.data(prefix + 'duration'); }
-	if (stick == null) { stick = el.data(prefix + 'stick'); }
-
-	// massage into correct data types
-	startTime = startTime != null ? moment.duration(startTime) : null;
-	duration = duration != null ? moment.duration(duration) : null;
-	stick = Boolean(stick);
-
-	return { eventProps: eventProps, startTime: startTime, duration: duration, stick: stick };
+// updates the "backup" properties, which are preserved in order to compute diffs later on.
+function backupEventDates(event) {
+	event._allDay = event.allDay;
+	event._start = event.start.clone();
+	event._end = event.end ? event.end.clone() : null;
 }
 
 ;;
@@ -85297,15 +87156,7 @@ function getDraggedElMeta(el) {
 // It is a manager for a DayGrid subcomponent, which does most of the heavy lifting.
 // It is responsible for managing width/height.
 
-function BasicView(calendar) {
-	View.call(this, calendar); // call the super-constructor
-	this.dayGrid = new DayGrid(this);
-	this.coordMap = this.dayGrid.coordMap; // the view's date-to-cell mapping is identical to the subcomponent's
-}
-
-
-BasicView.prototype = createObject(View.prototype); // define the super-class
-$.extend(BasicView.prototype, {
+var BasicView = fcViews.basic = View.extend({
 
 	dayGrid: null, // the main subcomponent that does most of the heavy lifting
 
@@ -85317,15 +87168,45 @@ $.extend(BasicView.prototype, {
 	headRowEl: null, // the fake row element of the day-of-week header
 
 
-	// Renders the view into `this.el`, which should already be assigned.
-	// rowCnt, colCnt, and dayNumbersVisible have been calculated by a subclass and passed here.
-	render: function(rowCnt, colCnt, dayNumbersVisible) {
+	initialize: function() {
+		this.dayGrid = new DayGrid(this);
+		this.coordMap = this.dayGrid.coordMap; // the view's date-to-cell mapping is identical to the subcomponent's
+	},
 
-		// needed for cell-to-date and date-to-cell calculations in View
-		this.rowCnt = rowCnt;
-		this.colCnt = colCnt;
 
-		this.dayNumbersVisible = dayNumbersVisible;
+	// Sets the display range and computes all necessary dates
+	setRange: function(range) {
+		View.prototype.setRange.call(this, range); // call the super-method
+
+		this.dayGrid.breakOnWeeks = /year|month|week/.test(this.intervalUnit); // do before setRange
+		this.dayGrid.setRange(range);
+	},
+
+
+	// Compute the value to feed into setRange. Overrides superclass.
+	computeRange: function(date) {
+		var range = View.prototype.computeRange.call(this, date); // get value from the super-method
+
+		// year and month views should be aligned with weeks. this is already done for week
+		if (/year|month/.test(range.intervalUnit)) {
+			range.start.startOf('week');
+			range.start = this.skipHiddenDays(range.start);
+
+			// make end-of-week if not already
+			if (range.end.weekday()) {
+				range.end.add(1, 'week').startOf('week');
+				range.end = this.skipHiddenDays(range.end, -1, true); // exclusively move backwards
+			}
+		}
+
+		return range;
+	},
+
+
+	// Renders the view into `this.el`, which should already be assigned
+	render: function() {
+
+		this.dayNumbersVisible = this.dayGrid.rowCnt > 1; // TODO: make grid responsible
 		this.weekNumbersVisible = this.opt('weekNumbers');
 		this.dayGrid.numbersVisible = this.dayNumbersVisible || this.weekNumbersVisible;
 
@@ -85338,8 +87219,6 @@ $.extend(BasicView.prototype, {
 
 		this.dayGrid.el = this.el.find('.fc-day-grid');
 		this.dayGrid.render(this.hasRigidRows());
-
-		View.prototype.render.call(this); // call the super-method
 	},
 
 
@@ -85396,7 +87275,7 @@ $.extend(BasicView.prototype, {
 			return '' +
 				'<td class="fc-week-number" ' + this.weekNumberStyleAttr() + '>' +
 					'<span>' + // needed for matchCellWidths
-						this.calendar.calculateWeekNumber(this.cellToDate(row, 0)) +
+						this.calendar.calculateWeekNumber(this.dayGrid.getCell(row, 0).start) +
 					'</span>' +
 				'</td>';
 		}
@@ -85424,7 +87303,8 @@ $.extend(BasicView.prototype, {
 
 	// Generates the HTML for the <td>s of the "number" row in the DayGrid's content skeleton.
 	// The number row will only exist if either day numbers or week numbers are turned on.
-	numberCellHtml: function(row, col, date) {
+	numberCellHtml: function(cell) {
+		var date = cell.start;
 		var classes;
 
 		if (!this.dayNumbersVisible) { // if there are week numbers but not day numbers
@@ -85530,21 +87410,17 @@ $.extend(BasicView.prototype, {
 		this.dayGrid.renderEvents(events);
 
 		this.updateHeight(); // must compensate for events that overflow the row
-
-		View.prototype.renderEvents.call(this, events); // call the super-method
 	},
 
 
 	// Retrieves all segment objects that are rendered in the view
-	getSegs: function() {
-		return this.dayGrid.getSegs();
+	getEventSegs: function() {
+		return this.dayGrid.getEventSegs();
 	},
 
 
 	// Unrenders all event elements and clears internal segment data
 	destroyEvents: function() {
-		View.prototype.destroyEvents.call(this); // do this before dayGrid's segs have been cleared
-
 		this.recordScroll(); // removing events will reduce height and mess with the scroll, so record beforehand
 		this.dayGrid.destroyEvents();
 
@@ -85554,18 +87430,16 @@ $.extend(BasicView.prototype, {
 	},
 
 
-	/* Event Dragging
+	/* Dragging (for both events and external elements)
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders a visual indication of an event being dragged over the view.
 	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(start, end, seg) {
-		return this.dayGrid.renderDrag(start, end, seg);
+	renderDrag: function(dropLocation, seg) {
+		return this.dayGrid.renderDrag(dropLocation, seg);
 	},
 
 
-	// Unrenders the visual indication of an event being dragged over the view
 	destroyDrag: function() {
 		this.dayGrid.destroyDrag();
 	},
@@ -85576,8 +87450,8 @@ $.extend(BasicView.prototype, {
 
 
 	// Renders a visual indication of a selection
-	renderSelection: function(start, end) {
-		this.dayGrid.renderSelection(start, end);
+	renderSelection: function(range) {
+		this.dayGrid.renderSelection(range);
 	},
 
 
@@ -85597,51 +87471,21 @@ setDefaults({
 	fixedWeekCount: true
 });
 
-fcViews.month = MonthView; // register the view
+var MonthView = fcViews.month = BasicView.extend({
 
-function MonthView(calendar) {
-	BasicView.call(this, calendar); // call the super-constructor
-}
+	// Produces information about what range to display
+	computeRange: function(date) {
+		var range = BasicView.prototype.computeRange.call(this, date); // get value from super-method
 
-
-MonthView.prototype = createObject(BasicView.prototype); // define the super-class
-$.extend(MonthView.prototype, {
-
-	name: 'month',
-
-
-	incrementDate: function(date, delta) {
-		return date.clone().stripTime().add(delta, 'months').startOf('month');
-	},
-
-
-	render: function(date) {
-		var rowCnt;
-
-		this.intervalStart = date.clone().stripTime().startOf('month');
-		this.intervalEnd = this.intervalStart.clone().add(1, 'months');
-
-		this.start = this.intervalStart.clone();
-		this.start = this.skipHiddenDays(this.start); // move past the first week if no visible days
-		this.start.startOf('week');
-		this.start = this.skipHiddenDays(this.start); // move past the first invisible days of the week
-
-		this.end = this.intervalEnd.clone();
-		this.end = this.skipHiddenDays(this.end, -1, true); // move in from the last week if no visible days
-		this.end.add((7 - this.end.weekday()) % 7, 'days'); // move to end of week if not already
-		this.end = this.skipHiddenDays(this.end, -1, true); // move in from the last invisible days of the week
-
-		rowCnt = Math.ceil( // need to ceil in case there are hidden days
-			this.end.diff(this.start, 'weeks', true) // returnfloat=true
-		);
 		if (this.isFixedWeeks()) {
-			this.end.add(6 - rowCnt, 'weeks');
-			rowCnt = 6;
+			// ensure 6 weeks
+			range.end.add(
+				6 - range.end.diff(range.start, 'weeks'),
+				'weeks'
+			);
 		}
 
-		this.title = this.calendar.formatDate(this.intervalStart, this.opt('titleFormat'));
-
-		BasicView.prototype.render.call(this, rowCnt, this.getCellsPerWeek(), true); // call the super-method
+		return range;
 	},
 
 
@@ -85670,85 +87514,26 @@ $.extend(MonthView.prototype, {
 
 });
 
+MonthView.duration = { months: 1 };
+
 ;;
 
 /* A week view with simple day cells running horizontally
 ----------------------------------------------------------------------------------------------------------------------*/
-// TODO: a WeekView mixin for calculating dates and titles
 
-fcViews.basicWeek = BasicWeekView; // register this view
-
-function BasicWeekView(calendar) {
-	BasicView.call(this, calendar); // call the super-constructor
-}
-
-
-BasicWeekView.prototype = createObject(BasicView.prototype); // define the super-class
-$.extend(BasicWeekView.prototype, {
-
-	name: 'basicWeek',
-
-
-	incrementDate: function(date, delta) {
-		return date.clone().stripTime().add(delta, 'weeks').startOf('week');
-	},
-
-
-	render: function(date) {
-
-		this.intervalStart = date.clone().stripTime().startOf('week');
-		this.intervalEnd = this.intervalStart.clone().add(1, 'weeks');
-
-		this.start = this.skipHiddenDays(this.intervalStart);
-		this.end = this.skipHiddenDays(this.intervalEnd, -1, true);
-
-		this.title = this.calendar.formatRange(
-			this.start,
-			this.end.clone().subtract(1), // make inclusive by subtracting 1 ms
-			this.opt('titleFormat'),
-			' \u2014 ' // emphasized dash
-		);
-
-		BasicView.prototype.render.call(this, 1, this.getCellsPerWeek(), false); // call the super-method
-	}
-	
-});
+fcViews.basicWeek = {
+	type: 'basic',
+	duration: { weeks: 1 }
+};
 ;;
 
 /* A view with a single simple day cell
 ----------------------------------------------------------------------------------------------------------------------*/
 
-fcViews.basicDay = BasicDayView; // register this view
-
-function BasicDayView(calendar) {
-	BasicView.call(this, calendar); // call the super-constructor
-}
-
-
-BasicDayView.prototype = createObject(BasicView.prototype); // define the super-class
-$.extend(BasicDayView.prototype, {
-
-	name: 'basicDay',
-
-
-	incrementDate: function(date, delta) {
-		var out = date.clone().stripTime().add(delta, 'days');
-		out = this.skipHiddenDays(out, delta < 0 ? -1 : 1);
-		return out;
-	},
-
-
-	render: function(date) {
-
-		this.start = this.intervalStart = date.clone().stripTime();
-		this.end = this.intervalEnd = this.start.clone().add(1, 'days');
-
-		this.title = this.calendar.formatDate(this.start, this.opt('titleFormat'));
-
-		BasicView.prototype.render.call(this, 1, 1, false); // call the super-method
-	}
-
-});
+fcViews.basicDay = {
+	type: 'basic',
+	duration: { days: 1 }
+};
 ;;
 
 /* An abstract class for all agenda-related views. Displays one more columns with time slots running vertically.
@@ -85759,16 +87544,8 @@ $.extend(BasicDayView.prototype, {
 setDefaults({
 	allDaySlot: true,
 	allDayText: 'all-day',
-
 	scrollTime: '06:00:00',
-
 	slotDuration: '00:30:00',
-
-	axisFormat: generateAgendaAxisFormat,
-	timeFormat: {
-		agenda: generateAgendaTimeFormat
-	},
-
 	minTime: '00:00:00',
 	maxTime: '24:00:00',
 	slotEventOverlap: true
@@ -85776,43 +87553,7 @@ setDefaults({
 
 var AGENDA_ALL_DAY_EVENT_LIMIT = 5;
 
-
-function generateAgendaAxisFormat(options, langData) {
-	return langData.longDateFormat('LT')
-		.replace(':mm', '(:mm)')
-		.replace(/(\Wmm)$/, '($1)') // like above, but for foreign langs
-		.replace(/\s*a$/i, 'a'); // convert AM/PM/am/pm to lowercase. remove any spaces beforehand
-}
-
-
-function generateAgendaTimeFormat(options, langData) {
-	return langData.longDateFormat('LT')
-		.replace(/\s*a$/i, ''); // remove trailing AM/PM
-}
-
-
-function AgendaView(calendar) {
-	View.call(this, calendar); // call the super-constructor
-
-	this.timeGrid = new TimeGrid(this);
-
-	if (this.opt('allDaySlot')) { // should we display the "all-day" area?
-		this.dayGrid = new DayGrid(this); // the all-day subcomponent of this view
-
-		// the coordinate grid will be a combination of both subcomponents' grids
-		this.coordMap = new ComboCoordMap([
-			this.dayGrid.coordMap,
-			this.timeGrid.coordMap
-		]);
-	}
-	else {
-		this.coordMap = this.timeGrid.coordMap;
-	}
-}
-
-
-AgendaView.prototype = createObject(View.prototype); // define the super-class
-$.extend(AgendaView.prototype, {
+fcViews.agenda = View.extend({ // AgendaView
 
 	timeGrid: null, // the main time-grid subcomponent of this view
 	dayGrid: null, // the "all-day" subcomponent. if all-day is turned off, this will be null
@@ -85826,17 +87567,41 @@ $.extend(AgendaView.prototype, {
 	bottomRuleHeight: null,
 
 
+	initialize: function() {
+		this.timeGrid = new TimeGrid(this);
+
+		if (this.opt('allDaySlot')) { // should we display the "all-day" area?
+			this.dayGrid = new DayGrid(this); // the all-day subcomponent of this view
+
+			// the coordinate grid will be a combination of both subcomponents' grids
+			this.coordMap = new ComboCoordMap([
+				this.dayGrid.coordMap,
+				this.timeGrid.coordMap
+			]);
+		}
+		else {
+			this.coordMap = this.timeGrid.coordMap;
+		}
+	},
+
+
 	/* Rendering
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders the view into `this.el`, which has already been assigned.
-	// `colCnt` has been calculated by a subclass and passed here.
-	render: function(colCnt) {
+	// Sets the display range and computes all necessary dates
+	setRange: function(range) {
+		View.prototype.setRange.call(this, range); // call the super-method
 
-		// needed for cell-to-date and date-to-cell calculations in View
-		this.rowCnt = 1;
-		this.colCnt = colCnt;
+		this.timeGrid.setRange(range);
+		if (this.dayGrid) {
+			this.dayGrid.setRange(range);
+		}
+	},
+
+
+	// Renders the view into `this.el`, which has already been assigned
+	render: function() {
 
 		this.el.addClass('fc-agenda-view').html(this.renderHtml());
 
@@ -85860,10 +87625,6 @@ $.extend(AgendaView.prototype, {
 		}
 
 		this.noScrollRowEls = this.el.find('.fc-row:not(.fc-scroller *)'); // fake rows not within the scroller
-
-		View.prototype.render.call(this); // call the super-method
-
-		this.resetScroll(); // do this after sizes have been set
 	},
 
 
@@ -85916,7 +87677,7 @@ $.extend(AgendaView.prototype, {
 		var weekText;
 
 		if (this.opt('weekNumbers')) {
-			date = this.cellToDate(0, 0);
+			date = this.timeGrid.getCell(0).start;
 			weekNumber = this.calendar.calculateWeekNumber(date);
 			weekTitle = this.opt('weekNumberTitle');
 
@@ -85977,6 +87738,7 @@ $.extend(AgendaView.prototype, {
 
 	/* Dimensions
 	------------------------------------------------------------------------------------------------------------------*/
+
 
 	updateSize: function(isResize) {
 		if (isResize) {
@@ -86046,8 +87808,8 @@ $.extend(AgendaView.prototype, {
 	},
 
 
-	// Sets the scroll value of the scroller to the intial pre-configured state prior to allowing the user to change it.
-	resetScroll: function() {
+	// Sets the scroll value of the scroller to the initial pre-configured state prior to allowing the user to change it
+	initializeScroll: function() {
 		var _this = this;
 		var scrollTime = moment.duration(this.opt('scrollTime'));
 		var top = this.timeGrid.computeTimeTop(scrollTime);
@@ -86098,22 +87860,19 @@ $.extend(AgendaView.prototype, {
 
 		// the all-day area is flexible and might have a lot of events, so shift the height
 		this.updateHeight();
-
-		View.prototype.renderEvents.call(this, events); // call the super-method
 	},
 
 
 	// Retrieves all segment objects that are rendered in the view
-	getSegs: function() {
-		return this.timeGrid.getSegs().concat(
-			this.dayGrid ? this.dayGrid.getSegs() : []
+	getEventSegs: function() {
+		return this.timeGrid.getEventSegs().concat(
+			this.dayGrid ? this.dayGrid.getEventSegs() : []
 		);
 	},
 
 
 	// Unrenders all event elements and clears internal segment data
 	destroyEvents: function() {
-		View.prototype.destroyEvents.call(this); // do this before the grids' segs have been cleared
 
 		// if destroyEvents is being called as part of an event rerender, renderEvents will be called shortly
 		// after, so remember what the scroll value was so we can restore it.
@@ -86131,23 +87890,21 @@ $.extend(AgendaView.prototype, {
 	},
 
 
-	/* Event Dragging
+	/* Dragging (for events and external elements)
 	------------------------------------------------------------------------------------------------------------------*/
 
 
-	// Renders a visual indication of an event being dragged over the view.
 	// A returned value of `true` signals that a mock "helper" event has been rendered.
-	renderDrag: function(start, end, seg) {
-		if (start.hasTime()) {
-			return this.timeGrid.renderDrag(start, end, seg);
+	renderDrag: function(dropLocation, seg) {
+		if (dropLocation.start.hasTime()) {
+			return this.timeGrid.renderDrag(dropLocation, seg);
 		}
 		else if (this.dayGrid) {
-			return this.dayGrid.renderDrag(start, end, seg);
+			return this.dayGrid.renderDrag(dropLocation, seg);
 		}
 	},
 
 
-	// Unrenders a visual indications of an event being dragged over the view
 	destroyDrag: function() {
 		this.timeGrid.destroyDrag();
 		if (this.dayGrid) {
@@ -86161,12 +87918,12 @@ $.extend(AgendaView.prototype, {
 
 
 	// Renders a visual indication of a selection
-	renderSelection: function(start, end) {
-		if (start.hasTime() || end.hasTime()) {
-			this.timeGrid.renderSelection(start, end);
+	renderSelection: function(range) {
+		if (range.start.hasTime() || range.end.hasTime()) {
+			this.timeGrid.renderSelection(range);
 		}
 		else if (this.dayGrid) {
-			this.dayGrid.renderSelection(start, end);
+			this.dayGrid.renderSelection(range);
 		}
 	},
 
@@ -86185,83 +87942,20 @@ $.extend(AgendaView.prototype, {
 
 /* A week view with an all-day cell area at the top, and a time grid below
 ----------------------------------------------------------------------------------------------------------------------*/
-// TODO: a WeekView mixin for calculating dates and titles
 
-fcViews.agendaWeek = AgendaWeekView; // register the view
-
-function AgendaWeekView(calendar) {
-	AgendaView.call(this, calendar); // call the super-constructor
-}
-
-
-AgendaWeekView.prototype = createObject(AgendaView.prototype); // define the super-class
-$.extend(AgendaWeekView.prototype, {
-
-	name: 'agendaWeek',
-
-
-	incrementDate: function(date, delta) {
-		return date.clone().stripTime().add(delta, 'weeks').startOf('week');
-	},
-
-
-	render: function(date) {
-
-		this.intervalStart = date.clone().stripTime().startOf('week');
-		this.intervalEnd = this.intervalStart.clone().add(1, 'weeks');
-
-		this.start = this.skipHiddenDays(this.intervalStart);
-		this.end = this.skipHiddenDays(this.intervalEnd, -1, true);
-
-		this.title = this.calendar.formatRange(
-			this.start,
-			this.end.clone().subtract(1), // make inclusive by subtracting 1 ms
-			this.opt('titleFormat'),
-			' \u2014 ' // emphasized dash
-		);
-
-		AgendaView.prototype.render.call(this, this.getCellsPerWeek()); // call the super-method
-	}
-
-});
-
+fcViews.agendaWeek = {
+	type: 'agenda',
+	duration: { weeks: 1 }
+};
 ;;
 
 /* A day view with an all-day cell area at the top, and a time grid below
 ----------------------------------------------------------------------------------------------------------------------*/
 
-fcViews.agendaDay = AgendaDayView; // register the view
-
-function AgendaDayView(calendar) {
-	AgendaView.call(this, calendar); // call the super-constructor
-}
-
-
-AgendaDayView.prototype = createObject(AgendaView.prototype); // define the super-class
-$.extend(AgendaDayView.prototype, {
-
-	name: 'agendaDay',
-
-
-	incrementDate: function(date, delta) {
-		var out = date.clone().stripTime().add(delta, 'days');
-		out = this.skipHiddenDays(out, delta < 0 ? -1 : 1);
-		return out;
-	},
-
-
-	render: function(date) {
-
-		this.start = this.intervalStart = date.clone().stripTime();
-		this.end = this.intervalEnd = this.start.clone().add(1, 'days');
-
-		this.title = this.calendar.formatDate(this.start, this.opt('titleFormat'));
-
-		AgendaView.prototype.render.call(this, 1); // call the super-method
-	}
-
-});
-
+fcViews.agendaDay = {
+	type: 'agenda',
+	duration: { days: 1 }
+};
 ;;
 
 });
@@ -86345,8 +88039,8 @@ $.extend(AgendaDayView.prototype, {
   mapOverlayDirective('uiMapCircle', 'center_changed click dblclick mousedown mousemove ' + 'mouseout mouseover mouseup radius_changed rightclick');
   mapOverlayDirective('uiMapGroundOverlay', 'click dblclick');
 }());
-var deps=["ObjectPath"];try{angular.module("ngSanitize"),deps.push("ngSanitize")}catch(e){}try{angular.module("ui.sortable"),deps.push("ui.sortable")}catch(e){}try{angular.module("angularSpectrumColorpicker"),deps.push("angularSpectrumColorpicker")}catch(e){}angular.module("schemaForm",deps),angular.module("schemaForm").provider("sfPath",["ObjectPathProvider",function(e){var r={parse:e.parse};r.stringify=1===angular.version.major&&angular.version.minor<3?function(e){return Array.isArray(e)?e.join("."):e.toString()}:e.stringify,r.normalize=function(e,t){return r.stringify(Array.isArray(e)?e:r.parse(e),t)},this.parse=r.parse,this.stringify=r.stringify,this.normalize=r.normalize,this.$get=function(){return r}}]),angular.module("schemaForm").factory("sfSelect",["sfPath",function(e){var r=/^\d+$/;return function(t,a,n){a||(a=this);var i="string"==typeof t?e.parse(t):t;if("undefined"!=typeof n&&1===i.length)return a[i[0]]=n,a;"undefined"!=typeof n&&"undefined"==typeof a[i[0]]&&(a[i[0]]=i.length>2&&r.test(i[1])?[]:{});for(var o=a[i[0]],u=1;u<i.length;u++){if(""===i[u])return void 0;if("undefined"!=typeof n){if(u===i.length-1)return o[i[u]]=n,n;var l=o[i[u]];("undefined"==typeof l||null===l)&&(l=r.test(i[u+1])?[]:{},o[i[u]]=l),o=l}else o&&(o=o[i[u]])}return o}}]),angular.module("schemaForm").provider("schemaFormDecorators",["$compileProvider","sfPathProvider",function(e,r){var t="",a={},n=function(e,r){"sfDecorator"===e&&(e=t);for(var n=a[e],i=n.rules,o=0;o<i.length;o++){var u=i[o](r);if(u)return u}return n.mappings[r.type]?n.mappings[r.type]:n.mappings["default"]},i=function(t){e.directive(t,["$parse","$compile","$http","$templateCache",function(e,a,i,o){return{restrict:"AE",replace:!1,transclude:!1,scope:!0,require:"?^sfSchema",link:function(e,u,l,s){var c=e.$watch(l.form,function(l){if(l){e.form=l;var s=n(t,l);i.get(s,{cache:o}).then(function(t){var n=l.key?r.stringify(l.key).replace(/"/g,"&quot;"):"",i=t.data.replace(/\$\$value\$\$/g,"model"+("["!==n[0]?".":"")+n);u.html(i),a(u.contents())(e)}),c()}});e.showTitle=function(){return e.form&&e.form.notitle!==!0&&e.form.title},e.listToCheckboxValues=function(e){var r={};return angular.forEach(e,function(e){r[e]=!0}),r},e.checkboxValuesToList=function(e){var r=[];return angular.forEach(e,function(e,t){e&&r.push(t)}),r},e.buttonClick=function(r,t){angular.isFunction(t.onClick)?t.onClick(r,t):angular.isString(t.onClick)&&(s?s.evalInParentScope(t.onClick,{$event:r,form:t}):e.$eval(t.onClick,{$event:r,form:t}))},e.evalExpr=function(r,t){return s?s.evalInParentScope(r,t):e.$eval(r,t)},e.evalInScope=function(r,t){return r?e.$eval(r,t):void 0},e.errorMessage=function(r){return e.form.validationMessage?r?angular.isString(e.form.validationMessage)?e.form.validationMessage:e.form.validationMessage[r.code]||e.form.validationMessage["default"]:e.form.validationMessage.number||e.form.validationMessage["default"]||e.form.validationMessage:r?r.message:"Not a number"}}}}])},o=function(r,t,a){a=angular.isDefined(a)?a:!1,e.directive("sf"+angular.uppercase(r[0])+r.substr(1),function(){return{restrict:"EAC",scope:!0,replace:!0,transclude:a,template:'<sf-decorator form="form"></sf-decorator>',link:function(e,t,a){var n={items:"c",titleMap:"c",schema:"c"},i={type:r},o=!0;angular.forEach(a,function(r,t){if("$"!==t[0]&&0!==t.indexOf("ng")&&"sfField"!==t){var u=function(r){angular.isDefined(r)&&r!==i[t]&&(i[t]=r,o&&i.type&&(i.key||angular.isUndefined(a.key))&&(e.form=i,o=!1))};"model"===t?e.$watch(r,function(r){r&&e.model!==r&&(e.model=r)}):"c"===n[t]?e.$watchCollection(r,u):a.$observe(t,u)}})}}})};this.createDecorator=function(e,r,n){a[e]={mappings:r||{},rules:n||[]},a[t]||(t=e),i(e)},this.createDirective=o,this.createDirectives=function(e){angular.forEach(e,function(e,r){o(r,e)})},this.directive=function(e){return e=e||t,a[e]},this.addMapping=function(e,r,t){a[e]&&(a[e].mappings[r]=t)},this.$get=function(){return{directive:function(e){return a[e]},defaultDecorator:t}},i("sfDecorator")}]),angular.module("schemaForm").provider("schemaForm",["sfPathProvider",function(e){var r=function(e){var r=[];return e.forEach(function(e){r.push({name:e,value:e})}),r},t=function(e,r){if(!angular.isArray(e)){var t=[];return r?angular.forEach(r,function(r){t.push({name:e[r],value:r})}):angular.forEach(e,function(e,r){t.push({name:e,value:r})}),t}return e},a=function(e,r,t){var a=d[r.type];if(a)for(var n,i=0;i<a.length;i++)if(n=a[i](e,r,t))return n},n=function(e,r,a){a=a||{};var n=a.global&&a.global.formDefaults?angular.copy(a.global.formDefaults):{};return n.title=a.global&&a.global.supressPropertyTitles===!0?r.title:r.title||e,r.description&&(n.description=r.description),(a.required===!0||r.required===!0)&&(n.required=!0),r.maxLength&&(n.maxlength=r.maxLength),r.minLength&&(n.minlength=r.maxLength),(r.readOnly||r.readonly)&&(n.readonly=!0),r.minimum&&(n.minimum=r.minimum+(r.exclusiveMinimum?1:0)),r.maximum&&(n.maximum=r.maximum-(r.exclusiveMaximum?1:0)),r.validationMessage&&(n.validationMessage=r.validationMessage),r.enumNames&&(n.titleMap=t(r.enumNames,r["enum"])),n.schema=r,n.ngModelOptions=n.ngModelOptions||{},n},i=function(r,t,a){if("string"===t.type&&!t["enum"]){var i=n(r,t,a);return i.key=a.path,i.type="text",a.lookup[e.stringify(a.path)]=i,i}},o=function(r,t,a){if("number"===t.type){var i=n(r,t,a);return i.key=a.path,i.type="number",a.lookup[e.stringify(a.path)]=i,i}},u=function(r,t,a){if("integer"===t.type){var i=n(r,t,a);return i.key=a.path,i.type="number",a.lookup[e.stringify(a.path)]=i,i}},l=function(r,t,a){if("boolean"===t.type){var i=n(r,t,a);return i.key=a.path,i.type="checkbox",a.lookup[e.stringify(a.path)]=i,i}},s=function(t,a,i){if("string"===a.type&&a["enum"]){var o=n(t,a,i);return o.key=i.path,o.type="select",o.titleMap||(o.titleMap=r(a["enum"])),i.lookup[e.stringify(i.path)]=o,o}},c=function(t,a,i){if("array"===a.type&&a.items&&a.items["enum"]){var o=n(t,a,i);return o.key=i.path,o.type="checkboxes",o.titleMap||(o.titleMap=r(a.items["enum"])),i.lookup[e.stringify(i.path)]=o,o}},f=function(r,t,i){if("object"===t.type){var o=n(r,t,i);return o.type="fieldset",o.items=[],i.lookup[e.stringify(i.path)]=o,angular.forEach(t.properties,function(r,n){var u=i.path.slice();if(u.push(n),i.ignore[e.stringify(u)]!==!0){var l=t.required&&-1!==t.required.indexOf(n),s=a(n,r,{path:u,required:l||!1,lookup:i.lookup,ignore:i.ignore});s&&o.items.push(s)}}),o}},m=function(r,t,i){if("array"===t.type){var o=n(r,t,i);o.type="array",o.key=i.path,i.lookup[e.stringify(i.path)]=o;var u=t.required&&-1!==t.required.indexOf(i.path[i.path.length-1]),l=i.path.slice();return l.push(""),o.items=[a(r,t.items,{path:l,required:u||!1,lookup:i.lookup,ignore:i.ignore,global:i.global})],o}},d={string:[s,i],object:[f],number:[o],integer:[u],"boolean":[l],array:[c,m]},p=function(e){return e};this.defaults=d,this.stdFormObj=n,this.defaultFormDefinition=a,this.postProcess=function(e){p=e},this.appendRule=function(e,r){d[e]||(d[e]=[]),d[e].push(r)},this.prependRule=function(e,r){d[e]||(d[e]=[]),d[e].unshift(r)},this.createStandardForm=n,this.$get=function(){var r={};return r.merge=function(a,n,i,o,u){n=n||["*"],o=o||{},u=u||a.readonly||a.readOnly;var l=r.defaults(a,i,o),s=n.indexOf("*");-1!==s&&(n=n.slice(0,s).concat(l.form).concat(n.slice(s+1)));var c=l.lookup;return p(n.map(function(n){if("string"==typeof n&&(n={key:n}),n.key&&"string"==typeof n.key&&(n.key=e.parse(n.key)),n.titleMap&&(n.titleMap=t(n.titleMap)),n.itemForm){n.items=[];var l=e.stringify(n.key),s=c[l];angular.forEach(s.items,function(e){var r=angular.copy(n.itemForm);r.key=e.key,n.items.push(r)})}if(n.key){var f=e.stringify(n.key);c[f]&&(n=angular.extend(c[f],n))}return u===!0&&(n.readonly=!0),n.items&&(n.items=r.merge(a,n.items,i,o,n.readonly)),n.tabs&&angular.forEach(n.tabs,function(e){e.items=r.merge(a,e.items,i,o,n.readonly)}),"checkbox"===n.type&&angular.isUndefined(n.schema["default"])&&(n.schema["default"]=!1),n}))},r.defaults=function(e,r,t){var n=[],i={};if(r=r||{},t=t||{},"object"!==e.type)throw new Error('Not implemented. Only type "object" allowed at root level of schema.');return angular.forEach(e.properties,function(o,u){if(r[u]!==!0){var l=e.required&&-1!==e.required.indexOf(u),s=a(u,o,{path:[u],lookup:i,ignore:r,required:l,global:t});s&&n.push(s)}}),{form:n,lookup:i}},r.traverseSchema=function(e,r,t,a){a=angular.isDefined(a)?a:!0,t=t||[];var n=function(e,r,t){if(r(e,t),angular.forEach(e.properties,function(e,a){var i=t.slice();i.push(a),n(e,r,i)}),!a&&e.items){var i=t.slice();i.push(""),n(e.items,r,i)}};n(e,r,t||[])},r.traverseForm=function(e,t){t(e),angular.forEach(e.items,function(e){r.traverseForm(e,t)}),e.tabs&&angular.forEach(e.tabs,function(e){angular.forEach(e.items,function(e){r.traverseForm(e,t)})})},r}}]),angular.module("schemaForm").factory("sfValidator",[function(){var e={};return e.validate=function(e,r){if(!e)return{valid:!0};var t=e.schema;if(!t)return{valid:!0};""===r&&(r=void 0),"number"===e.type&&null===r&&(r=void 0);var a={type:"object",properties:{}},n=e.key[e.key.length-1];a.properties[n]=t,e.required&&(a.required=[n]);var i={};return angular.isDefined(r)&&(i[n]=r),tv4.validateResult(i,a)},e}]),angular.module("schemaForm").directive("sfArray",["sfSelect","schemaForm","sfValidator",function(e,r,t){var a=function(e){return function(r){r.key&&(r.key[r.key.indexOf("")]=e)}};return{restrict:"A",scope:!0,require:"?ngModel",link:function(n,i,o,u){var l={},s=n.$watch(o.sfArray,function(i){var o=e(i.key,n.model);if(angular.isUndefined(o)&&(o=[],e(i.key,n.model,o)),n.modelArray=o,i.items){var c=i.items[0];i.items.length>1&&(c={type:"section",items:i.items.map(function(e){return e.ngModelOptions=i.ngModelOptions,e.readonly=i.readonly,e})})}if(n.copyWithIndex=function(e){if(!l[e]&&c){var t=angular.copy(c);t.arrayIndex=e,r.traverseForm(t,a(e)),l[e]=t}return l[e]},n.appendToArray=function(){var t=o.length,a=n.copyWithIndex(t);if(r.traverseForm(a,function(r){r.key&&angular.isDefined(r["default"])&&e(r.key,n.model,r["default"])}),t===o.length){var u,l=e("schema.items.type",i);"object"===l?u={}:"array"===l&&(u=[]),o.push(u)}return n.validateArray&&n.validateArray(),o},n.deleteFromArray=function(e){return o.splice(e,1),n.validateArray&&n.validateArray(),o},i.titleMap||i.startEmpty===!0||0!==o.length||n.appendToArray(),i.titleMap&&i.titleMap.length>0){n.titleMapValues=[];var f=function(e){n.titleMapValues=[],e=e||[],i.titleMap.forEach(function(r){n.titleMapValues.push(-1!==e.indexOf(r.value))})};f(n.modelArray),n.$watchCollection("modelArray",f),n.$watchCollection("titleMapValues",function(e){if(e){for(var r=n.modelArray;r.length>0;)r.shift();i.titleMap.forEach(function(t,a){e[a]&&r.push(t.value)})}})}if(u){var m;n.validateArray=function(){var e=t.validate(i,n.modelArray.length>0?n.modelArray:void 0);e.valid!==!1||!e.error||""!==e.error.dataPath&&e.error.dataPath!=="/"+i.key[i.key.length-1]?u.$setValidity("schema",!0):(u.$setViewValue(n.modelArray),m=e.error,u.$setValidity("schema",!1))},n.$on("schemaFormValidate",n.validateArray),n.hasSuccess=function(){return u.$valid&&!u.$pristine},n.hasError=function(){return u.$invalid},n.schemaError=function(){return m}}s()})}}}]),angular.module("schemaForm").directive("sfChanged",function(){return{require:"ngModel",restrict:"AC",scope:!1,link:function(e,r,t,a){var n=e.$eval(t.sfChanged);n&&n.onChange&&a.$viewChangeListeners.push(function(){angular.isFunction(n.onChange)?n.onChange(a.$modelValue,n):e.evalExpr(n.onChange,{modelValue:a.$modelValue,form:n})})}}}),angular.module("schemaForm").directive("sfSchema",["$compile","schemaForm","schemaFormDecorators","sfSelect",function(e,r,t,a){var n=/[A-Z]/g,i=function(e,r){return r=r||"_",e.replace(n,function(e,t){return(t?r:"")+e.toLowerCase()})};return{scope:{schema:"=sfSchema",initialForm:"=sfForm",model:"=sfModel",options:"=sfOptions"},controller:["$scope",function(e){this.evalInParentScope=function(r,t){return e.$parent.$eval(r,t)}}],replace:!1,restrict:"A",transclude:!0,require:"?form",link:function(n,o,u,l,s){n.formCtrl=l;var c={};s(n,function(e){if(e.addClass("schema-form-ignore"),o.prepend(e),o[0].querySelectorAll){var r=o[0].querySelectorAll("[ng-model]");if(r)for(var t=0;t<r.length;t++){var a=r[t].getAttribute("ng-model");c[a.substring(a.indexOf(".")+1)]=!0}}});var f={};n.$watch(function(){var l=n.schema,s=n.initialForm||["*"];if(s&&l&&l.type&&(f.form!==s||f.schema!==l)&&Object.keys(l.properties).length>0){f.schema=l,f.form=s;var m=r.merge(l,s,c,n.options),d=document.createDocumentFragment();n.schemaForm={form:m,schema:l},o.children(":not(.schema-form-ignore)").remove(),angular.forEach(m,function(e,r){var a=document.createElement(u.sfDecorator||i(t.defaultDecorator,"-"));a.setAttribute("form","schemaForm.form["+r+"]");var n;try{n=o[0].querySelector('*[sf-insert-field="'+e.key+'"]')}catch(l){n=null}n?(n.innerHTML="",n.appendChild(a)):d.appendChild(a)}),o[0].appendChild(d),e(o.children())(n),r.traverseSchema(l,function(e,r){if(angular.isDefined(e["default"])){var t=a(r,n.model);angular.isUndefined(t)&&a(r,n.model,e["default"])}})}})}}}]),angular.module("schemaForm").directive("schemaValidate",["sfValidator",function(e){return{restrict:"A",scope:!1,priority:1e3,require:"ngModel",link:function(r,t,a,n){r.ngModel=n;var i=null,o=function(){return u||(u=r.$eval(a.schemaValidate)),u},u=o();n.$validators?n.$validators.schema=function(r){var t=e.validate(o(),r);return i=t.error,t.valid}:n.$parsers.push(function(r){if(u=o(),!u)return r;var t=e.validate(u,r);return t.valid?(n.$setValidity("schema",!0),r):(n.$setValidity("schema",!1),void(i=t.error))}),r.$on("schemaFormValidate",function(){n.$validate?(n.$validate(),n.$invalid&&(n.$dirty=!0,n.$pristine=!1)):n.$setViewValue(n.$viewValue)}),r.hasSuccess=function(){return n.$valid&&(!n.$pristine||!n.$isEmpty(n.$modelValue))},r.hasError=function(){return n.$invalid&&!n.$pristine},r.schemaError=function(){return i}}}}]);
-angular.module("schemaForm").run(["$templateCache",function(e){e.put("directives/decorators/bootstrap/actions-trcl.html",'<div class="btn-group" ng-transclude=""></div>'),e.put("directives/decorators/bootstrap/actions.html",'<div class="btn-group"><input ng-repeat-start="item in form.items" type="submit" class="btn {{ item.style || \'btn-primary\' }}" value="{{item.title}}" ng-if="item.type === \'submit\'"><button ng-repeat-end="" class="btn {{ item.style || \'btn-default\' }}" type="button" ng-disabled="form.readonly" ng-if="item.type !== \'submit\'" ng-click="buttonClick($event,item)">{{item.title}}</button></div>'),e.put("directives/decorators/bootstrap/array.html",'<div sf-array="form" ng-model="$$value$$" ng-model-options="form.ngModelOptions"><h3 ng-show="form.title && form.notitle !== true">{{ form.title }}</h3><ol class="list-group" ng-model="modelArray" ui-sortable=""><li class="list-group-item" ng-repeat="item in modelArray track by $index"><button ng-hide="form.readonly" ng-click="deleteFromArray($index)" style="position: relative; z-index: 20;" type="button" class="close pull-right"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button><sf-decorator ng-init="arrayIndex = $index" form="copyWithIndex($index)"></sf-decorator></li></ol><div class="clearfix" style="padding: 15px;"><button ng-hide="form.readonly" ng-click="appendToArray()" type="button" class="btn {{ form.style.add || \'btn-default\' }} pull-right"><i class="glyphicon glyphicon-plus"></i> {{ form.add || \'Add\'}}</button></div><div class="help-block" ng-show="(hasError() && errorMessage(schemaError())) || form.description" ng-bind-html="(hasError() && errorMessage(schemaError())) || form.description"></div></div>'),e.put("directives/decorators/bootstrap/checkbox.html",'<div class="checkbox" ng-class="{\'has-error\': hasError(), \'has-success\': hasSuccess()}"><label><input type="checkbox" sf-changed="form" ng-disabled="form.readonly" ng-model="$$value$$" ng-model-options="form.ngModelOptions" schema-validate="form"><span ng-bind-html="form.title"></span></label><div class="help-block" ng-show="form.description" ng-bind-html="form.description"></div></div>'),e.put("directives/decorators/bootstrap/checkboxes.html",'<div sf-array="form" ng-model="$$value$$" class="form-group" ng-class="{\'has-error\': hasError(), \'has-success\': hasSuccess()}"><label class="control-label" ng-show="showTitle()">{{form.title}}</label><div class="checkbox" ng-repeat="val in titleMapValues track by $index"><label><input type="checkbox" ng-disabled="form.readonly" sf-changed="form" ng-model="titleMapValues[$index]"><span ng-bind-html="form.titleMap[$index].name"></span></label></div><div class="help-block" ng-show="(hasError() && errorMessage(schemaError())) || form.description" ng-bind-html="(hasError() && errorMessage(schemaError())) || form.description"></div></div>'),e.put("directives/decorators/bootstrap/default.html",'<div class="form-group" ng-class="{\'has-error\': hasError(), \'has-success\': hasSuccess(), \'has-feedback\': form.feedback !== false }"><label class="control-label" ng-show="showTitle()">{{form.title}}</label><input ng-show="form.key" type="{{form.type}}" step="any" sf-changed="form" placeholder="{{form.placeholder}}" class="form-control" ng-model-options="form.ngModelOptions" ng-model="$$value$$" ng-disabled="form.readonly" schema-validate="form"><span ng-if="form.feedback !== false" class="form-control-feedback" ng-class="evalInScope(form.feedback) || {\'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError() }"></span><div class="help-block" ng-show="(hasError() && errorMessage(schemaError())) || form.description" ng-bind-html="(hasError() && errorMessage(schemaError())) || form.description"></div></div>'),e.put("directives/decorators/bootstrap/fieldset-trcl.html",'<fieldset ng-disabled="form.readonly"><legend ng-show="form.title">{{ form.title }}</legend><div class="help-block" ng-show="form.description" ng-bind-html="form.description"></div><div ng-transclude=""></div></fieldset>'),e.put("directives/decorators/bootstrap/fieldset.html",'<fieldset ng-disabled="form.readonly"><legend ng-show="form.title">{{ form.title }}</legend><div class="help-block" ng-show="form.description" ng-bind-html="form.description"></div><sf-decorator ng-repeat="item in form.items" form="item"></sf-decorator></fieldset>'),e.put("directives/decorators/bootstrap/help.html",'<div class="helpvalue" ng-bind-html="form.helpvalue"></div>'),e.put("directives/decorators/bootstrap/radio-buttons.html",'<div class="form-group" ng-class="{\'has-error\': hasError(), \'has-success\': hasSuccess()}"><div><label class="control-label" ng-show="showTitle()">{{form.title}}</label></div><div class="btn-group"><label class="btn {{ (item.value === $$value$$) ? form.style.selected || \'btn-primary\' : form.style.unselected || \'btn-primary\'; }}" ng-class="{ active: item.value === $$value$$ }" ng-repeat="item in form.titleMap"><input type="radio" sf-changed="form" style="display: none;" ng-disabled="form.readonly" ng-model="$$value$$" ng-model-options="form.ngModelOptions" ng-value="item.value"><span ng-bind-html="item.name"></span></label></div><div class="help-block" ng-show="form.description" ng-bind-html="form.description"></div></div>'),e.put("directives/decorators/bootstrap/radios-inline.html",'<div class="form-group" ng-class="{\'has-error\': hasError(), \'has-success\': hasSuccess()}"><label class="control-label" ng-show="showTitle()">{{form.title}}</label><div><label class="radio-inline" ng-repeat="item in form.titleMap"><input type="radio" sf-changed="form" ng-disabled="form.readonly" ng-model="$$value$$" ng-value="item.value"><span ng-bind-html="item.name"></span></label></div><div class="help-block" ng-show="(hasError() && errorMessage(schemaError())) || form.description" ng-bind-html="(hasError() && errorMessage(schemaError())) || form.description"></div></div>'),e.put("directives/decorators/bootstrap/radios.html",'<div class="form-group" ng-class="{\'has-error\': hasError(), \'has-success\': hasSuccess()}"><label class="control-label" ng-show="showTitle()">{{form.title}}</label><div class="radio" ng-repeat="item in form.titleMap"><label><input type="radio" sf-changed="form" ng-disabled="form.readonly" ng-model="$$value$$" ng-model-options="form.ngModelOptions" ng-value="item.value"><span ng-bind-html="item.name"></span></label></div><div class="help-block" ng-show="(hasError() && errorMessage(schemaError())) || form.description" ng-bind-html="(hasError() && errorMessage(schemaError())) || form.description"></div></div>'),e.put("directives/decorators/bootstrap/readonly.html",'<div class="form-group"><label ng-show="showTitle()">{{form.title}}</label><input ng-if="form.type !== \'textarea\'" type="text" disabled="" class="form-control" value="{{$$value$$}}"><textarea ng-if="form.type === \'textarea\'" disabled="" class="form-control">{{$$value$$}}</textarea><div class="help-block" ng-show="form.description" ng-bind-html="form.description"></div></div>'),e.put("directives/decorators/bootstrap/section.html",'<div ng-if="!form.condition || evalExpr(form.condition,{ model: model, \'arrayIndex\': arrayIndex })"><sf-decorator ng-repeat="item in form.items" form="item"></sf-decorator></div>'),e.put("directives/decorators/bootstrap/select.html",'<div class="form-group" ng-class="{\'has-error\': hasError(), \'has-success\': hasSuccess(), \'has-feedback\': form.feedback !== false}"><label class="control-label" ng-show="showTitle()">{{form.title}}</label><select ng-model="$$value$$" ng-model-options="form.ngModelOptions" ng-disabled="form.readonly" sf-changed="form" class="form-control" schema-validate="form" ng-options="item.value as item.name for item in form.titleMap"></select><div class="help-block" ng-show="(hasError() && errorMessage(schemaError())) || form.description" ng-bind-html="(hasError() && errorMessage(schemaError())) || form.description"></div></div>'),e.put("directives/decorators/bootstrap/submit.html",'<div class="form-group"><input type="submit" class="btn {{ form.style || \'btn-primary\' }}" value="{{form.title}}" ng-disabled="form.readonly" ng-if="form.type === \'submit\'"><button class="btn {{ form.style || \'btn-default\' }}" type="button" ng-click="buttonClick($event,form)" ng-disabled="form.readonly" ng-if="form.type !== \'submit\'">{{form.title}}</button></div>'),e.put("directives/decorators/bootstrap/tabarray.html",'<div sf-array="form" ng-init="selected = { tab: 0 }" class="clearfix"><div ng-if="!form.tabType || form.tabType !== \'right\'" ng-class="{\'col-xs-3\': !form.tabType || form.tabType === \'left\'}"><ul class="nav nav-tabs" ng-class="{ \'tabs-left\': !form.tabType || form.tabType === \'left\'}" style="margin-bottom: 15px"><li ng-repeat="item in modelArray track by $index" ng-click="$event.preventDefault() || (selected.tab = $index)" ng-class="{active: selected.tab === $index}"><a href="#">{{evalExpr(form.title,{\'$index\':$index, value: item}) || $index}}</a></li><li ng-hide="form.readonly" ng-click="$event.preventDefault() || (selected.tab = appendToArray().length - 1)"><a href="#"><i class="glyphicon glyphicon-plus"></i> {{ form.add || \'Add\'}}</a></li></ul></div><div ng-class="{\'col-xs-9\': !form.tabsType || form.tabsType === \'left\' || form.tabsType === \'right\'}"><div class="tab-content"><div class="tab-pane clearfix" ng-repeat="item in modelArray track by $index" ng-show="selected.tab === $index" ng-class="{active: selected.tab === $index}"><sf-decorator form="copyWithIndex($index)"></sf-decorator><button ng-hide="form.readonly" ng-click="selected.tab = deleteFromArray($index).length - 1" type="button" class="btn {{ form.style.remove || \'btn-default\' }} pull-right"><i class="glyphicon glyphicon-trash"></i> {{ form.remove || \'Remove\'}}</button></div></div></div><div ng-if="form.tabType === \'right\'" class="col-xs-3"><ul class="nav nav-tabs tabs-right" style="margin-bottom: 15px"><li ng-repeat="item in modelArray track by $index" ng-click="$event.preventDefault() || (selected.tab = $index)" ng-class="{active: selected.tab === $index}"><a href="#">{{evalExpr(form.title,{\'$index\':$index, value: item}) || $index}}</a></li><li ng-hide="form.readonly" ng-click="$event.preventDefault() || appendToArray()"><a href="#"><i class="glyphicon glyphicon-plus"></i> {{ form.add || \'Add\'}}</a></li></ul></div></div>'),e.put("directives/decorators/bootstrap/tabs.html",'<div ng-init="selected = { tab: 0 }"><ul class="nav nav-tabs" style="margin-bottom: 15px"><li ng-repeat="tab in form.tabs" ng-disabled="form.readonly" ng-click="$event.preventDefault() || (selected.tab = $index)" ng-class="{active: selected.tab === $index}"><a href="#">{{ tab.title }}</a></li></ul><div class="tab-content"><div class="tab-pane" ng-disabled="form.readonly" ng-repeat="tab in form.tabs" ng-show="selected.tab === $index" ng-class="{active: selected.tab === $index}"><bootstrap-decorator ng-repeat="item in tab.items" form="item"></bootstrap-decorator></div></div></div>'),e.put("directives/decorators/bootstrap/textarea.html",'<div class="form-group has-feedback" ng-class="{\'has-error\': hasError(), \'has-success\': hasSuccess()}"><label ng-show="showTitle()">{{form.title}}</label><textarea class="form-control" sf-changed="form" placeholder="{{form.placeholder}}" ng-disabled="form.readonly" ng-model="$$value$$" ng-model-options="form.ngModelOptions" schema-validate="form"></textarea> <span class="help-block">{{ (hasError() && errorMessage(schemaError())) || form.description}}</span></div>')}]),angular.module("schemaForm").config(["schemaFormDecoratorsProvider",function(e){var t="directives/decorators/bootstrap/";e.createDecorator("bootstrapDecorator",{textarea:t+"textarea.html",fieldset:t+"fieldset.html",array:t+"array.html",tabarray:t+"tabarray.html",tabs:t+"tabs.html",section:t+"section.html",conditional:t+"section.html",actions:t+"actions.html",select:t+"select.html",checkbox:t+"checkbox.html",checkboxes:t+"checkboxes.html",number:t+"default.html",password:t+"default.html",submit:t+"submit.html",button:t+"submit.html",radios:t+"radios.html","radios-inline":t+"radios-inline.html",radiobuttons:t+"radio-buttons.html",help:t+"help.html","default":t+"default.html"},[]),e.createDirectives({textarea:t+"textarea.html",select:t+"select.html",checkbox:t+"checkbox.html",checkboxes:t+"checkboxes.html",number:t+"default.html",submit:t+"submit.html",button:t+"submit.html",text:t+"default.html",date:t+"default.html",password:t+"default.html",datepicker:t+"datepicker.html",input:t+"default.html",radios:t+"radios.html","radios-inline":t+"radios-inline.html",radiobuttons:t+"radio-buttons.html"})}]).directive("sfFieldset",function(){return{transclude:!0,scope:!0,templateUrl:"directives/decorators/bootstrap/fieldset-trcl.html",link:function(e,t,r){e.title=e.$eval(r.title)}}});
+var deps=[];try{angular.module("ngSanitize"),deps.push("ngSanitize")}catch(e){}try{angular.module("ui.sortable"),deps.push("ui.sortable")}catch(e){}try{angular.module("angularSpectrumColorpicker"),deps.push("angularSpectrumColorpicker")}catch(e){}angular.module("schemaForm",deps),angular.module("schemaForm").provider("sfPath",[function(){var e={parse:ObjectPath.parse};e.stringify=1===angular.version.major&&angular.version.minor<3?function(e){return Array.isArray(e)?e.join("."):e.toString()}:ObjectPath.stringify,e.normalize=function(r,t){return e.stringify(Array.isArray(r)?r:e.parse(r),t)},this.parse=e.parse,this.stringify=e.stringify,this.normalize=e.normalize,this.$get=function(){return e}}]),angular.module("schemaForm").factory("sfSelect",["sfPath",function(e){var r=/^\d+$/;return function(t,a,n){a||(a=this);var i="string"==typeof t?e.parse(t):t;if("undefined"!=typeof n&&1===i.length)return a[i[0]]=n,a;"undefined"!=typeof n&&"undefined"==typeof a[i[0]]&&(a[i[0]]=i.length>2&&r.test(i[1])?[]:{});for(var o=a[i[0]],u=1;u<i.length;u++){if(""===i[u])return void 0;if("undefined"!=typeof n){if(u===i.length-1)return o[i[u]]=n,n;var l=o[i[u]];("undefined"==typeof l||null===l)&&(l=r.test(i[u+1])?[]:{},o[i[u]]=l),o=l}else o&&(o=o[i[u]])}return o}}]),angular.module("schemaForm").provider("schemaFormDecorators",["$compileProvider","sfPathProvider",function(e,r){var t="",a={},n=function(e,r){"sfDecorator"===e&&(e=t);for(var n=a[e],i=n.rules,o=0;o<i.length;o++){var u=i[o](r);if(u)return u}return n.mappings[r.type]?n.mappings[r.type]:n.mappings["default"]},i=function(t){e.directive(t,["$parse","$compile","$http","$templateCache",function(e,a,i,o){return{restrict:"AE",replace:!1,transclude:!1,scope:!0,require:"?^sfSchema",link:function(e,u,l,s){var c=e.$watch(l.form,function(l){if(l){e.form=l;var s=n(t,l);i.get(s,{cache:o}).then(function(t){var n=l.key?r.stringify(l.key).replace(/"/g,"&quot;"):"",i=t.data.replace(/\$\$value\$\$/g,"model"+("["!==n[0]?".":"")+n);u.html(i),a(u.contents())(e)}),c()}});e.showTitle=function(){return e.form&&e.form.notitle!==!0&&e.form.title},e.listToCheckboxValues=function(e){var r={};return angular.forEach(e,function(e){r[e]=!0}),r},e.checkboxValuesToList=function(e){var r=[];return angular.forEach(e,function(e,t){e&&r.push(t)}),r},e.buttonClick=function(r,t){angular.isFunction(t.onClick)?t.onClick(r,t):angular.isString(t.onClick)&&(s?s.evalInParentScope(t.onClick,{$event:r,form:t}):e.$eval(t.onClick,{$event:r,form:t}))},e.evalExpr=function(r,t){return s?s.evalInParentScope(r,t):e.$eval(r,t)},e.evalInScope=function(r,t){return r?e.$eval(r,t):void 0},e.errorMessage=function(r){return e.form.validationMessage?r?angular.isString(e.form.validationMessage)?e.form.validationMessage:e.form.validationMessage[r.code]||e.form.validationMessage["default"]:e.form.validationMessage.number||e.form.validationMessage["default"]||e.form.validationMessage:r?r.message:"Not a number"}}}}])},o=function(r,t,a){a=angular.isDefined(a)?a:!1,e.directive("sf"+angular.uppercase(r[0])+r.substr(1),function(){return{restrict:"EAC",scope:!0,replace:!0,transclude:a,template:'<sf-decorator form="form"></sf-decorator>',link:function(e,t,a){var n={items:"c",titleMap:"c",schema:"c"},i={type:r},o=!0;angular.forEach(a,function(r,t){if("$"!==t[0]&&0!==t.indexOf("ng")&&"sfField"!==t){var u=function(r){angular.isDefined(r)&&r!==i[t]&&(i[t]=r,o&&i.type&&(i.key||angular.isUndefined(a.key))&&(e.form=i,o=!1))};"model"===t?e.$watch(r,function(r){r&&e.model!==r&&(e.model=r)}):"c"===n[t]?e.$watchCollection(r,u):a.$observe(t,u)}})}}})};this.createDecorator=function(e,r,n){a[e]={mappings:r||{},rules:n||[]},a[t]||(t=e),i(e)},this.createDirective=o,this.createDirectives=function(e){angular.forEach(e,function(e,r){o(r,e)})},this.directive=function(e){return e=e||t,a[e]},this.addMapping=function(e,r,t){a[e]&&(a[e].mappings[r]=t)},this.$get=function(){return{directive:function(e){return a[e]},defaultDecorator:t}},i("sfDecorator")}]),angular.module("schemaForm").provider("schemaForm",["sfPathProvider",function(e){var r=function(e){var r=[];return e.forEach(function(e){r.push({name:e,value:e})}),r},t=function(e,r){if(!angular.isArray(e)){var t=[];return r?angular.forEach(r,function(r){t.push({name:e[r],value:r})}):angular.forEach(e,function(e,r){t.push({name:e,value:r})}),t}return e},a=function(e,r,t){var a=d[r.type];if(a)for(var n,i=0;i<a.length;i++)if(n=a[i](e,r,t))return n.schema["x-schema-form"]&&angular.isObject(n.schema["x-schema-form"])&&(n=angular.extend(n,n.schema["x-schema-form"])),n},n=function(e,r,a){a=a||{};var n=a.global&&a.global.formDefaults?angular.copy(a.global.formDefaults):{};return n.title=a.global&&a.global.supressPropertyTitles===!0?r.title:r.title||e,r.description&&(n.description=r.description),(a.required===!0||r.required===!0)&&(n.required=!0),r.maxLength&&(n.maxlength=r.maxLength),r.minLength&&(n.minlength=r.maxLength),(r.readOnly||r.readonly)&&(n.readonly=!0),r.minimum&&(n.minimum=r.minimum+(r.exclusiveMinimum?1:0)),r.maximum&&(n.maximum=r.maximum-(r.exclusiveMaximum?1:0)),r.validationMessage&&(n.validationMessage=r.validationMessage),r.enumNames&&(n.titleMap=t(r.enumNames,r["enum"])),n.schema=r,n.ngModelOptions=n.ngModelOptions||{},n},i=function(r,t,a){if("string"===t.type&&!t["enum"]){var i=n(r,t,a);return i.key=a.path,i.type="text",a.lookup[e.stringify(a.path)]=i,i}},o=function(r,t,a){if("number"===t.type){var i=n(r,t,a);return i.key=a.path,i.type="number",a.lookup[e.stringify(a.path)]=i,i}},u=function(r,t,a){if("integer"===t.type){var i=n(r,t,a);return i.key=a.path,i.type="number",a.lookup[e.stringify(a.path)]=i,i}},l=function(r,t,a){if("boolean"===t.type){var i=n(r,t,a);return i.key=a.path,i.type="checkbox",a.lookup[e.stringify(a.path)]=i,i}},s=function(t,a,i){if("string"===a.type&&a["enum"]){var o=n(t,a,i);return o.key=i.path,o.type="select",o.titleMap||(o.titleMap=r(a["enum"])),i.lookup[e.stringify(i.path)]=o,o}},c=function(t,a,i){if("array"===a.type&&a.items&&a.items["enum"]){var o=n(t,a,i);return o.key=i.path,o.type="checkboxes",o.titleMap||(o.titleMap=r(a.items["enum"])),i.lookup[e.stringify(i.path)]=o,o}},f=function(r,t,i){if("object"===t.type){var o=n(r,t,i);return o.type="fieldset",o.items=[],i.lookup[e.stringify(i.path)]=o,angular.forEach(t.properties,function(r,n){var u=i.path.slice();if(u.push(n),i.ignore[e.stringify(u)]!==!0){var l=t.required&&-1!==t.required.indexOf(n),s=a(n,r,{path:u,required:l||!1,lookup:i.lookup,ignore:i.ignore});s&&o.items.push(s)}}),o}},m=function(r,t,i){if("array"===t.type){var o=n(r,t,i);o.type="array",o.key=i.path,i.lookup[e.stringify(i.path)]=o;var u=t.required&&-1!==t.required.indexOf(i.path[i.path.length-1]),l=i.path.slice();return l.push(""),o.items=[a(r,t.items,{path:l,required:u||!1,lookup:i.lookup,ignore:i.ignore,global:i.global})],o}},d={string:[s,i],object:[f],number:[o],integer:[u],"boolean":[l],array:[c,m]},p=function(e){return e};this.defaults=d,this.stdFormObj=n,this.defaultFormDefinition=a,this.postProcess=function(e){p=e},this.appendRule=function(e,r){d[e]||(d[e]=[]),d[e].push(r)},this.prependRule=function(e,r){d[e]||(d[e]=[]),d[e].unshift(r)},this.createStandardForm=n,this.$get=function(){var r={};return r.merge=function(a,n,i,o,u){n=n||["*"],o=o||{},u=u||a.readonly||a.readOnly;var l=r.defaults(a,i,o),s=n.indexOf("*");-1!==s&&(n=n.slice(0,s).concat(l.form).concat(n.slice(s+1)));var c=l.lookup;return p(n.map(function(n){if("string"==typeof n&&(n={key:n}),n.key&&"string"==typeof n.key&&(n.key=e.parse(n.key)),n.titleMap&&(n.titleMap=t(n.titleMap)),n.itemForm){n.items=[];var l=e.stringify(n.key),s=c[l];angular.forEach(s.items,function(e){var r=angular.copy(n.itemForm);r.key=e.key,n.items.push(r)})}if(n.key){var f=e.stringify(n.key);c[f]&&(n=angular.extend(c[f],n))}return u===!0&&(n.readonly=!0),n.items&&(n.items=r.merge(a,n.items,i,o,n.readonly)),n.tabs&&angular.forEach(n.tabs,function(e){e.items=r.merge(a,e.items,i,o,n.readonly)}),"checkbox"===n.type&&angular.isUndefined(n.schema["default"])&&(n.schema["default"]=!1),n}))},r.defaults=function(e,r,t){var n=[],i={};if(r=r||{},t=t||{},"object"!==e.type)throw new Error('Not implemented. Only type "object" allowed at root level of schema.');return angular.forEach(e.properties,function(o,u){if(r[u]!==!0){var l=e.required&&-1!==e.required.indexOf(u),s=a(u,o,{path:[u],lookup:i,ignore:r,required:l,global:t});s&&n.push(s)}}),{form:n,lookup:i}},r.traverseSchema=function(e,r,t,a){a=angular.isDefined(a)?a:!0,t=t||[];var n=function(e,r,t){if(r(e,t),angular.forEach(e.properties,function(e,a){var i=t.slice();i.push(a),n(e,r,i)}),!a&&e.items){var i=t.slice();i.push(""),n(e.items,r,i)}};n(e,r,t||[])},r.traverseForm=function(e,t){t(e),angular.forEach(e.items,function(e){r.traverseForm(e,t)}),e.tabs&&angular.forEach(e.tabs,function(e){angular.forEach(e.items,function(e){r.traverseForm(e,t)})})},r}}]),angular.module("schemaForm").factory("sfValidator",[function(){var e={};return e.validate=function(e,r){if(!e)return{valid:!0};var t=e.schema;if(!t)return{valid:!0};""===r&&(r=void 0),"number"===e.type&&null===r&&(r=void 0);var a={type:"object",properties:{}},n=e.key[e.key.length-1];a.properties[n]=t,e.required&&(a.required=[n]);var i={};return angular.isDefined(r)&&(i[n]=r),tv4.validateResult(i,a)},e}]),angular.module("schemaForm").directive("sfArray",["sfSelect","schemaForm","sfValidator","sfPath",function(e,r,t,a){var n=function(e){return function(r){r.key&&(r.key[r.key.indexOf("")]=e)}};return{restrict:"A",scope:!0,require:"?ngModel",link:function(i,o,u,l){var s={},c=i.$watch(u.sfArray,function(o){var u=e(o.key,i.model);if(i.$watch("model"+a.normalize(o.key),function(){u=e(o.key,i.model),i.modelArray=u}),angular.isUndefined(u)&&(u=[],e(o.key,i.model,u)),i.modelArray=u,o.items){var f=o.items[0];o.items.length>1&&(f={type:"section",items:o.items.map(function(e){return e.ngModelOptions=o.ngModelOptions,e.readonly=o.readonly,e})})}if(i.copyWithIndex=function(e){if(!s[e]&&f){var t=angular.copy(f);t.arrayIndex=e,r.traverseForm(t,n(e)),s[e]=t}return s[e]},i.appendToArray=function(){var t=u.length,a=i.copyWithIndex(t);if(r.traverseForm(a,function(r){if(r.key){var t;angular.isDefined(r["default"])&&(t=r["default"]),angular.isDefined(r.schema)&&angular.isDefined(r.schema["default"])&&(t=r.schema["default"]),angular.isDefined(t)&&e(r.key,i.model,t)}}),t===u.length){var n,l=e("schema.items.type",o);"object"===l?n={}:"array"===l&&(n=[]),u.push(n)}return i.validateArray&&i.validateArray(),u},i.deleteFromArray=function(e){return u.splice(e,1),i.validateArray&&i.validateArray(),u},o.titleMap||o.startEmpty===!0||0!==u.length||i.appendToArray(),o.titleMap&&o.titleMap.length>0){i.titleMapValues=[];var m=function(e){i.titleMapValues=[],e=e||[],o.titleMap.forEach(function(r){i.titleMapValues.push(-1!==e.indexOf(r.value))})};m(i.modelArray),i.$watchCollection("modelArray",m),i.$watchCollection("titleMapValues",function(e){if(e){for(var r=i.modelArray;r.length>0;)r.shift();o.titleMap.forEach(function(t,a){e[a]&&r.push(t.value)})}})}if(l){var d;i.validateArray=function(){var e=t.validate(o,i.modelArray.length>0?i.modelArray:void 0);e.valid!==!1||!e.error||""!==e.error.dataPath&&e.error.dataPath!=="/"+o.key[o.key.length-1]?l.$setValidity("schema",!0):(l.$setViewValue(i.modelArray),d=e.error,l.$setValidity("schema",!1))},i.$on("schemaFormValidate",i.validateArray),i.hasSuccess=function(){return l.$valid&&!l.$pristine},i.hasError=function(){return l.$invalid},i.schemaError=function(){return d}}c()})}}}]),angular.module("schemaForm").directive("sfChanged",function(){return{require:"ngModel",restrict:"AC",scope:!1,link:function(e,r,t,a){var n=e.$eval(t.sfChanged);n&&n.onChange&&a.$viewChangeListeners.push(function(){angular.isFunction(n.onChange)?n.onChange(a.$modelValue,n):e.evalExpr(n.onChange,{modelValue:a.$modelValue,form:n})})}}}),angular.module("schemaForm").directive("sfSchema",["$compile","schemaForm","schemaFormDecorators","sfSelect","sfPath",function(e,r,t,a,n){var i=/[A-Z]/g,o=function(e,r){return r=r||"_",e.replace(i,function(e,t){return(t?r:"")+e.toLowerCase()})};return{scope:{schema:"=sfSchema",initialForm:"=sfForm",model:"=sfModel",options:"=sfOptions"},controller:["$scope",function(e){this.evalInParentScope=function(r,t){return e.$parent.$eval(r,t)}}],replace:!1,restrict:"A",transclude:!0,require:"?form",link:function(i,u,l,s,c){i.formCtrl=s;var f={};c(i,function(e){if(e.addClass("schema-form-ignore"),u.prepend(e),u[0].querySelectorAll){var r=u[0].querySelectorAll("[ng-model]");if(r)for(var t=0;t<r.length;t++){var a=r[t].getAttribute("ng-model");f[a.substring(a.indexOf(".")+1)]=!0}}});var m,d={};i.$watch(function(){var s=i.schema,c=i.initialForm||["*"];if(c&&s&&s.type&&(d.form!==c||d.schema!==s)&&Object.keys(s.properties).length>0){d.schema=s,d.form=c;var p=r.merge(s,c,f,i.options),h=document.createDocumentFragment();m&&m.$destroy(),m=i.$new(),m.schemaForm={form:p,schema:s},u.children(":not(.schema-form-ignore)").remove();for(var g={},v=u[0].querySelectorAll("*[sf-insert-field]"),y=0;y<v.length;y++)g[v[y].getAttribute("sf-insert-field")]=v[y];angular.forEach(p,function(e,r){var a=document.createElement(l.sfDecorator||o(t.defaultDecorator,"-"));if(a.setAttribute("form","schemaForm.form["+r+"]"),e.key){var i=g[n.stringify(e.key)];if(i){for(;i.firstChild;)i.removeChild(i.firstChild);return void i.appendChild(a)}}h.appendChild(a)}),u[0].appendChild(h),e(u.children())(m),r.traverseSchema(s,function(e,r){if(angular.isDefined(e["default"])){var t=a(r,i.model);angular.isUndefined(t)&&a(r,i.model,e["default"])}})}i.$emit("sf-render-finished",u)})}}}]),angular.module("schemaForm").directive("schemaValidate",["sfValidator",function(e){return{restrict:"A",scope:!1,priority:1e3,require:"ngModel",link:function(r,t,a,n){r.ngModel=n;var i=null,o=function(){return u||(u=r.$eval(a.schemaValidate)),u},u=o();n.$validators?n.$validators.schema=function(r){var t=e.validate(o(),r);return i=t.error,t.valid}:n.$parsers.push(function(r){if(u=o(),!u)return r;var t=e.validate(u,r);return t.valid?(n.$setValidity("schema",!0),r):(n.$setValidity("schema",!1),void(i=t.error))}),r.$on("schemaFormValidate",function(){n.$validate?(n.$validate(),n.$invalid&&(n.$dirty=!0,n.$pristine=!1)):n.$setViewValue(n.$viewValue)}),r.hasSuccess=function(){return n.$valid&&(!n.$pristine||!n.$isEmpty(n.$modelValue))},r.hasError=function(){return n.$invalid&&!n.$pristine},r.schemaError=function(){return i}}}}]);
+angular.module("schemaForm").run(["$templateCache",function(e){e.put("directives/decorators/bootstrap/actions-trcl.html",'<div class="btn-group schema-form-actions {{form.htmlClass}}" ng-transclude=""></div>'),e.put("directives/decorators/bootstrap/actions.html",'<div class="btn-group schema-form-actions {{form.htmlClass}}"><input ng-repeat-start="item in form.items" type="submit" class="btn {{ item.style || \'btn-default\' }} {{form.fieldHtmlClass}}" value="{{item.title}}" ng-if="item.type === \'submit\'"> <button ng-repeat-end="" class="btn {{ item.style || \'btn-default\' }} {{form.fieldHtmlClass}}" type="button" ng-disabled="form.readonly" ng-if="item.type !== \'submit\'" ng-click="buttonClick($event,item)">{{item.title}}</button></div>'),e.put("directives/decorators/bootstrap/array.html",'<div sf-array="form" class="schema-form-array {{form.htmlClass}}" ng-model="$$value$$" ng-model-options="form.ngModelOptions"><h3 ng-show="form.title && form.notitle !== true">{{ form.title }}</h3><ol class="list-group" ng-model="modelArray" ui-sortable=""><li class="list-group-item {{form.fieldHtmlClass}}" ng-repeat="item in modelArray track by $index"><button ng-hide="form.readonly" ng-click="deleteFromArray($index)" style="position: relative; z-index: 20;" type="button" class="close pull-right"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button><sf-decorator ng-init="arrayIndex = $index" form="copyWithIndex($index)"></sf-decorator></li></ol><div class="clearfix" style="padding: 15px;"><button ng-hide="form.readonly || form.add === null" ng-click="appendToArray()" type="button" class="btn {{ form.style.add || \'btn-default\' }} pull-right"><i class="glyphicon glyphicon-plus"></i> {{ form.add || \'Add\'}}</button></div><div class="help-block" ng-show="(hasError() && errorMessage(schemaError())) || form.description" ng-bind-html="(hasError() && errorMessage(schemaError())) || form.description"></div></div>'),e.put("directives/decorators/bootstrap/checkbox.html",'<div class="checkbox schema-form-checkbox {{form.htmlClass}}" ng-class="{\'has-error\': hasError(), \'has-success\': hasSuccess()}"><label><input type="checkbox" sf-changed="form" ng-disabled="form.readonly" ng-model="$$value$$" ng-model-options="form.ngModelOptions" schema-validate="form" class="{{form.fieldHtmlClass}}" name="{{form.key.slice(-1)[0]}}"> <span ng-bind-html="form.title"></span></label><div class="help-block" ng-show="form.description" ng-bind-html="form.description"></div></div>'),e.put("directives/decorators/bootstrap/checkboxes.html",'<div sf-array="form" ng-model="$$value$$" class="form-group schema-form-checkboxes {{form.htmlClass}}" ng-class="{\'has-error\': hasError(), \'has-success\': hasSuccess()}"><label class="control-label" ng-show="showTitle()">{{form.title}}</label><div class="checkbox" ng-repeat="val in titleMapValues track by $index"><label><input type="checkbox" ng-disabled="form.readonly" sf-changed="form" class="{{form.fieldHtmlClass}}" ng-model="titleMapValues[$index]" name="{{form.key.slice(-1)[0]}}"> <span ng-bind-html="form.titleMap[$index].name"></span></label></div><div class="help-block" ng-show="(hasError() && errorMessage(schemaError())) || form.description" ng-bind-html="(hasError() && errorMessage(schemaError())) || form.description"></div></div>'),e.put("directives/decorators/bootstrap/default.html",'<div class="form-group schema-form-{{form.type}} {{form.htmlClass}}" ng-class="{\'has-error\': hasError(), \'has-success\': hasSuccess(), \'has-feedback\': form.feedback !== false }"><label class="control-label" ng-show="showTitle()">{{form.title}}</label> <input ng-show="form.key" type="{{form.type}}" step="any" sf-changed="form" placeholder="{{form.placeholder}}" class="form-control {{form.fieldHtmlClass}}" ng-model-options="form.ngModelOptions" ng-model="$$value$$" ng-disabled="form.readonly" schema-validate="form" name="{{form.key.slice(-1)[0]}}"> <span ng-if="form.feedback !== false" class="form-control-feedback" ng-class="evalInScope(form.feedback) || {\'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError() }"></span><div class="help-block" ng-show="(hasError() && errorMessage(schemaError())) || form.description" ng-bind-html="(hasError() && errorMessage(schemaError())) || form.description"></div></div>'),e.put("directives/decorators/bootstrap/fieldset-trcl.html",'<fieldset ng-disabled="form.readonly" class="schema-form-fieldset {{form.htmlClass}}"><legend ng-show="form.title">{{ form.title }}</legend><div class="help-block" ng-show="form.description" ng-bind-html="form.description"></div><div ng-transclude=""></div></fieldset>'),e.put("directives/decorators/bootstrap/fieldset.html",'<fieldset ng-disabled="form.readonly" class="schema-form-fieldset {{form.htmlClass}}"><legend ng-show="form.title">{{ form.title }}</legend><div class="help-block" ng-show="form.description" ng-bind-html="form.description"></div><sf-decorator ng-repeat="item in form.items" form="item"></sf-decorator></fieldset>'),e.put("directives/decorators/bootstrap/help.html",'<div class="helpvalue schema-form-helpvalue {{form.htmlClass}}" ng-bind-html="form.helpvalue"></div>'),e.put("directives/decorators/bootstrap/radio-buttons.html",'<div class="form-group schema-form-radiobuttons {{form.htmlClass}}" ng-class="{\'has-error\': hasError(), \'has-success\': hasSuccess()}"><div><label class="control-label" ng-show="showTitle()">{{form.title}}</label></div><div class="btn-group"><label class="btn {{ (item.value === $$value$$) ? form.style.selected || \'btn-default\' : form.style.unselected || \'btn-default\'; }}" ng-class="{ active: item.value === $$value$$ }" ng-repeat="item in form.titleMap"><input type="radio" class="{{form.fieldHtmlClass}}" sf-changed="form" style="display: none;" ng-disabled="form.readonly" ng-model="$$value$$" ng-model-options="form.ngModelOptions" ng-value="item.value" name="{{form.key.slice(-1)[0]}}"> <span ng-bind-html="item.name"></span></label></div><div class="help-block" ng-show="form.description" ng-bind-html="form.description"></div></div>'),e.put("directives/decorators/bootstrap/radios-inline.html",'<div class="form-group schema-form-radios-inline {{form.htmlClass}}" ng-class="{\'has-error\': hasError(), \'has-success\': hasSuccess()}"><label class="control-label" ng-show="showTitle()">{{form.title}}</label><div><label class="radio-inline" ng-repeat="item in form.titleMap"><input type="radio" class="{{form.fieldHtmlClass}}" sf-changed="form" ng-disabled="form.readonly" ng-model="$$value$$" ng-value="item.value" name="{{form.key.slice(-1)[0]}}"> <span ng-bind-html="item.name"></span></label></div><div class="help-block" ng-show="(hasError() && errorMessage(schemaError())) || form.description" ng-bind-html="(hasError() && errorMessage(schemaError())) || form.description"></div></div>'),e.put("directives/decorators/bootstrap/radios.html",'<div class="form-group schema-form-radios {{form.htmlClass}}" ng-class="{\'has-error\': hasError(), \'has-success\': hasSuccess()}"><label class="control-label" ng-show="showTitle()">{{form.title}}</label><div class="radio" ng-repeat="item in form.titleMap"><label><input type="radio" class="{{form.fieldHtmlClass}}" sf-changed="form" ng-disabled="form.readonly" ng-model="$$value$$" ng-model-options="form.ngModelOptions" ng-value="item.value" name="{{form.key.slice(-1)[0]}}"> <span ng-bind-html="item.name"></span></label></div><div class="help-block" ng-show="(hasError() && errorMessage(schemaError())) || form.description" ng-bind-html="(hasError() && errorMessage(schemaError())) || form.description"></div></div>'),e.put("directives/decorators/bootstrap/readonly.html",'<div class="form-group"><label ng-show="showTitle()">{{form.title}}</label> <input ng-if="form.type !== \'textarea\'" type="text" disabled="" class="form-control" value="{{$$value$$}}"> <textarea ng-if="form.type === \'textarea\'" disabled="" class="form-control">{{$$value$$}}</textarea><div class="help-block" ng-show="form.description" ng-bind-html="form.description"></div></div>'),e.put("directives/decorators/bootstrap/section.html",'<div class="schema-form-section {{form.htmlClass}}" ng-if="!form.condition || evalExpr(form.condition,{ model: model, \'arrayIndex\': arrayIndex })"><sf-decorator ng-repeat="item in form.items" form="item"></sf-decorator></div>'),e.put("directives/decorators/bootstrap/select.html",'<div class="form-group {{form.htmlClass}} schema-form-select" ng-class="{\'has-error\': hasError(), \'has-success\': hasSuccess(), \'has-feedback\': form.feedback !== false}"><label class="control-label" ng-show="showTitle()">{{form.title}}</label><select ng-model="$$value$$" ng-model-options="form.ngModelOptions" ng-disabled="form.readonly" sf-changed="form" class="form-control {{form.fieldHtmlClass}}" schema-validate="form" ng-options="item.value as item.name for item in form.titleMap" name="{{form.key.slice(-1)[0]}}"></select><div class="help-block" ng-show="(hasError() && errorMessage(schemaError())) || form.description" ng-bind-html="(hasError() && errorMessage(schemaError())) || form.description"></div></div>'),e.put("directives/decorators/bootstrap/submit.html",'<div class="form-group schema-form-submit {{form.htmlClass}}"><input type="submit" class="btn {{ form.style || \'btn-primary\' }} {{form.fieldHtmlClass}}" value="{{form.title}}" ng-disabled="form.readonly" ng-if="form.type === \'submit\'"> <button class="btn {{ form.style || \'btn-default\' }}" type="button" ng-click="buttonClick($event,form)" ng-disabled="form.readonly" ng-if="form.type !== \'submit\'">{{form.title}}</button></div>'),e.put("directives/decorators/bootstrap/tabarray.html",'<div sf-array="form" ng-init="selected = { tab: 0 }" class="clearfix schema-form-tabarray schema-form-tabarray-{{form.tabType || \'left\'}} {{form.htmlClass}}"><div ng-if="!form.tabType || form.tabType !== \'right\'" ng-class="{\'col-xs-3\': !form.tabType || form.tabType === \'left\'}"><ul class="nav nav-tabs" ng-class="{ \'tabs-left\': !form.tabType || form.tabType === \'left\'}"><li ng-repeat="item in modelArray track by $index" ng-click="$event.preventDefault() || (selected.tab = $index)" ng-class="{active: selected.tab === $index}"><a href="#">{{evalExpr(form.title,{\'$index\':$index, value: item}) || $index}}</a></li><li ng-hide="form.readonly" ng-click="$event.preventDefault() || (selected.tab = appendToArray().length - 1)"><a href="#"><i class="glyphicon glyphicon-plus"></i> {{ form.add || \'Add\'}}</a></li></ul></div><div ng-class="{\'col-xs-9\': !form.tabType || form.tabType === \'left\' || form.tabType === \'right\'}"><div class="tab-content {{form.fieldHtmlClass}}"><div class="tab-pane clearfix" ng-repeat="item in modelArray track by $index" ng-show="selected.tab === $index" ng-class="{active: selected.tab === $index}"><sf-decorator ng-init="arrayIndex = $index" form="copyWithIndex($index)"></sf-decorator><button ng-hide="form.readonly" ng-click="selected.tab = deleteFromArray($index).length - 1" type="button" class="btn {{ form.style.remove || \'btn-default\' }} pull-right"><i class="glyphicon glyphicon-trash"></i> {{ form.remove || \'Remove\'}}</button></div></div></div><div ng-if="form.tabType === \'right\'" class="col-xs-3"><ul class="nav nav-tabs tabs-right"><li ng-repeat="item in modelArray track by $index" ng-click="$event.preventDefault() || (selected.tab = $index)" ng-class="{active: selected.tab === $index}"><a href="#">{{evalExpr(form.title,{\'$index\':$index, value: item}) || $index}}</a></li><li ng-hide="form.readonly" ng-click="$event.preventDefault() || appendToArray()"><a href="#"><i class="glyphicon glyphicon-plus"></i> {{ form.add || \'Add\'}}</a></li></ul></div></div>'),e.put("directives/decorators/bootstrap/tabs.html",'<div ng-init="selected = { tab: 0 }" class="schema-form-tabs {{form.htmlClass}}"><ul class="nav nav-tabs"><li ng-repeat="tab in form.tabs" ng-disabled="form.readonly" ng-click="$event.preventDefault() || (selected.tab = $index)" ng-class="{active: selected.tab === $index}"><a href="#">{{ tab.title }}</a></li></ul><div class="tab-content {{form.fieldHtmlClass}}"><div class="tab-pane" ng-disabled="form.readonly" ng-repeat="tab in form.tabs" ng-show="selected.tab === $index" ng-class="{active: selected.tab === $index}"><bootstrap-decorator ng-repeat="item in tab.items" form="item"></bootstrap-decorator></div></div></div>'),e.put("directives/decorators/bootstrap/textarea.html",'<div class="form-group has-feedback {{form.htmlClass}} schema-form-textarea" ng-class="{\'has-error\': hasError(), \'has-success\': hasSuccess()}"><label ng-show="showTitle()">{{form.title}}</label> <textarea class="form-control {{form.fieldHtmlClass}}" sf-changed="form" placeholder="{{form.placeholder}}" ng-disabled="form.readonly" ng-model="$$value$$" ng-model-options="form.ngModelOptions" schema-validate="form" name="{{form.key.slice(-1)[0]}}"></textarea> <span class="help-block">{{ (hasError() && errorMessage(schemaError())) || form.description}}</span></div>')}]),angular.module("schemaForm").config(["schemaFormDecoratorsProvider",function(e){var t="directives/decorators/bootstrap/";e.createDecorator("bootstrapDecorator",{textarea:t+"textarea.html",fieldset:t+"fieldset.html",array:t+"array.html",tabarray:t+"tabarray.html",tabs:t+"tabs.html",section:t+"section.html",conditional:t+"section.html",actions:t+"actions.html",select:t+"select.html",checkbox:t+"checkbox.html",checkboxes:t+"checkboxes.html",number:t+"default.html",password:t+"default.html",submit:t+"submit.html",button:t+"submit.html",radios:t+"radios.html","radios-inline":t+"radios-inline.html",radiobuttons:t+"radio-buttons.html",help:t+"help.html","default":t+"default.html"},[]),e.createDirectives({textarea:t+"textarea.html",select:t+"select.html",checkbox:t+"checkbox.html",checkboxes:t+"checkboxes.html",number:t+"default.html",submit:t+"submit.html",button:t+"submit.html",text:t+"default.html",date:t+"default.html",password:t+"default.html",datepicker:t+"datepicker.html",input:t+"default.html",radios:t+"radios.html","radios-inline":t+"radios-inline.html",radiobuttons:t+"radio-buttons.html"})}]).directive("sfFieldset",function(){return{transclude:!0,scope:!0,templateUrl:"directives/decorators/bootstrap/fieldset-trcl.html",link:function(e,t,s){e.title=e.$eval(s.title)}}});
 /*! angular-spectrum-colorpicker v1.3.4 */
 !function(a){"use strict";var b=a.module("angularSpectrumColorpicker",[]);!function(){b.directive("spectrumColorpicker",function(){return{restrict:"E",require:"ngModel",scope:{fallbackValue:"=",disabled:"=?",format:"=?",options:"=?",triggerId:"@?",onChange:"&?",onShow:"&?",onHide:"&?",onMove:"&?",onBeforeShow:"&?"},replace:!0,templateUrl:"directive.html",link:function(b,c,d,e){function f(a){var c=a;return c&&(c=a.toString(b.format)),c}function g(c){a.isFunction(b.onChange)&&b.onChange({color:c})}function h(c){var d=b.fallbackValue;c?d=f(c):a.isUndefined(b.fallbackValue)&&(d=c),e.$setViewValue(d),g(d)}var i=c.find("input"),j=function(a){b.$apply(function(){h(a)})},k=function(){return i.spectrum("toggle"),!1},l={color:e.$viewValue},m={};a.forEach({change:"onChange",move:"onMove",hide:"onHide",show:"onShow"},function(c,d){m[d]=function(d){return j(d),"change"!==c&&a.isFunction(b[c])?b[c]({color:f(d)}):void 0}}),a.isFunction(b.onBeforeShow)&&(m.beforeShow=function(a){return b.onBeforeShow({color:f(a)})});var n=a.extend({},l,b.options,m);b.triggerId&&a.element(document.body).on("click","#"+b.triggerId,k),e.$render=function(){i.spectrum("set",e.$viewValue||""),g(e.$viewValue)},n.color&&(i.spectrum("set",n.color||""),h(n.color)),i.spectrum(n),b.$on("$destroy",function(){b.triggerId&&a.element(document.body).off("click","#"+b.triggerId,k),i.spectrum("destroy")}),a.isDefined(n.disabled)&&(b.disabled=!!n.disabled),b.$watch("disabled",function(a){i.spectrum(a?"disable":"enable")})}}})}(),a.module("angularSpectrumColorpicker").run(["$templateCache",function(a){a.put("directive.html","<span><input class=input-small></span>")}])}(window.angular);
 /*
@@ -95560,989 +97254,6 @@ angular.module('BBAdmin.Directives').controller('CalController', function($scope
 }).call(this);
 
 (function() {
-  angular.module('BBMember').controller('editBookingModalForm', function($scope, $modalInstance, $log, booking) {
-    $scope.title = 'Booking Details';
-    booking.$get('edit_booking').then(function(booking_schema) {
-      $scope.form = booking_schema.form;
-      $scope.schema = booking_schema.schema;
-      return booking.getAnswersPromise().then(function(answers) {
-        var answer, _i, _len, _ref;
-        _ref = answers.answers;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          answer = _ref[_i];
-          booking["question" + answer.question_id] = answer.value;
-        }
-        return $scope.booking = booking;
-      });
-    });
-    $scope.submit = function(booking) {
-      return $scope.booking.$put('self', {}, booking).then(function(booking) {
-        $log.info("Booking update success");
-        return $modalInstance.close($scope.booking);
-      }, function(err) {
-        return $log.error("Booking update failure");
-      });
-    };
-    return $scope.cancel = function() {
-      return $modalInstance.dismiss('cancel');
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BB.Controllers').controller('MembersBookings', function($scope, $rootScope, $location, $filter, $q, $timeout, $modal, MemberBookingService, LoginService, BBModel) {
-    var doCancel, flushBookings, getBookings;
-    $scope.init = (function(_this) {
-      return function(options) {
-        _this.type = options.type;
-        return _this.limit = options.limit;
-      };
-    })(this);
-    $scope.$watch("members", (function(_this) {
-      return function(new_value, old_value) {
-        if ($scope.members) {
-          return getBookings();
-        }
-      };
-    })(this));
-    $scope.$watch("member", (function(_this) {
-      return function(new_value, old_value) {
-        if ($scope.member) {
-          return getBookings();
-        }
-      };
-    })(this));
-    $scope.$on("updateBookings", (function(_this) {
-      return function() {
-        flushBookings();
-        return getBookings();
-      };
-    })(this));
-    getBookings = (function(_this) {
-      return function() {
-        switch (_this.type) {
-          case 'upcoming':
-            return $scope.upcoming();
-          case 'historical':
-            return $scope.historical('years', -1);
-        }
-      };
-    })(this);
-    flushBookings = (function(_this) {
-      return function() {
-        var member, params;
-        switch (_this.type) {
-          case 'upcoming':
-            params = {
-              start_date: moment().format('YYYY-MM-DD')
-            };
-            member = $scope.member;
-            return MemberBookingService.flush(member, params);
-        }
-      };
-    })(this);
-    $scope.filter_bookings = function(booking) {
-      return booking.deleted === true;
-    };
-    doCancel = function(member, booking) {
-      return MemberBookingService.cancel(member, booking).then(function() {
-        if ($scope.bookings) {
-          $scope.bookings = $scope.bookings.filter(function(b) {
-            return b.id !== booking.id;
-          });
-        }
-        if ($scope.removeBooking) {
-          return $scope.removeBooking(booking);
-        }
-      }, function(err) {
-        return console.log('cancel error');
-      });
-    };
-    $scope.cancel = function(booking) {
-      var modalInstance;
-      modalInstance = $modal.open({
-        templateUrl: "deleteModal.html",
-        windowClass: "bbug",
-        controller: function($scope, $rootScope, $modalInstance, booking) {
-          $scope.controller = "ModalDelete";
-          $scope.booking = booking;
-          $scope.confirm_delete = function() {
-            return $modalInstance.close(booking);
-          };
-          return $scope.cancel = function() {
-            return $modalInstance.dismiss("cancel");
-          };
-        },
-        resolve: {
-          booking: function() {
-            return booking;
-          }
-        }
-      });
-      return modalInstance.result.then(function(booking) {
-        console.log("close booking", booking, $scope.member, $scope.members);
-        if ($scope.member) {
-          doCancel($scope.member, booking);
-        }
-        if ($scope.client) {
-          return doCancel($scope.client, booking);
-        } else if ($scope.members) {
-          return booking.$get('member').then(function(member) {
-            return doCancel(member, booking);
-          });
-        }
-      });
-    };
-    $scope.upcoming = (function(_this) {
-      return function() {
-        var member, members, params, promises;
-        $scope.notLoaded($scope);
-        params = {
-          start_date: moment().format('YYYY-MM-DD')
-        };
-        if (_this.limit) {
-          params.per_page = _this.limit;
-        }
-        if ($scope.members) {
-          members = $scope.members;
-        } else if ($scope.member) {
-          members = [$scope.member];
-        }
-        promises = (function() {
-          var _i, _len, _results;
-          _results = [];
-          for (_i = 0, _len = members.length; _i < _len; _i++) {
-            member = members[_i];
-            _results.push(MemberBookingService.query(member, params));
-          }
-          return _results;
-        })();
-        return $q.all(promises).then(function(bookings) {
-          $scope.setLoaded($scope);
-          return $scope.bookings = [].concat.apply([], bookings);
-        }, function(err) {
-          return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
-        });
-      };
-    })(this);
-    $scope.historical = (function(_this) {
-      return function(type, num) {
-        var date, member, members, params, promises;
-        $scope.notLoaded($scope);
-        date = moment().add(num, type);
-        params = {
-          start_date: date.format('YYYY-MM-DD'),
-          end_date: moment().format('YYYY-MM-DD')
-        };
-        if (_this.limit) {
-          params.per_page = _this.limit;
-        }
-        if ($scope.members) {
-          members = $scope.members;
-        } else if ($scope.member) {
-          members = [$scope.member];
-        }
-        promises = (function() {
-          var _i, _len, _results;
-          _results = [];
-          for (_i = 0, _len = members.length; _i < _len; _i++) {
-            member = members[_i];
-            _results.push(MemberBookingService.query(member, params));
-          }
-          return _results;
-        })();
-        return $q.all(promises).then(function(bookings) {
-          $scope.setLoaded($scope);
-          return $scope.bookings = [].concat.apply([], bookings);
-        }, function(err) {
-          return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
-        });
-      };
-    })(this);
-    $scope.move = function(booking, route, options) {
-      if (options == null) {
-        options = {};
-      }
-      return booking.getMemberPromise().then(function(member) {
-        $scope.setClient(member);
-        $scope.notLoaded($scope);
-        $scope.initWidget({
-          company_id: booking.company_id,
-          no_route: true
-        });
-        $scope.clearPage();
-        return $timeout((function(_this) {
-          return function() {
-            var new_item;
-            $scope.bb.moving_booking = booking;
-            new_item = new BBModel.BasketItem(booking, $scope.bb);
-            new_item.setSrcBooking(booking);
-            new_item.ready = false;
-            if (booking.$has('resource') && options.use_resource) {
-              return booking.$get('resource').then(function(resource) {
-                new_item.setResource(new BBModel.Resource(resource));
-                if (booking.$has('service')) {
-                  return booking.$get('service').then(function(service) {
-                    new_item.setService(new BBModel.Service(service));
-                    $scope.setBasketItem(new_item);
-                    $scope.setLoaded($scope);
-                    return $scope.decideNextPage(route);
-                  }, function(err) {
-                    return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
-                  });
-                } else {
-                  $scope.setBasketItem(new_item);
-                  $scope.setLoaded($scope);
-                  return $scope.decideNextPage(route);
-                }
-              });
-            } else {
-              if (booking.$has('service')) {
-                return booking.$get('service').then(function(service) {
-                  new_item.setService(new BBModel.Service(service));
-                  $scope.setBasketItem(new_item);
-                  $scope.setLoaded($scope);
-                  return $scope.decideNextPage(route);
-                }, function(err) {
-                  return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
-                });
-              } else {
-                $scope.setBasketItem(new_item);
-                $scope.setLoaded($scope);
-                return $scope.decideNextPage(route);
-              }
-            }
-          };
-        })(this));
-      });
-    };
-    return $scope.isMovable = function(booking) {
-      if (booking.min_cancellation_time) {
-        return moment().isBefore(booking.min_cancellation_time);
-      }
-      return booking.datetime.isAfter(moment());
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBMember').directive('memberBookingsTable', function($modal, $log, $rootScope, MemberLoginService, MemberBookingService, $compile, $templateCache) {
-    var controller, link;
-    controller = function($scope, $modal) {
-      var getBookings;
-      $scope.loading = true;
-      $scope.fields || ($scope.fields = ['describe', 'full_describe']);
-      $scope.$watch('member', function(member) {
-        if (member != null) {
-          return getBookings($scope, member);
-        }
-      });
-      $scope.edit = function(id) {
-        var booking;
-        booking = _.find($scope.booking_models, function(b) {
-          return b.id === id;
-        });
-        return $modal.open({
-          templateUrl: 'edit_booking_modal_form.html',
-          controller: 'editBookingModalForm',
-          resolve: {
-            booking: function() {
-              return booking;
-            }
-          }
-        });
-      };
-      return getBookings = function($scope, member) {
-        var params;
-        params = {
-          start_date: moment().format('YYYY-MM-DD')
-        };
-        return MemberBookingService.query(member, params).then(function(bookings) {
-          $scope.booking_models = bookings;
-          $scope.bookings = _.map(bookings, function(booking) {
-            return _.pick(booking, 'id', 'full_describe', 'describe');
-          });
-          return $scope.loading = false;
-        }, function(err) {
-          $log.error(err.data);
-          return $scope.loading = false;
-        });
-      };
-    };
-    link = function(scope, element, attrs) {
-      var _base, _base1;
-      $rootScope.bb || ($rootScope.bb = {});
-      (_base = $rootScope.bb).api_url || (_base.api_url = scope.apiUrl);
-      return (_base1 = $rootScope.bb).api_url || (_base1.api_url = "http://www.bookingbug.com");
-    };
-    return {
-      link: link,
-      controller: controller,
-      templateUrl: 'member_bookings_table.html',
-      scope: {
-        apiUrl: '@',
-        fields: '=?',
-        member: '='
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBMember').directive('memberForm', function($modal, $log, $rootScope, MemberLoginService, MemberBookingService) {
-    var controller, link;
-    controller = function($scope) {
-      $scope.loading = true;
-      $scope.$watch('member', function(member) {
-        if (member != null) {
-          return member.$get('edit_member').then(function(member_schema) {
-            $scope.form = member_schema.form;
-            $scope.schema = member_schema.schema;
-            return $scope.loading = false;
-          });
-        }
-      });
-      return $scope.submit = function(form) {
-        $scope.loading = true;
-        return $scope.member.$put('self', {}, form).then(function(member) {
-          $log.info("Successfully updated member");
-          return $scope.loading = false;
-        }, function(err) {
-          $log.error("Failed to update member - " + err);
-          return $scope.loading = false;
-        });
-      };
-    };
-    link = function(scope, element, attrs) {
-      var _base, _base1;
-      $rootScope.bb || ($rootScope.bb = {});
-      (_base = $rootScope.bb).api_url || (_base.api_url = attrs.apiUrl);
-      return (_base1 = $rootScope.bb).api_url || (_base1.api_url = "http://www.bookingbug.com");
-    };
-    return {
-      link: link,
-      controller: controller,
-      template: "<div ng-show=\"loading\"><img src='/BB_wait.gif' class=\"loader\"></div>\n<form sf-schema=\"schema\" sf-form=\"form\" sf-model=\"member\"\n  ng-submit=\"submit(member)\" ng-hide=\"loading\"></form>"
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBMember').directive('loginMember', function($modal, $log, $rootScope, MemberLoginService, $templateCache, $q) {
-    var link, loginMemberController, pickCompanyController;
-    loginMemberController = function($scope, $modalInstance, company_id) {
-      $scope.title = 'Login';
-      $scope.schema = {
-        type: 'object',
-        properties: {
-          email: {
-            type: 'string',
-            title: 'Email'
-          },
-          password: {
-            type: 'string',
-            title: 'Password'
-          }
-        }
-      };
-      $scope.form = [
-        {
-          key: 'email',
-          type: 'email',
-          feedback: false,
-          autofocus: true
-        }, {
-          key: 'password',
-          type: 'password',
-          feedback: false
-        }
-      ];
-      $scope.login_form = {};
-      $scope.submit = function(form) {
-        var options;
-        options = {
-          company_id: company_id
-        };
-        return MemberLoginService.login(form, options).then(function(member) {
-          member.email = form.email;
-          member.password = form.password;
-          return $modalInstance.close(member);
-        }, function(err) {
-          return $modalInstance.dismiss(err);
-        });
-      };
-      return $scope.cancel = function() {
-        return $modalInstance.dismiss('cancel');
-      };
-    };
-    pickCompanyController = function($scope, $modalInstance, companies) {
-      var c;
-      $scope.title = 'Pick Company';
-      $scope.schema = {
-        type: 'object',
-        properties: {
-          company_id: {
-            type: 'integer',
-            title: 'Company'
-          }
-        }
-      };
-      $scope.schema.properties.company_id["enum"] = (function() {
-        var _i, _len, _results;
-        _results = [];
-        for (_i = 0, _len = companies.length; _i < _len; _i++) {
-          c = companies[_i];
-          _results.push(c.id);
-        }
-        return _results;
-      })();
-      $scope.form = [
-        {
-          key: 'company_id',
-          type: 'select',
-          titleMap: (function() {
-            var _i, _len, _results;
-            _results = [];
-            for (_i = 0, _len = companies.length; _i < _len; _i++) {
-              c = companies[_i];
-              _results.push({
-                value: c.id,
-                name: c.name
-              });
-            }
-            return _results;
-          })(),
-          autofocus: true
-        }
-      ];
-      $scope.pick_company_form = {};
-      $scope.submit = function(form) {
-        return $modalInstance.close(form.company_id);
-      };
-      return $scope.cancel = function() {
-        return $modalInstance.dismiss('cancel');
-      };
-    };
-    link = function(scope, element, attrs) {
-      var loginModal, pickCompanyModal, tryLogin, _base, _base1;
-      $rootScope.bb || ($rootScope.bb = {});
-      (_base = $rootScope.bb).api_url || (_base.api_url = scope.apiUrl);
-      (_base1 = $rootScope.bb).api_url || (_base1.api_url = "http://www.bookingbug.com");
-      loginModal = function() {
-        var modalInstance;
-        modalInstance = $modal.open({
-          templateUrl: 'login_modal_form.html',
-          controller: loginMemberController,
-          resolve: {
-            company_id: function() {
-              return scope.companyId;
-            }
-          }
-        });
-        return modalInstance.result.then(function(result) {
-          scope.memberEmail = result.email;
-          scope.memberPassword = result.password;
-          if (result.$has('members')) {
-            return result.$get('members').then(function(members) {
-              var m;
-              scope.members = members;
-              return $q.all((function() {
-                var _i, _len, _results;
-                _results = [];
-                for (_i = 0, _len = members.length; _i < _len; _i++) {
-                  m = members[_i];
-                  _results.push(m.$get('company'));
-                }
-                return _results;
-              })()).then(function(companies) {
-                return pickCompanyModal(companies);
-              });
-            });
-          } else {
-            return scope.member = result;
-          }
-        }, function() {
-          return loginModal();
-        });
-      };
-      pickCompanyModal = function(companies) {
-        var modalInstance;
-        modalInstance = $modal.open({
-          templateUrl: 'pick_company_modal_form.html',
-          controller: pickCompanyController,
-          resolve: {
-            companies: function() {
-              return companies;
-            }
-          }
-        });
-        return modalInstance.result.then(function(company_id) {
-          scope.companyId = company_id;
-          return tryLogin();
-        }, function() {
-          return pickCompanyModal();
-        });
-      };
-      tryLogin = function() {
-        var login_form, options;
-        login_form = {
-          email: scope.memberEmail,
-          password: scope.memberPassword
-        };
-        options = {
-          company_id: scope.companyId
-        };
-        return MemberLoginService.login(login_form, options).then(function(result) {
-          if (result.$has('members')) {
-            return result.$get('members').then(function(members) {
-              var m;
-              scope.members = members;
-              return $q.all((function() {
-                var _i, _len, _results;
-                _results = [];
-                for (_i = 0, _len = members.length; _i < _len; _i++) {
-                  m = members[_i];
-                  _results.push(m.$get('company'));
-                }
-                return _results;
-              })()).then(function(companies) {
-                return pickCompanyModal(companies);
-              });
-            });
-          } else {
-            return scope.member = result;
-          }
-        }, function(err) {
-          return loginModal();
-        });
-      };
-      if (scope.memberEmail && scope.memberPassword) {
-        return tryLogin();
-      } else {
-        return loginModal();
-      }
-    };
-    return {
-      link: link,
-      scope: {
-        memberEmail: '@',
-        memberPassword: '@',
-        companyId: '@',
-        apiUrl: '@',
-        member: '='
-      },
-      transclude: true,
-      template: "<div ng-hide='member'><img src='/BB_wait.gif' class=\"loader\"></div>\n<div ng-show='member' ng-transclude></div>"
-    };
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  angular.module('BB.Models').factory("Member.BookingModel", function($q, $window, BBModel, BaseModel, $bbug) {
-    var Member_Booking;
-    return Member_Booking = (function(_super) {
-      __extends(Member_Booking, _super);
-
-      function Member_Booking(data) {
-        this.getMemberPromise = __bind(this.getMemberPromise, this);
-        Member_Booking.__super__.constructor.call(this, data);
-        this.datetime = moment.parseZone(this.datetime);
-        if (this.time_zone) {
-          this.datetime.tz(this.time_zone);
-        }
-        this.end_datetime = moment.parseZone(this.end_datetime);
-        if (this.time_zone) {
-          this.end_datetime.tz(this.time_zone);
-        }
-      }
-
-      Member_Booking.prototype.getGroup = function() {
-        if (this.group) {
-          return this.group;
-        }
-        if (this._data.$has('event_groups')) {
-          return this._data.$get('event_groups').then((function(_this) {
-            return function(group) {
-              _this.group = group;
-              return _this.group;
-            };
-          })(this));
-        }
-      };
-
-      Member_Booking.prototype.getColour = function() {
-        if (this.getGroup()) {
-          return this.getGroup().colour;
-        } else {
-          return "#FFFFFF";
-        }
-      };
-
-      Member_Booking.prototype.getCompany = function() {
-        if (this.company) {
-          return this.company;
-        }
-        if (this.$has('company')) {
-          return this._data.$get('company').then((function(_this) {
-            return function(company) {
-              _this.company = new BBModel.Company(company);
-              return _this.company;
-            };
-          })(this));
-        }
-      };
-
-      Member_Booking.prototype.getAnswers = function() {
-        var defer;
-        defer = $q.defer();
-        if (this.answers) {
-          defer.resolve(this.answers);
-        }
-        if (this._data.$has('answers')) {
-          this._data.$get('answers').then((function(_this) {
-            return function(answers) {
-              var a;
-              _this.answers = (function() {
-                var _i, _len, _results;
-                _results = [];
-                for (_i = 0, _len = answers.length; _i < _len; _i++) {
-                  a = answers[_i];
-                  _results.push(new BBModel.Answer(a));
-                }
-                return _results;
-              })();
-              return defer.resolve(_this.answers);
-            };
-          })(this));
-        } else {
-          defer.resolve([]);
-        }
-        return defer.promise;
-      };
-
-      Member_Booking.prototype.printed_price = function() {
-        if (parseFloat(this.price) % 1 === 0) {
-          return "£" + this.price;
-        }
-        return $window.sprintf("£%.2f", parseFloat(this.price));
-      };
-
-      Member_Booking.prototype.getMemberPromise = function() {
-        var defer;
-        defer = $q.defer();
-        if (this.member) {
-          defer.resolve(this.member);
-        }
-        if (this._data.$has('member')) {
-          this._data.$get('member').then((function(_this) {
-            return function(member) {
-              _this.member = new BBModel.Member.Member(member);
-              return defer.resolve(_this.member);
-            };
-          })(this));
-        }
-        return defer.promise;
-      };
-
-      return Member_Booking;
-
-    })(BaseModel);
-  });
-
-}).call(this);
-
-(function() {
-  var __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  angular.module('BB.Models').factory("Member.MemberModel", function($q, BBModel, BaseModel, ClientModel) {
-    var Member_Member;
-    return Member_Member = (function(_super) {
-      __extends(Member_Member, _super);
-
-      function Member_Member() {
-        return Member_Member.__super__.constructor.apply(this, arguments);
-      }
-
-      return Member_Member;
-
-    })(ClientModel);
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  var __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  angular.module('BB.Models').factory("Member.PrepaidBookingModel", function($q, BBModel, BaseModel) {
-    var Member_PrePaidBooking;
-    return Member_PrePaidBooking = (function(_super) {
-      __extends(Member_PrePaidBooking, _super);
-
-      function Member_PrePaidBooking(data) {
-        Member_PrePaidBooking.__super__.constructor.call(this, data);
-      }
-
-      Member_PrePaidBooking.prototype.checkValidity = function(event) {
-        if (this.service_id && event.service_id && this.service_id !== event.service_id) {
-          return false;
-        } else if (this.resource_id && event.resource_id && this.resource_id !== event.resource_id) {
-          return false;
-        } else if (this.person_id && event.person_id && this.person_id !== event.person_id) {
-          return false;
-        } else {
-          return true;
-        }
-      };
-
-      return Member_PrePaidBooking;
-
-    })(BaseModel);
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  angular.module('BB.Services').factory("MemberBookingService", function($q, $window, SpaceCollections, $rootScope, MemberService, BBModel) {
-    return {
-      query: function(member, params) {
-        var deferred;
-        deferred = $q.defer();
-        if (!member.$has('bookings')) {
-          deferred.reject("member does not have bookings");
-        } else {
-          member.$get('bookings', params).then((function(_this) {
-            return function(bookings) {
-              var booking;
-              if ($window.typeIsArray(bookings)) {
-                bookings = (function() {
-                  var _i, _len, _results;
-                  _results = [];
-                  for (_i = 0, _len = bookings.length; _i < _len; _i++) {
-                    booking = bookings[_i];
-                    _results.push(new BBModel.Member.Booking(booking));
-                  }
-                  return _results;
-                })();
-                return deferred.resolve(bookings);
-              } else {
-                return bookings.$get('bookings', params).then(function(bookings) {
-                  bookings = (function() {
-                    var _i, _len, _results;
-                    _results = [];
-                    for (_i = 0, _len = bookings.length; _i < _len; _i++) {
-                      booking = bookings[_i];
-                      _results.push(new BBModel.Member.Booking(booking));
-                    }
-                    return _results;
-                  })();
-                  return deferred.resolve(bookings);
-                }, function(err) {
-                  return deferred.reject(err);
-                });
-              }
-            };
-          })(this), function(err) {
-            return deferred.reject(err);
-          });
-        }
-        return deferred.promise;
-      },
-      cancel: function(member, booking) {
-        var deferred;
-        deferred = $q.defer();
-        booking.$del('self').then((function(_this) {
-          return function(b) {
-            booking.deleted = true;
-            b = new BBModel.Member.Booking(b);
-            MemberService.refresh(member).then(function(member) {
-              return member = member;
-            }, function(err) {
-              return console.log(err);
-            });
-            return deferred.resolve(b);
-          };
-        })(this), (function(_this) {
-          return function(err) {
-            return deferred.reject(err);
-          };
-        })(this));
-        return deferred.promise;
-      },
-      update: function(booking) {
-        var deferred;
-        deferred = $q.defer();
-        $rootScope.member.flushBookings();
-        booking.$put('self', {}, booking).then((function(_this) {
-          return function(booking) {
-            var book;
-            book = new BBModel.Member.Booking(booking);
-            SpaceCollections.checkItems(book);
-            return deferred.resolve(book);
-          };
-        })(this), (function(_this) {
-          return function(err) {
-            _.each(booking, function(value, key, booking) {
-              if (key !== 'data' && key !== 'self') {
-                return booking[key] = booking.data[key];
-              }
-            });
-            return deferred.reject(err, new BBModel.Member.Booking(booking));
-          };
-        })(this));
-        return deferred.promise;
-      },
-      flush: function(member, params) {
-        if (member.$has('bookings')) {
-          return member.$flush('bookings', params);
-        }
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBMember.Services').factory("MemberLoginService", function($q, halClient, $rootScope, BBModel) {
-    return {
-      login: function(form, options) {
-        var defer, url;
-        defer = $q.defer();
-        url = "" + $rootScope.bb.api_url + "/api/v1/login";
-        if (options.company_id != null) {
-          url = "" + url + "/member/" + options.company_id;
-        }
-        halClient.$post(url, options, form).then(function(login) {
-          if (login.$has('member')) {
-            return login.$get('member').then(function(member) {
-              member = new BBModel.Member.Member(member);
-              return defer.resolve(member);
-            });
-          } else if (login.$has('members')) {
-            return defer.resolve(login);
-          } else {
-            return defer.reject("No member account for login");
-          }
-        }, (function(_this) {
-          return function(err) {
-            var login;
-            if (err.status === 400) {
-              login = halClient.$parse(err.data);
-              if (login.$has('members')) {
-                return defer.resolve(login);
-              } else {
-                return defer.reject(err);
-              }
-            } else {
-              return defer.reject(err);
-            }
-          };
-        })(this));
-        return defer.promise;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BB.Services').factory("MemberService", function($q, halClient, $rootScope, BBModel) {
-    return {
-      refresh: function(member) {
-        var deferred;
-        deferred = $q.defer();
-        member.$flush('self');
-        member.$get('self').then((function(_this) {
-          return function(member) {
-            member = new BBModel.Member.Member(member);
-            return deferred.resolve(member);
-          };
-        })(this), (function(_this) {
-          return function(err) {
-            return deferred.reject(err);
-          };
-        })(this));
-        return deferred.promise;
-      },
-      current: function() {
-        var callback, deferred;
-        deferred = $q.defer();
-        callback = function() {
-          return deferred.resolve($rootScope.member);
-        };
-        setTimeout(callback, 200);
-        return deferred.promise;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BB.Services').factory("MemberPrePaidBookingService", function($q, $window, SpaceCollections, $rootScope, MemberService) {
-    return {
-      query: function(member, params) {
-        var deferred;
-        deferred = $q.defer();
-        if (!member.$has('pre_paid_bookings')) {
-          deferred.reject("member does not have pre paid bookings");
-        } else {
-          member.$get('pre_paid_bookings', params).then((function(_this) {
-            return function(bookings) {
-              var booking;
-              if ($window.typeIsArray(bookings)) {
-                bookings = (function() {
-                  var _i, _len, _results;
-                  _results = [];
-                  for (_i = 0, _len = bookings.length; _i < _len; _i++) {
-                    booking = bookings[_i];
-                    _results.push(new BBModel.Member.PrePaidBooking(booking));
-                  }
-                  return _results;
-                })();
-                return deferred.resolve(bookings);
-              } else {
-                return bookings.$get('pre_paid_bookings', params).then(function(bookings) {
-                  bookings = (function() {
-                    var _i, _len, _results;
-                    _results = [];
-                    for (_i = 0, _len = bookings.length; _i < _len; _i++) {
-                      booking = bookings[_i];
-                      _results.push(new BBModel.Member.PrePaidBooking(booking));
-                    }
-                    return _results;
-                  })();
-                  return deferred.resolve(bookings);
-                });
-              }
-            };
-          })(this), (function(_this) {
-            return function(err) {
-              return deferred.reject(err);
-            };
-          })(this));
-        }
-        return deferred.promise;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -105553,6 +106264,9 @@ angular.module('BBAdmin.Directives').controller('CalController', function($scope
       }
 
       BasketItem.prototype.setDefaults = function(defaults) {
+        if (defaults.settings) {
+          this.settings = defaults.settings;
+        }
         if (defaults.company) {
           this.setCompany(defaults.company);
         }
@@ -110957,6 +111671,989 @@ angular.module('BBAdmin.Directives').controller('CalController', function($scope
           }
           return _results;
         }
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBMember').controller('editBookingModalForm', function($scope, $modalInstance, $log, booking) {
+    $scope.title = 'Booking Details';
+    booking.$get('edit_booking').then(function(booking_schema) {
+      $scope.form = booking_schema.form;
+      $scope.schema = booking_schema.schema;
+      return booking.getAnswersPromise().then(function(answers) {
+        var answer, _i, _len, _ref;
+        _ref = answers.answers;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          answer = _ref[_i];
+          booking["question" + answer.question_id] = answer.value;
+        }
+        return $scope.booking = booking;
+      });
+    });
+    $scope.submit = function(booking) {
+      return $scope.booking.$put('self', {}, booking).then(function(booking) {
+        $log.info("Booking update success");
+        return $modalInstance.close($scope.booking);
+      }, function(err) {
+        return $log.error("Booking update failure");
+      });
+    };
+    return $scope.cancel = function() {
+      return $modalInstance.dismiss('cancel');
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BB.Controllers').controller('MembersBookings', function($scope, $rootScope, $location, $filter, $q, $timeout, $modal, MemberBookingService, LoginService, BBModel) {
+    var doCancel, flushBookings, getBookings;
+    $scope.init = (function(_this) {
+      return function(options) {
+        _this.type = options.type;
+        return _this.limit = options.limit;
+      };
+    })(this);
+    $scope.$watch("members", (function(_this) {
+      return function(new_value, old_value) {
+        if ($scope.members) {
+          return getBookings();
+        }
+      };
+    })(this));
+    $scope.$watch("member", (function(_this) {
+      return function(new_value, old_value) {
+        if ($scope.member) {
+          return getBookings();
+        }
+      };
+    })(this));
+    $scope.$on("updateBookings", (function(_this) {
+      return function() {
+        flushBookings();
+        return getBookings();
+      };
+    })(this));
+    getBookings = (function(_this) {
+      return function() {
+        switch (_this.type) {
+          case 'upcoming':
+            return $scope.upcoming();
+          case 'historical':
+            return $scope.historical('years', -1);
+        }
+      };
+    })(this);
+    flushBookings = (function(_this) {
+      return function() {
+        var member, params;
+        switch (_this.type) {
+          case 'upcoming':
+            params = {
+              start_date: moment().format('YYYY-MM-DD')
+            };
+            member = $scope.member;
+            return MemberBookingService.flush(member, params);
+        }
+      };
+    })(this);
+    $scope.filter_bookings = function(booking) {
+      return booking.deleted === true;
+    };
+    doCancel = function(member, booking) {
+      return MemberBookingService.cancel(member, booking).then(function() {
+        if ($scope.bookings) {
+          $scope.bookings = $scope.bookings.filter(function(b) {
+            return b.id !== booking.id;
+          });
+        }
+        if ($scope.removeBooking) {
+          return $scope.removeBooking(booking);
+        }
+      }, function(err) {
+        return console.log('cancel error');
+      });
+    };
+    $scope.cancel = function(booking) {
+      var modalInstance;
+      modalInstance = $modal.open({
+        templateUrl: "deleteModal.html",
+        windowClass: "bbug",
+        controller: function($scope, $rootScope, $modalInstance, booking) {
+          $scope.controller = "ModalDelete";
+          $scope.booking = booking;
+          $scope.confirm_delete = function() {
+            return $modalInstance.close(booking);
+          };
+          return $scope.cancel = function() {
+            return $modalInstance.dismiss("cancel");
+          };
+        },
+        resolve: {
+          booking: function() {
+            return booking;
+          }
+        }
+      });
+      return modalInstance.result.then(function(booking) {
+        console.log("close booking", booking, $scope.member, $scope.members);
+        if ($scope.member) {
+          doCancel($scope.member, booking);
+        }
+        if ($scope.client) {
+          return doCancel($scope.client, booking);
+        } else if ($scope.members) {
+          return booking.$get('member').then(function(member) {
+            return doCancel(member, booking);
+          });
+        }
+      });
+    };
+    $scope.upcoming = (function(_this) {
+      return function() {
+        var member, members, params, promises;
+        $scope.notLoaded($scope);
+        params = {
+          start_date: moment().format('YYYY-MM-DD')
+        };
+        if (_this.limit) {
+          params.per_page = _this.limit;
+        }
+        if ($scope.members) {
+          members = $scope.members;
+        } else if ($scope.member) {
+          members = [$scope.member];
+        }
+        promises = (function() {
+          var _i, _len, _results;
+          _results = [];
+          for (_i = 0, _len = members.length; _i < _len; _i++) {
+            member = members[_i];
+            _results.push(MemberBookingService.query(member, params));
+          }
+          return _results;
+        })();
+        return $q.all(promises).then(function(bookings) {
+          $scope.setLoaded($scope);
+          return $scope.bookings = [].concat.apply([], bookings);
+        }, function(err) {
+          return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
+        });
+      };
+    })(this);
+    $scope.historical = (function(_this) {
+      return function(type, num) {
+        var date, member, members, params, promises;
+        $scope.notLoaded($scope);
+        date = moment().add(num, type);
+        params = {
+          start_date: date.format('YYYY-MM-DD'),
+          end_date: moment().format('YYYY-MM-DD')
+        };
+        if (_this.limit) {
+          params.per_page = _this.limit;
+        }
+        if ($scope.members) {
+          members = $scope.members;
+        } else if ($scope.member) {
+          members = [$scope.member];
+        }
+        promises = (function() {
+          var _i, _len, _results;
+          _results = [];
+          for (_i = 0, _len = members.length; _i < _len; _i++) {
+            member = members[_i];
+            _results.push(MemberBookingService.query(member, params));
+          }
+          return _results;
+        })();
+        return $q.all(promises).then(function(bookings) {
+          $scope.setLoaded($scope);
+          return $scope.bookings = [].concat.apply([], bookings);
+        }, function(err) {
+          return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
+        });
+      };
+    })(this);
+    $scope.move = function(booking, route, options) {
+      if (options == null) {
+        options = {};
+      }
+      return booking.getMemberPromise().then(function(member) {
+        $scope.setClient(member);
+        $scope.notLoaded($scope);
+        $scope.initWidget({
+          company_id: booking.company_id,
+          no_route: true
+        });
+        $scope.clearPage();
+        return $timeout((function(_this) {
+          return function() {
+            var new_item;
+            $scope.bb.moving_booking = booking;
+            new_item = new BBModel.BasketItem(booking, $scope.bb);
+            new_item.setSrcBooking(booking);
+            new_item.ready = false;
+            if (booking.$has('resource') && options.use_resource) {
+              return booking.$get('resource').then(function(resource) {
+                new_item.setResource(new BBModel.Resource(resource));
+                if (booking.$has('service')) {
+                  return booking.$get('service').then(function(service) {
+                    new_item.setService(new BBModel.Service(service));
+                    $scope.setBasketItem(new_item);
+                    $scope.setLoaded($scope);
+                    return $scope.decideNextPage(route);
+                  }, function(err) {
+                    return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
+                  });
+                } else {
+                  $scope.setBasketItem(new_item);
+                  $scope.setLoaded($scope);
+                  return $scope.decideNextPage(route);
+                }
+              });
+            } else {
+              if (booking.$has('service')) {
+                return booking.$get('service').then(function(service) {
+                  new_item.setService(new BBModel.Service(service));
+                  $scope.setBasketItem(new_item);
+                  $scope.setLoaded($scope);
+                  return $scope.decideNextPage(route);
+                }, function(err) {
+                  return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
+                });
+              } else {
+                $scope.setBasketItem(new_item);
+                $scope.setLoaded($scope);
+                return $scope.decideNextPage(route);
+              }
+            }
+          };
+        })(this));
+      });
+    };
+    return $scope.isMovable = function(booking) {
+      if (booking.min_cancellation_time) {
+        return moment().isBefore(booking.min_cancellation_time);
+      }
+      return booking.datetime.isAfter(moment());
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBMember').directive('memberBookingsTable', function($modal, $log, $rootScope, MemberLoginService, MemberBookingService, $compile, $templateCache) {
+    var controller, link;
+    controller = function($scope, $modal) {
+      var getBookings;
+      $scope.loading = true;
+      $scope.fields || ($scope.fields = ['describe', 'full_describe']);
+      $scope.$watch('member', function(member) {
+        if (member != null) {
+          return getBookings($scope, member);
+        }
+      });
+      $scope.edit = function(id) {
+        var booking;
+        booking = _.find($scope.booking_models, function(b) {
+          return b.id === id;
+        });
+        return $modal.open({
+          templateUrl: 'edit_booking_modal_form.html',
+          controller: 'editBookingModalForm',
+          resolve: {
+            booking: function() {
+              return booking;
+            }
+          }
+        });
+      };
+      return getBookings = function($scope, member) {
+        var params;
+        params = {
+          start_date: moment().format('YYYY-MM-DD')
+        };
+        return MemberBookingService.query(member, params).then(function(bookings) {
+          $scope.booking_models = bookings;
+          $scope.bookings = _.map(bookings, function(booking) {
+            return _.pick(booking, 'id', 'full_describe', 'describe');
+          });
+          return $scope.loading = false;
+        }, function(err) {
+          $log.error(err.data);
+          return $scope.loading = false;
+        });
+      };
+    };
+    link = function(scope, element, attrs) {
+      var _base, _base1;
+      $rootScope.bb || ($rootScope.bb = {});
+      (_base = $rootScope.bb).api_url || (_base.api_url = scope.apiUrl);
+      return (_base1 = $rootScope.bb).api_url || (_base1.api_url = "http://www.bookingbug.com");
+    };
+    return {
+      link: link,
+      controller: controller,
+      templateUrl: 'member_bookings_table.html',
+      scope: {
+        apiUrl: '@',
+        fields: '=?',
+        member: '='
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBMember').directive('memberForm', function($modal, $log, $rootScope, MemberLoginService, MemberBookingService) {
+    var controller, link;
+    controller = function($scope) {
+      $scope.loading = true;
+      $scope.$watch('member', function(member) {
+        if (member != null) {
+          return member.$get('edit_member').then(function(member_schema) {
+            $scope.form = member_schema.form;
+            $scope.schema = member_schema.schema;
+            return $scope.loading = false;
+          });
+        }
+      });
+      return $scope.submit = function(form) {
+        $scope.loading = true;
+        return $scope.member.$put('self', {}, form).then(function(member) {
+          $log.info("Successfully updated member");
+          return $scope.loading = false;
+        }, function(err) {
+          $log.error("Failed to update member - " + err);
+          return $scope.loading = false;
+        });
+      };
+    };
+    link = function(scope, element, attrs) {
+      var _base, _base1;
+      $rootScope.bb || ($rootScope.bb = {});
+      (_base = $rootScope.bb).api_url || (_base.api_url = attrs.apiUrl);
+      return (_base1 = $rootScope.bb).api_url || (_base1.api_url = "http://www.bookingbug.com");
+    };
+    return {
+      link: link,
+      controller: controller,
+      template: "<div ng-show=\"loading\"><img src='/BB_wait.gif' class=\"loader\"></div>\n<form sf-schema=\"schema\" sf-form=\"form\" sf-model=\"member\"\n  ng-submit=\"submit(member)\" ng-hide=\"loading\"></form>"
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBMember').directive('loginMember', function($modal, $log, $rootScope, MemberLoginService, $templateCache, $q) {
+    var link, loginMemberController, pickCompanyController;
+    loginMemberController = function($scope, $modalInstance, company_id) {
+      $scope.title = 'Login';
+      $scope.schema = {
+        type: 'object',
+        properties: {
+          email: {
+            type: 'string',
+            title: 'Email'
+          },
+          password: {
+            type: 'string',
+            title: 'Password'
+          }
+        }
+      };
+      $scope.form = [
+        {
+          key: 'email',
+          type: 'email',
+          feedback: false,
+          autofocus: true
+        }, {
+          key: 'password',
+          type: 'password',
+          feedback: false
+        }
+      ];
+      $scope.login_form = {};
+      $scope.submit = function(form) {
+        var options;
+        options = {
+          company_id: company_id
+        };
+        return MemberLoginService.login(form, options).then(function(member) {
+          member.email = form.email;
+          member.password = form.password;
+          return $modalInstance.close(member);
+        }, function(err) {
+          return $modalInstance.dismiss(err);
+        });
+      };
+      return $scope.cancel = function() {
+        return $modalInstance.dismiss('cancel');
+      };
+    };
+    pickCompanyController = function($scope, $modalInstance, companies) {
+      var c;
+      $scope.title = 'Pick Company';
+      $scope.schema = {
+        type: 'object',
+        properties: {
+          company_id: {
+            type: 'integer',
+            title: 'Company'
+          }
+        }
+      };
+      $scope.schema.properties.company_id["enum"] = (function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = companies.length; _i < _len; _i++) {
+          c = companies[_i];
+          _results.push(c.id);
+        }
+        return _results;
+      })();
+      $scope.form = [
+        {
+          key: 'company_id',
+          type: 'select',
+          titleMap: (function() {
+            var _i, _len, _results;
+            _results = [];
+            for (_i = 0, _len = companies.length; _i < _len; _i++) {
+              c = companies[_i];
+              _results.push({
+                value: c.id,
+                name: c.name
+              });
+            }
+            return _results;
+          })(),
+          autofocus: true
+        }
+      ];
+      $scope.pick_company_form = {};
+      $scope.submit = function(form) {
+        return $modalInstance.close(form.company_id);
+      };
+      return $scope.cancel = function() {
+        return $modalInstance.dismiss('cancel');
+      };
+    };
+    link = function(scope, element, attrs) {
+      var loginModal, pickCompanyModal, tryLogin, _base, _base1;
+      $rootScope.bb || ($rootScope.bb = {});
+      (_base = $rootScope.bb).api_url || (_base.api_url = scope.apiUrl);
+      (_base1 = $rootScope.bb).api_url || (_base1.api_url = "http://www.bookingbug.com");
+      loginModal = function() {
+        var modalInstance;
+        modalInstance = $modal.open({
+          templateUrl: 'login_modal_form.html',
+          controller: loginMemberController,
+          resolve: {
+            company_id: function() {
+              return scope.companyId;
+            }
+          }
+        });
+        return modalInstance.result.then(function(result) {
+          scope.memberEmail = result.email;
+          scope.memberPassword = result.password;
+          if (result.$has('members')) {
+            return result.$get('members').then(function(members) {
+              var m;
+              scope.members = members;
+              return $q.all((function() {
+                var _i, _len, _results;
+                _results = [];
+                for (_i = 0, _len = members.length; _i < _len; _i++) {
+                  m = members[_i];
+                  _results.push(m.$get('company'));
+                }
+                return _results;
+              })()).then(function(companies) {
+                return pickCompanyModal(companies);
+              });
+            });
+          } else {
+            return scope.member = result;
+          }
+        }, function() {
+          return loginModal();
+        });
+      };
+      pickCompanyModal = function(companies) {
+        var modalInstance;
+        modalInstance = $modal.open({
+          templateUrl: 'pick_company_modal_form.html',
+          controller: pickCompanyController,
+          resolve: {
+            companies: function() {
+              return companies;
+            }
+          }
+        });
+        return modalInstance.result.then(function(company_id) {
+          scope.companyId = company_id;
+          return tryLogin();
+        }, function() {
+          return pickCompanyModal();
+        });
+      };
+      tryLogin = function() {
+        var login_form, options;
+        login_form = {
+          email: scope.memberEmail,
+          password: scope.memberPassword
+        };
+        options = {
+          company_id: scope.companyId
+        };
+        return MemberLoginService.login(login_form, options).then(function(result) {
+          if (result.$has('members')) {
+            return result.$get('members').then(function(members) {
+              var m;
+              scope.members = members;
+              return $q.all((function() {
+                var _i, _len, _results;
+                _results = [];
+                for (_i = 0, _len = members.length; _i < _len; _i++) {
+                  m = members[_i];
+                  _results.push(m.$get('company'));
+                }
+                return _results;
+              })()).then(function(companies) {
+                return pickCompanyModal(companies);
+              });
+            });
+          } else {
+            return scope.member = result;
+          }
+        }, function(err) {
+          return loginModal();
+        });
+      };
+      if (scope.memberEmail && scope.memberPassword) {
+        return tryLogin();
+      } else {
+        return loginModal();
+      }
+    };
+    return {
+      link: link,
+      scope: {
+        memberEmail: '@',
+        memberPassword: '@',
+        companyId: '@',
+        apiUrl: '@',
+        member: '='
+      },
+      transclude: true,
+      template: "<div ng-hide='member'><img src='/BB_wait.gif' class=\"loader\"></div>\n<div ng-show='member' ng-transclude></div>"
+    };
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  angular.module('BB.Models').factory("Member.BookingModel", function($q, $window, BBModel, BaseModel, $bbug) {
+    var Member_Booking;
+    return Member_Booking = (function(_super) {
+      __extends(Member_Booking, _super);
+
+      function Member_Booking(data) {
+        this.getMemberPromise = __bind(this.getMemberPromise, this);
+        Member_Booking.__super__.constructor.call(this, data);
+        this.datetime = moment.parseZone(this.datetime);
+        if (this.time_zone) {
+          this.datetime.tz(this.time_zone);
+        }
+        this.end_datetime = moment.parseZone(this.end_datetime);
+        if (this.time_zone) {
+          this.end_datetime.tz(this.time_zone);
+        }
+      }
+
+      Member_Booking.prototype.getGroup = function() {
+        if (this.group) {
+          return this.group;
+        }
+        if (this._data.$has('event_groups')) {
+          return this._data.$get('event_groups').then((function(_this) {
+            return function(group) {
+              _this.group = group;
+              return _this.group;
+            };
+          })(this));
+        }
+      };
+
+      Member_Booking.prototype.getColour = function() {
+        if (this.getGroup()) {
+          return this.getGroup().colour;
+        } else {
+          return "#FFFFFF";
+        }
+      };
+
+      Member_Booking.prototype.getCompany = function() {
+        if (this.company) {
+          return this.company;
+        }
+        if (this.$has('company')) {
+          return this._data.$get('company').then((function(_this) {
+            return function(company) {
+              _this.company = new BBModel.Company(company);
+              return _this.company;
+            };
+          })(this));
+        }
+      };
+
+      Member_Booking.prototype.getAnswers = function() {
+        var defer;
+        defer = $q.defer();
+        if (this.answers) {
+          defer.resolve(this.answers);
+        }
+        if (this._data.$has('answers')) {
+          this._data.$get('answers').then((function(_this) {
+            return function(answers) {
+              var a;
+              _this.answers = (function() {
+                var _i, _len, _results;
+                _results = [];
+                for (_i = 0, _len = answers.length; _i < _len; _i++) {
+                  a = answers[_i];
+                  _results.push(new BBModel.Answer(a));
+                }
+                return _results;
+              })();
+              return defer.resolve(_this.answers);
+            };
+          })(this));
+        } else {
+          defer.resolve([]);
+        }
+        return defer.promise;
+      };
+
+      Member_Booking.prototype.printed_price = function() {
+        if (parseFloat(this.price) % 1 === 0) {
+          return "£" + this.price;
+        }
+        return $window.sprintf("£%.2f", parseFloat(this.price));
+      };
+
+      Member_Booking.prototype.getMemberPromise = function() {
+        var defer;
+        defer = $q.defer();
+        if (this.member) {
+          defer.resolve(this.member);
+        }
+        if (this._data.$has('member')) {
+          this._data.$get('member').then((function(_this) {
+            return function(member) {
+              _this.member = new BBModel.Member.Member(member);
+              return defer.resolve(_this.member);
+            };
+          })(this));
+        }
+        return defer.promise;
+      };
+
+      return Member_Booking;
+
+    })(BaseModel);
+  });
+
+}).call(this);
+
+(function() {
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  angular.module('BB.Models').factory("Member.MemberModel", function($q, BBModel, BaseModel, ClientModel) {
+    var Member_Member;
+    return Member_Member = (function(_super) {
+      __extends(Member_Member, _super);
+
+      function Member_Member() {
+        return Member_Member.__super__.constructor.apply(this, arguments);
+      }
+
+      return Member_Member;
+
+    })(ClientModel);
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  angular.module('BB.Models').factory("Member.PrepaidBookingModel", function($q, BBModel, BaseModel) {
+    var Member_PrePaidBooking;
+    return Member_PrePaidBooking = (function(_super) {
+      __extends(Member_PrePaidBooking, _super);
+
+      function Member_PrePaidBooking(data) {
+        Member_PrePaidBooking.__super__.constructor.call(this, data);
+      }
+
+      Member_PrePaidBooking.prototype.checkValidity = function(event) {
+        if (this.service_id && event.service_id && this.service_id !== event.service_id) {
+          return false;
+        } else if (this.resource_id && event.resource_id && this.resource_id !== event.resource_id) {
+          return false;
+        } else if (this.person_id && event.person_id && this.person_id !== event.person_id) {
+          return false;
+        } else {
+          return true;
+        }
+      };
+
+      return Member_PrePaidBooking;
+
+    })(BaseModel);
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  angular.module('BB.Services').factory("MemberBookingService", function($q, $window, SpaceCollections, $rootScope, MemberService, BBModel) {
+    return {
+      query: function(member, params) {
+        var deferred;
+        deferred = $q.defer();
+        if (!member.$has('bookings')) {
+          deferred.reject("member does not have bookings");
+        } else {
+          member.$get('bookings', params).then((function(_this) {
+            return function(bookings) {
+              var booking;
+              if ($window.typeIsArray(bookings)) {
+                bookings = (function() {
+                  var _i, _len, _results;
+                  _results = [];
+                  for (_i = 0, _len = bookings.length; _i < _len; _i++) {
+                    booking = bookings[_i];
+                    _results.push(new BBModel.Member.Booking(booking));
+                  }
+                  return _results;
+                })();
+                return deferred.resolve(bookings);
+              } else {
+                return bookings.$get('bookings', params).then(function(bookings) {
+                  bookings = (function() {
+                    var _i, _len, _results;
+                    _results = [];
+                    for (_i = 0, _len = bookings.length; _i < _len; _i++) {
+                      booking = bookings[_i];
+                      _results.push(new BBModel.Member.Booking(booking));
+                    }
+                    return _results;
+                  })();
+                  return deferred.resolve(bookings);
+                }, function(err) {
+                  return deferred.reject(err);
+                });
+              }
+            };
+          })(this), function(err) {
+            return deferred.reject(err);
+          });
+        }
+        return deferred.promise;
+      },
+      cancel: function(member, booking) {
+        var deferred;
+        deferred = $q.defer();
+        booking.$del('self').then((function(_this) {
+          return function(b) {
+            booking.deleted = true;
+            b = new BBModel.Member.Booking(b);
+            MemberService.refresh(member).then(function(member) {
+              return member = member;
+            }, function(err) {
+              return console.log(err);
+            });
+            return deferred.resolve(b);
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            return deferred.reject(err);
+          };
+        })(this));
+        return deferred.promise;
+      },
+      update: function(booking) {
+        var deferred;
+        deferred = $q.defer();
+        $rootScope.member.flushBookings();
+        booking.$put('self', {}, booking).then((function(_this) {
+          return function(booking) {
+            var book;
+            book = new BBModel.Member.Booking(booking);
+            SpaceCollections.checkItems(book);
+            return deferred.resolve(book);
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            _.each(booking, function(value, key, booking) {
+              if (key !== 'data' && key !== 'self') {
+                return booking[key] = booking.data[key];
+              }
+            });
+            return deferred.reject(err, new BBModel.Member.Booking(booking));
+          };
+        })(this));
+        return deferred.promise;
+      },
+      flush: function(member, params) {
+        if (member.$has('bookings')) {
+          return member.$flush('bookings', params);
+        }
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBMember.Services').factory("MemberLoginService", function($q, halClient, $rootScope, BBModel) {
+    return {
+      login: function(form, options) {
+        var defer, url;
+        defer = $q.defer();
+        url = "" + $rootScope.bb.api_url + "/api/v1/login";
+        if (options.company_id != null) {
+          url = "" + url + "/member/" + options.company_id;
+        }
+        halClient.$post(url, options, form).then(function(login) {
+          if (login.$has('member')) {
+            return login.$get('member').then(function(member) {
+              member = new BBModel.Member.Member(member);
+              return defer.resolve(member);
+            });
+          } else if (login.$has('members')) {
+            return defer.resolve(login);
+          } else {
+            return defer.reject("No member account for login");
+          }
+        }, (function(_this) {
+          return function(err) {
+            var login;
+            if (err.status === 400) {
+              login = halClient.$parse(err.data);
+              if (login.$has('members')) {
+                return defer.resolve(login);
+              } else {
+                return defer.reject(err);
+              }
+            } else {
+              return defer.reject(err);
+            }
+          };
+        })(this));
+        return defer.promise;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BB.Services').factory("MemberService", function($q, halClient, $rootScope, BBModel) {
+    return {
+      refresh: function(member) {
+        var deferred;
+        deferred = $q.defer();
+        member.$flush('self');
+        member.$get('self').then((function(_this) {
+          return function(member) {
+            member = new BBModel.Member.Member(member);
+            return deferred.resolve(member);
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            return deferred.reject(err);
+          };
+        })(this));
+        return deferred.promise;
+      },
+      current: function() {
+        var callback, deferred;
+        deferred = $q.defer();
+        callback = function() {
+          return deferred.resolve($rootScope.member);
+        };
+        setTimeout(callback, 200);
+        return deferred.promise;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BB.Services').factory("MemberPrePaidBookingService", function($q, $window, SpaceCollections, $rootScope, MemberService) {
+    return {
+      query: function(member, params) {
+        var deferred;
+        deferred = $q.defer();
+        if (!member.$has('pre_paid_bookings')) {
+          deferred.reject("member does not have pre paid bookings");
+        } else {
+          member.$get('pre_paid_bookings', params).then((function(_this) {
+            return function(bookings) {
+              var booking;
+              if ($window.typeIsArray(bookings)) {
+                bookings = (function() {
+                  var _i, _len, _results;
+                  _results = [];
+                  for (_i = 0, _len = bookings.length; _i < _len; _i++) {
+                    booking = bookings[_i];
+                    _results.push(new BBModel.Member.PrePaidBooking(booking));
+                  }
+                  return _results;
+                })();
+                return deferred.resolve(bookings);
+              } else {
+                return bookings.$get('pre_paid_bookings', params).then(function(bookings) {
+                  bookings = (function() {
+                    var _i, _len, _results;
+                    _results = [];
+                    for (_i = 0, _len = bookings.length; _i < _len; _i++) {
+                      booking = bookings[_i];
+                      _results.push(new BBModel.Member.PrePaidBooking(booking));
+                    }
+                    return _results;
+                  })();
+                  return deferred.resolve(bookings);
+                });
+              }
+            };
+          })(this), (function(_this) {
+            return function(err) {
+              return deferred.reject(err);
+            };
+          })(this));
+        }
+        return deferred.promise;
       }
     };
   });
