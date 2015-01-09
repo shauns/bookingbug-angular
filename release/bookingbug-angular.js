@@ -99242,7 +99242,8 @@ angular.module('BBAdmin.Directives').controller('CalController', function($scope
             email: $scope.login.email,
             password: $scope.login.password
           }).then(function(client) {
-            return $scope.setClient(new BBModel.Client(client));
+            $scope.setClient(new BBModel.Client(client));
+            return $scope.decideNextPage();
           }, function(err) {
             return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
           });
