@@ -5,13 +5,13 @@ angular.module('BB.Services').factory "TimeService", ($q, BBModel, halClient) ->
     deferred = $q.defer()
 
     if prms.date
-      date = prms.date.format("YYYY-MM-DD")
+      date = prms.date.toISODate()
     else
       if !prms.cItem.date
         deferred.reject("No date set")
         return deferred.promise
       else
-        date = prms.cItem.date.date.format("YYYY-MM-DD")
+        date = prms.cItem.date.date.toISODate()
 
     # if there was no duration passed in get the default duration off the
     # current item
@@ -29,7 +29,7 @@ angular.module('BB.Services').factory "TimeService", ($q, BBModel, halClient) ->
       extra.event_id = prms.cItem.event_id if prms.cItem.event_id
       extra.person_id = prms.cItem.person.id if prms.cItem.person && !prms.cItem.anyPerson() && !item_link.event_id && !extra.event_id
       extra.resource_id = prms.cItem.resource.id if prms.cItem.resource && !prms.cItem.anyResource() && !item_link.event_id  && !extra.event_id
-      extra.end_date = prms.end_date.format("YYYY-MM-DD") if prms.end_date
+      extra.end_date = prms.end_date.toISODate() if prms.end_date
       extra.duration = prms.duration
       extra.num_resources = prms.num_resources
 
@@ -87,18 +87,19 @@ angular.module('BB.Services').factory "TimeService", ($q, BBModel, halClient) ->
     for ev in all_events
       if ev.times
         for i in ev.times
-          i.event_id = ev.event_id
-          sorted_times[i.time] = i
+          # set it not set, currently unavaialble, or randomly based on the number of events
+          if !sorted_times[i.time] || sorted_times[i.time].avail == 0 || (Math.floor(Math.random()*all_events.length) == 0 && i.avail > 0)
+            i.event_id = ev.event_id
+            sorted_times[i.time] = i
         # if we have an item - which an already booked item - make sure that's int he l;ist of time slots we can select - iee. that we can select the current slot
-        if item && item.id && item.held && item.held.event_id == ev.event_id && item.held.time && !sorted_times[item.held.time.time] && item.held.date && item.held.date.date.format("YYYY-MM-DD") == ev.date
+        if item && item.id && item.held && item.held.event_id == ev.event_id && item.held.time && !sorted_times[item.held.time.time] && item.held.date && item.held.date.date.toISODate() == ev.date
           sorted_times[item.held.time.time] = item.held.time
           # remote this entry from the cache - just in case - we know it has a held item in it so lets just not keep it in case that goes later!
           halClient.clearCache(ev.$href("self"))
-        else if item && item.id && item.event_id == ev.event_id && item.time && !sorted_times[item.time.time] && item.date && item.date.date.format("YYYY-MM-DD") == ev.date
+        else if item && item.id && item.event_id == ev.event_id && item.time && !sorted_times[item.time.time] && item.date && item.date.date.toISODate() == ev.date
           sorted_times[item.time.time] = item.time
           # remote this entry from the cache - just in case - we know it has a held item in it so lets just not keep it in case that goes later!
           halClient.clearCache(ev.$href("self"))
-
 
     times = []
     date_times = {}

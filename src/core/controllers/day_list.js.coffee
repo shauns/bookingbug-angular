@@ -115,7 +115,7 @@ angular.module('BB.Controllers').controller 'DayList', ($scope,  $rootScope, $q,
     edate = moment(date).add(7, 'days')
     $scope.end_date = moment(edate).add(-1, 'days')
     if $scope.data_source
-      DayService.query({company: $scope.bb.company, cItem: $scope.data_source, date: date.format("YYYY-MM-DD"), edate: edate.format("YYYY-MM-DD"), client: $scope.client  }).then (days) =>
+      DayService.query({company: $scope.bb.company, cItem: $scope.data_source, date: date.toISODate(), edate: edate.toISODate(), client: $scope.client  }).then (days) =>
         $scope.days = days
         for day in days
           $scope.day_data[day.string_date] = day

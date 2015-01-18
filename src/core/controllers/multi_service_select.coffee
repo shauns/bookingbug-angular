@@ -14,6 +14,7 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
 
   $scope.options = $scope.$eval($attrs.bbMultiServiceSelect) or {}
   $scope.options.max_services = $scope.options.max_services or 3
+  $scope.options.services = $scope.options.services or 'items'
 
   # Get the categories
   CategoryService.query($scope.bb.company).then (items) =>
@@ -22,8 +23,9 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
 
 
   # wait for items and all_categories before for we begin initialisation
-  $scope.$watch 'items', (newval, oldval) ->
+  $scope.$watch $scope.options.services, (newval, oldval) ->
     if newval and angular.isArray(newval) and $scope.all_categories and !$scope.initialised
+      $scope.items = newval
       initialise()
   $scope.$watch 'all_categories', (newval, oldval) ->
     if newval and angular.isArray(newval) and $scope.items and !$scope.initialised
@@ -106,7 +108,7 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
       $rootScope.$emit "multi_service_select:item_added"
     else
       for i in $scope.items
-        i.popover = "Sorry, you can only book a maximum of three treatments"
+        i.popover = "Sorry, you can only book a maximum of #{$scope.options.max_services} treatments"
         i.popoverText = i.popover
 
 

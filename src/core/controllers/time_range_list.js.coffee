@@ -284,11 +284,11 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
         if $scope.bb.moving_booking?
           move_date = $scope.bb.moving_booking.datetime
           if date <= move_date && edate >= move_date
-            if dateTimeArr[move_date.format("YYYY-MM-DD")].length == 0
+            if dateTimeArr[move_date.toISODate()].length == 0
               v = move_date.minutes() + move_date.hours() * 60
-              dateTimeArr[move_date.format("YYYY-MM-DD")].splice(0, 0, new BBModel.TimeSlot({time: v, avail: 1}, curItem))
+              dateTimeArr[move_date.toISODate()].splice(0, 0, new BBModel.TimeSlot({time: v, avail: 1}, curItem))
             else
-              for slot in dateTimeArr[move_date.format("YYYY-MM-DD")]
+              for slot in dateTimeArr[move_date.toISODate()]
                 if (curItem.time and curItem.time.time is slot.time)
                   slot.avail = 1
         for pair in _.sortBy(_.pairs(dateTimeArr), (pair) -> pair[0])

@@ -327,3 +327,9 @@ app.filter 'international_number', () ->
     else
       return ""
 
+
+app.filter 'add', ->
+  (item, value) =>
+    if item and value
+      item = parseInt(item)
+      return item + value

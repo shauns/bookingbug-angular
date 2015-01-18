@@ -15,6 +15,7 @@ angular.module('BB.Services').factory 'QuestionService', ($window, QueryStringSe
     convertDates($window.bb_setup)
     angular.extend(defaults, $window.bb_setup)
 
+
   # adds an answer property to a question object if the id of the question
   # matches the id of the values stored in the defaults object. this would
   # almost defintiely be used to get values from the querystring i.e.
@@ -49,8 +50,6 @@ angular.module('BB.Services').factory 'QuestionService', ($window, QueryStringSe
     return str
 
 
-
-
   # takes an array of questions objects. loops through the questions gettting
   # the obj.name value and converting it into snake case. then loop through the
   # stored value key name and see if there is whole or partial match.
@@ -66,8 +65,6 @@ angular.module('BB.Services').factory 'QuestionService', ($window, QueryStringSe
               question.answer = defaults[key]
               delete defaults[key]
           return
-
-
 
 
   # takes an object and array of key names. it loops through key names and if
@@ -86,6 +83,14 @@ angular.module('BB.Services').factory 'QuestionService', ($window, QueryStringSe
       return
 
 
+  # takes an array of questions and an answers object, which then matches answers by 
+  # thier key name to the questions help_text value
+  addAnswersByKey = (questions, answers) ->
+    for question in questions
+      name = question.help_text
+      question.answer = answers[name] if answers[name]
+
+
   storeDefaults = (obj) ->
     angular.extend(defaults, obj.bb_setup or {})
 
@@ -94,11 +99,10 @@ angular.module('BB.Services').factory 'QuestionService', ($window, QueryStringSe
     getStoredData   : ->
       return defaults
 
-    storeDefaults    : storeDefaults
-    addAnswersById   : addAnswersById
-    addAnswersByName : addAnswersByName
+    storeDefaults           : storeDefaults
+    addAnswersById          : addAnswersById
+    addAnswersByName        : addAnswersByName
     addDynamicAnswersByName : addDynamicAnswersByName
-    convertToSnakeCase : convertToSnakeCase
+    addAnswersByKey         : addAnswersByKey
+    convertToSnakeCase      : convertToSnakeCase
   }
-
-

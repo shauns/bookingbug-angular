@@ -70,7 +70,7 @@ angular.module('BB.Controllers').controller 'ServiceList',
       # if there's a default - pick it and move on
       if $scope.booking_item.defaultService()
         for item in items
-          if item.self == $scope.booking_item.defaultService().self
+          if item.self == $scope.booking_item.defaultService().self or (item.name is $scope.booking_item.defaultService().name and !item.deleted)
             $scope.selectItem(item, $scope.nextRoute)
 
       # if there's one selected - just select it
@@ -91,8 +91,8 @@ angular.module('BB.Controllers').controller 'ServiceList',
 
     if ($scope.booking_item.person && !$scope.booking_item.anyPerson()) ||
        ($scope.booking_item.resource && !$scope.booking_item.anyResource())
+
       # if we've lready picked a service or a resource - get a more limited service selection
-      
       ItemService.query({company: $scope.bb.company, cItem: $scope.booking_item, wait: ppromise, item: 'service'}).then (items) =>
         if $scope.booking_item.service_ref
           items = items.filter (x) -> x.api_ref == $scope.booking_item.service_ref
@@ -102,6 +102,7 @@ angular.module('BB.Controllers').controller 'ServiceList',
         
         $scope.bookable_services = services
         $scope.bookable_items = items
+        
         if (services.length == 1 && !$scope.allowSinglePick)
           if !$scope.selectItem(services[0], $scope.nextRoute )
             setServiceItem services

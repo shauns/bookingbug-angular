@@ -267,7 +267,7 @@ app.directive 'bbDateSplit', ($parse) ->
         if @day && @month && @year
           date_string = @day + '/' + @month + '/' + @year 
           @date = moment(date_string, "DD/MM/YYYY")
-          date_string = @date.format('YYYY-MM-DD')
+          date_string = @date.toISODate()
 
           ngModel.$setViewValue(date_string)
           ngModel.$render()     
@@ -294,22 +294,23 @@ app.directive 'bbDateSplit', ($parse) ->
 # bbCommPref
 app.directive 'bbCommPref', ($parse) ->
   restrict: 'A'
-  require: ['ngModel', '^bbItemDetails']
+  require: ['ngModel']
   link: (scope, element, attrs, ctrls) ->
 
-    ngModelCtrl     = ctrls[0]
-    itemDetailsCtrl = ctrls[1]
+    ngModelCtrl = ctrls[0]
 
     # get the default communication preference 
     comm_pref_default = scope.$eval attrs.bbCommPref or false
 
     # and set it
-    itemDetailsCtrl.setCommunicationPreferences(comm_pref_default)
     ngModelCtrl.$setViewValue(comm_pref_default)
 
     # watch for changes
     scope.$watch attrs.ngModel, (newval, oldval) ->
-      itemDetailsCtrl.setCommunicationPreferences(newval) if newval != oldval
+      if newval != oldval
+        scope.bb.current_item.settings.send_email_followup = newval
+        scope.bb.current_item.settings.send_sms_followup   = newval
+
 
 
 # bbOwlCarousel

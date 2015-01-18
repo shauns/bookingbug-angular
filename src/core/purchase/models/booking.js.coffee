@@ -69,7 +69,7 @@ angular.module('BB.Models').factory "Purchase.BookingModel", ($q, $window, BBMod
       data.client_id = @client_id
       data.company_id = @company_id
       data.time = (@datetime.hour() * 60) + @datetime.minute()
-      data.date = @datetime.format("YYYY-MM-DD") 
+      data.date = @datetime.toISODate() 
       data.deleted = @deleted
       data.describe = @describe
       data.duration = @duration
@@ -119,7 +119,7 @@ angular.module('BB.Models').factory "Purchase.BookingModel", ($q, $window, BBMod
 
 
     getDateString: () ->
-      @datetime.format("YYYY-MM-DD")
+      @datetime.toISODate()
 
 
     # return the time of day in total minutes

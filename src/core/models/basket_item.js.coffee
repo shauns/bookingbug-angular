@@ -27,7 +27,7 @@ angular.module('BB.Models').factory "BasketItemModel",
       if @date
         @date = new BBModel.Day({date: @date, spaces: 1})
       if @datetime
-        @date = new BBModel.Day({date: @datetime.format("YYYY-MM-DD"), spaces: 1})
+        @date = new BBModel.Day({date: @datetime.toISODate(), spaces: 1})
         t =  @datetime.hour() * 60 +  @datetime.minute()
         @time = new BBModel.TimeSlot({time: t, event_id: @event_id, selected: true, avail: 1, price: @price })
 
@@ -163,7 +163,7 @@ angular.module('BB.Models').factory "BasketItemModel",
 
     setSlot: (slot) ->
 
-      @date = new BBModel.Day({date: slot.datetime.format("YYYY-MM-DD"), spaces: 1})
+      @date = new BBModel.Day({date: slot.datetime.toISODate(), spaces: 1})
       t =  slot.datetime.hour() * 60 +  slot.datetime.minute()
       @time = new BBModel.TimeSlot({time: t, avail: 1, price: @price })
       @available_slot = slot.id
@@ -459,7 +459,7 @@ angular.module('BB.Models').factory "BasketItemModel",
 
       data = {}
       if @date
-        data.date = @date.date.format("YYYY-MM-DD")
+        data.date = @date.date.toISODate()
       if @time
         data.time = @time.time
         if @time.event_id
@@ -584,14 +584,14 @@ angular.module('BB.Models').factory "BasketItemModel",
     # get booking start datetime
     start_datetime: () ->
       return null if !@date || !@time
-      start_datetime = moment(@date.date.format("YYYY-MM-DD"))
+      start_datetime = moment(@date.date.toISODate())
       start_datetime.minutes(@time.time)
       start_datetime
 
     # get booking end datetime
     end_datetime: () ->
       return null if !@date || !@time || !@listed_duration
-      end_datetime = moment(@date.date.format("YYYY-MM-DD"))
+      end_datetime = moment(@date.date.toISODate())
       end_datetime.minutes(@time.time + @listed_duration)
       end_datetime
 

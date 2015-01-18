@@ -26,15 +26,15 @@ angular.module('BB.Controllers').controller 'DurationList', ($scope,  $rootScope
         (for d in _.zip(service.durations, service.prices)
           {value: d[0], price: d[1]})
       
-      initial_duration = $scope.$eval($attrs.bbInitialDuration) 
+      initial_duration = $scope.$eval($attrs.bbInitialDuration)
 
       for duration in $scope.durations
-
         # does the current item already have a duration?
         if $scope.bb.current_item.duration && duration.value == $scope.bb.current_item.duration
           $scope.duration = duration
         else if initial_duration and initial_duration is duration.value
           $scope.duration = duration
+          $scope.bb.current_item.setDuration(duration.value)
 
         if duration.value < 60
           duration.pretty = duration.value + " minutes"
@@ -45,10 +45,12 @@ angular.module('BB.Controllers').controller 'DurationList', ($scope,  $rootScope
           rem = duration.value % 60
           if rem != 0
             duration.pretty += " " + rem + " minutes"
+
       if $scope.durations.length == 1
         $scope.skipThisStep()
         $scope.selectDuration($scope.durations[0], $scope.nextRoute)
-      $scope.setLoaded $scope
+
+    $scope.setLoaded $scope
 
 
   $scope.selectDuration = (dur, route) =>
