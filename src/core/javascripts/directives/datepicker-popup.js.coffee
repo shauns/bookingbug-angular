@@ -63,8 +63,9 @@ angular.module('BB.Directives').directive 'bbDatepickerPopup', ($parse, $documen
     $bbug(element).on 'click', (e) ->
       e.preventDefault()
       e.stopPropagation()
-      scope.opened = true
-
+      $timeout ->
+        scope.opened = true
+      ,
 
     # call the function which handles the date change
     # on-date-change="selectedDateChanged()"

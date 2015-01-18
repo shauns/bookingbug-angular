@@ -37,7 +37,7 @@ angular.module('BB.Models').factory "BBWidget", ($q, BBModel, BasketService, $ur
       if @current_item
         service_name = @convertToDashSnakeCase(@current_item.service.name) if @current_item.service
         event_group = @convertToDashSnakeCase(@current_item.event_group.name) if @current_item.event_group
-        date = @current_item.date.date.format("YYYY-MM-DD") if @current_item.date
+        date = @current_item.date.date.toISODate() if @current_item.date
         time = @current_item.time.time if @current_item.time
         company = @convertToDashSnakeCase(@current_item.company.name) if @current_item.company
 

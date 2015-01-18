@@ -30,7 +30,7 @@ angular.module('BB.Controllers').controller 'TimeSlots', ($scope,
     $scope.start_date = moment()
     $scope.end_date = moment().add(1, 'month')
 
-    SlotService.query($scope.bb.company, {item: $scope.booking_item,  start_date:$scope.start_date.format("YYYY-MM-DD"), end_date:$scope.end_date.format("YYYY-MM-DD")}).then (slots) ->
+    SlotService.query($scope.bb.company, {item: $scope.booking_item,  start_date:$scope.start_date.toISODate(), end_date:$scope.end_date.toISODate()}).then (slots) ->
       $scope.slots = slots
       $scope.setLoaded $scope
     , (err) ->

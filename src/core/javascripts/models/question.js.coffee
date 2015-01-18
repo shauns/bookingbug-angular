@@ -61,7 +61,7 @@ angular.module('BB.Models').factory "QuestionModel", ($q, $filter, BBModel, Base
       x = {}
       x.id = @id
       x.answer = @answer
-      x.answer = moment(@answer).format("YYYY-MM-DD") if @detail_type == "date" && @answer
+      x.answer = moment(@answer).toISODate() if @detail_type == "date" && @answer
       p = @selectedPrice()
       x.price = p if p
       x

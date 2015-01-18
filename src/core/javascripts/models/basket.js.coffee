@@ -106,5 +106,5 @@ angular.module('BB.Models').factory "BasketModel", ($q, BBModel, BaseModel) ->
     totalDuration: ->
       duration = 0
       for item in @items
-        duration =+ item.service.listed_duration if item.service and item.service.duration
+        duration =+ item.service.listed_duration if item.service and item.service.listed_duration
       return duration

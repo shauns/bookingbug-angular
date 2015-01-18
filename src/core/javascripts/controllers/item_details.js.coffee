@@ -53,6 +53,7 @@ angular.module('BB.Controllers').controller 'ItemDetails',
       setItemDetails $scope.item.item_details
       # this will add any values in the querystring
       QuestionService.addDynamicAnswersByName($scope.item_details.questions)
+      QuestionService.addAnswersByKey($scope.item_details.questions, $scope.bb.item_defaults.answers) if $scope.bb.item_defaults.answers
       $scope.recalc_price()
       $scope.setLoaded $scope
     else
@@ -60,6 +61,7 @@ angular.module('BB.Controllers').controller 'ItemDetails',
       ItemDetailsService.query(params).then (details) ->
         setItemDetails details
         $scope.item.item_details = $scope.item_details
+        QuestionService.addAnswersByKey($scope.item_details.questions, $scope.bb.item_defaults.answers) if $scope.bb.item_defaults.answers
         $scope.recalc_price()
         $scope.setLoaded $scope
       , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
@@ -188,12 +190,6 @@ angular.module('BB.Controllers').controller 'ItemDetails',
   $scope.editItem = () ->
     $scope.item_details_updated = false
 
-
-  # private methods
-  setCommunicationPreferences: (value)->
-    $scope.bb.current_item.settings.send_email_followup = value
-    $scope.bb.current_item.settings.send_sms_followup   = value
-  
 
   $scope.onFileSelect = (item, $file, existing) ->
     $scope.upload_progress = 0

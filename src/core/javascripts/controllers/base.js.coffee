@@ -246,7 +246,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
         $scope.bb_route_init()
 
     if prms.locale
-      moment.lang(prms.locale)
+      moment.locale(prms.locale)
 
     if prms.hide == true
       $scope.hide_page = true
@@ -259,6 +259,13 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
 
     if prms.reserve_without_questions
       $scope.bb.reserve_without_questions = prms.reserve_without_questions
+
+    if prms.extra_setup and prms.extra_setup.step
+      $scope.bb.starting_step_number = parseInt(prms.extra_setup.step)
+
+    if prms.extra_setup and prms.extra_setup.return_url
+      $scope.bb.return_url = prms.extra_setup.return_url
+
 
     @waiting_for_conn_started_def = $q.defer()
     $scope.waiting_for_conn_started = @waiting_for_conn_started_def.promise
@@ -468,12 +475,15 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
         event.then (res) =>
           $scope.bb.item_defaults.event = new BBModel.Event(res)
 
-
       if $scope.bb.item_defaults.category
         category = halClient.$get($scope.bb.api_url + '/api/v1/' + company_id + '/categories/' + $scope.bb.item_defaults.category )
         $scope.bb.default_setup_promises.push(category)
         category.then (res) =>
           $scope.bb.item_defaults.category = new BBModel.Category(res)    
+
+
+      if $scope.bb.item_defaults.duration
+        $scope.bb.item_defaults.duration = parseInt($scope.bb.item_defaults.duration)
  
       $q.all($scope.bb.default_setup_promises)['finally'] () ->
         def.resolve()     

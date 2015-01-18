@@ -42,31 +42,34 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
 
     $scope.notLoaded $scope
     comp = $scope.bb.company 
-    params = {item: $scope.bb.current_item, start_date:$scope.start_date.format("YYYY-MM-DD"), end_date:$scope.end_date.format("YYYY-MM-DD")}
+    params = {item: $scope.bb.current_item, start_date:$scope.start_date.toISODate(), end_date:$scope.end_date.toISODate()}
 
     EventService.summary(comp, params).then (items) ->
-      item_dates = []
-      for item in items
-        d = moment(item)
-        item_dates.push({
-          date:d, 
-          idate:  parseInt(d.format("YYYYDDDD")), 
-          count:1, 
-          spaces:1,
-          today: moment().isSame(d, 'day')
-        })
+      
+      if items and items.length > 0
 
-      $scope.item_dates = item_dates.sort (a,b) -> (a.idate - b.idate) 
+        item_dates = []
+        for item in items
+          d = moment(item)
+          item_dates.push({
+            date:d, 
+            idate:  parseInt(d.format("YYYYDDDD")), 
+            count:1, 
+            spaces:1,
+            today: moment().isSame(d, 'day')
+          })
 
-      # clear the selected date if the event group has changed
-      if $scope.current_item? && $scope.current_item.event_group?
-        if $scope.current_item.event_group.id != $scope.event_group_id
+        $scope.item_dates = item_dates.sort (a,b) -> (a.idate - b.idate) 
+
+        # clear the selected date if the event group has changed
+        if $scope.current_item? and $scope.current_item.event_group?
+          if $scope.current_item.event_group.id != $scope.event_group_id
+            $scope.showDate($scope.item_dates[0].date)
+          $scope.event_group_id = $scope.current_item.event_group.id
+        if ($scope.selected_date and ($scope.selected_date.isAfter($scope.item_dates[0].date) or $scope.selected_date.isSame($scope.item_dates[0].date)) and ($scope.selected_date.isBefore($scope.item_dates[$scope.item_dates.length-1].date) || $scope.selected_date.isSame($scope.item_dates[$scope.item_dates.length-1].date)))
+          $scope.showDate($scope.selected_date)
+        else
           $scope.showDate($scope.item_dates[0].date)
-        $scope.event_group_id = $scope.current_item.event_group.id
-      if ($scope.selected_date && ($scope.selected_date.isAfter($scope.item_dates[0].date) || $scope.selected_date.isSame($scope.item_dates[0].date)) && ($scope.selected_date.isBefore($scope.item_dates[$scope.item_dates.length-1].date) || $scope.selected_date.isSame($scope.item_dates[$scope.item_dates.length-1].date)))
-        $scope.showDate($scope.selected_date)
-      else
-        $scope.showDate($scope.item_dates[0].date)
 
       $scope.setLoaded $scope
 
@@ -83,7 +86,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
 
     $scope.notLoaded $scope
     comp ||= $scope.bb.company 
-    params = {item: $scope.bb.current_item, start_date:$scope.start_date.format("YYYY-MM-DD"), end_date:$scope.end_date.format("YYYY-MM-DD")}
+    params = {item: $scope.bb.current_item, start_date:$scope.start_date.toISODate(), end_date:$scope.end_date.toISODate()}
     EventService.query(comp, params).then (items) ->
       $scope.items = items
 

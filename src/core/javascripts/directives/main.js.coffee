@@ -61,8 +61,6 @@ app.directive 'bbScrollTo', ($rootScope, AppConfig, BreadcrumbService, $bbug) ->
               , 500
 
 
-
-
 # bbSlotGrouper
 # group time slots together based on a given start time and end time
 app.directive  'bbSlotGrouper', () ->
@@ -98,3 +96,4 @@ app.directive 'bbForm', () ->
         invalid_input.focus()
         return false
       return true
+

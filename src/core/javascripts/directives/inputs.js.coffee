@@ -76,7 +76,7 @@ app.directive 'bbQuestion', ($compile, $timeout) ->
               html = "<div class='checkbox'><label><input name='q#{question.id}' id='#{question.id}' ng-model='question.answer' ng-checked='question.answer == \"1\"' ng-change='recalc()' ng-required='question.currentlyShown && (#{adminRequired} || (question.required && !bb.isAdmin))' type='checkbox' value=1> ({{question.price | currency:'GBP'}})</label></div>"
 
             else if question.detail_type is "date"
-              html = "<input type='text' class='form-question form-control' name='q#{question.id}' id='#{question.id}' bb-datepicker-popup='DD/MM/YYYY' datepicker-popup='dd/MM/yyyy' ng-model='question.answer' ng-required='question.currentlyShown && (#{adminRequired} || (question.required && !bb.isAdmin))' datepicker-options='{\"starting-day\": 1}' show-weeks='false' show-button-bar='false' />"
+              html = "<input type='text' class='form-question form-control' name='q#{question.id}' id='#{question.id}' bb-datepicker-popup='DD/MM/YYYY' datepicker-popup='dd/MM/yyyy' is-open='opened' ng-model='question.answer' ng-required='question.currentlyShown && (#{adminRequired} || (question.required && !bb.isAdmin))' datepicker-options='{\"starting-day\": 1}' show-weeks='false' show-button-bar='false' />"
 
             else
               html = "<input type='text' ng-model='question.answer' name='q#{question.id}' id='#{question.id}' ng-required='question.currentlyShown && (#{adminRequired} || (question.required && !bb.isAdmin))' class='form-question form-control'/>"
