@@ -218,9 +218,11 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
       $scope.bb.clear_basket = false
     if prms.clear_basket == false
       $scope.bb.clear_basket = false
-    if $window.bb_setup
+    if $window.bb_setup || prms.client
       # if setup is defined - blank the member -a s we're probably setting it - unless specifically defined as false
       prms.clear_member ||= true
+    $scope.bb.client_defaults = prms.client if prms.client
+
     if prms.clear_member
       $scope.bb.clear_member = prms.clear_member
       $sessionStorage.removeItem("login")
@@ -963,6 +965,8 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     $scope.client = new BBModel.Client()
     if $window.bb_setup
       $scope.client.setDefaults($window.bb_setup)
+    if $scope.bb.client_defaults
+      $scope.client.setDefaults($scope.bb.client_defaults)
 
 
   #######################################################
