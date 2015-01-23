@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('BB.Directives').directive 'bbMultiServiceSelect', () ->
   restrict: 'AE'
   scope : true
@@ -7,24 +9,29 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
 ($scope, $rootScope, $q, $attrs, BBModel, AlertService, CategoryService, FormDataStoreService) ->
 
   FormDataStoreService.init 'MultiServiceSelect', $scope, [
-    'selected_category'
+    'selected_category_name'
   ]
 
   $scope.options = $scope.$eval($attrs.bbMultiServiceSelect) or {}
   $scope.options.max_services = $scope.options.max_services or 3
+  $scope.options.services = $scope.options.services or 'items'
 
   # Get the categories
   CategoryService.query($scope.bb.company).then (items) =>
+    for item in items 
+      item.order = parseInt(item.name.slice(0,2))
+      item.name  = item.name.slice(3)
     $scope.all_categories = _.indexBy(items, 'id')
   , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
 
   # wait for items and all_categories before for we begin initialisation
-  $scope.$watch 'items', (newval, oldval) ->
-    if newval and angular.isArray(newval) and $scope.all_categories and !$scope.initialised 
+  $scope.$watch $scope.options.services, (newval, oldval) ->
+    if newval and angular.isArray(newval) and $scope.all_categories and !$scope.initialised
+      $scope.items = newval
       initialise()
   $scope.$watch 'all_categories', (newval, oldval) ->
-    if newval and angular.isArray(newval) and $scope.items and !$scope.initialised 
+    if newval and angular.isArray(newval) and $scope.items and !$scope.initialised
       initialise()
 
 
@@ -42,14 +49,16 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
     # if there's already some stacked items (i.e. we've come back to this page,
     # make sure they're selected)
     if $scope.bb.stacked_items && $scope.bb.stacked_items.length > 0
-      for item in $scope.items
-        for stacked_item in $scope.bb.stacked_items
-          item.selected = item.self == stacked_item.service.self
-          break if item.selected
+      for stacked_item in $scope.bb.stacked_items
+        for item in $scope.items
+          if item.self is stacked_item.service.self
+            stacked_item.service = item
+            stacked_item.service.selected = true
+            break
 
-      if $scope.bb.moving_booking
-        # if we're moving the booking just move to the next step
-        $scope.nextStep()
+    if $scope.bb.moving_booking
+      # if we're moving the booking just move to the next step
+      $scope.nextStep()
 
     $scope.setLoaded $scope
 
@@ -74,7 +83,11 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
         name           : category_details.name 
         description    : category_details.description 
         sub_categories : sub_categories
+        order          : $scope.all_categories[category_id].order
       })
+
+      if $scope.selected_category_name and $scope.selected_category_name is category_details.name
+        $scope.selected_category = $scope.categories[$scope.categories.length - 1]
 
 
   $scope.changeCategory = (category_name, services) ->
@@ -84,6 +97,7 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
         name: category_name
         sub_categories: services
       }
+      $scope.selected_category_name = $scope.selected_category.name
       $rootScope.$emit "multi_service_select:category_changed"
 
 
@@ -98,16 +112,15 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
       $rootScope.$emit "multi_service_select:item_added"
     else
       for i in $scope.items
-        i.popover = "Sorry, you can only book a maximum of three treatments"
+        i.popover = "Sorry, you can only book a maximum of #{$scope.options.max_services} treatments"
         i.popoverText = i.popover
 
 
   $scope.removeItem = (item) ->
+    item.selected = false
     $scope.bb.deleteStackedItemByService(item)
-    # loop around the services to set the selected flag, we can't assign 'selected' directly, as the
-    # passed in item might be a item from the service list controller or a stacked item
     for i in $scope.items
-      i.selected = false if i.self == item.self 
+      i.selected = false if i.self is item.self 
 
 
   $scope.nextStep = () ->
