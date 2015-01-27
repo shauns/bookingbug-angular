@@ -5,8 +5,7 @@ angular.module('BB.Directives').directive 'bbClientDetails', () ->
   scope : true
   controller : 'ClientDetails'
 
-
-angular.module('BB.Controllers').controller 'ClientDetails', ($scope,  $rootScope, ClientDetailsService, ClientService, LoginService, BBModel, ValidatorService) ->
+angular.module('BB.Controllers').controller 'ClientDetails', ($scope,  $rootScope, ClientDetailsService, ClientService, LoginService, BBModel, ValidatorService, QuestionService) ->
   $scope.controller = "public.controllers.ClientDetails"
   $scope.notLoaded $scope
   $scope.validator = ValidatorService
@@ -26,10 +25,12 @@ angular.module('BB.Controllers').controller 'ClientDetails', ($scope,  $rootScop
 
     if $scope.client.client_details
       $scope.client_details = $scope.client.client_details
+      QuestionService.checkConditionalQuestions($scope.client_details.questions) if $scope.client_details.questions
       $scope.setLoaded $scope
     else 
       ClientDetailsService.query($scope.bb.company).then (details) =>
         $scope.client_details = details
+        QuestionService.checkConditionalQuestions($scope.client_details.questions) if $scope.client_details.questions
         $scope.setLoaded $scope
       , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
@@ -113,3 +114,6 @@ angular.module('BB.Controllers').controller 'ClientDetails', ($scope,  $rootScop
   $scope.useClient = (client) ->
     $scope.setClient(client)
     
+
+  $scope.recalc_question = () ->
+    QuestionService.checkConditionalQuestions($scope.client_details.questions) if $scope.client_details.questions

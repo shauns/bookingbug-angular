@@ -42,6 +42,8 @@ app.directive 'bbQuestion', ($compile, $timeout) ->
             scope.recalc = () =>
               if angular.isDefined(scope.recalc_price)
                 scope.recalc_price() if !question.outcome
+              if angular.isDefined(scope.recalc_question)
+                scope.recalc_question()
 
             # are we using a completely custom question
             if scope.idmaps and (scope.idmaps[question.detail_type] or scope.idmaps[question.id])
