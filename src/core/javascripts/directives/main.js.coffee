@@ -79,7 +79,7 @@ app.directive  'bbSlotGrouper', () ->
 # bbForm
 # Adds behaviour to select first invalid input 
 # TODO more all form behaviour to this directive, initilising options as parmas
-app.directive 'bbForm', () ->
+app.directive 'bbForm', ($bbug) ->
   restrict: 'A'
   require: '^form'
   link: (scope, elem, attrs, ctrls) ->
