@@ -12,15 +12,17 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
     'selected_category_name'
   ]
 
-  $scope.options = $scope.$eval($attrs.bbMultiServiceSelect) or {}
-  $scope.options.max_services = $scope.options.max_services or 3
-  $scope.options.services = $scope.options.services or 'items'
+  $scope.options                    = $scope.$eval($attrs.bbMultiServiceSelect) or {}
+  $scope.options.max_services       = $scope.options.max_services or 3
+  $scope.options.ordered_categories = $scope.options.ordered_categories or false
+  $scope.options.services           = $scope.options.services or 'items'
 
   # Get the categories
   CategoryService.query($scope.bb.company).then (items) =>
-    for item in items 
-      item.order = parseInt(item.name.slice(0,2))
-      item.name  = item.name.slice(3)
+    for item in items
+      if $scope.options.ordered_categories
+        item.order = parseInt(item.name.slice(0,2))
+        item.name  = item.name.slice(3)
     $scope.all_categories = _.indexBy(items, 'id')
   , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
@@ -79,12 +81,14 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
 
       category_details = {name: $scope.all_categories[category_id].name, description: $scope.all_categories[category_id].description} if $scope.all_categories[category_id]
 
-      $scope.categories.push({
+      category = {
         name           : category_details.name 
         description    : category_details.description 
         sub_categories : sub_categories
-        order          : $scope.all_categories[category_id].order
-      })
+        }
+      category.order = $scope.all_categories[category_id].order if $scope.options.ordered_categories
+
+      $scope.categories.push(category)
 
       if $scope.selected_category_name and $scope.selected_category_name is category_details.name
         $scope.selected_category = $scope.categories[$scope.categories.length - 1]
