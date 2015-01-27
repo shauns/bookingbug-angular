@@ -1093,13 +1093,11 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
   $scope.supportsTouch = () ->
     Modernizr.touch
 
-  String.prototype.parameterise = () ->
-    return this.trim().replace(/\s/g,'-').toLowerCase()
 
   $rootScope.$on 'show:loader', () ->
     $scope.loading = true
   $rootScope.$on 'hide:loader', () ->
     $scope.loading = false
 
-  String.prototype.parameterise = () ->
-    return this.trim().replace(/\s/g,'-').toLowerCase()
+  String.prototype.parameterise = (seperator = '-') ->
+    return this.trim().replace(/\s/g,seperator).toLowerCase()
