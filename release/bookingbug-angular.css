@@ -3209,6 +3209,21 @@ be a descendant of the grid when it is being dragged.
 	content: "=";
 }
 
+[schedule-edit] {
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none; }
+  [schedule-edit] .eng-selected-item {
+    background: blue;
+    color: white; }
+  [schedule-edit] td {
+    padding: 10px;
+    border: 1px solid gray; }
+
 /*!
  * Bootstrap v3.0.0
  *

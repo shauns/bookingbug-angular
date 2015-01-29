@@ -1,0 +1,5 @@
+<table>
+  <tr ng-repeat="hour in hours" ng-init="$last ? lastHour() : null">
+    <td ng-repeat="date in dates" ng-init="$last ? lastDate() : null" id="{{date}}|{{hour}}"></td>
+  </tr>
+</table>
