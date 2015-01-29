@@ -1,16 +1,20 @@
-angular.module('BBAdminServices').directive 'scheduleEdit', (AdminCompanyService,
-    AdminScheduleService, $modal, $log, ModalForm, $window, $document) ->
+angular.module('BBAdminServices').directive 'scheduleEdit', ($window, $document) ->
+
+  hourRange = (start_hour) ->
+    start = start_hour* 100
+    end = start_hour*100 + 100
+    "#{sprintf('%04s', start)}-#{sprintf('%04s', end)}"
 
   controller = ($scope) ->
 
-    start_date = moment()
-    $scope.dates = (start_date.add(x, 'days').format('YYYY-MM-DD') for x in [0..6])
-    # $scope.dates = [0..6]
+    # start_date = moment()
+    # $scope.dates = (start_date.add(x, 'days').format('YYYY-MM-DD') for x in [0..6])
+    $scope.dates = [0..6]
+    $scope.hours = (hourRange(x) for x in [0..23])
 
     $scope.hoursDone = false
     $scope.datesDone = false
 
-    $scope.hours = _.range(0, 600, 100)
 
     $scope.lastHour = () ->
       $scope.hoursDone = true
@@ -28,9 +32,9 @@ angular.module('BBAdminServices').directive 'scheduleEdit', (AdminCompanyService
 
     ngModel.$render = () ->
       ids = _.flatten(_.map(ngModel.$viewValue, (hours, date) ->
-        _.map(_.range(parseInt(hours.split('-')[0]),
-                      parseInt(hours.split('-')[1]) + 100, 100),
-              (hour) -> "#{date}|#{hour}")
+        _.map(_.range(parseInt(hours.split('-')[0])/100,
+                      parseInt(hours.split('-')[1])/100),
+              (hour) -> "#{date}|#{hourRange(hour)}")
       ))
       if scope.datesDone
         updateTableElements(ids)
@@ -45,14 +49,11 @@ angular.module('BBAdminServices').directive 'scheduleEdit', (AdminCompanyService
     updateModel = (ids) ->
       ngModel.$setViewValue(_.reduce(ids, (memo, id) ->
         date = id.split('|')[0]
-        hour = id.split('|')[1]
+        hours = id.split('|')[1]
         if memo[date]
-          if memo[date].length == 1
-            memo[date] = "#{memo[date]}-#{hour}"
-          else
-            memo[date] = "#{memo[date].split('-')[0]}-#{hour}"
+          memo[date] = "#{memo[date].split('-')[0]}-#{hours.split('-')[1]}"
         else
-          memo[date] = hour
+          memo[date] = hours
         memo
       , {}))
 

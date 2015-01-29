@@ -42,7 +42,8 @@
     "ng-idle": "~0.3.5",
     "underscore": "~1.7.0",
     "angular-ui-calendar": "~0.8.1",
-    "fullcalendar": "~2.2.3"
+    "fullcalendar": "~2.2.3",
+    "sprintf": "~1.0.2"
   },
   "resolutions": {
     "angular": "~1.2.25",
