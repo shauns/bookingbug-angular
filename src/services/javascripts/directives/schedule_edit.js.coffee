@@ -14,7 +14,6 @@ angular.module('BBAdminServices').directive 'scheduleEdit', ($window, $document)
 
     # start_date = moment()
     # $scope.dates = (start_date.add(x, 'days').format('YYYY-MM-DD') for x in [0..6])
-    # TODO days represented and hour should be configurable
     $scope.dates = [0..6]
     $scope.hours = (hourRange(x) for x in [0..23])
 
@@ -24,7 +23,18 @@ angular.module('BBAdminServices').directive 'scheduleEdit', ($window, $document)
     # TODO
     # using dates and hours specified, create array of slots indexed by hour (rows) and date (cols)
     # eg. $scope.slots['2015-10-01']['13:00']
-    #
+
+    # options = {start_date: '2015-02-02', end_date: '2015-02-02', start_time: '0800', end_time: '2200', duration: '30'}
+
+    # if (options.start_date and angular.isNumber(options.start_date)) and (options.end_date and angular.isNumber(options.end_date))
+    #   start_date = options.start_date
+    #   end_date   = options.end_date
+    # else
+    #   start_date = moment(options.start_date)
+    #   end_date   = moment(options.end_date)
+
+
+
 
 
     $scope.lastHour = () ->
