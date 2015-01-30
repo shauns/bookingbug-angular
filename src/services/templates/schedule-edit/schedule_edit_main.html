@@ -1,5 +1,15 @@
 <table>
-  <tr ng-repeat="hour in hours" ng-init="$last ? lastHour() : null">
-    <td ng-repeat="date in dates" ng-init="$last ? lastDate() : null" id="{{date}}|{{hour}}"></td>
-  </tr>
+  <thead>
+    <tr>
+      <th><!--empty cell--></th>
+      <th ng-repeat="date in dates">{{date | dayName}}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="hour in hours" ng-init="$last ? lastHour() : null">
+      <td class="hour-label">{{hour | hourName}}</td>
+      <td ng-repeat="date in dates" ng-init="$last ? lastDate() : null" id="{{date}}|{{hour}}"></td>
+    </tr>
+  </tbody>
 </table>
+
