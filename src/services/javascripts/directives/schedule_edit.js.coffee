@@ -63,20 +63,24 @@ angular.module('BBAdminServices').directive 'scheduleEdit', ($window, $document)
 
     # update the rules json string
     updateModel = (ids) ->
-      debugger
-      # _.sortBy(ids, (id) ->
-      #   date = id.split('|')[0]
-      #   hours = id.split('|')[1]
-      # )
       ngModel.$setViewValue(_.reduce(ids, (memo, id) ->
+        #debugger
         date = id.split('|')[0]
         hours = id.split('|')[1]
         if memo[date]
-          memo[date] = "#{memo[date].split('-')[0]}-#{hours.split('-')[1]}"
+          memo_start  = parseInt(memo[date].slice(0,2))
+          memo_end    = parseInt(memo[date].slice(5,7))
+          hours_start = parseInt(hours.slice(0,2))
+          hours_end   = parseInt(hours.slice(5,7))
+
+          if hours_start < memo_start then start = hours.split('-')[0] else start = memo[date].split('-')[0]
+          if hours_end > memo_end then end = hours.split('-')[1] else end = memo[date].split('-')[1]
+          memo[date] = "#{start}-#{end}"
         else
           memo[date] = hours
         memo
       , {}))
+
 
     mouseUp = (el) ->
       dragging = false
@@ -122,9 +126,6 @@ angular.module('BBAdminServices').directive 'scheduleEdit', ($window, $document)
           delete selectedIds[el.attr("id")]
         #interactedWith.push el.attr("id")
         #updateModel(selectedIds)
-        console.log 'selectedIds', selectedIds
-
-
 
 
     cellsBetween = (start, end) ->
