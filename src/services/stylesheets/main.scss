@@ -1,6 +1,5 @@
 [schedule-edit] {
 
-  cursor: pointer;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -8,14 +7,41 @@
   -ms-user-select: none;
   user-select: none;
 
-  .eng-selected-item {
-    background: blue;
-    color: white;
+  table {
+    width: 100%;
   }
 
-  td {
+  td, th {
     padding: 10px;
-    border: 1px solid gray;
+    border: 2px solid rgba(220, 228, 236,1);
+    width: 12.5%;
+  }
+
+  th {
+    text-align: center;
+    font-weight: normal;
+  }
+
+  td.eng-item {
+    cursor: pointer;
+    -webkit-transition: display 0.4s ease;
+    transition: background-color 0.4s ease;
+  }
+
+  td.eng-item:not(.eng-selected-item) {
+    &:hover {
+      background-color: #3be6c4;
+    }
+  }
+
+  td.eng-selected-item {
+    background-color: #3be6c4;
+    color: white;
+    border-color: rgba(220, 228, 236,0.2);
+  }
+
+  td.hour-label {
+    width: auto;
   }
 
 }

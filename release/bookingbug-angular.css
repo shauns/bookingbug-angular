@@ -3210,19 +3210,33 @@ be a descendant of the grid when it is being dragged.
 }
 
 [schedule-edit] {
-  cursor: pointer;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none; }
-  [schedule-edit] .eng-selected-item {
-    background: blue;
-    color: white; }
-  [schedule-edit] td {
+  [schedule-edit] table {
+    width: 100%; }
+  [schedule-edit] td, [schedule-edit] th {
     padding: 10px;
-    border: 1px solid gray; }
+    border: 2px solid #dce4ec;
+    width: 12.5%; }
+  [schedule-edit] th {
+    text-align: center;
+    font-weight: normal; }
+  [schedule-edit] td.eng-item {
+    cursor: pointer;
+    -webkit-transition: display 0.4s ease;
+    transition: background-color 0.4s ease; }
+  [schedule-edit] td.eng-item:not(.eng-selected-item):hover {
+    background-color: #3be6c4; }
+  [schedule-edit] td.eng-selected-item {
+    background-color: #3be6c4;
+    color: white;
+    border-color: rgba(220, 228, 236, 0.2); }
+  [schedule-edit] td.hour-label {
+    width: auto; }
 
 @charset "UTF-8";
 /*!
