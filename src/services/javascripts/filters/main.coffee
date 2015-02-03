@@ -4,7 +4,6 @@ app = angular.module 'BB.Filters'
 
 app.filter 'dayName', ->
   (day_of_week) ->
-    moment().locale('en-GB');
     date = moment().weekday(day_of_week)
     return date.format('ddd')
 
