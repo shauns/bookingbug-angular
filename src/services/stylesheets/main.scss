@@ -24,20 +24,20 @@
 
   td.eng-item {
     cursor: pointer;
-    -webkit-transition: display 0.4s ease;
-    transition: background-color 0.4s ease;
+    // -webkit-transition: display 0.4s ease;
+    // transition: background-color 0.4s ease;
   }
 
   td.eng-item:not(.eng-selected-item) {
     &:hover {
-      background-color: #3be6c4;
+      background-color: rgba(59,230,196,0.5);
     }
   }
 
   td.eng-selected-item {
-    background-color: #3be6c4;
+    background-color: rgba(59,230,196,1);
     color: white;
-    border-color: rgba(220, 228, 236,0.2);
+    border-color: rgba(220, 228, 236,0.4);
   }
 
   td.hour-label {
