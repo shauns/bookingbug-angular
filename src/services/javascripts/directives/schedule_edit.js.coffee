@@ -1,7 +1,7 @@
 angular.module('BBAdminServices').directive 'scheduleEdit', ($window, $document) ->
 
   # TODO
-  # time slots wont nessecarily be an hour, could be 15 mins!
+  # time slots wont nessecarily be an hour, could be 15 mins
   hourRange = (start_hour) ->
     start = start_hour* 100
     end = start_hour*100 + 100
@@ -9,11 +9,6 @@ angular.module('BBAdminServices').directive 'scheduleEdit', ($window, $document)
 
   controller = ($scope) ->
 
-    # TODO
-    # init directive with date range, time range and duration of time slots
-
-    # start_date = moment()
-    # $scope.dates = (start_date.add(x, 'days').format('YYYY-MM-DD') for x in [0..6])
     $scope.dates = [0..6]
     $scope.hours = (hourRange(x) for x in [0..23])
 
@@ -22,7 +17,7 @@ angular.module('BBAdminServices').directive 'scheduleEdit', ($window, $document)
 
     # TODO
     # using dates and hours specified, create array of slots indexed by hour (rows) and date (cols)
-    # eg. $scope.slots['2015-10-01']['13:00']
+    # eg. $scope.slots['13:00']['2015-10-01']
 
     # options = {start_date: '2015-02-02', end_date: '2015-02-02', start_time: '0800', end_time: '2200', duration: '30'}
 
@@ -32,9 +27,6 @@ angular.module('BBAdminServices').directive 'scheduleEdit', ($window, $document)
     # else
     #   start_date = moment(options.start_date)
     #   end_date   = moment(options.end_date)
-
-
-
 
 
     $scope.lastHour = () ->
@@ -73,11 +65,15 @@ angular.module('BBAdminServices').directive 'scheduleEdit', ($window, $document)
 
     # update the rules json string
     updateModel = (ids) ->
+      #1 sort cells then update range
+      #1 ids = sortSelectedCells(ids)
       ngModel.$setViewValue(_.reduce(ids, (memo, id) ->
-        #debugger
         date = id.split('|')[0]
         hours = id.split('|')[1]
         if memo[date]
+          #1 memo[date] = "#{memo[date].split('-')[0]}-#{hours.split('-')[1]}"
+
+          #2 check each new selected cell and adjust range as needed
           memo_start  = parseInt(memo[date].slice(0,2))
           memo_end    = parseInt(memo[date].slice(5,7))
           hours_start = parseInt(hours.slice(0,2))
@@ -92,11 +88,23 @@ angular.module('BBAdminServices').directive 'scheduleEdit', ($window, $document)
       , {}))
 
 
+    sortSelectedCells = (ids) ->
+      ids = _.toArray(ids) 
+      ids.sort (id1,id2) ->
+        a = {}
+        b = {}
+        a.date  = parseInt(id1.split('|')[0])
+        a.hours = parseInt(id1.split('|')[1].slice(0,2))
+        b.date  = parseInt(id2.split('|')[0])
+        b.hours = parseInt(id2.split('|')[1].slice(0,2))
+        if a.date is b.date
+          return a.hours - b.hours
+        return a.date - b.date
+      return ids
+
+
     mouseUp = (el) ->
       dragging = false
-      # TODO need to interate through cells to determine selected state, toggle selected cells
-      # only on mouse up shpould the JSON string be built
-      # inspect selected cells with that ar
       updateModel(selectedIds)
 
     mouseDown = (el) ->
@@ -115,28 +123,15 @@ angular.module('BBAdminServices').directive 'scheduleEdit', ($window, $document)
       else
         mode = "add"
 
-    # TODO don't change the selected state of a cell that's already been processed - start cell
-    # Remember that end cell is called repeaty as the mouse enters new cells
     setEndCell = (el) ->
-      #selectedIds = [] #clear this on mouse down
-      #interactedWith = []
-      #element.find("td").removeClass cls
       cellsBetween(startCell, el).each ->
-        #return if interactedWith.indexOf(el.attr("id")) != -1
         el = angular.element(this)
-        # TODO use id of cell to find slot in array and then set the status of it, should use ng-class to apply selected class
-        # if el.hasClass(cls)
-        #   el.removeClass cls
-        # else
         if mode is "add"
           el.addClass cls
           selectedIds[el.attr("id")] = el.attr("id") 
         else
           el.removeClass cls
           delete selectedIds[el.attr("id")]
-        #interactedWith.push el.attr("id")
-        #updateModel(selectedIds)
-
 
     cellsBetween = (start, end) ->
       coordsStart = getCoords(start)
