@@ -37,7 +37,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
     'event_group_id'
   ]
   
-  $scope.$setIfUndefined 'event_group_set', false
+  #$scope.$setIfUndefined 'event_group_set', false
   $scope.start_date = moment()
   $scope.end_date   = moment().add(1, 'year')
   $scope.event_group_set = if !$scope.event_group_set then false else $scope.current_item.event_group?

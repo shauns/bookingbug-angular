@@ -12,7 +12,7 @@ angular.module('BB.Models').service "BBModel", ($q, $injector) ->
     'Category', 'Client', 'ClientDetails', 'Company', 'CompanySettings',
     'Day', 'Event', 'EventChain', 'EventGroup', 'EventTicket', 'EventSequence', 
     'ItemDetails', 'Person', 'PurchaseItem', 'PurchaseTotal', 
-    'Question', 'Resource', 'Service', 'Slot', 'Space', 'SurveyQuestion','TimeSlot']
+    'Question', 'Resource', 'Service', 'Slot', 'Space', 'SurveyQuestion','TimeSlot', 'BusinessQuestion', 'Image']
 
   funcs = {}
   for model in models

@@ -96117,166 +96117,6 @@ angular.module('ui.utils',  [
   "ui.validate"
 ]);
 !function(e){"use strict";function t(e){var n;if(null===e||void 0===e)return!1;if(r.isArray(e))return e.length>0;if("string"==typeof e||"number"==typeof e||"boolean"==typeof e)return!0;for(n in e)if(e.hasOwnProperty(n)&&t(e[n]))return!0;return!1}var n=function(){function e(e){this.options=e}return e.prototype.toString=function(){return JSON&&JSON.stringify?JSON.stringify(this.options):this.options},e}(),r=function(){function e(e){return"[object Array]"===Object.prototype.toString.apply(e)}function t(e){return"[object String]"===Object.prototype.toString.apply(e)}function n(e){return"[object Number]"===Object.prototype.toString.apply(e)}function r(e){return"[object Boolean]"===Object.prototype.toString.apply(e)}function i(e,t){var n,r="",i=!0;for(n=0;n<e.length;n+=1)i?i=!1:r+=t,r+=e[n];return r}function o(e,t){for(var n=[],r=0;r<e.length;r+=1)n.push(t(e[r]));return n}function s(e,t){for(var n=[],r=0;r<e.length;r+=1)t(e[r])&&n.push(e[r]);return n}function a(e){if("object"!=typeof e||null===e)return e;Object.freeze(e);var t,n;for(n in e)e.hasOwnProperty(n)&&(t=e[n],"object"==typeof t&&u(t));return e}function u(e){return"function"==typeof Object.freeze?a(e):e}return{isArray:e,isString:t,isNumber:n,isBoolean:r,join:i,map:o,filter:s,deepFreeze:u}}(),i=function(){function e(e){return e>="a"&&"z">=e||e>="A"&&"Z">=e}function t(e){return e>="0"&&"9">=e}function n(e){return t(e)||e>="a"&&"f">=e||e>="A"&&"F">=e}return{isAlpha:e,isDigit:t,isHexDigit:n}}(),o=function(){function e(e){var t,n,r="",i=s.encode(e);for(n=0;n<i.length;n+=1)t=i.charCodeAt(n),r+="%"+(16>t?"0":"")+t.toString(16).toUpperCase();return r}function t(e,t){return"%"===e.charAt(t)&&i.isHexDigit(e.charAt(t+1))&&i.isHexDigit(e.charAt(t+2))}function n(e,t){return parseInt(e.substr(t,2),16)}function r(e){if(!t(e,0))return!1;var r=n(e,1),i=s.numBytes(r);if(0===i)return!1;for(var o=1;i>o;o+=1)if(!t(e,3*o)||!s.isValidFollowingCharCode(n(e,3*o+1)))return!1;return!0}function o(e,r){var i=e.charAt(r);if(!t(e,r))return i;var o=n(e,r+1),a=s.numBytes(o);if(0===a)return i;for(var u=1;a>u;u+=1)if(!t(e,r+3*u)||!s.isValidFollowingCharCode(n(e,r+3*u+1)))return i;return e.substr(r,3*a)}var s={encode:function(e){return unescape(encodeURIComponent(e))},numBytes:function(e){return 127>=e?1:e>=194&&223>=e?2:e>=224&&239>=e?3:e>=240&&244>=e?4:0},isValidFollowingCharCode:function(e){return e>=128&&191>=e}};return{encodeCharacter:e,isPctEncoded:r,pctCharAt:o}}(),s=function(){function e(e){return i.isAlpha(e)||i.isDigit(e)||"_"===e||o.isPctEncoded(e)}function t(e){return i.isAlpha(e)||i.isDigit(e)||"-"===e||"."===e||"_"===e||"~"===e}function n(e){return":"===e||"/"===e||"?"===e||"#"===e||"["===e||"]"===e||"@"===e||"!"===e||"$"===e||"&"===e||"("===e||")"===e||"*"===e||"+"===e||","===e||";"===e||"="===e||"'"===e}return{isVarchar:e,isUnreserved:t,isReserved:n}}(),a=function(){function e(e,t){var n,r="",i="";for(("number"==typeof e||"boolean"==typeof e)&&(e=e.toString()),n=0;n<e.length;n+=i.length)i=e.charAt(n),r+=s.isUnreserved(i)||t&&s.isReserved(i)?i:o.encodeCharacter(i);return r}function t(t){return e(t,!0)}function n(e,t){var n=o.pctCharAt(e,t);return n.length>1?n:s.isReserved(n)||s.isUnreserved(n)?n:o.encodeCharacter(n)}function r(e){var t,n="",r="";for(t=0;t<e.length;t+=r.length)r=o.pctCharAt(e,t),n+=r.length>1?r:s.isReserved(r)||s.isUnreserved(r)?r:o.encodeCharacter(r);return n}return{encode:e,encodePassReserved:t,encodeLiteral:r,encodeLiteralCharacter:n}}(),u=function(){function e(e){t[e]={symbol:e,separator:"?"===e?"&":""===e||"+"===e||"#"===e?",":e,named:";"===e||"&"===e||"?"===e,ifEmpty:"&"===e||"?"===e?"=":"",first:"+"===e?"":e,encode:"+"===e||"#"===e?a.encodePassReserved:a.encode,toString:function(){return this.symbol}}}var t={};return e(""),e("+"),e("#"),e("."),e("/"),e(";"),e("?"),e("&"),{valueOf:function(e){return t[e]?t[e]:"=,!@|".indexOf(e)>=0?null:t[""]}}}(),f=function(){function e(e){this.literal=a.encodeLiteral(e)}return e.prototype.expand=function(){return this.literal},e.prototype.toString=e.prototype.expand,e}(),p=function(){function e(e){function t(){var t=e.substring(h,f);if(0===t.length)throw new n({expressionText:e,message:"a varname must be specified",position:f});c={varname:t,exploded:!1,maxLength:null},h=null}function r(){if(d===f)throw new n({expressionText:e,message:"after a ':' you have to specify the length",position:f});c.maxLength=parseInt(e.substring(d,f),10),d=null}var a,f,p=[],c=null,h=null,d=null,g="";for(a=function(t){var r=u.valueOf(t);if(null===r)throw new n({expressionText:e,message:"illegal use of reserved operator",position:f,operator:t});return r}(e.charAt(0)),f=a.symbol.length,h=f;f<e.length;f+=g.length){if(g=o.pctCharAt(e,f),null!==h){if("."===g){if(h===f)throw new n({expressionText:e,message:"a varname MUST NOT start with a dot",position:f});continue}if(s.isVarchar(g))continue;t()}if(null!==d){if(f===d&&"0"===g)throw new n({expressionText:e,message:"A :prefix must not start with digit 0",position:f});if(i.isDigit(g)){if(f-d>=4)throw new n({expressionText:e,message:"A :prefix must have max 4 digits",position:f});continue}r()}if(":"!==g)if("*"!==g){if(","!==g)throw new n({expressionText:e,message:"illegal character",character:g,position:f});p.push(c),c=null,h=f+1}else{if(null===c)throw new n({expressionText:e,message:"exploded without varspec",position:f});if(c.exploded)throw new n({expressionText:e,message:"exploded twice",position:f});if(c.maxLength)throw new n({expressionText:e,message:"an explode (*) MUST NOT follow to a prefix",position:f});c.exploded=!0}else{if(null!==c.maxLength)throw new n({expressionText:e,message:"only one :maxLength is allowed per varspec",position:f});if(c.exploded)throw new n({expressionText:e,message:"an exploeded varspec MUST NOT be varspeced",position:f});d=f+1}}return null!==h&&t(),null!==d&&r(),p.push(c),new l(e,a,p)}function t(t){var r,i,o=[],s=null,a=0;for(r=0;r<t.length;r+=1)if(i=t.charAt(r),null===a){if(null===s)throw new Error("reached unreachable code");if("{"===i)throw new n({templateText:t,message:"brace already opened",position:r});if("}"===i){if(s+1===r)throw new n({templateText:t,message:"empty braces",position:s});try{o.push(e(t.substring(s+1,r)))}catch(u){if(u.prototype===n.prototype)throw new n({templateText:t,message:u.options.message,position:s+u.options.position,details:u.options});throw u}s=null,a=r+1}}else{if("}"===i)throw new n({templateText:t,message:"unopened brace closed",position:r});"{"===i&&(r>a&&o.push(new f(t.substring(a,r))),a=null,s=r)}if(null!==s)throw new n({templateText:t,message:"unclosed brace",position:s});return a<t.length&&o.push(new f(t.substr(a))),new c(t,o)}return t}(),l=function(){function e(e){return JSON&&JSON.stringify?JSON.stringify(e):e}function n(e){if(!t(e))return!0;if(r.isString(e))return""===e;if(r.isNumber(e)||r.isBoolean(e))return!1;if(r.isArray(e))return 0===e.length;for(var n in e)if(e.hasOwnProperty(n))return!1;return!0}function i(e){var t,n=[];for(t in e)e.hasOwnProperty(t)&&n.push({name:t,value:e[t]});return n}function o(e,t,n){this.templateText=e,this.operator=t,this.varspecs=n}function s(e,t,n){var r="";if(n=n.toString(),t.named){if(r+=a.encodeLiteral(e.varname),""===n)return r+=t.ifEmpty;r+="="}return null!==e.maxLength&&(n=n.substr(0,e.maxLength)),r+=t.encode(n)}function u(e){return t(e.value)}function f(e,o,s){var f=[],p="";if(o.named){if(p+=a.encodeLiteral(e.varname),n(s))return p+=o.ifEmpty;p+="="}return r.isArray(s)?(f=s,f=r.filter(f,t),f=r.map(f,o.encode),p+=r.join(f,",")):(f=i(s),f=r.filter(f,u),f=r.map(f,function(e){return o.encode(e.name)+","+o.encode(e.value)}),p+=r.join(f,",")),p}function p(e,o,s){var f=r.isArray(s),p=[];return f?(p=s,p=r.filter(p,t),p=r.map(p,function(t){var r=a.encodeLiteral(e.varname);return r+=n(t)?o.ifEmpty:"="+o.encode(t)})):(p=i(s),p=r.filter(p,u),p=r.map(p,function(e){var t=a.encodeLiteral(e.name);return t+=n(e.value)?o.ifEmpty:"="+o.encode(e.value)})),r.join(p,o.separator)}function l(e,n){var o=[],s="";return r.isArray(n)?(o=n,o=r.filter(o,t),o=r.map(o,e.encode),s+=r.join(o,e.separator)):(o=i(n),o=r.filter(o,function(e){return t(e.value)}),o=r.map(o,function(t){return e.encode(t.name)+"="+e.encode(t.value)}),s+=r.join(o,e.separator)),s}return o.prototype.toString=function(){return this.templateText},o.prototype.expand=function(i){var o,a,u,c,h=[],d=!1,g=this.operator;for(o=0;o<this.varspecs.length;o+=1)if(a=this.varspecs[o],u=i[a.varname],null!==u&&void 0!==u)if(a.exploded&&(d=!0),c=r.isArray(u),"string"==typeof u||"number"==typeof u||"boolean"==typeof u)h.push(s(a,g,u));else{if(a.maxLength&&t(u))throw new Error("Prefix modifiers are not applicable to variables that have composite values. You tried to expand "+this+" with "+e(u));a.exploded?t(u)&&(g.named?h.push(p(a,g,u)):h.push(l(g,u))):(g.named||!n(u))&&h.push(f(a,g,u))}return 0===h.length?"":g.first+r.join(h,g.separator)},o}(),c=function(){function e(e,t){this.templateText=e,this.expressions=t,r.deepFreeze(this)}return e.prototype.toString=function(){return this.templateText},e.prototype.expand=function(e){var t,n="";for(t=0;t<this.expressions.length;t+=1)n+=this.expressions[t].expand(e);return n},e.parse=p,e.UriTemplateError=n,e}();e(c)}(function(e){"use strict";"undefined"!=typeof module?module.exports=e:"function"==typeof define?define([],function(){return e}):"undefined"!=typeof window?window.UriTemplate=e:global.UriTemplate=e});
-
-
-angular.module('BBAdmin.Directives').controller('CalController', function($scope) {
-    /* config object */
-    $scope.calendarConfig = {
-        height: 450,
-        editiable: true,
-        dayClick: function(){
-            scope.$apply($scope.alertEventOnClick);
-        }
-    };
-});
-
-(function() {
-  'use strict';
-  angular.module('BBAdmin.Directives').directive('bbDashboardBooking', function() {
-    return {
-      restrict: 'AE',
-      replace: true,
-      scope: {
-        avail: '=available',
-        booking: '=',
-        person: '=',
-        time: '=',
-        allDayBlocking: '=',
-        first: '=',
-        numServices: '='
-      },
-      templateUrl: function(tElm, tAttrs) {
-        return tAttrs.template;
-      },
-      controller: function($scope) {
-        $scope.openModal = $scope.$parent.openModal;
-        return $scope.$watchCollection('[booking, allDayBlocking, avail, first]', function(newValues) {
-          var booking, start;
-          booking = newValues[0];
-          $scope.completed = false;
-          $scope.checked_in = false;
-          $scope.being_seen = false;
-          $scope.no_show = false;
-          $scope.blocking = newValues[1];
-          $scope.blocked = newValues[1] != null;
-          $scope.allDay = false;
-          if (booking != null) {
-            $scope.allDay |= booking.allDay;
-          }
-          $scope.allDay |= $scope.blocking != null;
-          $scope.available = newValues[2];
-          $scope.showHeader = newValues[3] || !$scope.blocked;
-          if ((booking != null)) {
-            $scope.blocked |= booking.status !== 4;
-            $scope.blocking = booking;
-            if ((booking.multi_status != null) && !$scope.blocked) {
-              $scope.completed = booking.hasStatus('completed');
-              $scope.checked_in = booking.hasStatus('checked_in');
-              $scope.no_show = booking.hasStatus('no_show');
-              $scope.being_seen = booking.hasStatus('being_seen');
-            }
-            start = booking.start.minutes() + (booking.start.hours() * 60);
-            return $scope.showHeader = start === $scope.time;
-          }
-        });
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  angular.module('BBAdmin.Directives').directive('bbPeopleList', function($rootScope) {
-    return {
-      restrict: 'AE',
-      replace: true,
-      scope: true,
-      controller: function($scope, $rootScope, PersonService, $q, BBModel, PersonModel) {
-        $rootScope.connection_started.then(function() {
-          return $scope.bb.company.getPeoplePromise().then(function(people) {
-            var person, _i, _len, _results;
-            $scope.people = people;
-            _results = [];
-            for (_i = 0, _len = people.length; _i < _len; _i++) {
-              person = people[_i];
-              _results.push(person.show = true);
-            }
-            return _results;
-          });
-        });
-        $scope.show_all_people = function() {
-          var x, _i, _len, _ref, _results;
-          _ref = $scope.people;
-          _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            x = _ref[_i];
-            _results.push(x.show = true);
-          }
-          return _results;
-        };
-        return $scope.hide_all_people = function() {
-          var x, _i, _len, _ref, _results;
-          _ref = $scope.people;
-          _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            x = _ref[_i];
-            _results.push(x.show = false);
-          }
-          return _results;
-        };
-      },
-      link: function(scope, element, attrs) {}
-    };
-  });
-
-  angular.module('BBAdmin.Directives').directive('bbBookingList', function() {
-    return {
-      restrict: 'AE',
-      replace: true,
-      scope: {
-        bookings: '=',
-        cancelled: '=',
-        params: '='
-      },
-      templateUrl: function(tElm, tAttrs) {
-        return tAttrs.template;
-      },
-      controller: function($scope, $filter) {
-        var status;
-        $scope.title = $scope.params.title;
-        status = $scope.params.status;
-        return $scope.$watch(function() {
-          return $scope.bookings;
-        }, function() {
-          var bookings, cancelled;
-          bookings = $scope.bookings;
-          cancelled = $scope.cancelled;
-          if (cancelled == null) {
-            cancelled = false;
-          }
-          if ((bookings != null)) {
-            bookings = $filter('filter')(bookings, function(booking) {
-              var ret;
-              ret = booking.is_cancelled === cancelled;
-              if ((status != null)) {
-                ret &= booking.hasStatus(status);
-              } else {
-                ret &= (booking.multi_status == null) || Object.keys(booking.multi_status).length === 0;
-              }
-              ret &= booking.status === 4;
-              return ret;
-            });
-            $scope.relevantBookings = $filter('orderBy')(bookings, 'datetime');
-          }
-          return $scope.relevantBookings != null ? $scope.relevantBookings : $scope.relevantBookings = [];
-        });
-      }
-    };
-  });
-
-}).call(this);
-
 (function() {
   angular.module('BBAdmin.Controllers').controller('BBAdminCtrl', function($controller, $scope, $location, $rootScope, halClient, $window, $http, $localCache, $q, BasketService, LoginService, AlertService, $sce, $element, $compile, $sniffer, $modal, $timeout, BBModel, BBWidget, SSOService, ErrorService, AppConfig, BookingCollections, SlotCollections, $state, AdminLoginService, AdminBookingService, $sessionStorage, $log, idleTimeout) {
     angular.extend(this, $controller('BBCtrl', {
@@ -98507,6 +98347,166 @@ SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
         });
       }
       return $scope.ok();
+    };
+  });
+
+}).call(this);
+
+
+
+angular.module('BBAdmin.Directives').controller('CalController', function($scope) {
+    /* config object */
+    $scope.calendarConfig = {
+        height: 450,
+        editiable: true,
+        dayClick: function(){
+            scope.$apply($scope.alertEventOnClick);
+        }
+    };
+});
+
+(function() {
+  'use strict';
+  angular.module('BBAdmin.Directives').directive('bbDashboardBooking', function() {
+    return {
+      restrict: 'AE',
+      replace: true,
+      scope: {
+        avail: '=available',
+        booking: '=',
+        person: '=',
+        time: '=',
+        allDayBlocking: '=',
+        first: '=',
+        numServices: '='
+      },
+      templateUrl: function(tElm, tAttrs) {
+        return tAttrs.template;
+      },
+      controller: function($scope) {
+        $scope.openModal = $scope.$parent.openModal;
+        return $scope.$watchCollection('[booking, allDayBlocking, avail, first]', function(newValues) {
+          var booking, start;
+          booking = newValues[0];
+          $scope.completed = false;
+          $scope.checked_in = false;
+          $scope.being_seen = false;
+          $scope.no_show = false;
+          $scope.blocking = newValues[1];
+          $scope.blocked = newValues[1] != null;
+          $scope.allDay = false;
+          if (booking != null) {
+            $scope.allDay |= booking.allDay;
+          }
+          $scope.allDay |= $scope.blocking != null;
+          $scope.available = newValues[2];
+          $scope.showHeader = newValues[3] || !$scope.blocked;
+          if ((booking != null)) {
+            $scope.blocked |= booking.status !== 4;
+            $scope.blocking = booking;
+            if ((booking.multi_status != null) && !$scope.blocked) {
+              $scope.completed = booking.hasStatus('completed');
+              $scope.checked_in = booking.hasStatus('checked_in');
+              $scope.no_show = booking.hasStatus('no_show');
+              $scope.being_seen = booking.hasStatus('being_seen');
+            }
+            start = booking.start.minutes() + (booking.start.hours() * 60);
+            return $scope.showHeader = start === $scope.time;
+          }
+        });
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  angular.module('BBAdmin.Directives').directive('bbPeopleList', function($rootScope) {
+    return {
+      restrict: 'AE',
+      replace: true,
+      scope: true,
+      controller: function($scope, $rootScope, PersonService, $q, BBModel, PersonModel) {
+        $rootScope.connection_started.then(function() {
+          return $scope.bb.company.getPeoplePromise().then(function(people) {
+            var person, _i, _len, _results;
+            $scope.people = people;
+            _results = [];
+            for (_i = 0, _len = people.length; _i < _len; _i++) {
+              person = people[_i];
+              _results.push(person.show = true);
+            }
+            return _results;
+          });
+        });
+        $scope.show_all_people = function() {
+          var x, _i, _len, _ref, _results;
+          _ref = $scope.people;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            x = _ref[_i];
+            _results.push(x.show = true);
+          }
+          return _results;
+        };
+        return $scope.hide_all_people = function() {
+          var x, _i, _len, _ref, _results;
+          _ref = $scope.people;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            x = _ref[_i];
+            _results.push(x.show = false);
+          }
+          return _results;
+        };
+      },
+      link: function(scope, element, attrs) {}
+    };
+  });
+
+  angular.module('BBAdmin.Directives').directive('bbBookingList', function() {
+    return {
+      restrict: 'AE',
+      replace: true,
+      scope: {
+        bookings: '=',
+        cancelled: '=',
+        params: '='
+      },
+      templateUrl: function(tElm, tAttrs) {
+        return tAttrs.template;
+      },
+      controller: function($scope, $filter) {
+        var status;
+        $scope.title = $scope.params.title;
+        status = $scope.params.status;
+        return $scope.$watch(function() {
+          return $scope.bookings;
+        }, function() {
+          var bookings, cancelled;
+          bookings = $scope.bookings;
+          cancelled = $scope.cancelled;
+          if (cancelled == null) {
+            cancelled = false;
+          }
+          if ((bookings != null)) {
+            bookings = $filter('filter')(bookings, function(booking) {
+              var ret;
+              ret = booking.is_cancelled === cancelled;
+              if ((status != null)) {
+                ret &= booking.hasStatus(status);
+              } else {
+                ret &= (booking.multi_status == null) || Object.keys(booking.multi_status).length === 0;
+              }
+              ret &= booking.status === 4;
+              return ret;
+            });
+            $scope.relevantBookings = $filter('orderBy')(bookings, 'datetime');
+          }
+          return $scope.relevantBookings != null ? $scope.relevantBookings : $scope.relevantBookings = [];
+        });
+      }
     };
   });
 
@@ -102287,7 +102287,6 @@ SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
       num_items: null
     };
     FormDataStoreService.init('EventList', $scope, ['selected_date', 'event_group_id']);
-    $scope.$setIfUndefined('event_group_set', false);
     $scope.start_date = moment();
     $scope.end_date = moment().add(1, 'year');
     $scope.event_group_set = !$scope.event_group_set ? false : $scope.current_item.event_group != null;
@@ -108439,7 +108438,7 @@ SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
 (function() {
   angular.module('BB.Models').service("BBModel", function($q, $injector) {
     var admin_models, afuncs, funcs, member_models, mfuncs, model, models, pfuncs, purchase_models, _fn, _fn1, _fn2, _fn3, _i, _j, _k, _l, _len, _len1, _len2, _len3;
-    models = ['Address', 'Answer', 'Affiliate', 'Basket', 'BasketItem', 'BookableItem', 'Category', 'Client', 'ClientDetails', 'Company', 'CompanySettings', 'Day', 'Event', 'EventChain', 'EventGroup', 'EventTicket', 'EventSequence', 'ItemDetails', 'Person', 'PurchaseItem', 'PurchaseTotal', 'Question', 'Resource', 'Service', 'Slot', 'Space', 'SurveyQuestion', 'TimeSlot'];
+    models = ['Address', 'Answer', 'Affiliate', 'Basket', 'BasketItem', 'BookableItem', 'Category', 'Client', 'ClientDetails', 'Company', 'CompanySettings', 'Day', 'Event', 'EventChain', 'EventGroup', 'EventTicket', 'EventSequence', 'ItemDetails', 'Person', 'PurchaseItem', 'PurchaseTotal', 'Question', 'Resource', 'Service', 'Slot', 'Space', 'SurveyQuestion', 'TimeSlot', 'BusinessQuestion', 'Image'];
     funcs = {};
     _fn = (function(_this) {
       return function(model) {
@@ -115694,148 +115693,6 @@ SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
 }).call(this);
 
 (function() {
-  angular.module('BBAdminSettings').directive('adminTable', function(AdminCompanyService, AdminAdministratorService, $modal, $log, ModalForm) {
-    var controller, link;
-    controller = function($scope) {
-      $scope.getAdministrators = function() {
-        var params;
-        params = {
-          company: $scope.company
-        };
-        return AdminAdministratorService.query(params).then(function(administrators) {
-          $scope.admin_models = administrators;
-          return $scope.administrators = _.map(administrators, function(administrator) {
-            return _.pick(administrator, 'id', 'name', 'email', 'role');
-          });
-        });
-      };
-      $scope.newAdministrator = function() {
-        return ModalForm["new"]({
-          company: $scope.company,
-          title: 'New Administrator',
-          new_rel: 'new_administrator',
-          post_rel: 'administrators',
-          success: function(administrator) {
-            return $scope.administrators.push(administrator);
-          }
-        });
-      };
-      return $scope.edit = function(id) {
-        var admin;
-        admin = _.find($scope.admin_models, function(p) {
-          return p.id === id;
-        });
-        return ModalForm.edit({
-          model: admin,
-          title: 'Edit Administrator'
-        });
-      };
-    };
-    link = function(scope, element, attrs) {
-      if (scope.company) {
-        return scope.getAdministrators();
-      } else {
-        return AdminCompanyService.query(attrs).then(function(company) {
-          scope.company = company;
-          return scope.getAdministrators();
-        });
-      }
-    };
-    return {
-      controller: controller,
-      link: link,
-      templateUrl: 'admin_table_main.html'
-    };
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  var __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  angular.module('BB.Models').factory("Admin.AdministratorModel", function($q, BBModel, BaseModel) {
-    var Admin_Administrator;
-    return Admin_Administrator = (function(_super) {
-      __extends(Admin_Administrator, _super);
-
-      function Admin_Administrator(data) {
-        Admin_Administrator.__super__.constructor.call(this, data);
-      }
-
-      return Admin_Administrator;
-
-    })(BaseModel);
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  var __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  angular.module('BB.Models').factory("Admin.UserModel", function($q, BBModel, BaseModel) {
-    var Admin_User;
-    return Admin_User = (function(_super) {
-      __extends(Admin_User, _super);
-
-      function Admin_User(data) {
-        Admin_User.__super__.constructor.call(this, data);
-        this.companies = [];
-        if (data) {
-          if (this.$has('companies')) {
-            this.$get('companies').then((function(_this) {
-              return function(comps) {
-                return _this.companies = comps;
-              };
-            })(this));
-          }
-        }
-      }
-
-      return Admin_User;
-
-    })(BaseModel);
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdmin.Services').factory('AdminAdministratorService', function($q, BBModel) {
-    return {
-      query: function(params) {
-        var company, defer;
-        company = params.company;
-        defer = $q.defer();
-        company.$get('administrators').then(function(collection) {
-          return collection.$get('administrators').then(function(administrators) {
-            var a, models;
-            models = (function() {
-              var _i, _len, _results;
-              _results = [];
-              for (_i = 0, _len = administrators.length; _i < _len; _i++) {
-                a = administrators[_i];
-                _results.push(new BBModel.Admin.Administrator(a));
-              }
-              return _results;
-            })();
-            return defer.resolve(models);
-          }, function(err) {
-            return defer.reject(err);
-          });
-        }, function(err) {
-          return defer.reject(err);
-        });
-        return defer.promise;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
   angular.module('BBAdminServices').directive('personTable', function(AdminCompanyService, AdminPersonService, $modal, $log, ModalForm) {
     var controller, link;
     controller = function($scope) {
@@ -116605,6 +116462,148 @@ SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
               for (_i = 0, _len = services.length; _i < _len; _i++) {
                 s = services[_i];
                 _results.push(new BBModel.Service(s));
+              }
+              return _results;
+            })();
+            return defer.resolve(models);
+          }, function(err) {
+            return defer.reject(err);
+          });
+        }, function(err) {
+          return defer.reject(err);
+        });
+        return defer.promise;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdminSettings').directive('adminTable', function(AdminCompanyService, AdminAdministratorService, $modal, $log, ModalForm) {
+    var controller, link;
+    controller = function($scope) {
+      $scope.getAdministrators = function() {
+        var params;
+        params = {
+          company: $scope.company
+        };
+        return AdminAdministratorService.query(params).then(function(administrators) {
+          $scope.admin_models = administrators;
+          return $scope.administrators = _.map(administrators, function(administrator) {
+            return _.pick(administrator, 'id', 'name', 'email', 'role');
+          });
+        });
+      };
+      $scope.newAdministrator = function() {
+        return ModalForm["new"]({
+          company: $scope.company,
+          title: 'New Administrator',
+          new_rel: 'new_administrator',
+          post_rel: 'administrators',
+          success: function(administrator) {
+            return $scope.administrators.push(administrator);
+          }
+        });
+      };
+      return $scope.edit = function(id) {
+        var admin;
+        admin = _.find($scope.admin_models, function(p) {
+          return p.id === id;
+        });
+        return ModalForm.edit({
+          model: admin,
+          title: 'Edit Administrator'
+        });
+      };
+    };
+    link = function(scope, element, attrs) {
+      if (scope.company) {
+        return scope.getAdministrators();
+      } else {
+        return AdminCompanyService.query(attrs).then(function(company) {
+          scope.company = company;
+          return scope.getAdministrators();
+        });
+      }
+    };
+    return {
+      controller: controller,
+      link: link,
+      templateUrl: 'admin_table_main.html'
+    };
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  angular.module('BB.Models').factory("Admin.AdministratorModel", function($q, BBModel, BaseModel) {
+    var Admin_Administrator;
+    return Admin_Administrator = (function(_super) {
+      __extends(Admin_Administrator, _super);
+
+      function Admin_Administrator(data) {
+        Admin_Administrator.__super__.constructor.call(this, data);
+      }
+
+      return Admin_Administrator;
+
+    })(BaseModel);
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  angular.module('BB.Models').factory("Admin.UserModel", function($q, BBModel, BaseModel) {
+    var Admin_User;
+    return Admin_User = (function(_super) {
+      __extends(Admin_User, _super);
+
+      function Admin_User(data) {
+        Admin_User.__super__.constructor.call(this, data);
+        this.companies = [];
+        if (data) {
+          if (this.$has('companies')) {
+            this.$get('companies').then((function(_this) {
+              return function(comps) {
+                return _this.companies = comps;
+              };
+            })(this));
+          }
+        }
+      }
+
+      return Admin_User;
+
+    })(BaseModel);
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdmin.Services').factory('AdminAdministratorService', function($q, BBModel) {
+    return {
+      query: function(params) {
+        var company, defer;
+        company = params.company;
+        defer = $q.defer();
+        company.$get('administrators').then(function(collection) {
+          return collection.$get('administrators').then(function(administrators) {
+            var a, models;
+            models = (function() {
+              var _i, _len, _results;
+              _results = [];
+              for (_i = 0, _len = administrators.length; _i < _len; _i++) {
+                a = administrators[_i];
+                _results.push(new BBModel.Admin.Administrator(a));
               }
               return _results;
             })();
@@ -117644,14 +117643,14 @@ $templateCache.put("main.html","<div bb-breadcrumb></div>\r\n<div ng-show=\"load
 $templateCache.put("service_list.html","<div bb-services ng-init=\"checkStepTitle(\'Select a service\')\"\r\n  id=\"service_list_page\" class=\"bb_wrap\">\r\n\r\n  <div class=\"bb-services bb-list\">\r\n    <div class=\"bb-list-item container\">\r\n      <div class=\"bb-item\" ng-click=\"selectItem(item)\" ng-repeat=\"item in items\">\r\n        <div class=\"bb-desc form-control\">\r\n          <div class=\"bb-txt col-sm-10\">\r\n            <h5>{{item.name}}</h5>\r\n            <small>{{item.description}}</small>\r\n          </div> \r\n          <div class=\"bb-price col-sm-2 btn-default\">\r\n            <span ng-show=\"item.price > 0\">{{item.price | currency:\"GBP\"}}</span>\r\n            <span ng-show=\"item.price == 0\">Free</span>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n  \r\n</div>\r\n");
 $templateCache.put("time.html","<div bb-times ng-init=\"checkStepTitle(\'Select a time\')\" id=\"time_page\">\r\n\r\n  <div class=\"bb-navigation container\">\r\n    <div class=\"bb-nav text-center\">\r\n      <button type=\"button\" class=\"bb-btn-prev btn btn-primary pull-left\" ng-click=\"subtract(\'days\',1)\">Previous Day</button>\r\n      <span class=\"bb-date\">{{format_date(\'Do MMM YYYY\')}}</span>\r\n      <button type=\"button\" class=\"bb-btn-next btn btn-primary pull-right\" ng-click=\"add(\'days\',1)\">Next Day</button>\r\n    </div>\r\n  </div>\r\n\r\n  <div>\r\n    <div ng-hide=\"slots\">\r\n      <span class=\"no_value\">No available times</span>\r\n    </div>\r\n    <div class=\"bb-times container\">\r\n      <div class=\"bb-time panel panel-default\">\r\n        <div class=\"clearfix\">\r\n          <div class=\"time-slot col-sm-2\" ng-repeat=\"slot in slots\">\r\n            <button type=\"button\" class=\"btn btn-default btn-block\" ng-click=\"selectSlot(slot)\">{{slot.print_time()}}</button>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n</div>\r\n");
 $templateCache.put("login.html","<div>\r\n  <form name=\"login_form\" ng-submit=\"login()\" class=\"form-horizontal\"\r\n  role=\"form\">\r\n    <div class=\"alert alert-danger\" role=\"alert\" ng-if=\"alert && alert.length > 0\">{{alert}}</div>\r\n\r\n    <div ng-class=\"{\'form-group\': true}\">\r\n      <label for=\"host\" class=\"col-sm-2 control-label\">Host</label>\r\n      <div class=\"col-sm-10\">\r\n        <input type=\"host\" ng-model=\"host\" name=\"host\" class=\"form-control\"\r\n          id=\"host\" placeholder=\"Host\" required autofocus>\r\n      </div>\r\n    </div>\r\n\r\n\r\n    <div ng-class=\"{\'form-group\': true, \'has-error\': emailIsInvalid()}\">\r\n      <label for=\"email\" class=\"col-sm-2 control-label\">Email</label>\r\n      <div class=\"col-sm-10\">\r\n        <input type=\"email\" ng-model=\"email\" name=\"email\" class=\"form-control\"\r\n          id=\"email\" placeholder=\"Email\" required autofocus>\r\n      </div>\r\n    </div>\r\n\r\n    <div ng-class=\"{\'form-group\': true, \'has-error\': passwordIsInvalid()}\">\r\n      <label for=\"password\" class=\"col-sm-2 control-label\">Password</label>\r\n      <div class=\"col-sm-10\">\r\n        <input type=\"password\" ng-model=\"password\" name=\"password\"\r\n          class=\"form-control\" id=\"password\" placeholder=\"Password\" required>\r\n      </div>\r\n    </div>\r\n\r\n    <div class=\"form-group\">\r\n      <div class=\"col-sm-offset-2 col-sm-10\">\r\n        <button type=\"submit\" class=\"btn btn-primary\">Log In</button>\r\n      </div>\r\n    </div>\r\n  </form>\r\n\r\n  <div ng-if=\"administrators\">\r\n    <h3>Select a company</h3>\r\n    <ul>\r\n      <li ng-repeat=\"admin in administrators\">\r\n        <a ng-click=\"pickAdmin(admin)\">{{admin.company_name}}</a>\r\n      </li>\r\n    </ul>\r\n  </div>\r\n</div>");
+$templateCache.put("admin_form.html","<div class=\"modal-header\">\r\n  <h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"administrator_form\" ng-submit=\"submit(administrator_form)\">\r\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"admin\"></div>\r\n  <div class=\"modal-footer\">\r\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\r\n  </div>\r\n</form>");
+$templateCache.put("admin_table_main.html","<button class=\"btn btn-default\" ng-click=\"newAdministrator()\">New Administrator</button>\r\n<table tr-ng-grid=\"\" items=\"administrators\">\r\n   <tbody>\r\n    <tr>\r\n      <td>\r\n        <button class=\"btn btn-default btn-sm\" ng-click=\"edit(gridDisplayItem.id)\">Edit</button>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n");
 $templateCache.put("person_form.html","<div class=\"modal-header\">\r\n  <h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"person_form\" ng-submit=\"submit(person_form)\">\r\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"person\">\r\n  </div>\r\n  <div class=\"modal-footer\">\r\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\r\n  </div>\r\n</form>\r\n");
 $templateCache.put("person_table_main.html","<button class=\"btn btn-default\" ng-click=\"newPerson()\">New Person</button>\r\n<table tr-ng-grid=\"\" items=\"people\">\r\n   <tbody>\r\n    <tr>\r\n      <td>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"delete(gridDisplayItem.id)\">\r\n            Delete\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"edit(gridDisplayItem.id)\">\r\n            Edit\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"schedule(gridDisplayItem.id)\">\r\n            Schedule\r\n        </button>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n");
 $templateCache.put("resource_form.html","<div class=\"modal-header\">\r\n  <h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"resource_form\" ng-submit=\"submit(resource_form)\">\r\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"resource\">\r\n  </div>\r\n  <div class=\"modal-footer\">\r\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\r\n  </div>\r\n</form>\r\n");
 $templateCache.put("resource_table_main.html","<button class=\"btn btn-default\" ng-click=\"newResource()\">New Resource</button>\r\n<table tr-ng-grid=\"\" items=\"resources\">\r\n   <tbody>\r\n    <tr>\r\n      <td>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"delete(gridDisplayItem.id)\">\r\n            Delete\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"edit(gridDisplayItem.id)\">\r\n            Edit\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"schedule(gridDisplayItem.id)\">\r\n            Schedule\r\n        </button>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>");
+$templateCache.put("schedule_table_main.html","<button class=\"btn btn-default\" ng-click=\"newSchedule()\">New Schedule</button>\r\n<table tr-ng-grid=\"\" items=\"schedules\">\r\n   <tbody>\r\n    <tr>\r\n      <td>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"delete(gridDisplayItem.id)\">\r\n            Delete\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"edit(gridDisplayItem.id)\">\r\n            Edit\r\n        </button>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n");
 $templateCache.put("schedule_edit_form.html","<div class=\"form-group\" ng-class=\"{\'has-error\': hasError()}\">\r\n  <label class=\"control-label\" ng-show=\"showTitle()\">{{form.title}}</label>\r\n\r\n  <div schedule-edit ng-model=\"$$value$$\"></div>\r\n\r\n  <span class=\"help-block\">{{ (hasError() && errorMessage(schemaError())) || form.description}}</span>\r\n</div>\r\n");
 $templateCache.put("schedule_edit_main.html","<table>\r\n  <thead>\r\n    <tr>\r\n      <th><!--empty cell--></th>\r\n      <th ng-repeat=\"date in dates\">{{date | dayName}}</th>\r\n    </tr>\r\n  </thead>\r\n  <tbody>\r\n    <tr ng-repeat=\"hour in hours\" ng-init=\"$last ? lastHour() : null\">\r\n      <td class=\"hour-label\">{{hour | hourName}}</td>\r\n      <td class=\"eng-item\" ng-repeat=\"date in dates\" ng-init=\"$last ? lastDate() : null\" id=\"{{date}}|{{hour}}\"></td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n\r\n");
-$templateCache.put("schedule_table_main.html","<button class=\"btn btn-default\" ng-click=\"newSchedule()\">New Schedule</button>\r\n<table tr-ng-grid=\"\" items=\"schedules\">\r\n   <tbody>\r\n    <tr>\r\n      <td>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"delete(gridDisplayItem.id)\">\r\n            Delete\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"edit(gridDisplayItem.id)\">\r\n            Edit\r\n        </button>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n");
 $templateCache.put("service_form.html","<div class=\"modal-header\">\r\n	<h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"service_form\" ng-submit=\"submit(service_form)\">\r\n	<div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"service\"></div>\r\n	<div class=\"modal-footer\">\r\n		<input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n		<button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\r\n	</div>\r\n</form>");
-$templateCache.put("service_table_main.html","<button class=\"btn btn-default\" ng-click=\"newService()\">New Service</button>\r\n<table tr-ng-grid=\"\" items=\"services\">\r\n	<tbody>\r\n		<tr>\r\n			<td>\r\n				<button class=\"btn btn-default btn-sm\" ng-click=\"edit(gridDisplayItem.id)\">Edit</button>\r\n			</td>\r\n		</tr>\r\n	</tbody>\r\n</table>");
-$templateCache.put("admin_form.html","<div class=\"modal-header\">\r\n  <h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"administrator_form\" ng-submit=\"submit(administrator_form)\">\r\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"admin\"></div>\r\n  <div class=\"modal-footer\">\r\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\r\n  </div>\r\n</form>");
-$templateCache.put("admin_table_main.html","<button class=\"btn btn-default\" ng-click=\"newAdministrator()\">New Administrator</button>\r\n<table tr-ng-grid=\"\" items=\"administrators\">\r\n   <tbody>\r\n    <tr>\r\n      <td>\r\n        <button class=\"btn btn-default btn-sm\" ng-click=\"edit(gridDisplayItem.id)\">Edit</button>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n");}]);
+$templateCache.put("service_table_main.html","<button class=\"btn btn-default\" ng-click=\"newService()\">New Service</button>\r\n<table tr-ng-grid=\"\" items=\"services\">\r\n	<tbody>\r\n		<tr>\r\n			<td>\r\n				<button class=\"btn btn-default btn-sm\" ng-click=\"edit(gridDisplayItem.id)\">Edit</button>\r\n			</td>\r\n		</tr>\r\n	</tbody>\r\n</table>");}]);
