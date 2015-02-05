@@ -53,7 +53,7 @@ gulp.task('javascripts', function() {
     .pipe(templateCache({module: 'BB'}))
   streamqueue({objectMode: true}, javascripts, templates)
     .pipe(concat('bookingbug-angular.js'))
-    .pipe(uglify({mangle: false}))
+    //.pipe(uglify({mangle: false}))
     .pipe(gulp.dest('release'));
 });
 
@@ -81,7 +81,7 @@ gulp.task('watch', function() {
 gulp.task('webserver', function() {
   connect.server({
     root: ['release', 'examples', 'bower_components'],
-    port: 8000
+    port: 8888
   });
 });
 

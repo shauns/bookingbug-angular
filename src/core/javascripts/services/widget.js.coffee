@@ -245,6 +245,12 @@ angular.module('BB.Models').factory "BBWidget", ($q, BBModel, BasketService, $ur
         @basket.addItem(i)
       @emptyStackedItems()
 
+    totalStackedItemsDuration: ->
+      duration = 0
+      for item in @stacked_items
+        duration =+ item.service.listed_duration if item.service and item.service.duration
+      return duration
+
 
     # Address methods
     clearAddress: () =>

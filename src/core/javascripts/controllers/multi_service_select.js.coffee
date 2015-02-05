@@ -92,6 +92,9 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
 
       if $scope.selected_category_name and $scope.selected_category_name is category_details.name
         $scope.selected_category = $scope.categories[$scope.categories.length - 1]
+      else if $scope.bb.item_defaults.category and $scope.bb.item_defaults.category.name is category_details.name and !$scope.selected_category 
+        $scope.selected_category = $scope.categories[$scope.categories.length - 1]
+        $scope.selected_category_name = $scope.selected_category.name
 
 
   $scope.changeCategory = (category_name, services) ->
@@ -101,6 +104,11 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
         name: category_name
         sub_categories: services
       }
+      $scope.selected_category_name = $scope.selected_category.name
+      $rootScope.$emit "multi_service_select:category_changed"
+
+
+  $scope.changeCategoryName = () ->
       $scope.selected_category_name = $scope.selected_category.name
       $rootScope.$emit "multi_service_select:category_changed"
 
@@ -123,6 +131,7 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
   $scope.removeItem = (item) ->
     item.selected = false
     $scope.bb.deleteStackedItemByService(item)
+    $rootScope.$emit "multi_service_select:item_removed"
     for i in $scope.items
       i.selected = false if i.self is item.self 
 
@@ -142,3 +151,17 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
 
   $scope.addService = () ->
     $rootScope.$emit "multi_service_select:add_item"
+
+
+  $scope.setReady = () ->
+    if $scope.bb.stacked_items.length > 1
+      return true
+    else if $scope.bb.stacked_items.length == 1
+      # first clear anything already in the basket and then set the basket item
+      $scope.quickEmptybasket({preserve_stacked_items: true}) if $scope.bb.basket && $scope.bb.basket.items.length > 0
+      $scope.setBasketItem($scope.bb.stacked_items[0])
+      return true
+    else
+      AlertService.clear()
+      AlertService.add("danger", { msg: "You need to select at least one treatment to continue" })
+      return false

@@ -1,11 +1,11 @@
 'use strict';
 
+#
 # Basket Directive
-
 # Example usage;
 # <div bb-basket></div>
 # <div bb-basket mini></div>
-
+#
 angular.module('BB.Directives').directive 'bbBasket', (PathSvc) ->
   restrict: 'A'
   replace: true
@@ -45,5 +45,27 @@ angular.module('BB.Directives').directive 'bbBasket', (PathSvc) ->
       e.preventDefault()
 
 
+angular.module('BB.Directives').directive 'bbMinSpend', () ->
+  restrict: 'A'
+  scope: true
+  controller: ($scope, $element, $attrs, AlertService) ->
 
+    options = $scope.$eval $attrs.bbMinSpend or {}
+    $scope.min_spend = options.min_spend or 0
+    #$scope.items = options.items or {}
 
+    $scope.setReady = () ->
+      return checkMinSpend()
+
+    checkMinSpend = () ->
+      price = 0
+      for item in $scope.bb.stacked_items
+        price += (item.service.price * 100)
+
+      if price >= $scope.min_spend
+        AlertService.clear()
+        return true
+      else
+        AlertService.clear()
+        AlertService.add("danger", { msg: "You need to spend at least £#{$scope.min_spend/100} to make a booking." })
+        return false

@@ -155,6 +155,8 @@ angular.module('BB.Controllers').controller 'ServiceList',
     if $scope.service
       $scope.booking_item.setService($scope.service)
       return true
+    else if $scope.bb.stacked_items and $scope.bb.stacked_items.length > 0
+      return true
     else
       return false
 

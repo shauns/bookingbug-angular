@@ -97,3 +97,40 @@ app.directive 'bbForm', ($bbug) ->
         return false
       return true
 
+
+# bbAddressMap
+# Adds behaviour to select first invalid input 
+app.directive 'bbAddressMap', ($q) ->
+  restrict: 'A'
+  scope: true
+  replace: true
+  link: (scope) ->
+    # map_ready_def   = $q.defer()
+    # scope.mapReady  = map_ready_def.promise
+
+  controller: ($scope, $element, $attrs, $q) ->
+
+    $scope.$watch $attrs.bbAddressMap, (new_val, old_val) ->
+      $scope.init(new_val)
+
+
+    $scope.init = (address) ->
+
+      map_ready_def     = $q.defer()
+      $scope.mapLoaded  = $q.defer()
+      $scope.mapReady   = map_ready_def.promise
+      $scope.map_init   = $scope.mapLoaded.promise
+      $scope.mapMarkers = []
+
+      $scope.latlong = new google.maps.LatLng(address.lat,address.long)
+      $scope.mapOptions = {center: $scope.latlong, zoom: 6, mapTypeId: google.maps.MapTypeId.ROADMAP}
+      map_ready_def.resolve(true)
+
+      $scope.map_init.then () ->
+        marker = new google.maps.Marker({
+          map: $scope.myMap,
+          position: $scope.latlong
+        })
+        $scope.mapMarkers.push(marker)
+
+
