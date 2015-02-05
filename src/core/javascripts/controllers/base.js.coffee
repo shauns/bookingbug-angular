@@ -44,6 +44,7 @@ angular.module('BB.Directives').directive 'bbWidget', (PathSvc, $http,
   scope:
     client: '=?'
     apiUrl: '@?'
+  transclude: true
   controller: 'BBCtrl'
   link: (scope, element, attrs) ->
     scope.client = attrs.member if attrs.member?
