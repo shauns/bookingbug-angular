@@ -36,6 +36,7 @@ angular.module('BBAdminServices').directive 'scheduleEdit', ($window, $document)
       $scope.datesDone = true if $scope.hoursDone
 
 
+
   link = (scope, element, attrs, ngModel) ->
 
     selectedIds = {}
@@ -88,7 +89,6 @@ angular.module('BBAdminServices').directive 'scheduleEdit', ($window, $document)
 
     mouseUp = (el) ->
       dragging = false
-      updateModel(_.keys(selectedIds))
 
     mouseDown = (el) ->
       dragging = true
@@ -115,6 +115,7 @@ angular.module('BBAdminServices').directive 'scheduleEdit', ($window, $document)
         else
           el.removeClass cls
           delete selectedIds[el.attr("id")]
+      updateModel(_.keys(selectedIds))
 
     cellsBetween = (start, end) ->
       coordsStart = getCoords(start)
