@@ -3,7 +3,7 @@ angular.module('BBAdminServices').directive 'scheduleEdit', ($window, $document)
   # TODO
   # time slots wont nessecarily be an hour, could be 15 mins
   hourRange = (start_hour) ->
-    start = start_hour* 100
+    start = start_hour*100
     end = start_hour*100 + 100
     "#{sprintf('%04s', start)}-#{sprintf('%04s', end)}"
 
@@ -44,68 +44,51 @@ angular.module('BBAdminServices').directive 'scheduleEdit', ($window, $document)
     dragging = false
     mode = "add"
 
-    # render existing schedule
     ngModel.$render = () ->
       ids = _.flatten(_.map(ngModel.$viewValue, (hours, date) ->
         _.map(_.range(parseInt(hours.split('-')[0])/100,
                       parseInt(hours.split('-')[1])/100),
               (hour) -> "#{date}|#{hourRange(hour)}")
       ))
-
       if scope.datesDone
         updateTableElements(ids)
       else
         scope.$watch 'datesDone', () ->
           updateTableElements(ids)
 
-    # highlight selected cells
     updateTableElements = (ids) ->
+      selectedIds[id] = true for id in ids
       for td in element.find('td') when _.indexOf(ids, td.id) > -1
         angular.element(td).addClass cls
 
-    # update the rules json string
+    insertRange = (ranges, range) ->
+      ranges.splice(_.sortedIndex(ranges, range), 0, range)
+      ranges
+
+    joinRanges = (ranges) ->
+      _.reduce(ranges, (m, range) ->
+        if range.slice(0, 4) == m.slice(m.length - 4, m.length)
+          m.slice(0, m.length - 4) + range.slice(5, 9)
+        else
+          [m,range].join()
+      , "")
+
     updateModel = (ids) ->
-      #1 sort cells then update range
-      #1 ids = sortSelectedCells(ids)
       ngModel.$setViewValue(_.reduce(ids, (memo, id) ->
         date = id.split('|')[0]
-        hours = id.split('|')[1]
+        range = id.split('|')[1]
         if memo[date]
-          #1 memo[date] = "#{memo[date].split('-')[0]}-#{hours.split('-')[1]}"
-
-          #2 check each new selected cell and adjust range as needed
-          memo_start  = parseInt(memo[date].slice(0,2))
-          memo_end    = parseInt(memo[date].slice(5,7))
-          hours_start = parseInt(hours.slice(0,2))
-          hours_end   = parseInt(hours.slice(5,7))
-
-          if hours_start < memo_start then start = hours.split('-')[0] else start = memo[date].split('-')[0]
-          if hours_end > memo_end then end = hours.split('-')[1] else end = memo[date].split('-')[1]
-          memo[date] = "#{start}-#{end}"
+          memo[date] = joinRanges(insertRange(memo[date].split(','), range))
         else
-          memo[date] = hours
+          memo[date] = range
+        if memo[date][0] == ','
+          memo[date] = memo[date].substr(1)
         memo
-      , {}))
-
-
-    sortSelectedCells = (ids) ->
-      ids = _.toArray(ids) 
-      ids.sort (id1,id2) ->
-        a = {}
-        b = {}
-        a.date  = parseInt(id1.split('|')[0])
-        a.hours = parseInt(id1.split('|')[1].slice(0,2))
-        b.date  = parseInt(id2.split('|')[0])
-        b.hours = parseInt(id2.split('|')[1].slice(0,2))
-        if a.date is b.date
-          return a.hours - b.hours
-        return a.date - b.date
-      return ids
-
+      ,{}))
 
     mouseUp = (el) ->
       dragging = false
-      updateModel(selectedIds)
+      updateModel(_.keys(selectedIds))
 
     mouseDown = (el) ->
       dragging = true
@@ -128,7 +111,7 @@ angular.module('BBAdminServices').directive 'scheduleEdit', ($window, $document)
         el = angular.element(this)
         if mode is "add"
           el.addClass cls
-          selectedIds[el.attr("id")] = el.attr("id") 
+          selectedIds[el.attr("id")] = true
         else
           el.removeClass cls
           delete selectedIds[el.attr("id")]
