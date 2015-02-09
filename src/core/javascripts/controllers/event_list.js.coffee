@@ -219,7 +219,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
       $scope.setLoaded $scope
       return false
     else
-      item.image = $scope.event_groups[item.service_id].image if $scope.event_groups[item.service_id].image
+      item.image = $scope.event_groups[item.service_id].image if $scope.event_groups and $scope.event_groups[item.service_id].image
       $scope.bb.current_item.setEvent(item)
       $scope.bb.current_item.ready = false
       $q.all($scope.bb.current_item.promises).then () ->
