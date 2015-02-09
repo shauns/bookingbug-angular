@@ -116,7 +116,6 @@ angular.module('BB.Services').factory "LoginService", ($q, halClient, $rootScope
         , (err) =>
           deferred.reject(err)
       , (err) =>
-        console.log(err)
         deferred.reject(err)
       deferred.promise
 
