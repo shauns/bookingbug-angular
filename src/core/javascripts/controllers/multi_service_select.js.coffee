@@ -43,26 +43,40 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
 
     collectCategories()
 
-    # if the basket already has some items, set the stacked items
-    if $scope.bb.basket && $scope.bb.basket.items.length > 0 && $scope.bb.basket.items[0].service
-      if !$scope.bb.stacked_items || $scope.bb.stacked_items.length == 0
-        $scope.bb.setStackedItems($scope.bb.basket.items)
+    if ($scope.bb.basket and $scope.bb.basket.items.length > 0) || ($scope.bb.stacked_items and $scope.bb.stacked_items.length > 0)
+      # if the basket already has some items, set the stacked items
+      if $scope.bb.basket and $scope.bb.basket.items.length > 0 and $scope.bb.basket.items[0].service
+        if !$scope.bb.stacked_items || $scope.bb.stacked_items.length == 0
+          $scope.bb.setStackedItems($scope.bb.basket.items)
 
-    # if there's already some stacked items (i.e. we've come back to this page,
-    # make sure they're selected)
-    if $scope.bb.stacked_items && $scope.bb.stacked_items.length > 0
-      for stacked_item in $scope.bb.stacked_items
-        for item in $scope.items
-          if item.self is stacked_item.service.self
-            stacked_item.service = item
-            stacked_item.service.selected = true
-            break
+      # if there's already some stacked items (i.e. we've come back to this page,
+      # make sure they're selected)
+      if $scope.bb.stacked_items and $scope.bb.stacked_items.length > 0
+        for stacked_item in $scope.bb.stacked_items
+          for item in $scope.items
+            if item.self is stacked_item.service.self
+              stacked_item.service = item
+              stacked_item.service.selected = true
+              break
+    else
+      # check item defaults
+      checkItemDefaults()
 
     if $scope.bb.moving_booking
       # if we're moving the booking just move to the next step
       $scope.nextStep()
 
     $scope.setLoaded $scope
+
+
+  checkItemDefaults = () ->
+    for category in $scope.categories
+      for sub_category of category.sub_categories
+        services = category.sub_categories[sub_category]
+        for service in services
+          if service.self is $scope.bb.item_defaults.service.self
+            $scope.addItem(service)
+            return
 
 
   collectCategories = () ->
