@@ -55,14 +55,19 @@ angular.module('BB.Controllers').controller 'ClientDetails', ($scope,  $rootScop
       $scope.setClient(client)
       $scope.client.setValid(true) if $scope.bb.isAdmin
       $scope.decideNextPage(route)
-    , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
+    , (err) ->
+      if err.data.error == "Please Login" 
+        $scope.existing_member = true 
+      $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
   $scope.clientLogin = () =>
     if $scope.login
       LoginService.companyLogin($scope.bb.company, {}, {email: $scope.login.email, password: $scope.login.password}).then (client) =>
         $scope.setClient(new BBModel.Client(client))
         $scope.decideNextPage()
-      , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
+      , (err) ->
+        $scope.login_error = true
+        $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
   $scope.setReady = () =>
     $scope.client.setClientDetails($scope.client_details)
