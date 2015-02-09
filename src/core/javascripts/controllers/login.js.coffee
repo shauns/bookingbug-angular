@@ -8,6 +8,12 @@ angular.module('BB.Directives').directive 'bbLogin', () ->
 
 angular.module('BB.Controllers').controller 'Login', ($scope,  $rootScope, LoginService, $q, ValidatorService, BBModel, $location) ->
   $scope.controller = "public.controllers.Login"
+  $scope.error = false
+  $scope.password_updated = false
+  $scope.password_error = false
+  $scope.email_sent = false
+  $scope.success = false
+  $scope.login_error = false
 
   $scope.login_sso = (token, route) =>
     $rootScope.connection_started.then =>
@@ -18,6 +24,7 @@ angular.module('BB.Controllers').controller 'Login', ($scope,  $rootScope, Login
 
 
   $scope.login_with_password = (email, password) =>
+    $scope.login_error = false
     LoginService.companyLogin($scope.bb.company, {}, {email: email, password: password}).then (member) =>
       member = new BBModel.Member.Member(member)
       $scope.member =  member
@@ -32,6 +39,7 @@ angular.module('BB.Controllers').controller 'Login', ($scope,  $rootScope, Login
     LoginService.isLoggedIn()
 
   $scope.sendPasswordReset = (email) =>
+    $scope.error = false
     LoginService.sendPasswordReset($scope.bb.company, {email: email, custom: true}).then () =>
       $scope.email_sent = true
     , (err) =>
@@ -39,6 +47,8 @@ angular.module('BB.Controllers').controller 'Login', ($scope,  $rootScope, Login
 
   $scope.updatePassword = (new_password, confirm_new_password) =>
     auth_token = $scope.member.getOption('auth_token')
+    $scope.password_error = false
+    $scope.error = false
     if $scope.member && auth_token && new_password && confirm_new_password && (new_password == confirm_new_password)
       LoginService.updatePassword($rootScope.member, {auth_token: auth_token, new_password: new_password, confirm_new_password: confirm_new_password}).then (member) =>
         if member

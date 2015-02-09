@@ -9,6 +9,8 @@ angular.module('BB.Controllers').controller 'ClientDetails', ($scope,  $rootScop
   $scope.controller = "public.controllers.ClientDetails"
   $scope.notLoaded $scope
   $scope.validator = ValidatorService
+  $scope.existing_member = false
+  $scope.login_error = false
   
   $rootScope.connection_started.then =>
 
@@ -44,6 +46,7 @@ angular.module('BB.Controllers').controller 'ClientDetails', ($scope,  $rootScop
 
   $scope.validateClient = (client_form, route) =>
     $scope.notLoaded $scope
+    $scope.existing_member = false
 
     # we need to validate teh client information has been correctly entered here
     if $scope.bb && $scope.bb.parent_client
@@ -61,6 +64,7 @@ angular.module('BB.Controllers').controller 'ClientDetails', ($scope,  $rootScop
       $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
   $scope.clientLogin = () =>
+    $scope.login_error = false
     if $scope.login
       LoginService.companyLogin($scope.bb.company, {}, {email: $scope.login.email, password: $scope.login.password}).then (client) =>
         $scope.setClient(new BBModel.Client(client))
