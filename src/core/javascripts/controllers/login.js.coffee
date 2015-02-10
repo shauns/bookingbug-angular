@@ -26,9 +26,9 @@ angular.module('BB.Controllers').controller 'Login', ($scope,  $rootScope, Login
   $scope.login_with_password = (email, password) =>
     $scope.login_error = false
     LoginService.companyLogin($scope.bb.company, {}, {email: email, password: password}).then (member) =>
-      member = new BBModel.Member.Member(member)
-      $scope.member =  member
+      $scope.member = new BBModel.Member.Member(member)
       $scope.success = true
+      $scope.login_error = false
     , (err) =>
       $scope.login_error = err
 
