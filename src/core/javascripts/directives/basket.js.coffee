@@ -67,5 +67,5 @@ angular.module('BB.Directives').directive 'bbMinSpend', () ->
         return true
       else
         AlertService.clear()
-        AlertService.add("danger", { msg: "You need to spend at least £#{$scope.min_spend/100} to make a booking." })
+        AlertService.add("warning", { msg: "You need to spend at least &pound;#{$scope.min_spend/100} to make a booking." })
         return false
