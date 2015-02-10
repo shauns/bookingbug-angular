@@ -101347,6 +101347,8 @@ angular.module('BBAdmin.Directives').controller('CalController', function($scope
     $scope.controller = "public.controllers.ClientDetails";
     $scope.notLoaded($scope);
     $scope.validator = ValidatorService;
+    $scope.existing_member = false;
+    $scope.login_error = false;
     $rootScope.connection_started.then((function(_this) {
       return function() {
         if (!$scope.client.valid() && LoginService.isLoggedIn()) {
@@ -101390,6 +101392,7 @@ angular.module('BBAdmin.Directives').controller('CalController', function($scope
     $scope.validateClient = (function(_this) {
       return function(client_form, route) {
         $scope.notLoaded($scope);
+        $scope.existing_member = false;
         if ($scope.bb && $scope.bb.parent_client) {
           $scope.client.parent_client_id = $scope.bb.parent_client.id;
         }
@@ -101400,22 +101403,29 @@ angular.module('BBAdmin.Directives').controller('CalController', function($scope
           if ($scope.bb.isAdmin) {
             $scope.client.setValid(true);
           }
+          $scope.existing_member = false;
           return $scope.decideNextPage(route);
         }, function(err) {
+          if (err.data.error === "Please Login") {
+            $scope.existing_member = true;
+          }
           return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
         });
       };
     })(this);
     $scope.clientLogin = (function(_this) {
       return function() {
+        $scope.login_error = false;
         if ($scope.login) {
           return LoginService.companyLogin($scope.bb.company, {}, {
             email: $scope.login.email,
             password: $scope.login.password
           }).then(function(client) {
             $scope.setClient(new BBModel.Client(client));
+            $scope.login_error = false;
             return $scope.decideNextPage();
           }, function(err) {
+            $scope.login_error = true;
             return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
           });
         }
@@ -102844,6 +102854,12 @@ angular.module('BBAdmin.Directives').controller('CalController', function($scope
 
   angular.module('BB.Controllers').controller('Login', function($scope, $rootScope, LoginService, $q, ValidatorService, BBModel, $location) {
     $scope.controller = "public.controllers.Login";
+    $scope.error = false;
+    $scope.password_updated = false;
+    $scope.password_error = false;
+    $scope.email_sent = false;
+    $scope.success = false;
+    $scope.login_error = false;
     $scope.login_sso = (function(_this) {
       return function(token, route) {
         return $rootScope.connection_started.then(function() {
@@ -102864,12 +102880,66 @@ angular.module('BBAdmin.Directives').controller('CalController', function($scope
         });
       };
     })(this);
-    return $scope.login_with_password = (function(_this) {
+    $scope.login_with_password = (function(_this) {
       return function(email, password) {
+        $scope.login_error = false;
         return LoginService.companyLogin($scope.bb.company, {}, {
           email: email,
           password: password
+        }).then(function(member) {
+          $scope.member = new BBModel.Member.Member(member);
+          $scope.success = true;
+          return $scope.login_error = false;
+        }, function(err) {
+          return $scope.login_error = err;
         });
+      };
+    })(this);
+    $scope.showEmailPasswordReset = (function(_this) {
+      return function() {
+        return $scope.showPage('email_reset_password');
+      };
+    })(this);
+    $scope.isLoggedIn = (function(_this) {
+      return function() {
+        return LoginService.isLoggedIn();
+      };
+    })(this);
+    $scope.sendPasswordReset = (function(_this) {
+      return function(email) {
+        $scope.error = false;
+        return LoginService.sendPasswordReset($scope.bb.company, {
+          email: email,
+          custom: true
+        }).then(function() {
+          return $scope.email_sent = true;
+        }, function(err) {
+          return $scope.error = err;
+        });
+      };
+    })(this);
+    return $scope.updatePassword = (function(_this) {
+      return function(new_password, confirm_new_password) {
+        var auth_token;
+        auth_token = $scope.member.getOption('auth_token');
+        $scope.password_error = false;
+        $scope.error = false;
+        if ($scope.member && auth_token && new_password && confirm_new_password && (new_password === confirm_new_password)) {
+          return LoginService.updatePassword($rootScope.member, {
+            auth_token: auth_token,
+            new_password: new_password,
+            confirm_new_password: confirm_new_password
+          }).then(function(member) {
+            if (member) {
+              $scope.password_updated = true;
+              return $scope.showPage('login');
+            }
+          }, function(err) {
+            return $scope.error = err;
+          });
+        } else {
+          return $scope.password_error = true;
+        }
       };
     })(this);
   });
@@ -105770,8 +105840,8 @@ angular.module('BBAdmin.Directives').controller('CalController', function($scope
             return true;
           } else {
             AlertService.clear();
-            AlertService.add("danger", {
-              msg: "You need to spend at least �" + ($scope.min_spend / 100) + " to make a booking."
+            AlertService.add("warning", {
+              msg: "You need to spend at least &pound;" + ($scope.min_spend / 100) + " to make a booking."
             });
             return false;
           }
@@ -113484,6 +113554,41 @@ angular.module('BBAdmin.Directives').controller('CalController', function($scope
           };
         })(this));
         return deferred.promise;
+      },
+      sendPasswordReset: function(company, params) {
+        var deferred;
+        deferred = $q.defer();
+        company.$post('email_password_reset', {}, params).then((function(_this) {
+          return function() {
+            return deferred.resolve(true);
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            return deferred.reject(err);
+          };
+        })(this));
+        return deferred.promise;
+      },
+      updatePassword: function(member, params) {
+        var deferred;
+        if (member && params['new_password'] && params['confirm_new_password']) {
+          deferred = $q.defer();
+          member.$post('update_password', {}, params).then((function(_this) {
+            return function(login) {
+              return login.$get('member').then(function(member) {
+                _this.setLogin(member);
+                return deferred.resolve(member);
+              }, function(err) {
+                return deferred.reject(err);
+              });
+            };
+          })(this), (function(_this) {
+            return function(err) {
+              return deferred.reject(err);
+            };
+          })(this));
+          return deferred.promise;
+        }
       }
     };
   });
@@ -116550,39 +116655,6 @@ angular.module('BBAdmin.Directives').controller('CalController', function($scope
 }).call(this);
 
 (function() {
-  angular.module('BBAdmin.Services').factory('AdminAdministratorService', function($q, BBModel) {
-    return {
-      query: function(params) {
-        var company, defer;
-        company = params.company;
-        defer = $q.defer();
-        company.$get('administrators').then(function(collection) {
-          return collection.$get('administrators').then(function(administrators) {
-            var a, models;
-            models = (function() {
-              var _i, _len, _results;
-              _results = [];
-              for (_i = 0, _len = administrators.length; _i < _len; _i++) {
-                a = administrators[_i];
-                _results.push(new BBModel.Admin.Administrator(a));
-              }
-              return _results;
-            })();
-            return defer.resolve(models);
-          }, function(err) {
-            return defer.reject(err);
-          });
-        }, function(err) {
-          return defer.reject(err);
-        });
-        return defer.promise;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
   'use strict';
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -116630,6 +116702,39 @@ angular.module('BBAdmin.Directives').controller('CalController', function($scope
       return Admin_User;
 
     })(BaseModel);
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdmin.Services').factory('AdminAdministratorService', function($q, BBModel) {
+    return {
+      query: function(params) {
+        var company, defer;
+        company = params.company;
+        defer = $q.defer();
+        company.$get('administrators').then(function(collection) {
+          return collection.$get('administrators').then(function(administrators) {
+            var a, models;
+            models = (function() {
+              var _i, _len, _results;
+              _results = [];
+              for (_i = 0, _len = administrators.length; _i < _len; _i++) {
+                a = administrators[_i];
+                _results.push(new BBModel.Admin.Administrator(a));
+              }
+              return _results;
+            })();
+            return defer.resolve(models);
+          }, function(err) {
+            return defer.reject(err);
+          });
+        }, function(err) {
+          return defer.reject(err);
+        });
+        return defer.promise;
+      }
+    };
   });
 
 }).call(this);
@@ -117656,13 +117761,13 @@ $templateCache.put("main.html","<div bb-breadcrumb></div>\r\n<div ng-show=\"load
 $templateCache.put("service_list.html","<div bb-services ng-init=\"checkStepTitle(\'Select a service\')\"\r\n  id=\"service_list_page\" class=\"bb_wrap\">\r\n\r\n  <div class=\"bb-services bb-list\">\r\n    <div class=\"bb-list-item container\">\r\n      <div class=\"bb-item\" ng-click=\"selectItem(item)\" ng-repeat=\"item in items\">\r\n        <div class=\"bb-desc form-control\">\r\n          <div class=\"bb-txt col-sm-10\">\r\n            <h5>{{item.name}}</h5>\r\n            <small>{{item.description}}</small>\r\n          </div> \r\n          <div class=\"bb-price col-sm-2 btn-default\">\r\n            <span ng-show=\"item.price > 0\">{{item.price | currency:\"GBP\"}}</span>\r\n            <span ng-show=\"item.price == 0\">Free</span>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n  \r\n</div>\r\n");
 $templateCache.put("time.html","<div bb-times ng-init=\"checkStepTitle(\'Select a time\')\" id=\"time_page\">\r\n\r\n  <div class=\"bb-navigation container\">\r\n    <div class=\"bb-nav text-center\">\r\n      <button type=\"button\" class=\"bb-btn-prev btn btn-primary pull-left\" ng-click=\"subtract(\'days\',1)\">Previous Day</button>\r\n      <span class=\"bb-date\">{{format_date(\'Do MMM YYYY\')}}</span>\r\n      <button type=\"button\" class=\"bb-btn-next btn btn-primary pull-right\" ng-click=\"add(\'days\',1)\">Next Day</button>\r\n    </div>\r\n  </div>\r\n\r\n  <div>\r\n    <div ng-hide=\"slots\">\r\n      <span class=\"no_value\">No available times</span>\r\n    </div>\r\n    <div class=\"bb-times container\">\r\n      <div class=\"bb-time panel panel-default\">\r\n        <div class=\"clearfix\">\r\n          <div class=\"time-slot col-sm-2\" ng-repeat=\"slot in slots\">\r\n            <button type=\"button\" class=\"btn btn-default btn-block\" ng-click=\"selectSlot(slot)\">{{slot.print_time()}}</button>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n</div>\r\n");
 $templateCache.put("login.html","<div>\r\n  <form name=\"login_form\" ng-submit=\"login()\" class=\"form-horizontal\"\r\n  role=\"form\">\r\n    <div class=\"alert alert-danger\" role=\"alert\" ng-if=\"alert && alert.length > 0\">{{alert}}</div>\r\n\r\n    <div ng-class=\"{\'form-group\': true}\">\r\n      <label for=\"host\" class=\"col-sm-2 control-label\">Host</label>\r\n      <div class=\"col-sm-10\">\r\n        <input type=\"host\" ng-model=\"host\" name=\"host\" class=\"form-control\"\r\n          id=\"host\" placeholder=\"Host\" required autofocus>\r\n      </div>\r\n    </div>\r\n\r\n\r\n    <div ng-class=\"{\'form-group\': true, \'has-error\': emailIsInvalid()}\">\r\n      <label for=\"email\" class=\"col-sm-2 control-label\">Email</label>\r\n      <div class=\"col-sm-10\">\r\n        <input type=\"email\" ng-model=\"email\" name=\"email\" class=\"form-control\"\r\n          id=\"email\" placeholder=\"Email\" required autofocus>\r\n      </div>\r\n    </div>\r\n\r\n    <div ng-class=\"{\'form-group\': true, \'has-error\': passwordIsInvalid()}\">\r\n      <label for=\"password\" class=\"col-sm-2 control-label\">Password</label>\r\n      <div class=\"col-sm-10\">\r\n        <input type=\"password\" ng-model=\"password\" name=\"password\"\r\n          class=\"form-control\" id=\"password\" placeholder=\"Password\" required>\r\n      </div>\r\n    </div>\r\n\r\n    <div class=\"form-group\">\r\n      <div class=\"col-sm-offset-2 col-sm-10\">\r\n        <button type=\"submit\" class=\"btn btn-primary\">Log In</button>\r\n      </div>\r\n    </div>\r\n  </form>\r\n\r\n  <div ng-if=\"administrators\">\r\n    <h3>Select a company</h3>\r\n    <ul>\r\n      <li ng-repeat=\"admin in administrators\">\r\n        <a ng-click=\"pickAdmin(admin)\">{{admin.company_name}}</a>\r\n      </li>\r\n    </ul>\r\n  </div>\r\n</div>");
-$templateCache.put("person_form.html","<div class=\"modal-header\">\r\n  <h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"person_form\" ng-submit=\"submit(person_form)\">\r\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"person\">\r\n  </div>\r\n  <div class=\"modal-footer\">\r\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\r\n  </div>\r\n</form>\r\n");
-$templateCache.put("person_table_main.html","<button class=\"btn btn-default\" ng-click=\"newPerson()\">New Person</button>\r\n<table tr-ng-grid=\"\" items=\"people\">\r\n   <tbody>\r\n    <tr>\r\n      <td>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"delete(gridDisplayItem.id)\">\r\n            Delete\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"edit(gridDisplayItem.id)\">\r\n            Edit\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"schedule(gridDisplayItem.id)\">\r\n            Schedule\r\n        </button>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n");
 $templateCache.put("resource_form.html","<div class=\"modal-header\">\r\n  <h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"resource_form\" ng-submit=\"submit(resource_form)\">\r\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"resource\">\r\n  </div>\r\n  <div class=\"modal-footer\">\r\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\r\n  </div>\r\n</form>\r\n");
 $templateCache.put("resource_table_main.html","<button class=\"btn btn-default\" ng-click=\"newResource()\">New Resource</button>\r\n<table tr-ng-grid=\"\" items=\"resources\">\r\n   <tbody>\r\n    <tr>\r\n      <td>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"delete(gridDisplayItem.id)\">\r\n            Delete\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"edit(gridDisplayItem.id)\">\r\n            Edit\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"schedule(gridDisplayItem.id)\">\r\n            Schedule\r\n        </button>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>");
+$templateCache.put("person_form.html","<div class=\"modal-header\">\r\n  <h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"person_form\" ng-submit=\"submit(person_form)\">\r\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"person\">\r\n  </div>\r\n  <div class=\"modal-footer\">\r\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\r\n  </div>\r\n</form>\r\n");
+$templateCache.put("person_table_main.html","<button class=\"btn btn-default\" ng-click=\"newPerson()\">New Person</button>\r\n<table tr-ng-grid=\"\" items=\"people\">\r\n   <tbody>\r\n    <tr>\r\n      <td>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"delete(gridDisplayItem.id)\">\r\n            Delete\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"edit(gridDisplayItem.id)\">\r\n            Edit\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"schedule(gridDisplayItem.id)\">\r\n            Schedule\r\n        </button>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n");
+$templateCache.put("schedule_table_main.html","<button class=\"btn btn-default\" ng-click=\"newSchedule()\">New Schedule</button>\r\n<table tr-ng-grid=\"\" items=\"schedules\">\r\n   <tbody>\r\n    <tr>\r\n      <td>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"delete(gridDisplayItem.id)\">\r\n            Delete\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"edit(gridDisplayItem.id)\">\r\n            Edit\r\n        </button>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n");
 $templateCache.put("schedule_edit_form.html","<div class=\"form-group\" ng-class=\"{\'has-error\': hasError()}\">\r\n  <label class=\"control-label\" ng-show=\"showTitle()\">{{form.title}}</label>\r\n\r\n  <div schedule-edit ng-model=\"$$value$$\"></div>\r\n\r\n  <span class=\"help-block\">{{ (hasError() && errorMessage(schemaError())) || form.description}}</span>\r\n</div>\r\n");
 $templateCache.put("schedule_edit_main.html","<table>\r\n  <thead>\r\n    <tr>\r\n      <th><!--empty cell--></th>\r\n      <th ng-repeat=\"date in dates\">{{date | dayName}}</th>\r\n    </tr>\r\n  </thead>\r\n  <tbody>\r\n    <tr ng-repeat=\"hour in hours\" ng-init=\"$last ? lastHour() : null\">\r\n      <td class=\"hour-label\">{{hour | hourName}}</td>\r\n      <td class=\"eng-item\" ng-repeat=\"date in dates\" ng-init=\"$last ? lastDate() : null\" id=\"{{date}}|{{hour}}\"></td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n\r\n");
-$templateCache.put("schedule_table_main.html","<button class=\"btn btn-default\" ng-click=\"newSchedule()\">New Schedule</button>\r\n<table tr-ng-grid=\"\" items=\"schedules\">\r\n   <tbody>\r\n    <tr>\r\n      <td>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"delete(gridDisplayItem.id)\">\r\n            Delete\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"edit(gridDisplayItem.id)\">\r\n            Edit\r\n        </button>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n");
 $templateCache.put("service_form.html","<div class=\"modal-header\">\r\n	<h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"service_form\" ng-submit=\"submit(service_form)\">\r\n	<div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"service\"></div>\r\n	<div class=\"modal-footer\">\r\n		<input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n		<button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\r\n	</div>\r\n</form>");
 $templateCache.put("service_table_main.html","<button class=\"btn btn-default\" ng-click=\"newService()\">New Service</button>\r\n<table tr-ng-grid=\"\" items=\"services\">\r\n	<tbody>\r\n		<tr>\r\n			<td>\r\n				<button class=\"btn btn-default btn-sm\" ng-click=\"edit(gridDisplayItem.id)\">Edit</button>\r\n			</td>\r\n		</tr>\r\n	</tbody>\r\n</table>");
 $templateCache.put("admin_form.html","<div class=\"modal-header\">\r\n  <h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"administrator_form\" ng-submit=\"submit(administrator_form)\">\r\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"admin\"></div>\r\n  <div class=\"modal-footer\">\r\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\r\n  </div>\r\n</form>");
