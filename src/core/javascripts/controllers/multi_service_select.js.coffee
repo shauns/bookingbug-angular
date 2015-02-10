@@ -70,6 +70,7 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
 
 
   checkItemDefaults = () ->
+    return if !$scope.bb.item_defaults.service
     for category in $scope.categories
       for sub_category of category.sub_categories
         services = category.sub_categories[sub_category]
