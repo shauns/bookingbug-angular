@@ -17,6 +17,7 @@ angular.module('BBAdminBooking').controller 'adminBookingClients', ($scope,  $ro
   $scope.clients = []
   $scope.searchClients = false
   $scope.newClient = false
+  $scope.no_clients = false
 
 #  $rootScope.connection_started.then ->
 #    $scope.notLoaded $scope
