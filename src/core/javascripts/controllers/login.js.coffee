@@ -14,6 +14,7 @@ angular.module('BB.Controllers').controller 'Login', ($scope,  $rootScope, Login
   $scope.email_sent = false
   $scope.success = false
   $scope.login_error = false
+  $scope.validator = ValidatorService
 
   $scope.login_sso = (token, route) =>
     $rootScope.connection_started.then =>
