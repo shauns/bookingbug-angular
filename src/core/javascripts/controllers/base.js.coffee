@@ -218,6 +218,8 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
       $scope.bb.page_suffix = prms.page_suffix
     if (prms.admin)
       $scope.bb.isAdmin = prms.admin
+    if (prms.auth_token) #temporary
+      $sessionStorage.setItem("auth_token", prms.auth_token)
     $scope.bb.app_id = 1
     $scope.bb.app_key = 1
     $scope.bb.clear_basket = true
