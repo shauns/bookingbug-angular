@@ -52,6 +52,7 @@ angular.module('BB.Services').factory 'ModalForm', ($modal, $log) ->
     $modal.open
       templateUrl: 'modal_form.html'
       controller: newForm
+      size: config.size
       resolve:
         company: () -> config.company
         title: () -> config.title
@@ -64,6 +65,7 @@ angular.module('BB.Services').factory 'ModalForm', ($modal, $log) ->
     $modal.open
       templateUrl: 'modal_form.html'
       controller: editForm
+      size: config.size
       resolve:
         model: () -> config.model
         title: () -> config.title
