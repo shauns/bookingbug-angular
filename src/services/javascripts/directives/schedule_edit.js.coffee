@@ -1,33 +1,30 @@
 angular.module('BBAdminServices').directive 'scheduleEdit', ($window, $document) ->
 
-  # TODO
-  # time slots wont nessecarily be an hour, could be 15 mins
-  hourRange = (start_hour) ->
-    start = start_hour*100
-    end = start_hour*100 + 100
-    "#{sprintf('%04s', start)}-#{sprintf('%04s', end)}"
+  timeRange = (start_time, div) ->
+    start = start_time.clone()
+    end = start_time.add(div, 'minutes')
+    {
+      label: start,
+      range: [start.format('HHmm'),end.format('HHmm')].join('-')
+    }
 
   controller = ($scope) ->
 
-    $scope.dates = [0..6]
-    $scope.hours = (hourRange(x) for x in [0..23])
+    $scope.weekdays = (moment().weekday(d) for d in [0..6])
+
+    $scope.dates = (moment().add(x, 'days') for x in [0..6])
 
     $scope.hoursDone = false
     $scope.datesDone = false
 
-    # TODO
-    # using dates and hours specified, create array of slots indexed by hour (rows) and date (cols)
-    # eg. $scope.slots['13:00']['2015-10-01']
+    $scope.time_division = 60
 
-    # options = {start_date: '2015-02-02', end_date: '2015-02-02', start_time: '0800', end_time: '2200', duration: '30'}
-
-    # if (options.start_date and angular.isNumber(options.start_date)) and (options.end_date and angular.isNumber(options.end_date))
-    #   start_date = options.start_date
-    #   end_date   = options.end_date
-    # else
-    #   start_date = moment(options.start_date)
-    #   end_date   = moment(options.end_date)
-
+    $scope.$watch 'time_division', (t) ->
+      u = parseInt(t)
+      m = moment({hour: 0, minute: 0})
+      $scope.timeRanges = (timeRange(m, u) for mins in [0..(1440 - u)] by u)
+      $scope.$evalAsync () ->
+        $scope.renderModel()
 
     $scope.lastHour = () ->
       $scope.hoursDone = true
@@ -45,11 +42,24 @@ angular.module('BBAdminServices').directive 'scheduleEdit', ($window, $document)
     dragging = false
     mode = "add"
 
+    findSmallestDivision = () ->
+      _.min(_.map(ngModel.$viewValue, (range, date) ->
+        start = moment(range.split('-')[0], 'HHmm')
+        end = moment(range.split('-')[1], 'HHmm')
+        moment.duration(end.diff(start)).asMinutes()
+      ))
+
+    scope.renderModel = () ->
+      ngModel.$render()
+
     ngModel.$render = () ->
-      ids = _.flatten(_.map(ngModel.$viewValue, (hours, date) ->
-        _.map(_.range(parseInt(hours.split('-')[0])/100,
-                      parseInt(hours.split('-')[1])/100),
-              (hour) -> "#{date}|#{hourRange(hour)}")
+      ids = _.flatten(_.map(ngModel.$viewValue, (rules, date) ->
+        start = moment(rules.split('-')[0], 'HHmm')
+        end = moment(rules.split('-')[1], 'HHmm')
+        duration = moment.duration(end.diff(start)).asMinutes()
+        _.map(_.range(0,duration,scope.time_division),
+              () -> [date,timeRange(start,scope.time_division).range].join('|')
+        )
       ))
       if scope.datesDone
         updateTableElements(ids)
@@ -128,7 +138,9 @@ angular.module('BBAdminServices').directive 'scheduleEdit', ($window, $document)
         column: $window.Math.max(coordsStart.column, coordsEnd.column)
         row: $window.Math.max(coordsStart.row, coordsEnd.row)
 
-      element.find("td").filter ->
+      element.find("table").parent().parent().children().filter(() ->
+        angular.element(this).hasClass('active')
+      ).find("td").filter ->
         el = angular.element(this)
         coords = getCoords(el)
         coords.column >= topLeft.column and coords.column <= bottomRight.column and
@@ -157,7 +169,8 @@ angular.module('BBAdminServices').directive 'scheduleEdit', ($window, $document)
     link: link
     templateUrl: 'schedule_edit_main.html'
     require: 'ngModel'
-    scope: {}
+    scope:
+      timeDivison: '='
   }
 
 
