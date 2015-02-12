@@ -4,8 +4,9 @@
 angular.module('BB.Directives').directive 'bbWidget', (PathSvc, $http,
     $templateCache, $compile, $q, AppConfig, $timeout, $bbug) ->
 
-  getTemplate = () ->
-    src = PathSvc.directivePartial('main').$$unwrapTrustedValue()
+  getTemplate = (template) ->
+    partial = if template then template else 'main'
+    src = PathSvc.directivePartial(partial).$$unwrapTrustedValue()
     $http.get(src, {cache: $templateCache}).then (response) ->
       response.data
 
@@ -34,8 +35,8 @@ angular.module('BB.Directives').directive 'bbWidget', (PathSvc, $http,
         defer.resolve(style)
     defer.promise
 
-  renderTemplate = (scope, element, design_mode) ->
-    $q.when(getTemplate()).then (template) ->
+  renderTemplate = (scope, element, design_mode, template) ->
+    $q.when(getTemplate(template)).then (template) ->
       element.html(template).show()
       element.append('<style widget_css scoped></style>') if design_mode
       $compile(element.contents())(scope)
@@ -63,6 +64,8 @@ angular.module('BB.Directives').directive 'bbWidget', (PathSvc, $http,
             $compile(element.contents())(scope)
             element.append(style)
             setupPusher(scope, element, prms) if prms.update_design
+      else if prms.template
+        renderTemplate(scope, element, prms.design_mode, prms.template)
       else
         renderTemplate(scope, element, prms.design_mode)
       scope.$on 'refreshPage', () ->
@@ -270,6 +273,9 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
 
     if prms.extra_setup and prms.extra_setup.return_url
       $scope.bb.return_url = prms.extra_setup.return_url
+
+    if prms.template
+      $scope.bb.template = prms.template
 
 
     @waiting_for_conn_started_def = $q.defer()
