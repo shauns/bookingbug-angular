@@ -5,7 +5,7 @@ angular.module('BB.Directives').directive 'bbClientDetails', () ->
   scope : true
   controller : 'ClientDetails'
 
-angular.module('BB.Controllers').controller 'ClientDetails', ($scope,  $rootScope, ClientDetailsService, ClientService, LoginService, BBModel, ValidatorService, QuestionService) ->
+angular.module('BB.Controllers').controller 'ClientDetails', ($scope,  $rootScope, ClientDetailsService, ClientService, LoginService, BBModel, ValidatorService, QuestionService, AlertService) ->
   $scope.controller = "public.controllers.ClientDetails"
   $scope.notLoaded $scope
   $scope.validator = ValidatorService
@@ -73,7 +73,8 @@ angular.module('BB.Controllers').controller 'ClientDetails', ($scope,  $rootScop
         $scope.decideNextPage()
       , (err) ->
         $scope.login_error = true
-        $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
+        $scope.setLoaded $scope
+        AlertService.danger({msg: "Sorry, your email or password was not recognised. Please try again."})
 
   $scope.setReady = () =>
     $scope.client.setClientDetails($scope.client_details)
