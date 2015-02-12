@@ -120,6 +120,6 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window, BBModel
     totalDuration: () ->
       duration = 0
       for item in @items
-        duration =+ item.duration if item.duration
+        duration += item.duration if item.duration
       duration /= 60
       return duration
