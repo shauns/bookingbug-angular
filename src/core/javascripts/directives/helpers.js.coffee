@@ -369,3 +369,15 @@ app.directive 'bbCapitaliseFirstLetter', () ->
         ngModel.$setViewValue(string)
         ngModel.$render()
         return
+
+
+app.directive 'apiUrl', ($rootScope) ->
+  restrict: 'A'
+  scope: {
+    apiUrl: '@'
+  }
+  link: (scope, element, attrs) ->
+    $rootScope.bb ||= {}
+    $rootScope.bb.api_url = scope.apiUrl
+
+
