@@ -373,11 +373,8 @@ app.directive 'bbCapitaliseFirstLetter', () ->
 
 app.directive 'apiUrl', ($rootScope) ->
   restrict: 'A'
-  scope: {
-    apiUrl: '@'
-  }
   link: (scope, element, attrs) ->
     $rootScope.bb ||= {}
-    $rootScope.bb.api_url = scope.apiUrl
+    $rootScope.bb.api_url = attrs.apiUrl
 
 
