@@ -54,6 +54,10 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
          href: 'http://www.bookingbug.com/api/v1/admin/123/services'
        new_service:
          href: 'http://www.bookingbug.com/api/v1/admin/123/services/new'
+       event_chains:
+         href: 'http://www.bookingbug.com/api/v1/admin/123/event_chains'
+       new_event_chain:
+         href: 'http://www.bookingbug.com/api/v1/admin/123/event_chains/new'
    $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/company').respond(company)
 
    people =
@@ -507,3 +511,87 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
 
 
 
+   event_chains =
+     total_entries: 1
+     _embedded:
+       event_chains: [
+         {
+           id: 1
+           deleted: false
+           disabled: false
+           company_id: 123
+           capacity_view: 3
+           description: ""
+           duration: 120
+           email_per_ticket: true
+           end_date: "2015-11-12"
+           group: "Events"
+           long_description: ""
+           max_num_bookings: 1
+           min_advance_time: "2015-02-13T14:24:29+00:00"
+           name: "My Event"
+           person_name: "Ed"
+           price: 0
+           questions_per_ticket: false
+           spaces: 10
+           start_date: "2015-11-12"
+           ticket_type: "single_space"
+           time: "12:00:00+00:00"
+           mobile: ""
+           _links:
+             self:
+               href: "http://www.bookingbug.com/api/v1/admin/123/event_chains/1"
+             edit:
+               href: "http://www.bookingbug.com/api/v1/admin/123/event_chains/1/edit"
+           _embedded: {}
+         }
+       ]
+     _links:
+       self:
+         href: "http://www.bookingbug.com/api/v1/admin/123/event_chains"
+       new:
+         href: "http://www.bookingbug.com/api/v1/admin/123/event_chains/new"
+         templated: true
+   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/event_chains').respond(event_chains)
+
+   event_chain_schema =
+     form: [
+       {key:'name', type:'text', feedback:false},
+       {key:'description', type:'text', feedback:false},
+       {key:'spaces', type:'number', feedback:false},
+       {key:'events', feedback:false, add: 'New Event', style: {add: 'btn-success'}, items:[
+            {key:'events[].date', type: 'date', feedback: false},
+            {key:'events[].time', type: 'time', feedback: false},
+            {key:'events[].duration', type: 'number', feedback: false}
+          ]
+       },
+       {type:'submit', title:'Save'}
+     ]
+     schema:
+       properties:
+         name:
+           title: 'Name *'
+           type: 'string'
+         description:
+           title: 'Description'
+           type: 'string'
+         events:
+           title: 'Events'
+           type: 'array'
+           items:
+             type: 'object'
+             properties:
+               date: {format: 'date', title: 'Date', type: 'string'}
+               duration: {title: 'Duration', type: 'number'}
+               time: {format: 'time', title: 'Time', type: 'string'}
+         spaces:
+           title: 'Spaces *'
+           type: 'string'
+       required: ['name', 'spaces']
+       title: 'Event Chain'
+       type: 'object'
+   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/event_chains/new').respond () ->
+     [200, event_chain_schema, {}]
+
+   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/event_chains/1/edit').respond () ->
+     [200, event_chain_schema, {}]
