@@ -5,7 +5,8 @@ angular.module('BBAdminServices', [
   'BBAdmin.Services',
   'BBAdmin.Filters',
   'BBAdmin.Controllers',
-  'trNgGrid'
+  'trNgGrid',
+  'ui.calendar',
 ])
 
 angular.module('BBAdminServices').config ($logProvider) ->

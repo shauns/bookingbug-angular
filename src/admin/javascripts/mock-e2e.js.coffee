@@ -58,6 +58,10 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
          href: 'http://www.bookingbug.com/api/v1/admin/123/event_chains'
        new_event_chain:
          href: 'http://www.bookingbug.com/api/v1/admin/123/event_chains/new'
+       schedules:
+         href: 'http://www.bookingbug.com/api/v1/admin/123/schedules'
+       new_schedule:
+         href: 'http://www.bookingbug.com/api/v1/admin/123/schedules/new'
    $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/company').respond(company)
 
    people =
@@ -595,3 +599,47 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
 
    $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/event_chains/1/edit').respond () ->
      [200, event_chain_schema, {}]
+
+
+   schedules =
+     total_entries: 1
+     _embedded:
+       schedules: [
+         {
+           id: 1
+           name: "Schedule1"
+           company_id: 123
+           rules:
+             '1': "0700-1500"
+             '2': "0700-1600,1800-1900"
+             '2015-02-01': "0600-1200"
+           _links:
+             self:
+               href: "http://www.bookingbug.com/api/v1/admin/123/schedules/1"
+             edit:
+               href: "http://www.bookingbug.com/api/v1/admin/123/schedules/edit"
+         }
+       ]
+     _links:
+       self:
+         href: "http://www.bookingbug.com/api/v1/admin/123/schedules"
+       new:
+         href: "http://www.bookingbug.com/api/v1/admin/123/schedules/new"
+         templated: true
+   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/schedules').respond(schedules)
+
+   schedule_schema =
+     form: [
+       {key:'name', type:'text', feedback:false},
+       {key:'rules', type:'schedule', feedback:false},
+         rules:
+           title: 'Rules *'
+           type: 'string'
+       required: ['name', 'rules']
+       title: 'Schema'
+       type: 'object'
+   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/schedules/new').respond () ->
+     [200, schedule_schema, {}]
+   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/schedules/edit').respond () ->
+     [200, schedule_schema, {}]
+
