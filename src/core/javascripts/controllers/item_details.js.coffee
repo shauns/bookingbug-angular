@@ -13,8 +13,7 @@ angular.module('BB.Directives').directive 'bbItemDetails', () ->
 
 
 angular.module('BB.Controllers').controller 'ItemDetails',
-($scope, $rootScope, ItemDetailsService, PurchaseBookingService, AlertService,
- BBModel, FormDataStoreService, ValidatorService, QuestionService, $modal, $location, $upload) ->
+($scope, $rootScope, ItemDetailsService, PurchaseBookingService, AlertService, BBModel, FormDataStoreService, ValidatorService, QuestionService, $modal, $location, $upload) ->
 
   $scope.controller = "public.controllers.ItemDetails"
   # stores data when navigating back/forward through the form

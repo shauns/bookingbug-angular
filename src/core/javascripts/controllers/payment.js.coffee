@@ -62,7 +62,7 @@ angular.module('BB.Controllers').controller 'Payment', ($scope,  $rootScope,
 
     $scope.bb.total = $scope.total if $scope.total
 
-    if !$scope.bb.total.total_price or $scope.bb.total.total_price is "0.0"
+    if !$scope.bb.total.total_price or parseFloat($scope.bb.total.total_price) is 0.0
       $scope.decideNextPage()
       return
 

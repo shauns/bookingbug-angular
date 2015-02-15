@@ -98,3 +98,24 @@ angular.module('BB.Services').factory "LoginService", ($q, halClient, $rootScope
       deferred.reject(err)
     deferred.promise
 
+  sendPasswordReset: (company, params) ->
+    deferred = $q.defer()
+    company.$post('email_password_reset', {}, params).then () =>
+      deferred.resolve(true)
+    , (err) =>
+      deferred.reject(err)
+    deferred.promise
+  
+  updatePassword: (member, params) ->
+    if member && params['new_password'] && params['confirm_new_password']
+      deferred = $q.defer()
+      member.$post('update_password', {}, params).then (login) =>
+        login.$get('member').then (member) =>
+          @setLogin(member)
+          deferred.resolve(member)
+        , (err) =>
+          deferred.reject(err)
+      , (err) =>
+        deferred.reject(err)
+      deferred.promise
+

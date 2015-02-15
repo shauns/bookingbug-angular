@@ -1,6 +1,3 @@
-
-
-
 angular.module('BB.Directives').directive 'bbPurchase', () ->
   restrict: 'AE'
   replace: true
@@ -10,12 +7,10 @@ angular.module('BB.Directives').directive 'bbPurchase', () ->
     scope.init(scope.$eval( attrs.bbPurchase ))
     return
 
-angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope,
-    CompanyService, PurchaseService, ClientService, $modal, $location, $timeout,
-    BBWidget, BBModel, $q, QueryStringService, SSOService, AlertService,
-    LoginService, $window, $upload, ServiceService, $sessionStorage) ->
+angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope, CompanyService, PurchaseService, ClientService, $modal, $location, $timeout, BBWidget, BBModel, $q, QueryStringService, SSOService, AlertService, LoginService, $window, $upload, ServiceService, $sessionStorage) ->
 
   $scope.controller = "Purchase"
+
 
   setPurchaseCompany = (company) ->
     $scope.bb.company_id = company.id
@@ -26,11 +21,13 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope,
       $scope.bb.item_defaults.merge_resources = true if company.settings.merge_resources
       $scope.bb.item_defaults.merge_people    = true if company.settings.merge_people
 
+
   failMsg = () ->
     if $scope.fail_msg
       AlertService.danger({msg:$scope.fail_msg})
     else
       AlertService.danger({msg:"Sorry, something went wrong"})
+
 
   $scope.init = (options) ->
     if options.move_route
@@ -41,6 +38,9 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope,
 
     if options.login_redirect
       $scope.requireLogin({redirect: options.login_redirect})
+    
+    $scope.replace_page = if options.replace_page then true else false
+
     $scope.notLoaded $scope
     $scope.fail_msg = options.fail_msg if options.fail_msg
     if options.member_sso
@@ -51,6 +51,7 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope,
         failMsg()
     else
       $scope.load()
+
 
   $scope.load = (id) ->
     $scope.notLoaded $scope
@@ -75,7 +76,6 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope,
             $scope.total = $scope.purchase
             $scope.price = !($scope.purchase.price == 0)
 
-
             $scope.purchase.getBookingsPromise().then (bookings) ->
               $scope.bookings = bookings
               $scope.setLoaded $scope
@@ -84,9 +84,6 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope,
               for booking in $scope.bookings
                 booking.getAnswersPromise().then (answers) ->
                   booking.answers = answers
-  #                for answer in answers
-  #                  answer.getQuestion().then (question) ->
-  #                    answer.question = question
             , (err) ->
               $scope.setLoaded $scope
               failMsg()
@@ -118,6 +115,7 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope,
       move_booking = (b for b in bookings when b.id == id)
       $scope.move(move_booking[0]) if move_booking.length > 0 && $scope.isMovable(bookings[0])
 
+
   $scope.requireLogin = (action) =>
     if _.isString action.redirect
       if action.redirect.indexOf('?') is -1
@@ -132,10 +130,12 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope,
     if $scope.login_action.redirect
       window.location = $scope.login_action.redirect
 
+
   getCompanyID = () ->
     matches = /^.*(?:\?|&)company_id=(.*?)(?:&|$)/.exec($location.absUrl())
     company_id = matches[1] if matches
     company_id
+
 
   getPurchaseID = () ->
     matches = /^.*(?:\?|&)id=(.*?)(?:&|$)/.exec($location.absUrl())
@@ -146,13 +146,14 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope,
     id = matches[1] if matches
     id
 
+
   $scope.move = (booking, route, options = {}) ->
     route ||= $scope.move_route
     if $scope.move_all
       return $scope.moveAll(route, options)
 
     $scope.notLoaded $scope
-    $scope.clearPage()
+    $scope.clearPage() if !$scope.replace_page
     $scope.initWidget({company_id: booking.company_id, no_route: true})
     $timeout () =>
       $rootScope.connection_started.then () =>
@@ -176,11 +177,11 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope,
       , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
 
-  # potentiall move all of the items in booking - move the whole lot to a basket
+  # potentially move all of the items in booking - move the whole lot to a basket
   $scope.moveAll = ( route, options = {}) ->
     route ||= $scope.move_route
     $scope.notLoaded $scope
-    $scope.clearPage()
+    $scope.clearPage() if !$scope.replace_page
     $scope.initWidget({company_id: $scope.bookings[0].company_id, no_route: true})
     $timeout () =>
       $rootScope.connection_started.then () =>
@@ -210,19 +211,9 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope,
       , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
 
-
-
-
-  $scope.confirm_delete = () ->
-    modalInstance = $modal.open
-    modalInstance.booking.$del('self').then (service) =>
-      modalInstance.close
-      $rootScope.$emit "booking:cancelled"
-    # , (err) ->
-    #   window.location = "/404"
-
+  # delete a single booking
   $scope.delete = (booking) ->
-    $scope.clearPage()
+    $scope.clearPage() if !$scope.replace_page
     modalInstance = $modal.open
       templateUrl: $scope.getPartial "cancel_modal"
       controller: ModalDelete
@@ -232,10 +223,23 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope,
     modalInstance.result.then (booking) ->
       booking.$del('self').then (service) =>
         $scope.bookings = _.without($scope.bookings, booking)
+        $rootScope.$emit "booking:cancelled"
 
-  $scope.cancel = ->
+  # delete all bookings assoicated to the purchase
+  $scope.delete_all = () ->
+    $scope.clearPage() if !$scope.replace_page
     modalInstance = $modal.open
-    modalInstance.dismiss "cancel"
+      templateUrl: $scope.getPartial "cancel_modal"
+      controller: ModalDeleteAll
+      resolve:
+        purchase: ->
+          $scope.purchase
+    modalInstance.result.then (purchase) ->
+      PurchaseService.delete_all(purchase).then (purchase) ->
+        $scope.purchase = purchase
+        $scope.bookings = []
+        $rootScope.$emit "booking:cancelled"
+
 
   $scope.isMovable = (booking) ->
     if booking.min_cancellation_time
@@ -281,6 +285,7 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope,
     # $scope.upload = $upload.http({...})  see 88#issuecomment-31366487 for sample code.
 
 
+  # is there a purchase total already in scope?
   if $scope.bb.total
     $scope.load($scope.bb.total.long_id)
   else
@@ -305,6 +310,17 @@ ModalDelete = ($scope,  $rootScope, $modalInstance, booking) ->
 
   $scope.confirm_delete = () ->
     $modalInstance.close(booking)
+
+  $scope.cancel = ->
+    $modalInstance.dismiss "cancel"
+
+
+ModalDeleteAll = ($scope,  $rootScope, $modalInstance, purchase) ->
+  $scope.controller = "ModalDeleteAll"
+  $scope.purchase = purchase
+
+  $scope.confirm_delete = () ->
+    $modalInstance.close(purchase)
 
   $scope.cancel = ->
     $modalInstance.dismiss "cancel"

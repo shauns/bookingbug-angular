@@ -1,0 +1,35 @@
+<tabset>
+  <tab heading="weekdays">
+    <table>
+      <thead>
+        <tr>
+          <th><!--empty cell--></th>
+          <th ng-repeat="weekday in weekdays">{{weekday | datetime : 'ddd'}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="timeRange in timeRanges" ng-init="$last ? lastHour() : null">
+          <td class="hour-label">{{timeRange.label | datetime : 'HH:mm'}}</td>
+          <td class="eng-item" ng-repeat="weekday in weekdays" ng-init="$last ?
+            lastDate() : null" id="{{weekday | datetime : 'd'}}|{{timeRange.range}}"></td>
+        </tr>
+      </tbody>
+    </table>
+  </tab>
+  <tab heading="dates">
+    <table>
+      <thead>
+        <tr>
+          <th><!--empty cell--></th>
+          <th ng-repeat="date in dates">{{date | datetime : 'D MMM'}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="timeRange in timeRanges" ng-init="$last ? lastHour() : null">
+          <td class="hour-label">{{timeRange.label | datetime : 'HH:mm'}}</td>
+          <td class="eng-item" ng-repeat="date in dates" ng-init="$last ?
+            lastDate() : null" id="{{date | datetime : 'YYYY-MM-DD'}}|{{timeRange.range}}"></td>
+        </tr>
+      </tbody>
+    </table>
+  </tab>

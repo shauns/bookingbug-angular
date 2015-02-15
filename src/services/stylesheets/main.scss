@@ -1,0 +1,47 @@
+[schedule-edit] {
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  table {
+    width: 100%;
+  }
+
+  td, th {
+    padding: 10px;
+    border: 2px solid rgba(220, 228, 236,1);
+    width: 12.5%;
+  }
+
+  th {
+    text-align: center;
+    font-weight: normal;
+  }
+
+  td.eng-item {
+    cursor: pointer;
+    // -webkit-transition: display 0.4s ease;
+    // transition: background-color 0.4s ease;
+  }
+
+  td.eng-item:not(.eng-selected-item) {
+    &:hover {
+      background-color: rgba(59,230,196,0.5);
+    }
+  }
+
+  td.eng-selected-item {
+    background-color: rgba(59,230,196,1);
+    color: white;
+    border-color: rgba(220, 228, 236,0.4);
+  }
+
+  td.hour-label {
+    width: auto;
+  }
+
+}

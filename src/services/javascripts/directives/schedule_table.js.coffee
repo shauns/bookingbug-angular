@@ -17,6 +17,7 @@ angular.module('BBAdminServices').directive 'scheduleTable', (AdminCompanyServic
         title: 'New Schedule'
         new_rel: 'new_schedule'
         post_rel: 'schedules'
+        size: 'lg'
         success: (schedule) ->
           $scope.schedules.push(schedule)
 
@@ -29,10 +30,10 @@ angular.module('BBAdminServices').directive 'scheduleTable', (AdminCompanyServic
 
     $scope.edit = (id) ->
       schedule = _.find $scope.schedules_models, (p) -> p.id == id
-      console.log id, schedule
       ModalForm.edit
         model: schedule
         title: 'Edit Schedule'
+        size: 'lg'
 
   link = (scope, element, attrs) ->
     if scope.company

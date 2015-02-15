@@ -69,8 +69,8 @@ angular.module('BB.Controllers').controller 'AccordianRangeGroup',
     $scope.has_availability = hasAvailability() if $scope.accordian_slots
 
     # if a day and slot has been provided, check if the slot is in range
-    if day and slot and day.date.isSame($scope.day.date) and slot.time >= $scope.start_time and slot.time < $scope.end_time
-      $scope.selected_slot = slot
+    if day and slot
+      $scope.selected_slot = slot if day.date.isSame($scope.day.date) and slot.time >= $scope.start_time and slot.time < $scope.end_time
     else 
       for slot in $scope.accordian_slots
         if slot.selected

@@ -1,27 +1,18 @@
-
-
 angular.module('BBAdminServices').factory 'AdminResourceService',
 ($q, $window, halClient, SlotCollections, BBModel) ->
 
-  query: (prms) ->
-    if prms.company
-      prms.company_id = prms.company.id
-    url = ""
-    url = prms.url if prms.url
-    href = url + "/api/v1/admin/{company_id}/resources"
-
-    uri = new $window.UriTemplate.parse(href).expand(prms || {})
-    deferred = $q.defer()
-    halClient.$get(uri, {}).then  (resource) =>
-      resource.$get('resources').then (items) =>
-        resources = []
-        for i in items
-          resources.push(new BBModel.Resource(i))
-        deferred.resolve(resources)
-    , (err) =>
-      deferred.reject(err)
-
-    deferred.promise
+  query: (params) ->
+    company = params.company
+    defer = $q.defer()
+    company.$get('resources').then (collection) ->
+      collection.$get('resources').then (resources) ->
+        models = (new BBModel.Resource(r) for r in resources)
+        defer.resolve(models)
+      , (err) ->
+        defer.reject(err)
+    , (err) ->
+      defer.reject(err)
+    defer.promise
 
   block: (company, resource, data) ->
     prms = {id:  resource.id, company_id: company.id}

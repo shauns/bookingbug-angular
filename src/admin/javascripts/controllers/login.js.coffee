@@ -1,37 +1,55 @@
 
-angular.module('BBAdmin').directive 'bbAdminLogin', () ->
+angular.module('BBAdmin.Directives').directive 'bbAdminLogin', () ->
+
   restrict: 'AE'
   replace: true
-  scope : true
-  controller : 'AdminLogin'
-  templateUrl: 'login.html'
+  scope: {
+    onSuccess: '='
+    onCancel: '='
+    onError: '='
+    bb: '='
+  }
+  controller: 'AdminLogin'
+  template: '<div ng-include="login_template"></div>'
 
 
-angular.module('BBAdmin').controller 'AdminLogin', ($scope,  $rootScope, AdminLoginService, $q, $sessionStorage) ->
+angular.module('BBAdmin.Controllers').controller 'AdminLogin', ($scope,
+    $rootScope, AdminLoginService, $q, $sessionStorage) ->
 
-  $scope.host = $sessionStorage.getItem("host")
+  $scope.login =
+    host: $sessionStorage.getItem('host')
+    email: null
+    password: null
 
-  $scope.login_sso = (token, route) =>
-    $rootScope.connection_started.then =>
-      AdminLoginService.ssoLogin({company_id: $scope.bb.company.id, root: $scope.bb.api_url}, {token: token}).then (user) =>
-        $scope.loggedInDef.resolve(user)
+  $scope.login_template = 'admin_login.html'
 
-  $scope.login_with_password = (email, password) =>
-    $rootScope.connection_started.then =>
-      AdminLoginService.login({email: email, password: password, company_id: $scope.bb.company.id}, {}).then (user) =>
-        $scope.loggedInDef.resolve(user)
+  $scope.login = () ->
+    $scope.alert = ""
+    params =
+      email: $scope.login.email
+      password: $scope.login.password
+    AdminLoginService.login(params).then (user) ->
+      if user.company_id?
         $scope.user = user
+        $scope.onSuccess() if $scope.onSuccess
+      else
+        user.getAdministratorsPromise().then (administrators) ->
+          $scope.administrators = administrators
+          $scope.pickCompany()
+    , (err) ->
+      $scope.alert = "Sorry, either your email or password was incorrect"
 
-  $scope.login = () =>
-    $rootScope.bb ||= {}
-    if $scope.host
-      $rootScope.bb.api_url = $scope.host
-      $sessionStorage.setItem("host", $scope.host)
-    AdminLoginService.login({email: $scope.email, password: $scope.password}, {}).then (user) =>
-      $scope.user = user
-      if user.$has('administrators')
-        user.$get('administrators').then (admins) =>
-          $scope.administrators = admins
+  $scope.pickCompany = () ->
+    $scope.login_template = 'pick_company.html'
 
-  $scope.pickAdmin = (admin) =>
-    LoginService.setLogin(admin)
+  $scope.selectedCompany = () ->
+    $scope.alert = ""
+    params =
+      email: $scope.email
+      password: $scope.password
+    $scope.selected_admin.$post('login', {}, params).then (login) ->
+      $scope.selected_admin.getCompanyPromise().then (company) ->
+        $scope.bb.company = company
+        AdminLoginService.setLogin($scope.selected_admin)
+        $scope.onSuccess(company)
+

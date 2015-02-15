@@ -7,10 +7,12 @@ angular.module('BB.Directives').directive 'bbEvent', () ->
   controller : 'Event'
 
 
-angular.module('BB.Controllers').controller 'Event', ($scope,  $rootScope, EventService, $q, PageControllerService, BBModel) ->
+angular.module('BB.Controllers').controller 'Event', ($scope,  $rootScope, EventService, $q, PageControllerService, BBModel, ValidatorService) ->
   $scope.controller = "public.controllers.Event"
   $scope.notLoaded $scope
   angular.extend(this, new PageControllerService($scope, $q))
+
+  $scope.validator = ValidatorService
 
   $rootScope.connection_started.then ->
     if $scope.bb.company
@@ -44,7 +46,7 @@ angular.module('BB.Controllers').controller 'Event', ($scope,  $rootScope, Event
 
             $scope.bb.stackItem(item)
     # ok so we have them as stacked items
-    # now push teh stacked items to a basket
+    # now push the stacked items to a basket
     if $scope.bb.stacked_items.length == 0
       $scope.setLoaded $scope
       return
@@ -69,4 +71,12 @@ angular.module('BB.Controllers').controller 'Event', ($scope,  $rootScope, Event
 
 
   $scope.setReady = () =>
+    $scope.bb.event_details = {
+      name     : $scope.event.chain.name,
+      image    : $scope.event.image,
+      address  : $scope.event.chain.address,
+      datetime : $scope.event.date,
+      tickets  : $scope.event.tickets
+    }
+    return $scope.selected_tickets 
     

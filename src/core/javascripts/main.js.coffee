@@ -157,3 +157,28 @@ window.bookingbug =
     angular.injector(['BB.Services', 'BB.Models', 'ng'])
            .get('LoginService').logout(logout_opts)
     window.location.reload() if options.reload
+
+
+angular.module('schemaForm').config (schemaFormProvider,
+    schemaFormDecoratorsProvider, sfPathProvider) ->
+
+  timepicker = (name, schema, options) ->
+    if schema.type == 'string' && (schema.format == 'time')
+      f = schemaFormProvider.stdFormObj(name, schema, options)
+      f.key = options.path
+      f.type = 'timepicker'
+      options.lookup[sfPathProvider.stringify(options.path)] = f
+      f
+
+  schemaFormProvider.defaults.string.unshift(timepicker)
+
+  schemaFormDecoratorsProvider.addMapping(
+    'bootstrapDecorator'
+    'time'
+    'bootstrap_ui_time_form.html'
+  )
+
+  schemaFormDecoratorsProvider.createDirective(
+    'time'
+    'bootstrap_ui_time_form.html'
+  )

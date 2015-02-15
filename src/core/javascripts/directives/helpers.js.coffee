@@ -206,6 +206,7 @@ app.directive 'bbPadWithZeros', () ->
     how_many = options.how_many or 2
 
     padNumber = (value) ->
+      value = String(value)
       if value and value.length < how_many
         padding = ""
         for index in [1..how_many-value.length]
@@ -368,3 +369,12 @@ app.directive 'bbCapitaliseFirstLetter', () ->
         ngModel.$setViewValue(string)
         ngModel.$render()
         return
+
+
+app.directive 'apiUrl', ($rootScope) ->
+  restrict: 'A'
+  link: (scope, element, attrs) ->
+    $rootScope.bb ||= {}
+    $rootScope.bb.api_url = attrs.apiUrl
+
+

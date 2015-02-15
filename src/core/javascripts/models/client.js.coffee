@@ -35,6 +35,16 @@ angular.module('BB.Models').factory "ClientModel", ($q, BBModel, BaseModel, Loca
       @phone = values.phone if values.phone
       @mobile = values.mobile if values.mobile
       @email = values.email if values.email
+      @id = values.id if values.id
+      @comp_ref = values.ref if values.ref
+      @comp_ref = values.comp_ref if values.comp_ref
+      @address1 = values.address1 if values.address1
+      @address2 = values.address2 if values.address2
+      @address3 = values.address3 if values.address3
+      @address4 = values.address4 if values.address4
+      @address5 = values.address5 if values.address5
+      @postcode = values.postcode if values.postcode
+      @country = values.country if values.country
 
     getName:  ->
       str = ""
@@ -115,6 +125,7 @@ angular.module('BB.Models').factory "ClientModel", ($q, BBModel, BaseModel, Loca
       x.phone = @phone
       x.email = @email
       x.id = @id
+      x.comp_ref = @comp_ref
       x.parent_client_id = @parent_client_id
       x.password = @password
 

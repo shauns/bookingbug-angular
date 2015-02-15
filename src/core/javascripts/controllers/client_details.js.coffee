@@ -5,11 +5,12 @@ angular.module('BB.Directives').directive 'bbClientDetails', () ->
   scope : true
   controller : 'ClientDetails'
 
-
-angular.module('BB.Controllers').controller 'ClientDetails', ($scope,  $rootScope, ClientDetailsService, ClientService, LoginService, BBModel, ValidatorService) ->
+angular.module('BB.Controllers').controller 'ClientDetails', ($scope,  $rootScope, ClientDetailsService, ClientService, LoginService, BBModel, ValidatorService, QuestionService, AlertService) ->
   $scope.controller = "public.controllers.ClientDetails"
   $scope.notLoaded $scope
   $scope.validator = ValidatorService
+  $scope.existing_member = false
+  $scope.login_error = false
   
   $rootScope.connection_started.then =>
 
@@ -26,10 +27,12 @@ angular.module('BB.Controllers').controller 'ClientDetails', ($scope,  $rootScop
 
     if $scope.client.client_details
       $scope.client_details = $scope.client.client_details
+      QuestionService.checkConditionalQuestions($scope.client_details.questions) if $scope.client_details.questions
       $scope.setLoaded $scope
     else 
       ClientDetailsService.query($scope.bb.company).then (details) =>
         $scope.client_details = details
+        QuestionService.checkConditionalQuestions($scope.client_details.questions) if $scope.client_details.questions
         $scope.setLoaded $scope
       , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
@@ -43,6 +46,7 @@ angular.module('BB.Controllers').controller 'ClientDetails', ($scope,  $rootScop
 
   $scope.validateClient = (client_form, route) =>
     $scope.notLoaded $scope
+    $scope.existing_member = false
 
     # we need to validate teh client information has been correctly entered here
     if $scope.bb && $scope.bb.parent_client
@@ -53,15 +57,25 @@ angular.module('BB.Controllers').controller 'ClientDetails', ($scope,  $rootScop
       $scope.setLoaded $scope
       $scope.setClient(client)
       $scope.client.setValid(true) if $scope.bb.isAdmin
+      $scope.existing_member = false
       $scope.decideNextPage(route)
-    , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
+    , (err) ->
+      if err.data.error == "Please Login" 
+        $scope.existing_member = true
+        AlertService.danger({msg: "You have already registered with this email address. Please login or reset your password using the Forgot Password link below."})
+      $scope.setLoaded $scope
 
   $scope.clientLogin = () =>
+    $scope.login_error = false
     if $scope.login
       LoginService.companyLogin($scope.bb.company, {}, {email: $scope.login.email, password: $scope.login.password}).then (client) =>
         $scope.setClient(new BBModel.Client(client))
+        $scope.login_error = false
         $scope.decideNextPage()
-      , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
+      , (err) ->
+        $scope.login_error = true
+        $scope.setLoaded $scope
+        AlertService.danger({msg: "Sorry, your email or password was not recognised. Please try again."})
 
   $scope.setReady = () =>
     $scope.client.setClientDetails($scope.client_details)
@@ -113,3 +127,6 @@ angular.module('BB.Controllers').controller 'ClientDetails', ($scope,  $rootScop
   $scope.useClient = (client) ->
     $scope.setClient(client)
     
+
+  $scope.recalc_question = () ->
+    QuestionService.checkConditionalQuestions($scope.client_details.questions) if $scope.client_details.questions

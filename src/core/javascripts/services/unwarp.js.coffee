@@ -5,7 +5,6 @@ angular.module('BB.Services').factory "BB.Service.address", ($q, BBModel) ->
     return new BBModel.Address(resource)
 
 
-
 angular.module('BB.Services').factory "BB.Service.person", ($q, BBModel) ->
   unwrap: (resource) ->
     return new BBModel.Person(resource)
@@ -87,6 +86,11 @@ angular.module('BB.Services').factory "BB.Service.event_groups", ($q, BBModel) -
     deferred.promise
 
 
+angular.module('BB.Services').factory "BB.Service.event_chain", ($q, BBModel) ->
+  unwrap: (resource) ->
+    return new BBModel.EventChain(resource)
+
+
 angular.module('BB.Services').factory "BB.Service.category", ($q, BBModel) ->
   unwrap: (resource) ->
     return new BBModel.Category(resource)
@@ -107,7 +111,6 @@ angular.module('BB.Services').factory "BB.Service.categories", ($q, BBModel) ->
       deferred.reject(err)
 
     deferred.promise
-
 
 
 angular.module('BB.Services').factory "BB.Service.client", ($q, BBModel) ->
@@ -162,7 +165,6 @@ angular.module('BB.Services').factory "BB.Service.questions", ($q, BBModel) ->
       (new BBModel.Question(i) for i in resource)
 
 
-
 angular.module('BB.Services').factory "BB.Service.question", ($q, BBModel) ->
   unwrap: (resource) ->
     return new BBModel.Question(resource)
@@ -184,10 +186,10 @@ angular.module('BB.Services').factory "BB.Service.answers", ($q, BBModel) ->
     return answers
 
 
-
 angular.module('BB.Services').factory "BB.Service.administrators", ($q, BBModel) ->
   unwrap: (items) ->
     new BBModel.Admin.User(i) for i in items
+
 
 angular.module('BB.Services').factory "BB.Service.company", ($q, BBModel) ->
   unwrap: (resource) ->
@@ -198,3 +200,44 @@ angular.module('BB.Services').factory "BB.Service.event_chains", ($q, BBModel) -
   promise: true
   unwrap: (resource) ->
     return new BBModel.EventChain(resource)
+
+
+angular.module('BB.Services').factory "BB.Service.parent", ($q, BBModel) ->
+  unwrap: (resource) ->
+    return new BBModel.Company(resource)
+    
+    
+angular.module('BB.Services').factory "BB.Service.company_questions", ($q, BBModel) ->
+  promise: true
+  unwrap: (resource) ->
+    deferred = $q.defer()
+    resource.$get('company_questions').then (items) =>
+      models = []
+      for i in items
+        models.push(new BBModel.BusinessQuestion(i))
+      console.log 'models', models
+      deferred.resolve(models)
+    , (err) =>
+      deferred.reject(err)
+
+    deferred.promise
+
+
+angular.module('BB.Services').factory "BB.Service.company_question", ($q, BBModel) ->
+  unwrap: (resource) ->
+    return new BBModel.BusinessQuestion(resource)
+
+
+angular.module('BB.Services').factory "BB.Service.images", ($q, BBModel) ->
+  promise: true
+  unwrap: (resource) ->
+    deferred = $q.defer()
+    resource.$get('images').then (items) =>
+      models = []
+      for i in items
+        models.push(new BBModel.Image(i))
+      deferred.resolve(models)
+    , (err) =>
+      deferred.reject(err)
+
+    deferred.promise

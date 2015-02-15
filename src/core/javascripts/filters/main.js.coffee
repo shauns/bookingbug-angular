@@ -160,6 +160,30 @@ app.filter 'pretty_price', ($window) ->
     return symbol + $window.sprintf("%.2f", parseFloat(price))
 
 
+app.filter 'ipretty_price', ($window, $rootScope) ->
+  (price, symbol) ->
+
+    if !symbol
+      currency = {
+        USD: "$",
+        GBP: "£",
+        AUD: "$",
+        EUR: "€",
+        CAD: "$",
+        MIXED: "~"
+      }
+      symbol = currency[$rootScope.bb_currency]
+
+    price /= 100.0
+
+    if parseFloat(price) == 0
+      return 'Free'
+    else if parseFloat(price) % 1 == 0
+      return symbol + parseFloat(price)
+    else
+      return symbol + $window.sprintf("%.2f", parseFloat(price))
+
+
 app.filter 'time_period', ->
   (v, options) ->
 
@@ -326,6 +350,14 @@ app.filter 'international_number', () ->
       return "#{number}"
     else
       return ""
+
+
+app.filter "startFrom", ->
+  (input, start) ->
+    if input is `undefined`
+      input
+    else
+      input.slice +start
 
 
 app.filter 'add', ->

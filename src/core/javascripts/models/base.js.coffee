@@ -12,7 +12,7 @@ angular.module('BB.Models').service "BBModel", ($q, $injector) ->
     'Category', 'Client', 'ClientDetails', 'Company', 'CompanySettings',
     'Day', 'Event', 'EventChain', 'EventGroup', 'EventTicket', 'EventSequence', 
     'ItemDetails', 'Person', 'PurchaseItem', 'PurchaseTotal', 
-    'Question', 'Resource', 'Service', 'Slot', 'Space', 'SurveyQuestion','TimeSlot']
+    'Question', 'Resource', 'Service', 'Slot', 'Space', 'SurveyQuestion','TimeSlot', 'BusinessQuestion', 'Image']
 
   funcs = {}
   for model in models
@@ -41,7 +41,7 @@ angular.module('BB.Models').service "BBModel", ($q, $injector) ->
 
   # admin models
   admin_models = ['Booking', 'Slot', 'User', 'Administrator', 'Schedule',
-    'Resource', 'Person', 'Service', 'Login']
+    'Resource', 'Person', 'Service', 'Login', 'EventChain', 'Event']
   afuncs = {}
   for model in admin_models
     do (model) =>  

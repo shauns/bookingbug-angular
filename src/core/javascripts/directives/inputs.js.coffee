@@ -42,6 +42,8 @@ app.directive 'bbQuestion', ($compile, $timeout) ->
             scope.recalc = () =>
               if angular.isDefined(scope.recalc_price)
                 scope.recalc_price() if !question.outcome
+              if angular.isDefined(scope.recalc_question)
+                scope.recalc_question()
 
             # are we using a completely custom question
             if scope.idmaps and (scope.idmaps[question.detail_type] or scope.idmaps[question.id])
@@ -76,7 +78,13 @@ app.directive 'bbQuestion', ($compile, $timeout) ->
               html = "<div class='checkbox'><label><input name='q#{question.id}' id='#{question.id}' ng-model='question.answer' ng-checked='question.answer == \"1\"' ng-change='recalc()' ng-required='question.currentlyShown && (#{adminRequired} || (question.required && !bb.isAdmin))' type='checkbox' value=1> ({{question.price | currency:'GBP'}})</label></div>"
 
             else if question.detail_type is "date"
-              html = "<input type='text' class='form-question form-control' name='q#{question.id}' id='#{question.id}' bb-datepicker-popup='DD/MM/YYYY' datepicker-popup='dd/MM/yyyy' is-open='opened' ng-model='question.answer' ng-required='question.currentlyShown && (#{adminRequired} || (question.required && !bb.isAdmin))' datepicker-options='{\"starting-day\": 1}' show-weeks='false' show-button-bar='false' />"
+              html = "
+                <div class='input-group date-picker'>
+                  <input type='text' class='form-question form-control' name='q#{question.id}' id='#{question.id}' bb-datepicker-popup='DD/MM/YYYY' datepicker-popup='dd/MM/yyyy' ng-model='question.answer' ng-required='question.currentlyShown && (#{adminRequired} || (question.required && !bb.isAdmin))' datepicker-options='{\"starting-day\": 1}' show-weeks='false' show-button-bar='false' is-open='opened' />
+                  <span class='input-group-btn' ng-click='$event.preventDefault();$event.stopPropagation();opened=true'>
+                    <button class='btn btn-default' type='submit'><span class='glyphicon glyphicon-calendar'></span></button>
+                  </span>
+                </div>"
 
             else
               html = "<input type='text' ng-model='question.answer' name='q#{question.id}' id='#{question.id}' ng-required='question.currentlyShown && (#{adminRequired} || (question.required && !bb.isAdmin))' class='form-question form-control'/>"

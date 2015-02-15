@@ -44,3 +44,20 @@ angular.module('BB.Services').factory "PurchaseService", ($q, halClient, BBModel
     , (err) =>
       defer.reject(err)
     defer.promise
+
+
+  delete_all: (purchase) ->
+
+    defer = $q.defer()
+
+    if !purchase
+      defer.reject("No purchase present")
+      return defer.promise
+
+    purchase.$del('self').then (purchase) ->
+      purchase = new BBModel.Purchase.Total(purchase)
+      defer.resolve(purchase)
+    , (err) =>
+      defer.reject(err)
+
+    defer.promise

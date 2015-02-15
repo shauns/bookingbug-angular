@@ -3209,6 +3209,33 @@ be a descendant of the grid when it is being dragged.
 	content: "=";
 }
 
+[schedule-edit] {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none; }
+  [schedule-edit] table {
+    width: 100%; }
+  [schedule-edit] td, [schedule-edit] th {
+    padding: 10px;
+    border: 2px solid #dce4ec;
+    width: 12.5%; }
+  [schedule-edit] th {
+    text-align: center;
+    font-weight: normal; }
+  [schedule-edit] td.eng-item {
+    cursor: pointer; }
+  [schedule-edit] td.eng-item:not(.eng-selected-item):hover {
+    background-color: rgba(59, 230, 196, 0.5); }
+  [schedule-edit] td.eng-selected-item {
+    background-color: #3be6c4;
+    color: white;
+    border-color: rgba(220, 228, 236, 0.4); }
+  [schedule-edit] td.hour-label {
+    width: auto; }
+
 /*!
  * Bootstrap v3.0.0
  *

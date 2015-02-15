@@ -1,25 +1,18 @@
 angular.module('BBAdminServices').factory 'AdminPersonService',  ($q, $window,
     $rootScope, halClient, SlotCollections, BBModel, LoginService) ->
 
-  query: (prms) ->
-    if prms.company
-      prms.company_id = prms.company.id
-    url = ""
-    url = $rootScope.bb.api_url if $rootScope.bb.api_url
-    href = url + "/api/v1/admin/{company_id}/people"
-
-    uri = new $window.UriTemplate.parse(href).expand(prms || {})
-    deferred = $q.defer()
-    halClient.$get(uri, {}).then  (resource) =>
-      resource.$get('people').then (items) =>
-        people = []
-        for i in items
-          people.push(new BBModel.Person(i))
-        deferred.resolve(people)
-    , (err) =>
-      deferred.reject(err)
-
-    deferred.promise
+  query: (params) ->
+    company = params.company
+    defer = $q.defer()
+    company.$get('people').then (collection) ->
+      collection.$get('people').then (people) ->
+        models = (new BBModel.Person(p) for p in people)
+        defer.resolve(models)
+      , (err) ->
+        defer.reject(err)
+    , (err) ->
+      defer.reject(err)
+    defer.promise
 
   block: (company, person, data) ->
     prms = {id:  person.id, company_id: company.id}

@@ -29,3 +29,5 @@ angular.module('BB.Models').factory "PurchaseTotalModel", ($q, BBModel, BaseMode
 
     id: ->
       @get('id')
+
+

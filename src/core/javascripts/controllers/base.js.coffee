@@ -4,8 +4,9 @@
 angular.module('BB.Directives').directive 'bbWidget', (PathSvc, $http,
     $templateCache, $compile, $q, AppConfig, $timeout, $bbug) ->
 
-  getTemplate = () ->
-    src = PathSvc.directivePartial('main').$$unwrapTrustedValue()
+  getTemplate = (template) ->
+    partial = if template then template else 'main'
+    src = PathSvc.directivePartial(partial).$$unwrapTrustedValue()
     $http.get(src, {cache: $templateCache}).then (response) ->
       response.data
 
@@ -34,8 +35,8 @@ angular.module('BB.Directives').directive 'bbWidget', (PathSvc, $http,
         defer.resolve(style)
     defer.promise
 
-  renderTemplate = (scope, element, design_mode) ->
-    $q.when(getTemplate()).then (template) ->
+  renderTemplate = (scope, element, design_mode, template) ->
+    $q.when(getTemplate(template)).then (template) ->
       element.html(template).show()
       element.append('<style widget_css scoped></style>') if design_mode
       $compile(element.contents())(scope)
@@ -44,6 +45,7 @@ angular.module('BB.Directives').directive 'bbWidget', (PathSvc, $http,
   scope:
     client: '=?'
     apiUrl: '@?'
+  transclude: true
   controller: 'BBCtrl'
   link: (scope, element, attrs) ->
     scope.client = attrs.member if attrs.member?
@@ -62,6 +64,8 @@ angular.module('BB.Directives').directive 'bbWidget', (PathSvc, $http,
             $compile(element.contents())(scope)
             element.append(style)
             setupPusher(scope, element, prms) if prms.update_design
+      else if prms.template
+        renderTemplate(scope, element, prms.design_mode, prms.template)
       else
         renderTemplate(scope, element, prms.design_mode)
       scope.$on 'refreshPage', () ->
@@ -161,24 +165,26 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
 
       # ie 8 hacks
       setTimeout $scope.initWidget2, 2000
-      if prms.api_url
-        url = document.createElement('a');
-        url.href = prms.api_url;
-        if url.protocol[url.protocol.length - 1] == ':'
-          src = "#{url.protocol}//#{url.host}/ClientProxy.html"
-        else
-          src = "#{url.protocol}://#{url.host}/ClientProxy.html"
-        $compile("<iframe id='ieapiframefix' name='" + url.hostname + "' src='#{src}' style='visibility:false;display:none;'></iframe>") $scope, (cloned, scope) =>
-          $bbug($element).append(cloned)
-      if prms.partial_url && prms.partial_url.indexOf("http") >= 0
-        url = document.createElement('a');
-        url.href = prms.partial_url or prms.bb.partial_url
-        if url.protocol[url.protocol.length - 1] == ':'
-          src = "#{url.protocol}//#{url.host}/ClientProxy.html"
-        else
-          src = "#{url.protocol}://#{url.host}/ClientProxy.html"
-        $compile("<iframe id='iepartialframefix' name='" + url.hostname + "' src='#{src}' style='visibility:false;display:none;'></iframe>") $scope, (cloned, scope) =>
-          $bbug($element).append(cloned)
+      $timeout ->
+        if prms.api_url
+          url = document.createElement('a');
+          url.href = prms.api_url;
+          if url.protocol[url.protocol.length - 1] == ':'
+            src = "#{url.protocol}//#{url.host}/ClientProxy.html"
+          else
+            src = "#{url.protocol}://#{url.host}/ClientProxy.html"
+          $compile("<iframe id='ieapiframefix' name='" + url.hostname + "' src='#{src}' style='visibility:false;display:none;'></iframe>") $scope, (cloned, scope) =>
+            $bbug($element).append(cloned)
+        if prms.partial_url && prms.partial_url.indexOf("http") >= 0
+          url = document.createElement('a');
+          url.href = prms.partial_url or prms.bb.partial_url
+          if url.protocol[url.protocol.length - 1] == ':'
+            src = "#{url.protocol}//#{url.host}/ClientProxy.html"
+          else
+            src = "#{url.protocol}://#{url.host}/ClientProxy.html"
+          $compile("<iframe id='iepartialframefix' name='" + url.hostname + "' src='#{src}' style='visibility:false;display:none;'></iframe>") $scope, (cloned, scope) =>
+            $bbug($element).append(cloned)
+      , 10
       return
 
 
@@ -217,6 +223,8 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
       $scope.bb.page_suffix = prms.page_suffix
     if (prms.admin)
       $scope.bb.isAdmin = prms.admin
+    if (prms.auth_token) #temporary
+      $sessionStorage.setItem("auth_token", prms.auth_token)
     $scope.bb.app_id = 1
     $scope.bb.app_key = 1
     $scope.bb.clear_basket = true
@@ -224,9 +232,11 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
       $scope.bb.clear_basket = false
     if prms.clear_basket == false
       $scope.bb.clear_basket = false
-    if $window.bb_setup
+    if $window.bb_setup || prms.client
       # if setup is defined - blank the member -a s we're probably setting it - unless specifically defined as false
       prms.clear_member ||= true
+    $scope.bb.client_defaults = prms.client if prms.client
+
     if prms.clear_member
       $scope.bb.clear_member = prms.clear_member
       $sessionStorage.removeItem("login")
@@ -265,6 +275,9 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
 
     if prms.extra_setup and prms.extra_setup.return_url
       $scope.bb.return_url = prms.extra_setup.return_url
+
+    if prms.template
+      $scope.bb.template = prms.template
 
 
     @waiting_for_conn_started_def = $q.defer()
@@ -969,6 +982,8 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     $scope.client = new BBModel.Client()
     if $window.bb_setup
       $scope.client.setDefaults($window.bb_setup)
+    if $scope.bb.client_defaults
+      $scope.client.setDefaults($scope.bb.client_defaults)
 
 
   #######################################################
@@ -1089,13 +1104,11 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
   $scope.supportsTouch = () ->
     Modernizr.touch
 
-  String.prototype.parameterise = () ->
-    return this.trim().replace(/\s/g,'-').toLowerCase()
 
   $rootScope.$on 'show:loader', () ->
     $scope.loading = true
   $rootScope.$on 'hide:loader', () ->
     $scope.loading = false
 
-  String.prototype.parameterise = () ->
-    return this.trim().replace(/\s/g,'-').toLowerCase()
+  String.prototype.parameterise = (seperator = '-') ->
+    return this.trim().replace(/\s/g,seperator).toLowerCase()
