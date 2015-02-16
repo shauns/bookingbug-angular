@@ -1,0 +1,41 @@
+<div bb-events ng-init="checkStepTitle('Pick an event')" id="event_list_page" class="bb_wrap">
+
+  <div class="container" ng-if="items.length == 1">
+    <div class="bb-txt">
+      <h3>{{items[0].description}}</h3>
+      <p>Date/Time: {{items[0].date.format('ddd Do MMM h:mma')}}, {{items[0].printDuration()}}</p>
+      <p>Spaces: {{items[0].getSpacesLeft()}} of {{items[0].num_spaces}} spaces left</p>
+    </div>
+    <button ng-click="selectItem(items[0])" class="btn pull-right">Book</button>
+  </div>
+
+  <div class="bb-events bb-list">
+
+
+    <div class="bb-list-item">
+
+      <ul class="bb-dates-list make-row" ng-if="item_dates">
+        <li class="bb-date-item col-sm-1" ng-click="showDate(date)" ng-repeat="date in item_dates" ng-class="{selected: date.idate == selected_date.idate}">
+          <b>{{date.date.format("dd Do MMM")}}</b><br/>
+          <small>{{date.count}} Sessions</small>
+        </li>
+        <li class="bb-date-item col-sm-1" ng-click="open($event)">
+          Pick a date
+           <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="pick.date" is-open="opened" min-date="" max-date="" datepicker-options=""  ng-required="true" close-text="Close" />
+        </li>
+      </ul>
+      <br/>
+
+
+      <div class="bb-item" ng-click="selectItem(item)" ng-repeat="item in items | filter:{idate: selected_date.idate}">
+        <div class="bb-desc">
+          <div class="bb-txt">
+            <h5>{{item.description}} : {{item.price | icurrency}}</h5>
+            <p>Date/Time: <b>{{item.date.format('ddd Do MMM h:mma')}}, {{item.printDuration()}},</b> Spaces: <b>{{item.getSpacesLeft()}} of {{item.num_spaces}} spaces left</b></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

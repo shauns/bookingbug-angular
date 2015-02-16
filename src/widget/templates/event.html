@@ -1,0 +1,108 @@
+<div bb-event ng-init="checkStepTitle('Details')" class="bb_wrap">
+
+  <div class="bb-client">
+    <div class="bb-frame">
+      <div class="bb-head">
+        <h2>{{event.chain.name}} {{event.date.format("Do MMMM YY")}}<h2>
+      </div>
+      <form name="client_form" class="bb-form" role="form">
+
+        <table>
+          <tr><th></th><th class="col-sm-6">Type</th><th class="col-sm-3">Price</th><th class="col-sm-3">Qty</th></tr>
+          <tr ng-repeat="ticket in event.tickets" class="row">
+            <td class="col-sm-6">{{ticket.fullName()}}</td>
+            <td class="col-sm-3">{{ticket.price | icurrency:"GBP"}}  <small ng-if="ticket.counts_as"><i>(for {{ticket.counts_as}})</i></small></td>
+            <td class="col-sm-3">
+              <span ng-if="selected_tickets">{{ticket.qty}}</span>
+              <select ng-if="!selected_tickets" ng-model="ticket.qty" ng-options="n as n for n in ticket.getRange(20)"></select>
+            </td>
+          </tr>
+        </table>
+        <br clear='all'/>
+        <button ng-if="!selected_tickets" class="btn primary pull-right" ng-click="selectTickets()">Next</button>
+        <br clear='all'/>
+      </form>
+    </div>
+  </div>
+  <div ng-if="selected_tickets">
+    <!-- First enter your details -->
+    <div ng-controller="PageController">
+
+      <div bb-client-details>
+        <div class="bb-client">
+          <div class="bb-frame">
+            <div class="bb-head">
+              <h2><%=_("Your details")%><h2>
+            </div>
+            <form name="client_form" class="bb-form" role="form">
+              <div class="bb-entry">
+                <label>First Name:</label>
+                <div class="bb-field">
+                  <input type="text" ng-model="client.first_name" class="form-control" autofocus/>
+                </div>
+              </div>
+              <div class="bb-entry">
+                <label>Last Name:</label>
+                <div class="bb-field">
+                  <input type="text" ng-model="client.last_name" class="form-control"/>
+                </div>
+              </div>
+              <div class="bb-entry">
+                <label>E-mail:</label>
+                <div class="bb-field">
+                  <input type="email" ng-model="client.email" class="form-control"/>
+                </div>
+              </div>
+
+              <div ng-show="client_details.hasQuestions">
+                <div class="bb-head">
+                  <h2><%=_("Questions")%></h2>
+                </div>
+                <div ng-show="client_details.hasQuestions">
+                  <div class="bb-entry" ng-repeat="question in client_details.questions">
+                    <label>{{question.name}}</label> 
+                    <div class="bb-field">
+                      <input bb-question="question"/>
+                      <small>{{question.help_text}}</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+                
+      <div ng-repeat="item in bb.basket.items" class="bb-frame">
+        <div bb-item-details="item">
+          <form name="booking_form" class="bb-form" role="form" novalidate>
+            <div ng-show="item_details.hasQuestions" class="question-node">
+              <h3><%=_("Questions")%></h3>
+              <div class="bb-entry" ng-repeat="question in item_details.questions" bb-question-line ng-show="question.currentlyShown">
+                <label>{{question.name}}:</label>
+                <div class="bb-field">
+                  <input bb-question="question" class="form-control"/><br/>
+                  <small>{{question.help_text}}</small>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="bb-actions">
+        <div class="bb-prev"></div>
+        <div class="bb-current">
+          <a href="" class="bb-btn-action" ng-click="reset()"><%=_("Clear")%></a>
+        </div>
+        <div class="bb-next">
+
+          <button class="btn btn-primary btn-next" ng-click="checkReady() && routeReady()"><span>Book</span></button>
+
+        </div>
+      </div>
+      
+    </div>
+
+  </div>
+</div>
