@@ -638,6 +638,7 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
        required: ['name', 'rules']
        title: 'Schema'
        type: 'object'
+     ]
    $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/schedules/new').respond () ->
      [200, schedule_schema, {}]
    $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/schedules/edit').respond () ->
