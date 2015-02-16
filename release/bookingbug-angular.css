@@ -11584,6 +11584,19 @@ body.modal-open {
   #time_page .bb-time .time-slot {
     margin-top: 10px; }
 
+#event_list_page .bb-dates-list {
+  list-style: none;
+  padding: 0px; }
+  #event_list_page .bb-dates-list .bb-date-item {
+    border: 1px solid #dbdbdb;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer; }
+    #event_list_page .bb-dates-list .bb-date-item:hover {
+      background-color: #F2F2F2; }
+    #event_list_page .bb-dates-list .bb-date-item.selected {
+      background-color: #CCC; }
+
 #bb {
   margin: 0; }
   #bb p {
