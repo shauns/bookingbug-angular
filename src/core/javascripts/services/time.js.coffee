@@ -20,7 +20,7 @@ angular.module('BB.Services').factory "TimeService", ($q, BBModel, halClient) ->
 
     item_link = prms.item_link
     if prms.cItem && prms.cItem.days_link && !item_link
-      item_link =   prms.cItem.days_link
+      item_link = prms.cItem.days_link
 
     if item_link
       extra = {date: date}

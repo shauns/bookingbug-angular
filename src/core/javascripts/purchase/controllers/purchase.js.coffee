@@ -225,6 +225,7 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope, Co
         $scope.bookings = _.without($scope.bookings, booking)
         $rootScope.$emit "booking:cancelled"
 
+
   # delete all bookings assoicated to the purchase
   $scope.delete_all = () ->
     $scope.clearPage() if !$scope.replace_page
@@ -303,7 +304,7 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope, Co
   $scope.checkAnswer = (answer) ->
     typeof answer.value == 'boolean' || typeof answer.value == 'string' || typeof answer.value == "number"
 
-# Simple Modal Controller For Handling the Delete Modal
+# Simple modal controller for handling the 'delete' modal
 ModalDelete = ($scope,  $rootScope, $modalInstance, booking) ->
   $scope.controller = "ModalDelete"
   $scope.booking = booking
@@ -314,7 +315,7 @@ ModalDelete = ($scope,  $rootScope, $modalInstance, booking) ->
   $scope.cancel = ->
     $modalInstance.dismiss "cancel"
 
-
+# Simple modal controller for handling the 'delete all' modal
 ModalDeleteAll = ($scope,  $rootScope, $modalInstance, purchase) ->
   $scope.controller = "ModalDeleteAll"
   $scope.purchase = purchase
