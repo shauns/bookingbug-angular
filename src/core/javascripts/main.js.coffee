@@ -182,3 +182,14 @@ angular.module('schemaForm').config (schemaFormProvider,
     'time'
     'bootstrap_ui_time_form.html'
   )
+
+  schemaFormDecoratorsProvider.addMapping(
+    'bootstrapDecorator'
+    'datetime'
+    'bootstrap_ui_datetime_form.html'
+  )
+
+  schemaFormDecoratorsProvider.createDirective(
+    'datetime'
+    'bootstrap_ui_datetime_form.html'
+  )

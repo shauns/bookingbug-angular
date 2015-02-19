@@ -37,7 +37,7 @@ angular.module('BB.Services').factory 'ModalForm', ($modal, $log) ->
       $scope.$broadcast('schemaFormValidate')
       $scope.model.$put('self', {}, $scope.form_model).then (model) ->
         $modalInstance.close(model)
-        success() if success
+        success(model) if success
       , (err) ->
         $modalInstance.close(err)
         $log.error 'Failed to create'
