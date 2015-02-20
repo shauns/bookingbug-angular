@@ -1,0 +1,15 @@
+[pricepicker] {
+
+  position: relative;
+
+  input {
+    padding-left: 22px;
+  }
+
+  span {
+    position: absolute;
+    padding: 7px 12px;
+    pointer-events: none;
+  }
+
+}

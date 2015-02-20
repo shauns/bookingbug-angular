@@ -20,7 +20,7 @@ angular.module('BB.Directives').directive 'datetimepicker', ()->
         scope.$$value$$ = scope.schemaValidate.schema.default
 
     scope.updateModel = (value) ->
-      ngModel.$setViewValue(value)
+      ngModel.$setViewValue(moment(value).format())
 
 
   require: 'ngModel'
