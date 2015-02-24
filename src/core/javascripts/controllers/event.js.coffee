@@ -37,13 +37,19 @@ angular.module('BB.Controllers').controller 'Event', ($scope,  $rootScope, Event
     base_item = $scope.current_item
     for ticket in $scope.event.tickets
       if ticket.qty
-        if $scope.event.chain.ticket_type == "single_space"
-          for c in [1..ticket.qty]
+        switch ($scope.event.chain.ticket_type)
+          when "single_space"
+            for c in [1..ticket.qty]
+              item = new BBModel.BasketItem()
+              angular.extend(item, base_item)
+              item.tickets = angular.copy(ticket)
+              item.tickets.qty = 1
+              $scope.bb.stackItem(item)
+          when "multi_space"
             item = new BBModel.BasketItem()
             angular.extend(item, base_item)
             item.tickets = angular.copy(ticket)
             item.tickets.qty = 1
-
             $scope.bb.stackItem(item)
     # ok so we have them as stacked items
     # now push the stacked items to a basket
@@ -78,5 +84,5 @@ angular.module('BB.Controllers').controller 'Event', ($scope,  $rootScope, Event
       datetime : $scope.event.date,
       tickets  : $scope.event.tickets
     }
-    return $scope.selected_tickets 
-    
+    return $scope.selected_tickets
+
