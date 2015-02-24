@@ -50,8 +50,12 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
 
       if !$scope.current_item.event_group
         loadEventGroups()
-
-      buildDynamicFilters()
+        
+      if $scope.bb.company && $scope.bb.company.$has('company_questions')
+        $scope.has_company_questions = true
+        buildDynamicFilters()
+      else
+        return $scope.has_company_questions = false
 
   , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
   
@@ -262,6 +266,9 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
 
 
   filterEventsWithDynamicFilters = (item) ->
+
+    return true if !$scope.has_company_questions
+
     result = true
 
     for type in $scope.dynamic_filters.question_types
@@ -279,7 +286,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
 
   $scope.resetFilters = () ->
     $scope.filters = {}
-    $scope.dynamic_filters.values = {}
+    $scope.dynamic_filters.values = {} if $scope.has_company_questions
     $scope.filterChanged()
 
 
