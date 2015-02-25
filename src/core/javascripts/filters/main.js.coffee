@@ -154,15 +154,29 @@ app.filter 'icurrency', ($window, $rootScope) ->
     $window.accounting.formatMoney(number, currency[currencyCode], 2, thousand, decimal, format)
 
 
-app.filter 'pretty_price', ($window) ->
+app.filter 'pretty_price', ($window, $rootScope) ->
   (price, symbol) ->
-    return symbol + parseFloat(price) if parseFloat(price) % 1 == 0
-    return symbol + $window.sprintf("%.2f", parseFloat(price))
+    if !symbol
+      currency = {
+        USD: "$",
+        GBP: "£",
+        AUD: "$",
+        EUR: "€",
+        CAD: "$",
+        MIXED: "~"
+      }
+      symbol = currency[$rootScope.bb_currency]
+
+    if parseFloat(price) == 0
+      return 'Free'
+    else if parseFloat(price) % 1 == 0
+      return symbol + parseFloat(price)
+    else
+      return symbol + $window.sprintf("%.2f", parseFloat(price))
 
 
 app.filter 'ipretty_price', ($window, $rootScope) ->
   (price, symbol) ->
-
     if !symbol
       currency = {
         USD: "$",
