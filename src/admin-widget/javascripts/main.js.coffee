@@ -2,7 +2,8 @@
 
 adminbookingapp = angular.module('BBAdminBooking', [
   'BB',
-  'BBAdmin.Services'
+  'BBAdmin.Services',
+  'trNgGrid'
 ])
 
 angular.module('BBAdminBooking').config ($logProvider) ->
