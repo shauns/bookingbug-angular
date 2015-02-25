@@ -292,10 +292,11 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
 
   # builds dynamic filters using company questions
   buildDynamicFilters = () ->
-    $scope.bb.company.getCompanyQuestionsPromise().then (questions) ->
-      $scope.dynamic_filters                = _.groupBy(questions, 'question_type')
-      $scope.dynamic_filters.question_types = _.uniq(_.pluck(questions, 'question_type'))
-      $scope.dynamic_filters.values         = {}
+    if $scope.bb.company.$has('company_questions')
+      $scope.bb.company.getCompanyQuestionsPromise().then (questions) ->
+        $scope.dynamic_filters                = _.groupBy(questions, 'question_type')
+        $scope.dynamic_filters.question_types = _.uniq(_.pluck(questions, 'question_type'))
+        $scope.dynamic_filters.values         = {}
 
 
 
@@ -317,9 +318,10 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
 
 
   $scope.filterChanged = () ->
-    $scope.filtered_items = $filter('filter')($scope.items, $scope.filterEvents);
-    $scope.pagination.num_items = $scope.filtered_items.length
-    $scope.filter_active = $scope.filtered_items.length != $scope.items.length
+    if $scope.items
+      $scope.filtered_items = $filter('filter')($scope.items, $scope.filterEvents)
+      $scope.pagination.num_items = $scope.filtered_items.length
+      $scope.filter_active = $scope.filtered_items.length != $scope.items.length
 
 
   $scope.pageChanged = () ->
