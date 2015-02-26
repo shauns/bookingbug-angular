@@ -52,14 +52,6 @@ angular.module('BBAdminBooking').controller 'adminBookingClients', ($scope,  $ro
     $scope.client.setValid(true)
     $scope.decideNextPage()
 
-  $scope.searchByEmail = () =>
-    $scope.searchName = false
-    $scope.searchEmail = true
-  
-  $scope.searchByName = () =>
-    $scope.searchEmail = false
-    $scope.searchName = true
-
   $scope.checkSearch = (search) =>
     if search.length >= 3
       $scope.search_error = false
