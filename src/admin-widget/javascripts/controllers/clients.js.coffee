@@ -12,12 +12,14 @@ angular.module('BBAdminBooking').controller 'adminBookingClients', ($scope,  $ro
   $scope.validator = ValidatorService
   $scope.clientDef = $q.defer()
   $scope.clientPromise = $scope.clientDef.promise 
-  $scope.per_page = 15
+  $scope.per_page = 20
   $scope.total_entries = 0
   $scope.clients = []
   $scope.searchClients = false
   $scope.newClient = false
   $scope.no_clients = false
+  $scope.search_error = false
+
 
 #  $rootScope.connection_started.then ->
 #    $scope.notLoaded $scope
@@ -32,24 +34,32 @@ angular.module('BBAdminBooking').controller 'adminBookingClients', ($scope,  $ro
 
 
   $scope.showSearch = () =>
-    unless $scope.clients.length > 0
-      $scope.getClients()
-    if $scope.clients
-      $scope.searchClients = true
-      $scope.newClient = false
-    else
-      $scope.no_clients = true
+    $scope.searchClients = true
+    $scope.newClient = false
+  
 
   $scope.showClientForm = () =>
+    $scope.search_error = false
     $scope.no_clients = false
     $scope.searchClients = false
     $scope.newClient = true
+  
 
   $scope.selectClient = (client) =>
+    $scope.search_error = false
     $scope.no_clients = false
     $scope.setClient(client)
     $scope.client.setValid(true)
     $scope.decideNextPage()
+
+  $scope.checkSearch = (search) =>
+    if search.length >= 3
+      $scope.search_error = false
+      return true
+    else
+      $scope.search_error = true
+      return false
+
 
   $scope.createClient = (client_form) =>
     $scope.notLoaded $scope
@@ -63,10 +73,12 @@ angular.module('BBAdminBooking').controller 'adminBookingClients', ($scope,  $ro
       $scope.setLoaded $scope
       $scope.selectClient(client)
     , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
+   
 
-    
   $scope.getClients = (currentPage, filterBy, filterByFields, orderBy, orderByReverse) ->
-    console.log currentPage, filterBy, filterByFields, orderBy, orderByReverse
+    AlertService.clear()
+    $scope.no_clients = false
+    $scope.search_error = false
     clientDef = $q.defer()
     params = {company: $scope.bb.company, per_page: $scope.per_page, filter_by: filterBy, filter_by_fields: filterByFields, order_by: orderBy, order_by_reverse: orderByReverse}
     params.page = currentPage+1 if currentPage
@@ -80,9 +92,10 @@ angular.module('BBAdminBooking').controller 'adminBookingClients', ($scope,  $ro
         $scope.total_entries = clients.total_entries
         clientDef.resolve(clients.items)
       , (err) ->  
-        clientDef.reject(err)
         $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
+        clientDef.reject(err)
     true
+  
 
   $scope.edit = (item) ->
     console.log item
