@@ -380,7 +380,7 @@ app.directive 'apiUrl', ($rootScope) ->
 app.directive 'bbBookingExport', ($compile) ->
   restrict: 'AE'
   scope: true
-  template: '<div bb-include="popout_export_booking" style="display: inline;"></div>'
+  template: '<div bb-include="popout_export_booking"></div>'
   link: (scope, element, attrs) ->
 
     scope.$watch 'total', (newval, old) ->
