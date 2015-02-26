@@ -38,10 +38,16 @@ app.directive 'bbScrollTo', ($rootScope, AppConfig, BreadcrumbService, $bbug) ->
     always_scroll = attrs.bbAlwaysScroll? or false
 
     if angular.isArray(evnts)
-      for evnt in evnts
+      angular.forEach evnts, (evnt) ->
+        
+        # remove listener for event otherwise duplicate listenr will be added if this 
+        # directive is invoked more than once on the same element
+        $rootScope.$$listeners[evnt] = null
+
         $rootScope.$on evnt, (e) ->
           scrollToCallback(evnt)
     else
+      $rootScope.$$listeners[evnts] = null
       $rootScope.$on evnts, (e) ->
         scrollToCallback(evnts)
 
