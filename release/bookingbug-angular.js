@@ -102076,111 +102076,6 @@ angular.module('ui.utils',  [
   "ui.validate"
 ]);
 !function(e){"use strict";function t(e){var n;if(null===e||void 0===e)return!1;if(r.isArray(e))return e.length>0;if("string"==typeof e||"number"==typeof e||"boolean"==typeof e)return!0;for(n in e)if(e.hasOwnProperty(n)&&t(e[n]))return!0;return!1}var n=function(){function e(e){this.options=e}return e.prototype.toString=function(){return JSON&&JSON.stringify?JSON.stringify(this.options):this.options},e}(),r=function(){function e(e){return"[object Array]"===Object.prototype.toString.apply(e)}function t(e){return"[object String]"===Object.prototype.toString.apply(e)}function n(e){return"[object Number]"===Object.prototype.toString.apply(e)}function r(e){return"[object Boolean]"===Object.prototype.toString.apply(e)}function i(e,t){var n,r="",i=!0;for(n=0;n<e.length;n+=1)i?i=!1:r+=t,r+=e[n];return r}function o(e,t){for(var n=[],r=0;r<e.length;r+=1)n.push(t(e[r]));return n}function s(e,t){for(var n=[],r=0;r<e.length;r+=1)t(e[r])&&n.push(e[r]);return n}function a(e){if("object"!=typeof e||null===e)return e;Object.freeze(e);var t,n;for(n in e)e.hasOwnProperty(n)&&(t=e[n],"object"==typeof t&&u(t));return e}function u(e){return"function"==typeof Object.freeze?a(e):e}return{isArray:e,isString:t,isNumber:n,isBoolean:r,join:i,map:o,filter:s,deepFreeze:u}}(),i=function(){function e(e){return e>="a"&&"z">=e||e>="A"&&"Z">=e}function t(e){return e>="0"&&"9">=e}function n(e){return t(e)||e>="a"&&"f">=e||e>="A"&&"F">=e}return{isAlpha:e,isDigit:t,isHexDigit:n}}(),o=function(){function e(e){var t,n,r="",i=s.encode(e);for(n=0;n<i.length;n+=1)t=i.charCodeAt(n),r+="%"+(16>t?"0":"")+t.toString(16).toUpperCase();return r}function t(e,t){return"%"===e.charAt(t)&&i.isHexDigit(e.charAt(t+1))&&i.isHexDigit(e.charAt(t+2))}function n(e,t){return parseInt(e.substr(t,2),16)}function r(e){if(!t(e,0))return!1;var r=n(e,1),i=s.numBytes(r);if(0===i)return!1;for(var o=1;i>o;o+=1)if(!t(e,3*o)||!s.isValidFollowingCharCode(n(e,3*o+1)))return!1;return!0}function o(e,r){var i=e.charAt(r);if(!t(e,r))return i;var o=n(e,r+1),a=s.numBytes(o);if(0===a)return i;for(var u=1;a>u;u+=1)if(!t(e,r+3*u)||!s.isValidFollowingCharCode(n(e,r+3*u+1)))return i;return e.substr(r,3*a)}var s={encode:function(e){return unescape(encodeURIComponent(e))},numBytes:function(e){return 127>=e?1:e>=194&&223>=e?2:e>=224&&239>=e?3:e>=240&&244>=e?4:0},isValidFollowingCharCode:function(e){return e>=128&&191>=e}};return{encodeCharacter:e,isPctEncoded:r,pctCharAt:o}}(),s=function(){function e(e){return i.isAlpha(e)||i.isDigit(e)||"_"===e||o.isPctEncoded(e)}function t(e){return i.isAlpha(e)||i.isDigit(e)||"-"===e||"."===e||"_"===e||"~"===e}function n(e){return":"===e||"/"===e||"?"===e||"#"===e||"["===e||"]"===e||"@"===e||"!"===e||"$"===e||"&"===e||"("===e||")"===e||"*"===e||"+"===e||","===e||";"===e||"="===e||"'"===e}return{isVarchar:e,isUnreserved:t,isReserved:n}}(),a=function(){function e(e,t){var n,r="",i="";for(("number"==typeof e||"boolean"==typeof e)&&(e=e.toString()),n=0;n<e.length;n+=i.length)i=e.charAt(n),r+=s.isUnreserved(i)||t&&s.isReserved(i)?i:o.encodeCharacter(i);return r}function t(t){return e(t,!0)}function n(e,t){var n=o.pctCharAt(e,t);return n.length>1?n:s.isReserved(n)||s.isUnreserved(n)?n:o.encodeCharacter(n)}function r(e){var t,n="",r="";for(t=0;t<e.length;t+=r.length)r=o.pctCharAt(e,t),n+=r.length>1?r:s.isReserved(r)||s.isUnreserved(r)?r:o.encodeCharacter(r);return n}return{encode:e,encodePassReserved:t,encodeLiteral:r,encodeLiteralCharacter:n}}(),u=function(){function e(e){t[e]={symbol:e,separator:"?"===e?"&":""===e||"+"===e||"#"===e?",":e,named:";"===e||"&"===e||"?"===e,ifEmpty:"&"===e||"?"===e?"=":"",first:"+"===e?"":e,encode:"+"===e||"#"===e?a.encodePassReserved:a.encode,toString:function(){return this.symbol}}}var t={};return e(""),e("+"),e("#"),e("."),e("/"),e(";"),e("?"),e("&"),{valueOf:function(e){return t[e]?t[e]:"=,!@|".indexOf(e)>=0?null:t[""]}}}(),f=function(){function e(e){this.literal=a.encodeLiteral(e)}return e.prototype.expand=function(){return this.literal},e.prototype.toString=e.prototype.expand,e}(),p=function(){function e(e){function t(){var t=e.substring(h,f);if(0===t.length)throw new n({expressionText:e,message:"a varname must be specified",position:f});c={varname:t,exploded:!1,maxLength:null},h=null}function r(){if(d===f)throw new n({expressionText:e,message:"after a ':' you have to specify the length",position:f});c.maxLength=parseInt(e.substring(d,f),10),d=null}var a,f,p=[],c=null,h=null,d=null,g="";for(a=function(t){var r=u.valueOf(t);if(null===r)throw new n({expressionText:e,message:"illegal use of reserved operator",position:f,operator:t});return r}(e.charAt(0)),f=a.symbol.length,h=f;f<e.length;f+=g.length){if(g=o.pctCharAt(e,f),null!==h){if("."===g){if(h===f)throw new n({expressionText:e,message:"a varname MUST NOT start with a dot",position:f});continue}if(s.isVarchar(g))continue;t()}if(null!==d){if(f===d&&"0"===g)throw new n({expressionText:e,message:"A :prefix must not start with digit 0",position:f});if(i.isDigit(g)){if(f-d>=4)throw new n({expressionText:e,message:"A :prefix must have max 4 digits",position:f});continue}r()}if(":"!==g)if("*"!==g){if(","!==g)throw new n({expressionText:e,message:"illegal character",character:g,position:f});p.push(c),c=null,h=f+1}else{if(null===c)throw new n({expressionText:e,message:"exploded without varspec",position:f});if(c.exploded)throw new n({expressionText:e,message:"exploded twice",position:f});if(c.maxLength)throw new n({expressionText:e,message:"an explode (*) MUST NOT follow to a prefix",position:f});c.exploded=!0}else{if(null!==c.maxLength)throw new n({expressionText:e,message:"only one :maxLength is allowed per varspec",position:f});if(c.exploded)throw new n({expressionText:e,message:"an exploeded varspec MUST NOT be varspeced",position:f});d=f+1}}return null!==h&&t(),null!==d&&r(),p.push(c),new l(e,a,p)}function t(t){var r,i,o=[],s=null,a=0;for(r=0;r<t.length;r+=1)if(i=t.charAt(r),null===a){if(null===s)throw new Error("reached unreachable code");if("{"===i)throw new n({templateText:t,message:"brace already opened",position:r});if("}"===i){if(s+1===r)throw new n({templateText:t,message:"empty braces",position:s});try{o.push(e(t.substring(s+1,r)))}catch(u){if(u.prototype===n.prototype)throw new n({templateText:t,message:u.options.message,position:s+u.options.position,details:u.options});throw u}s=null,a=r+1}}else{if("}"===i)throw new n({templateText:t,message:"unopened brace closed",position:r});"{"===i&&(r>a&&o.push(new f(t.substring(a,r))),a=null,s=r)}if(null!==s)throw new n({templateText:t,message:"unclosed brace",position:s});return a<t.length&&o.push(new f(t.substr(a))),new c(t,o)}return t}(),l=function(){function e(e){return JSON&&JSON.stringify?JSON.stringify(e):e}function n(e){if(!t(e))return!0;if(r.isString(e))return""===e;if(r.isNumber(e)||r.isBoolean(e))return!1;if(r.isArray(e))return 0===e.length;for(var n in e)if(e.hasOwnProperty(n))return!1;return!0}function i(e){var t,n=[];for(t in e)e.hasOwnProperty(t)&&n.push({name:t,value:e[t]});return n}function o(e,t,n){this.templateText=e,this.operator=t,this.varspecs=n}function s(e,t,n){var r="";if(n=n.toString(),t.named){if(r+=a.encodeLiteral(e.varname),""===n)return r+=t.ifEmpty;r+="="}return null!==e.maxLength&&(n=n.substr(0,e.maxLength)),r+=t.encode(n)}function u(e){return t(e.value)}function f(e,o,s){var f=[],p="";if(o.named){if(p+=a.encodeLiteral(e.varname),n(s))return p+=o.ifEmpty;p+="="}return r.isArray(s)?(f=s,f=r.filter(f,t),f=r.map(f,o.encode),p+=r.join(f,",")):(f=i(s),f=r.filter(f,u),f=r.map(f,function(e){return o.encode(e.name)+","+o.encode(e.value)}),p+=r.join(f,",")),p}function p(e,o,s){var f=r.isArray(s),p=[];return f?(p=s,p=r.filter(p,t),p=r.map(p,function(t){var r=a.encodeLiteral(e.varname);return r+=n(t)?o.ifEmpty:"="+o.encode(t)})):(p=i(s),p=r.filter(p,u),p=r.map(p,function(e){var t=a.encodeLiteral(e.name);return t+=n(e.value)?o.ifEmpty:"="+o.encode(e.value)})),r.join(p,o.separator)}function l(e,n){var o=[],s="";return r.isArray(n)?(o=n,o=r.filter(o,t),o=r.map(o,e.encode),s+=r.join(o,e.separator)):(o=i(n),o=r.filter(o,function(e){return t(e.value)}),o=r.map(o,function(t){return e.encode(t.name)+"="+e.encode(t.value)}),s+=r.join(o,e.separator)),s}return o.prototype.toString=function(){return this.templateText},o.prototype.expand=function(i){var o,a,u,c,h=[],d=!1,g=this.operator;for(o=0;o<this.varspecs.length;o+=1)if(a=this.varspecs[o],u=i[a.varname],null!==u&&void 0!==u)if(a.exploded&&(d=!0),c=r.isArray(u),"string"==typeof u||"number"==typeof u||"boolean"==typeof u)h.push(s(a,g,u));else{if(a.maxLength&&t(u))throw new Error("Prefix modifiers are not applicable to variables that have composite values. You tried to expand "+this+" with "+e(u));a.exploded?t(u)&&(g.named?h.push(p(a,g,u)):h.push(l(g,u))):(g.named||!n(u))&&h.push(f(a,g,u))}return 0===h.length?"":g.first+r.join(h,g.separator)},o}(),c=function(){function e(e,t){this.templateText=e,this.expressions=t,r.deepFreeze(this)}return e.prototype.toString=function(){return this.templateText},e.prototype.expand=function(e){var t,n="";for(t=0;t<this.expressions.length;t+=1)n+=this.expressions[t].expand(e);return n},e.parse=p,e.UriTemplateError=n,e}();e(c)}(function(e){"use strict";"undefined"!=typeof module?module.exports=e:"function"==typeof define?define([],function(){return e}):"undefined"!=typeof window?window.UriTemplate=e:global.UriTemplate=e});
-
-
-angular.module('BBAdmin.Directives').controller('CalController', function($scope) {
-    /* config object */
-    $scope.calendarConfig = {
-        height: 450,
-        editiable: true,
-        dayClick: function(){
-            scope.$apply($scope.alertEventOnClick);
-        }
-    };
-});
-
-(function() {
-  'use strict';
-  angular.module('BBAdmin.Directives').directive('bbPeopleList', function($rootScope) {
-    return {
-      restrict: 'AE',
-      replace: true,
-      scope: true,
-      controller: function($scope, $rootScope, PersonService, $q, BBModel, PersonModel) {
-        $rootScope.connection_started.then(function() {
-          return $scope.bb.company.getPeoplePromise().then(function(people) {
-            var i, len, person, results;
-            $scope.people = people;
-            results = [];
-            for (i = 0, len = people.length; i < len; i++) {
-              person = people[i];
-              results.push(person.show = true);
-            }
-            return results;
-          });
-        });
-        $scope.show_all_people = function() {
-          var i, len, ref, results, x;
-          ref = $scope.people;
-          results = [];
-          for (i = 0, len = ref.length; i < len; i++) {
-            x = ref[i];
-            results.push(x.show = true);
-          }
-          return results;
-        };
-        return $scope.hide_all_people = function() {
-          var i, len, ref, results, x;
-          ref = $scope.people;
-          results = [];
-          for (i = 0, len = ref.length; i < len; i++) {
-            x = ref[i];
-            results.push(x.show = false);
-          }
-          return results;
-        };
-      },
-      link: function(scope, element, attrs) {}
-    };
-  });
-
-  angular.module('BBAdmin.Directives').directive('bbBookingList', function() {
-    return {
-      restrict: 'AE',
-      replace: true,
-      scope: {
-        bookings: '=',
-        cancelled: '=',
-        params: '='
-      },
-      templateUrl: function(tElm, tAttrs) {
-        return tAttrs.template;
-      },
-      controller: function($scope, $filter) {
-        var status;
-        $scope.title = $scope.params.title;
-        status = $scope.params.status;
-        return $scope.$watch(function() {
-          return $scope.bookings;
-        }, function() {
-          var bookings, cancelled;
-          bookings = $scope.bookings;
-          cancelled = $scope.cancelled;
-          if (cancelled == null) {
-            cancelled = false;
-          }
-          if ((bookings != null)) {
-            bookings = $filter('filter')(bookings, function(booking) {
-              var ret;
-              ret = booking.is_cancelled === cancelled;
-              if ((status != null)) {
-                ret &= booking.hasStatus(status);
-              } else {
-                ret &= (booking.multi_status == null) || Object.keys(booking.multi_status).length === 0;
-              }
-              ret &= booking.status === 4;
-              return ret;
-            });
-            $scope.relevantBookings = $filter('orderBy')(bookings, 'datetime');
-          }
-          return $scope.relevantBookings != null ? $scope.relevantBookings : $scope.relevantBookings = [];
-        });
-      }
-    };
-  });
-
-}).call(this);
-
 (function() {
   angular.module('BBAdmin.Controllers').controller('BBAdminCtrl', function($controller, $scope, $location, $rootScope, halClient, $window, $http, $localCache, $q, BasketService, LoginService, AlertService, $sce, $element, $compile, $sniffer, $modal, $timeout, BBModel, BBWidget, SSOService, ErrorService, AppConfig, BookingCollections, SlotCollections, $state, AdminLoginService, AdminBookingService, $sessionStorage, $log, idleTimeout) {
     angular.extend(this, $controller('BBCtrl', {
@@ -103047,6 +102942,111 @@ SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
 
 }).call(this);
 
+
+
+angular.module('BBAdmin.Directives').controller('CalController', function($scope) {
+    /* config object */
+    $scope.calendarConfig = {
+        height: 450,
+        editiable: true,
+        dayClick: function(){
+            scope.$apply($scope.alertEventOnClick);
+        }
+    };
+});
+
+(function() {
+  'use strict';
+  angular.module('BBAdmin.Directives').directive('bbPeopleList', function($rootScope) {
+    return {
+      restrict: 'AE',
+      replace: true,
+      scope: true,
+      controller: function($scope, $rootScope, PersonService, $q, BBModel, PersonModel) {
+        $rootScope.connection_started.then(function() {
+          return $scope.bb.company.getPeoplePromise().then(function(people) {
+            var i, len, person, results;
+            $scope.people = people;
+            results = [];
+            for (i = 0, len = people.length; i < len; i++) {
+              person = people[i];
+              results.push(person.show = true);
+            }
+            return results;
+          });
+        });
+        $scope.show_all_people = function() {
+          var i, len, ref, results, x;
+          ref = $scope.people;
+          results = [];
+          for (i = 0, len = ref.length; i < len; i++) {
+            x = ref[i];
+            results.push(x.show = true);
+          }
+          return results;
+        };
+        return $scope.hide_all_people = function() {
+          var i, len, ref, results, x;
+          ref = $scope.people;
+          results = [];
+          for (i = 0, len = ref.length; i < len; i++) {
+            x = ref[i];
+            results.push(x.show = false);
+          }
+          return results;
+        };
+      },
+      link: function(scope, element, attrs) {}
+    };
+  });
+
+  angular.module('BBAdmin.Directives').directive('bbBookingList', function() {
+    return {
+      restrict: 'AE',
+      replace: true,
+      scope: {
+        bookings: '=',
+        cancelled: '=',
+        params: '='
+      },
+      templateUrl: function(tElm, tAttrs) {
+        return tAttrs.template;
+      },
+      controller: function($scope, $filter) {
+        var status;
+        $scope.title = $scope.params.title;
+        status = $scope.params.status;
+        return $scope.$watch(function() {
+          return $scope.bookings;
+        }, function() {
+          var bookings, cancelled;
+          bookings = $scope.bookings;
+          cancelled = $scope.cancelled;
+          if (cancelled == null) {
+            cancelled = false;
+          }
+          if ((bookings != null)) {
+            bookings = $filter('filter')(bookings, function(booking) {
+              var ret;
+              ret = booking.is_cancelled === cancelled;
+              if ((status != null)) {
+                ret &= booking.hasStatus(status);
+              } else {
+                ret &= (booking.multi_status == null) || Object.keys(booking.multi_status).length === 0;
+              }
+              ret &= booking.status === 4;
+              return ret;
+            });
+            $scope.relevantBookings = $filter('orderBy')(bookings, 'datetime');
+          }
+          return $scope.relevantBookings != null ? $scope.relevantBookings : $scope.relevantBookings = [];
+        });
+      }
+    };
+  });
+
+}).call(this);
+
 (function() {
   'use strict';
   var bbAdminFilters;
@@ -103081,6 +103081,168 @@ SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
     return function(v) {
       return $window.sprintf("%02d:%02d", Math.floor(v / 60), v % 60);
     };
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  angular.module('BB.Models').factory("Admin.BookingModel", function($q, BBModel, BaseModel) {
+    var Admin_Booking;
+    return Admin_Booking = (function(superClass) {
+      extend(Admin_Booking, superClass);
+
+      function Admin_Booking(data) {
+        Admin_Booking.__super__.constructor.apply(this, arguments);
+        this.datetime = moment(this.datetime);
+        this.start = this.datetime;
+        this.end = this.datetime.clone().add(this.duration, 'minutes');
+        this.title = this.full_describe;
+        this.time = this.start.hour() * 60 + this.start.minute();
+        this.allDay = false;
+        if (this.status === 3) {
+          this.className = "status_blocked";
+        } else if (this.status === 4) {
+          this.className = "status_booked";
+        }
+      }
+
+      Admin_Booking.prototype.getPostData = function() {
+        var data, q;
+        data = {};
+        data.date = this.start.format("YYYY-MM-DD");
+        data.time = this.start.hour() * 60 + this.start.minute();
+        data.duration = this.duration;
+        data.id = this.id;
+        data.questions = (function() {
+          var i, len, ref, results;
+          ref = this.questions;
+          results = [];
+          for (i = 0, len = ref.length; i < len; i++) {
+            q = ref[i];
+            results.push(q.getPostData());
+          }
+          return results;
+        }).call(this);
+        return data;
+      };
+
+      Admin_Booking.prototype.hasStatus = function(status) {
+        return this.multi_status[status] != null;
+      };
+
+      Admin_Booking.prototype.statusTime = function(status) {
+        if (this.multi_status[status]) {
+          return moment(this.multi_status[status]);
+        } else {
+          return null;
+        }
+      };
+
+      Admin_Booking.prototype.sinceStatus = function(status) {
+        var s;
+        s = this.statusTime(status);
+        if (!s) {
+          return 0;
+        }
+        return Math.floor((moment().unix() - s.unix()) / 60);
+      };
+
+      Admin_Booking.prototype.sinceStart = function(options) {
+        var s, start;
+        start = this.datetime.unix();
+        if (!options) {
+          return Math.floor((moment().unix() - start) / 60);
+        }
+        if (options.later) {
+          s = this.statusTime(options.later).unix();
+          if (s > start) {
+            return Math.floor((moment().unix() - s) / 60);
+          }
+        }
+        if (options.earlier) {
+          s = this.statusTime(options.earlier).unix();
+          if (s < start) {
+            return Math.floor((moment().unix() - s) / 60);
+          }
+        }
+        return Math.floor((moment().unix() - start) / 60);
+      };
+
+      Admin_Booking.prototype.$update = function() {
+        var data;
+        data = this.getPostData();
+        return this.$put('self', {}, data).then((function(_this) {
+          return function(res) {
+            return _this.constructor(res);
+          };
+        })(this));
+      };
+
+      return Admin_Booking;
+
+    })(BaseModel);
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  angular.module('BB.Models').factory("Admin.LoginModel", function($q, BBModel, BaseModel) {
+    var Admin_Login;
+    return Admin_Login = (function(superClass) {
+      extend(Admin_Login, superClass);
+
+      function Admin_Login(data) {
+        Admin_Login.__super__.constructor.call(this, data);
+      }
+
+      return Admin_Login;
+
+    })(BaseModel);
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  angular.module('BB.Models').factory("Admin.SlotModel", function($q, BBModel, BaseModel, TimeSlotModel) {
+    var Admin_Slot;
+    return Admin_Slot = (function(superClass) {
+      extend(Admin_Slot, superClass);
+
+      function Admin_Slot(data) {
+        Admin_Slot.__super__.constructor.call(this, data);
+        this.title = this.full_describe;
+        if (this.status === 0) {
+          this.title = "Available";
+        }
+        this.datetime = moment(this.datetime);
+        this.start = this.datetime;
+        this.end = this.datetime.clone().add(this.duration, 'minutes');
+        this.time = this.start.hour() * 60 + this.start.minute();
+        this.allDay = false;
+        if (this.status === 3) {
+          this.className = "status_blocked";
+        } else if (this.status === 4) {
+          this.className = "status_booked";
+        } else if (this.status === 0) {
+          this.className = "status_available";
+        }
+      }
+
+      return Admin_Slot;
+
+    })(TimeSlotModel);
   });
 
 }).call(this);
@@ -103767,452 +103929,6 @@ SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
           };
         })(this));
         return deferred.promise;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  angular.module('BB.Models').factory("Admin.BookingModel", function($q, BBModel, BaseModel) {
-    var Admin_Booking;
-    return Admin_Booking = (function(superClass) {
-      extend(Admin_Booking, superClass);
-
-      function Admin_Booking(data) {
-        Admin_Booking.__super__.constructor.apply(this, arguments);
-        this.datetime = moment(this.datetime);
-        this.start = this.datetime;
-        this.end = this.datetime.clone().add(this.duration, 'minutes');
-        this.title = this.full_describe;
-        this.time = this.start.hour() * 60 + this.start.minute();
-        this.allDay = false;
-        if (this.status === 3) {
-          this.className = "status_blocked";
-        } else if (this.status === 4) {
-          this.className = "status_booked";
-        }
-      }
-
-      Admin_Booking.prototype.getPostData = function() {
-        var data, q;
-        data = {};
-        data.date = this.start.format("YYYY-MM-DD");
-        data.time = this.start.hour() * 60 + this.start.minute();
-        data.duration = this.duration;
-        data.id = this.id;
-        data.questions = (function() {
-          var i, len, ref, results;
-          ref = this.questions;
-          results = [];
-          for (i = 0, len = ref.length; i < len; i++) {
-            q = ref[i];
-            results.push(q.getPostData());
-          }
-          return results;
-        }).call(this);
-        return data;
-      };
-
-      Admin_Booking.prototype.hasStatus = function(status) {
-        return this.multi_status[status] != null;
-      };
-
-      Admin_Booking.prototype.statusTime = function(status) {
-        if (this.multi_status[status]) {
-          return moment(this.multi_status[status]);
-        } else {
-          return null;
-        }
-      };
-
-      Admin_Booking.prototype.sinceStatus = function(status) {
-        var s;
-        s = this.statusTime(status);
-        if (!s) {
-          return 0;
-        }
-        return Math.floor((moment().unix() - s.unix()) / 60);
-      };
-
-      Admin_Booking.prototype.sinceStart = function(options) {
-        var s, start;
-        start = this.datetime.unix();
-        if (!options) {
-          return Math.floor((moment().unix() - start) / 60);
-        }
-        if (options.later) {
-          s = this.statusTime(options.later).unix();
-          if (s > start) {
-            return Math.floor((moment().unix() - s) / 60);
-          }
-        }
-        if (options.earlier) {
-          s = this.statusTime(options.earlier).unix();
-          if (s < start) {
-            return Math.floor((moment().unix() - s) / 60);
-          }
-        }
-        return Math.floor((moment().unix() - start) / 60);
-      };
-
-      Admin_Booking.prototype.$update = function() {
-        var data;
-        data = this.getPostData();
-        return this.$put('self', {}, data).then((function(_this) {
-          return function(res) {
-            return _this.constructor(res);
-          };
-        })(this));
-      };
-
-      return Admin_Booking;
-
-    })(BaseModel);
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  angular.module('BB.Models').factory("Admin.LoginModel", function($q, BBModel, BaseModel) {
-    var Admin_Login;
-    return Admin_Login = (function(superClass) {
-      extend(Admin_Login, superClass);
-
-      function Admin_Login(data) {
-        Admin_Login.__super__.constructor.call(this, data);
-      }
-
-      return Admin_Login;
-
-    })(BaseModel);
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  angular.module('BB.Models').factory("Admin.SlotModel", function($q, BBModel, BaseModel, TimeSlotModel) {
-    var Admin_Slot;
-    return Admin_Slot = (function(superClass) {
-      extend(Admin_Slot, superClass);
-
-      function Admin_Slot(data) {
-        Admin_Slot.__super__.constructor.call(this, data);
-        this.title = this.full_describe;
-        if (this.status === 0) {
-          this.title = "Available";
-        }
-        this.datetime = moment(this.datetime);
-        this.start = this.datetime;
-        this.end = this.datetime.clone().add(this.duration, 'minutes');
-        this.time = this.start.hour() * 60 + this.start.minute();
-        this.allDay = false;
-        if (this.status === 3) {
-          this.className = "status_blocked";
-        } else if (this.status === 4) {
-          this.className = "status_booked";
-        } else if (this.status === 0) {
-          this.className = "status_available";
-        }
-      }
-
-      return Admin_Slot;
-
-    })(TimeSlotModel);
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdminEvents').directive('eventChainTable', function(AdminCompanyService, AdminEventChainService, $modal, $log, ModalForm, $timeout) {
-    var controller, link;
-    controller = function($scope) {
-      var editSuccess;
-      $scope.fields = ['id', 'name', 'description'];
-      $scope.getEventChains = function() {
-        var params;
-        params = {
-          company: $scope.company
-        };
-        return AdminEventChainService.query(params).then(function(event_chains) {
-          return $scope.event_chains = event_chains;
-        });
-      };
-      $scope.newEventChain = function() {
-        return ModalForm["new"]({
-          company: $scope.company,
-          title: 'New Event Chain',
-          new_rel: 'new_event_chain',
-          post_rel: 'event_chains',
-          success: function(event_chain) {
-            return $scope.event_chains.push(event_chain);
-          }
-        });
-      };
-      $scope["delete"] = function(id) {
-        var event_chain;
-        event_chain = _.find($scope.event_chains, function(x) {
-          return x.id === id;
-        });
-        return event_chain.$del('self').then(function() {
-          return $scope.event_chains = _.reject($scope.event_chains, function(x) {
-            return x.id === id;
-          });
-        }, function(err) {
-          return $log.error("Failed to delete event_chain");
-        });
-      };
-      editSuccess = function(updated) {
-        updated.$flush('events');
-        return $scope.event_chains = _.map($scope.event_chains, function(event_chain) {
-          if (event_chain.id === updated.id) {
-            return updated;
-          } else {
-            return event_chain;
-          }
-        });
-      };
-      return $scope.edit = function(id) {
-        var event_chain;
-        event_chain = _.find($scope.event_chains, function(x) {
-          return x.id === id;
-        });
-        return event_chain.$get('events').then(function(collection) {
-          return collection.$get('events').then(function(events) {
-            event_chain.events = events;
-            return ModalForm.edit({
-              model: event_chain,
-              title: 'Edit Event Chain',
-              success: editSuccess
-            });
-          });
-        });
-      };
-    };
-    link = function(scope, element, attrs) {
-      if (scope.company) {
-        return scope.getEventChains();
-      } else {
-        return AdminCompanyService.query(attrs).then(function(company) {
-          scope.company = company;
-          return scope.getEventChains();
-        });
-      }
-    };
-    return {
-      controller: controller,
-      link: link,
-      templateUrl: 'event_chain_table_main.html'
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdminEvents').directive('eventGroupTable', function(AdminCompanyService, AdminEventGroupService, $modal, $log, ModalForm) {
-    var controller, link;
-    controller = function($scope) {
-      $scope.getEventGroups = function() {
-        var params;
-        params = {
-          company: $scope.company
-        };
-        return AdminEventGroupService.query(params).then(function(event_groups) {
-          $scope.event_groups_models = event_groups;
-          return $scope.event_groups = _.map(event_groups, function(event_group) {
-            return _.pick(event_group, 'id', 'name', 'mobile');
-          });
-        });
-      };
-      $scope.newEventGroup = function() {
-        return ModalForm["new"]({
-          company: $scope.company,
-          title: 'New Event Group',
-          new_rel: 'new_event_group',
-          post_rel: 'event_groups',
-          success: function(event_group) {
-            return $scope.event_groups.push(event_group);
-          }
-        });
-      };
-      $scope["delete"] = function(id) {
-        var event_group;
-        event_group = _.find($scope.event_groups_models, function(p) {
-          return p.id === id;
-        });
-        return event_group.$del('self').then(function() {
-          return $scope.event_groups = _.reject($scope.event_groups, function(p) {
-            return p.id === id;
-          });
-        }, function(err) {
-          return $log.error("Failed to delete event_group");
-        });
-      };
-      return $scope.edit = function(id) {
-        var event_group;
-        event_group = _.find($scope.event_groups_models, function(p) {
-          return p.id === id;
-        });
-        return ModalForm.edit({
-          model: event_group,
-          title: 'Edit Event Group'
-        });
-      };
-    };
-    link = function(scope, element, attrs) {
-      if (scope.company) {
-        return scope.getEventGroups();
-      } else {
-        return AdminCompanyService.query(attrs).then(function(company) {
-          scope.company = company;
-          return scope.getEventGroups();
-        });
-      }
-    };
-    return {
-      controller: controller,
-      link: link,
-      templateUrl: 'event_group_table_main.html'
-    };
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  angular.module('BB.Models').factory("Admin.EventModel", function($q, BBModel, BaseModel) {
-    var Admin_Event;
-    return Admin_Event = (function(superClass) {
-      extend(Admin_Event, superClass);
-
-      function Admin_Event(data) {
-        Admin_Event.__super__.constructor.call(this, data);
-      }
-
-      return Admin_Event;
-
-    })(BaseModel);
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  angular.module('BB.Models').factory("Admin.EventChainModel", function($q, BBModel, BaseModel) {
-    var Admin_EventChain;
-    return Admin_EventChain = (function(superClass) {
-      extend(Admin_EventChain, superClass);
-
-      function Admin_EventChain(data) {
-        Admin_EventChain.__super__.constructor.call(this, data);
-      }
-
-      return Admin_EventChain;
-
-    })(BaseModel);
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  angular.module('BB.Models').factory("Admin.EventGroupModel", function($q, BBModel, BaseModel) {
-    var Admin_EventGroup;
-    return Admin_EventGroup = (function(superClass) {
-      extend(Admin_EventGroup, superClass);
-
-      function Admin_EventGroup(data) {
-        Admin_EventGroup.__super__.constructor.call(this, data);
-      }
-
-      return Admin_EventGroup;
-
-    })(BaseModel);
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdminEvents').factory('AdminEventChainService', function($q, BBModel) {
-    return {
-      query: function(params) {
-        var company, defer;
-        company = params.company;
-        defer = $q.defer();
-        company.$get('event_chains').then(function(collection) {
-          return collection.$get('event_chains').then(function(event_chains) {
-            var e, models;
-            models = (function() {
-              var i, len, results;
-              results = [];
-              for (i = 0, len = event_chains.length; i < len; i++) {
-                e = event_chains[i];
-                results.push(new BBModel.Admin.EventChain(e));
-              }
-              return results;
-            })();
-            return defer.resolve(models);
-          }, function(err) {
-            return defer.reject(err);
-          });
-        }, function(err) {
-          return defer.reject(err);
-        });
-        return defer.promise;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdminEvents').factory('AdminEventGroupService', function($q, BBModel) {
-    return {
-      query: function(params) {
-        var company, defer;
-        company = params.company;
-        defer = $q.defer();
-        company.$get('event_groups').then(function(collection) {
-          return collection.$get('event_groups').then(function(event_groups) {
-            var e, models;
-            models = (function() {
-              var i, len, results;
-              results = [];
-              for (i = 0, len = event_groups.length; i < len; i++) {
-                e = event_groups[i];
-                results.push(new BBModel.Admin.EventGroup(e));
-              }
-              return results;
-            })();
-            return defer.resolve(models);
-          }, function(err) {
-            return defer.reject(err);
-          });
-        }, function(err) {
-          return defer.reject(err);
-        });
-        return defer.promise;
       }
     };
   });
@@ -111421,6 +111137,21 @@ SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
     };
   });
 
+  app.directive('bbBookingExport', function($compile) {
+    return {
+      restrict: 'AE',
+      scope: true,
+      template: '<div bb-include="popout_export_booking" style="display: inline;"></div>',
+      link: function(scope, element, attrs) {
+        return scope.$watch('total', function(newval, old) {
+          if (newval) {
+            return scope.html = "<a class='image img_outlook' title='Add this booking to an Outlook Calendar' href='" + (scope.total.icalLink()) + "'><img alt='' src='//images.bookingbug.com/widget/outlook.png'></a> <a class='image img_ical' title='Add this booking to an iCal Calendar' href='" + (scope.total.webcalLink()) + "'><img alt='' src='//images.bookingbug.com/widget/ical.png'></a> <a class='image img_gcal' title='Add this booking to Google Calendar' href='" + (scope.total.gcalLink()) + "' target='_blank'><img src='//images.bookingbug.com/widget/gcal.png' border='0'></a>";
+          }
+        });
+      }
+    };
+  });
+
 }).call(this);
 
 (function() {
@@ -116692,274 +116423,6 @@ SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
 }).call(this);
 
 (function() {
-  angular.module('BBMember').controller('editBookingModalForm', function($scope, $modalInstance, $log, booking) {
-    $scope.title = 'Booking Details';
-    booking.$get('edit_booking').then(function(booking_schema) {
-      $scope.form = booking_schema.form;
-      $scope.schema = booking_schema.schema;
-      return booking.getAnswersPromise().then(function(answers) {
-        var answer, i, len, ref;
-        ref = answers.answers;
-        for (i = 0, len = ref.length; i < len; i++) {
-          answer = ref[i];
-          booking["question" + answer.question_id] = answer.value;
-        }
-        return $scope.booking = booking;
-      });
-    });
-    $scope.submit = function(booking) {
-      return $scope.booking.$put('self', {}, booking).then(function(booking) {
-        $log.info("Booking update success");
-        return $modalInstance.close($scope.booking);
-      }, function(err) {
-        return $log.error("Booking update failure");
-      });
-    };
-    return $scope.cancel = function() {
-      return $modalInstance.dismiss('cancel');
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BB.Controllers').controller('MembersBookings', function($scope, $rootScope, $location, $filter, $q, $timeout, $modal, MemberBookingService, LoginService, BBModel) {
-    var doCancel, flushBookings, getBookings;
-    $scope.init = (function(_this) {
-      return function(options) {
-        _this.type = options.type;
-        return _this.limit = options.limit;
-      };
-    })(this);
-    $scope.$watch("members", (function(_this) {
-      return function(new_value, old_value) {
-        if ($scope.members) {
-          return getBookings();
-        }
-      };
-    })(this));
-    $scope.$watch("member", (function(_this) {
-      return function(new_value, old_value) {
-        if ($scope.member) {
-          return getBookings();
-        }
-      };
-    })(this));
-    $scope.$on("updateBookings", (function(_this) {
-      return function() {
-        flushBookings();
-        return getBookings();
-      };
-    })(this));
-    getBookings = (function(_this) {
-      return function() {
-        switch (_this.type) {
-          case 'upcoming':
-            return $scope.upcoming();
-          case 'historical':
-            return $scope.historical('years', -1);
-        }
-      };
-    })(this);
-    flushBookings = (function(_this) {
-      return function() {
-        var member, params;
-        switch (_this.type) {
-          case 'upcoming':
-            params = {
-              start_date: moment().format('YYYY-MM-DD')
-            };
-            member = $scope.member;
-            return MemberBookingService.flush(member, params);
-        }
-      };
-    })(this);
-    $scope.filter_bookings = function(booking) {
-      return booking.deleted === true;
-    };
-    doCancel = function(member, booking) {
-      return MemberBookingService.cancel(member, booking).then(function() {
-        if ($scope.bookings) {
-          $scope.bookings = $scope.bookings.filter(function(b) {
-            return b.id !== booking.id;
-          });
-        }
-        if ($scope.removeBooking) {
-          return $scope.removeBooking(booking);
-        }
-      }, function(err) {
-        return console.log('cancel error');
-      });
-    };
-    $scope.cancel = function(booking) {
-      var modalInstance;
-      modalInstance = $modal.open({
-        templateUrl: "deleteModal.html",
-        windowClass: "bbug",
-        controller: function($scope, $rootScope, $modalInstance, booking) {
-          $scope.controller = "ModalDelete";
-          $scope.booking = booking;
-          $scope.confirm_delete = function() {
-            return $modalInstance.close(booking);
-          };
-          return $scope.cancel = function() {
-            return $modalInstance.dismiss("cancel");
-          };
-        },
-        resolve: {
-          booking: function() {
-            return booking;
-          }
-        }
-      });
-      return modalInstance.result.then(function(booking) {
-        console.log("close booking", booking, $scope.member, $scope.members);
-        if ($scope.member) {
-          doCancel($scope.member, booking);
-        }
-        if ($scope.client) {
-          return doCancel($scope.client, booking);
-        } else if ($scope.members) {
-          return booking.$get('member').then(function(member) {
-            return doCancel(member, booking);
-          });
-        }
-      });
-    };
-    $scope.upcoming = (function(_this) {
-      return function() {
-        var member, members, params, promises;
-        $scope.notLoaded($scope);
-        params = {
-          start_date: moment().format('YYYY-MM-DD')
-        };
-        if (_this.limit) {
-          params.per_page = _this.limit;
-        }
-        if ($scope.members) {
-          members = $scope.members;
-        } else if ($scope.member) {
-          members = [$scope.member];
-        }
-        promises = (function() {
-          var i, len, results;
-          results = [];
-          for (i = 0, len = members.length; i < len; i++) {
-            member = members[i];
-            results.push(MemberBookingService.query(member, params));
-          }
-          return results;
-        })();
-        return $q.all(promises).then(function(bookings) {
-          $scope.setLoaded($scope);
-          return $scope.bookings = [].concat.apply([], bookings);
-        }, function(err) {
-          return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
-        });
-      };
-    })(this);
-    $scope.historical = (function(_this) {
-      return function(type, num) {
-        var date, member, members, params, promises;
-        $scope.notLoaded($scope);
-        date = moment().add(num, type);
-        params = {
-          start_date: date.format('YYYY-MM-DD'),
-          end_date: moment().format('YYYY-MM-DD')
-        };
-        if (_this.limit) {
-          params.per_page = _this.limit;
-        }
-        if ($scope.members) {
-          members = $scope.members;
-        } else if ($scope.member) {
-          members = [$scope.member];
-        }
-        promises = (function() {
-          var i, len, results;
-          results = [];
-          for (i = 0, len = members.length; i < len; i++) {
-            member = members[i];
-            results.push(MemberBookingService.query(member, params));
-          }
-          return results;
-        })();
-        return $q.all(promises).then(function(bookings) {
-          $scope.setLoaded($scope);
-          return $scope.bookings = [].concat.apply([], bookings);
-        }, function(err) {
-          return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
-        });
-      };
-    })(this);
-    $scope.move = function(booking, route, options) {
-      if (options == null) {
-        options = {};
-      }
-      return booking.getMemberPromise().then(function(member) {
-        $scope.setClient(member);
-        $scope.notLoaded($scope);
-        $scope.initWidget({
-          company_id: booking.company_id,
-          no_route: true
-        });
-        $scope.clearPage();
-        return $timeout((function(_this) {
-          return function() {
-            var new_item;
-            $scope.bb.moving_booking = booking;
-            new_item = new BBModel.BasketItem(booking, $scope.bb);
-            new_item.setSrcBooking(booking);
-            new_item.ready = false;
-            if (booking.$has('resource') && options.use_resource) {
-              return booking.$get('resource').then(function(resource) {
-                new_item.setResource(new BBModel.Resource(resource));
-                if (booking.$has('service')) {
-                  return booking.$get('service').then(function(service) {
-                    new_item.setService(new BBModel.Service(service));
-                    $scope.setBasketItem(new_item);
-                    $scope.setLoaded($scope);
-                    return $scope.decideNextPage(route);
-                  }, function(err) {
-                    return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
-                  });
-                } else {
-                  $scope.setBasketItem(new_item);
-                  $scope.setLoaded($scope);
-                  return $scope.decideNextPage(route);
-                }
-              });
-            } else {
-              if (booking.$has('service')) {
-                return booking.$get('service').then(function(service) {
-                  new_item.setService(new BBModel.Service(service));
-                  $scope.setBasketItem(new_item);
-                  $scope.setLoaded($scope);
-                  return $scope.decideNextPage(route);
-                }, function(err) {
-                  return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
-                });
-              } else {
-                $scope.setBasketItem(new_item);
-                $scope.setLoaded($scope);
-                return $scope.decideNextPage(route);
-              }
-            }
-          };
-        })(this));
-      });
-    };
-    return $scope.isMovable = function(booking) {
-      if (booking.min_cancellation_time) {
-        return moment().isBefore(booking.min_cancellation_time);
-      }
-      return booking.datetime.isAfter(moment());
-    };
-  });
-
-}).call(this);
-
-(function() {
   angular.module('BB.Services').factory("AddressListService", function($q, $window, halClient) {
     return {
       query: function(prms) {
@@ -120071,6 +119534,558 @@ SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
 }).call(this);
 
 (function() {
+  angular.module('BBAdminEvents').directive('eventChainTable', function(AdminCompanyService, AdminEventChainService, $modal, $log, ModalForm, $timeout) {
+    var controller, link;
+    controller = function($scope) {
+      var editSuccess;
+      $scope.fields = ['id', 'name', 'description'];
+      $scope.getEventChains = function() {
+        var params;
+        params = {
+          company: $scope.company
+        };
+        return AdminEventChainService.query(params).then(function(event_chains) {
+          return $scope.event_chains = event_chains;
+        });
+      };
+      $scope.newEventChain = function() {
+        return ModalForm["new"]({
+          company: $scope.company,
+          title: 'New Event Chain',
+          new_rel: 'new_event_chain',
+          post_rel: 'event_chains',
+          success: function(event_chain) {
+            return $scope.event_chains.push(event_chain);
+          }
+        });
+      };
+      $scope["delete"] = function(id) {
+        var event_chain;
+        event_chain = _.find($scope.event_chains, function(x) {
+          return x.id === id;
+        });
+        return event_chain.$del('self').then(function() {
+          return $scope.event_chains = _.reject($scope.event_chains, function(x) {
+            return x.id === id;
+          });
+        }, function(err) {
+          return $log.error("Failed to delete event_chain");
+        });
+      };
+      editSuccess = function(updated) {
+        updated.$flush('events');
+        return $scope.event_chains = _.map($scope.event_chains, function(event_chain) {
+          if (event_chain.id === updated.id) {
+            return updated;
+          } else {
+            return event_chain;
+          }
+        });
+      };
+      return $scope.edit = function(id) {
+        var event_chain;
+        event_chain = _.find($scope.event_chains, function(x) {
+          return x.id === id;
+        });
+        return event_chain.$get('events').then(function(collection) {
+          return collection.$get('events').then(function(events) {
+            event_chain.events = events;
+            return ModalForm.edit({
+              model: event_chain,
+              title: 'Edit Event Chain',
+              success: editSuccess
+            });
+          });
+        });
+      };
+    };
+    link = function(scope, element, attrs) {
+      if (scope.company) {
+        return scope.getEventChains();
+      } else {
+        return AdminCompanyService.query(attrs).then(function(company) {
+          scope.company = company;
+          return scope.getEventChains();
+        });
+      }
+    };
+    return {
+      controller: controller,
+      link: link,
+      templateUrl: 'event_chain_table_main.html'
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdminEvents').directive('eventGroupTable', function(AdminCompanyService, AdminEventGroupService, $modal, $log, ModalForm) {
+    var controller, link;
+    controller = function($scope) {
+      $scope.getEventGroups = function() {
+        var params;
+        params = {
+          company: $scope.company
+        };
+        return AdminEventGroupService.query(params).then(function(event_groups) {
+          $scope.event_groups_models = event_groups;
+          return $scope.event_groups = _.map(event_groups, function(event_group) {
+            return _.pick(event_group, 'id', 'name', 'mobile');
+          });
+        });
+      };
+      $scope.newEventGroup = function() {
+        return ModalForm["new"]({
+          company: $scope.company,
+          title: 'New Event Group',
+          new_rel: 'new_event_group',
+          post_rel: 'event_groups',
+          success: function(event_group) {
+            return $scope.event_groups.push(event_group);
+          }
+        });
+      };
+      $scope["delete"] = function(id) {
+        var event_group;
+        event_group = _.find($scope.event_groups_models, function(p) {
+          return p.id === id;
+        });
+        return event_group.$del('self').then(function() {
+          return $scope.event_groups = _.reject($scope.event_groups, function(p) {
+            return p.id === id;
+          });
+        }, function(err) {
+          return $log.error("Failed to delete event_group");
+        });
+      };
+      return $scope.edit = function(id) {
+        var event_group;
+        event_group = _.find($scope.event_groups_models, function(p) {
+          return p.id === id;
+        });
+        return ModalForm.edit({
+          model: event_group,
+          title: 'Edit Event Group'
+        });
+      };
+    };
+    link = function(scope, element, attrs) {
+      if (scope.company) {
+        return scope.getEventGroups();
+      } else {
+        return AdminCompanyService.query(attrs).then(function(company) {
+          scope.company = company;
+          return scope.getEventGroups();
+        });
+      }
+    };
+    return {
+      controller: controller,
+      link: link,
+      templateUrl: 'event_group_table_main.html'
+    };
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  angular.module('BB.Models').factory("Admin.EventModel", function($q, BBModel, BaseModel) {
+    var Admin_Event;
+    return Admin_Event = (function(superClass) {
+      extend(Admin_Event, superClass);
+
+      function Admin_Event(data) {
+        Admin_Event.__super__.constructor.call(this, data);
+      }
+
+      return Admin_Event;
+
+    })(BaseModel);
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  angular.module('BB.Models').factory("Admin.EventChainModel", function($q, BBModel, BaseModel) {
+    var Admin_EventChain;
+    return Admin_EventChain = (function(superClass) {
+      extend(Admin_EventChain, superClass);
+
+      function Admin_EventChain(data) {
+        Admin_EventChain.__super__.constructor.call(this, data);
+      }
+
+      return Admin_EventChain;
+
+    })(BaseModel);
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  angular.module('BB.Models').factory("Admin.EventGroupModel", function($q, BBModel, BaseModel) {
+    var Admin_EventGroup;
+    return Admin_EventGroup = (function(superClass) {
+      extend(Admin_EventGroup, superClass);
+
+      function Admin_EventGroup(data) {
+        Admin_EventGroup.__super__.constructor.call(this, data);
+      }
+
+      return Admin_EventGroup;
+
+    })(BaseModel);
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdminEvents').factory('AdminEventChainService', function($q, BBModel) {
+    return {
+      query: function(params) {
+        var company, defer;
+        company = params.company;
+        defer = $q.defer();
+        company.$get('event_chains').then(function(collection) {
+          return collection.$get('event_chains').then(function(event_chains) {
+            var e, models;
+            models = (function() {
+              var i, len, results;
+              results = [];
+              for (i = 0, len = event_chains.length; i < len; i++) {
+                e = event_chains[i];
+                results.push(new BBModel.Admin.EventChain(e));
+              }
+              return results;
+            })();
+            return defer.resolve(models);
+          }, function(err) {
+            return defer.reject(err);
+          });
+        }, function(err) {
+          return defer.reject(err);
+        });
+        return defer.promise;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdminEvents').factory('AdminEventGroupService', function($q, BBModel) {
+    return {
+      query: function(params) {
+        var company, defer;
+        company = params.company;
+        defer = $q.defer();
+        company.$get('event_groups').then(function(collection) {
+          return collection.$get('event_groups').then(function(event_groups) {
+            var e, models;
+            models = (function() {
+              var i, len, results;
+              results = [];
+              for (i = 0, len = event_groups.length; i < len; i++) {
+                e = event_groups[i];
+                results.push(new BBModel.Admin.EventGroup(e));
+              }
+              return results;
+            })();
+            return defer.resolve(models);
+          }, function(err) {
+            return defer.reject(err);
+          });
+        }, function(err) {
+          return defer.reject(err);
+        });
+        return defer.promise;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBMember').controller('editBookingModalForm', function($scope, $modalInstance, $log, booking) {
+    $scope.title = 'Booking Details';
+    booking.$get('edit_booking').then(function(booking_schema) {
+      $scope.form = booking_schema.form;
+      $scope.schema = booking_schema.schema;
+      return booking.getAnswersPromise().then(function(answers) {
+        var answer, i, len, ref;
+        ref = answers.answers;
+        for (i = 0, len = ref.length; i < len; i++) {
+          answer = ref[i];
+          booking["question" + answer.question_id] = answer.value;
+        }
+        return $scope.booking = booking;
+      });
+    });
+    $scope.submit = function(booking) {
+      return $scope.booking.$put('self', {}, booking).then(function(booking) {
+        $log.info("Booking update success");
+        return $modalInstance.close($scope.booking);
+      }, function(err) {
+        return $log.error("Booking update failure");
+      });
+    };
+    return $scope.cancel = function() {
+      return $modalInstance.dismiss('cancel');
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BB.Controllers').controller('MembersBookings', function($scope, $rootScope, $location, $filter, $q, $timeout, $modal, MemberBookingService, LoginService, BBModel) {
+    var doCancel, flushBookings, getBookings;
+    $scope.init = (function(_this) {
+      return function(options) {
+        _this.type = options.type;
+        return _this.limit = options.limit;
+      };
+    })(this);
+    $scope.$watch("members", (function(_this) {
+      return function(new_value, old_value) {
+        if ($scope.members) {
+          return getBookings();
+        }
+      };
+    })(this));
+    $scope.$watch("member", (function(_this) {
+      return function(new_value, old_value) {
+        if ($scope.member) {
+          return getBookings();
+        }
+      };
+    })(this));
+    $scope.$on("updateBookings", (function(_this) {
+      return function() {
+        flushBookings();
+        return getBookings();
+      };
+    })(this));
+    getBookings = (function(_this) {
+      return function() {
+        switch (_this.type) {
+          case 'upcoming':
+            return $scope.upcoming();
+          case 'historical':
+            return $scope.historical('years', -1);
+        }
+      };
+    })(this);
+    flushBookings = (function(_this) {
+      return function() {
+        var member, params;
+        switch (_this.type) {
+          case 'upcoming':
+            params = {
+              start_date: moment().format('YYYY-MM-DD')
+            };
+            member = $scope.member;
+            return MemberBookingService.flush(member, params);
+        }
+      };
+    })(this);
+    $scope.filter_bookings = function(booking) {
+      return booking.deleted === true;
+    };
+    doCancel = function(member, booking) {
+      return MemberBookingService.cancel(member, booking).then(function() {
+        if ($scope.bookings) {
+          $scope.bookings = $scope.bookings.filter(function(b) {
+            return b.id !== booking.id;
+          });
+        }
+        if ($scope.removeBooking) {
+          return $scope.removeBooking(booking);
+        }
+      }, function(err) {
+        return console.log('cancel error');
+      });
+    };
+    $scope.cancel = function(booking) {
+      var modalInstance;
+      modalInstance = $modal.open({
+        templateUrl: "deleteModal.html",
+        windowClass: "bbug",
+        controller: function($scope, $rootScope, $modalInstance, booking) {
+          $scope.controller = "ModalDelete";
+          $scope.booking = booking;
+          $scope.confirm_delete = function() {
+            return $modalInstance.close(booking);
+          };
+          return $scope.cancel = function() {
+            return $modalInstance.dismiss("cancel");
+          };
+        },
+        resolve: {
+          booking: function() {
+            return booking;
+          }
+        }
+      });
+      return modalInstance.result.then(function(booking) {
+        console.log("close booking", booking, $scope.member, $scope.members);
+        if ($scope.member) {
+          doCancel($scope.member, booking);
+        }
+        if ($scope.client) {
+          return doCancel($scope.client, booking);
+        } else if ($scope.members) {
+          return booking.$get('member').then(function(member) {
+            return doCancel(member, booking);
+          });
+        }
+      });
+    };
+    $scope.upcoming = (function(_this) {
+      return function() {
+        var member, members, params, promises;
+        $scope.notLoaded($scope);
+        params = {
+          start_date: moment().format('YYYY-MM-DD')
+        };
+        if (_this.limit) {
+          params.per_page = _this.limit;
+        }
+        if ($scope.members) {
+          members = $scope.members;
+        } else if ($scope.member) {
+          members = [$scope.member];
+        }
+        promises = (function() {
+          var i, len, results;
+          results = [];
+          for (i = 0, len = members.length; i < len; i++) {
+            member = members[i];
+            results.push(MemberBookingService.query(member, params));
+          }
+          return results;
+        })();
+        return $q.all(promises).then(function(bookings) {
+          $scope.setLoaded($scope);
+          return $scope.bookings = [].concat.apply([], bookings);
+        }, function(err) {
+          return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
+        });
+      };
+    })(this);
+    $scope.historical = (function(_this) {
+      return function(type, num) {
+        var date, member, members, params, promises;
+        $scope.notLoaded($scope);
+        date = moment().add(num, type);
+        params = {
+          start_date: date.format('YYYY-MM-DD'),
+          end_date: moment().format('YYYY-MM-DD')
+        };
+        if (_this.limit) {
+          params.per_page = _this.limit;
+        }
+        if ($scope.members) {
+          members = $scope.members;
+        } else if ($scope.member) {
+          members = [$scope.member];
+        }
+        promises = (function() {
+          var i, len, results;
+          results = [];
+          for (i = 0, len = members.length; i < len; i++) {
+            member = members[i];
+            results.push(MemberBookingService.query(member, params));
+          }
+          return results;
+        })();
+        return $q.all(promises).then(function(bookings) {
+          $scope.setLoaded($scope);
+          return $scope.bookings = [].concat.apply([], bookings);
+        }, function(err) {
+          return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
+        });
+      };
+    })(this);
+    $scope.move = function(booking, route, options) {
+      if (options == null) {
+        options = {};
+      }
+      return booking.getMemberPromise().then(function(member) {
+        $scope.setClient(member);
+        $scope.notLoaded($scope);
+        $scope.initWidget({
+          company_id: booking.company_id,
+          no_route: true
+        });
+        $scope.clearPage();
+        return $timeout((function(_this) {
+          return function() {
+            var new_item;
+            $scope.bb.moving_booking = booking;
+            new_item = new BBModel.BasketItem(booking, $scope.bb);
+            new_item.setSrcBooking(booking);
+            new_item.ready = false;
+            if (booking.$has('resource') && options.use_resource) {
+              return booking.$get('resource').then(function(resource) {
+                new_item.setResource(new BBModel.Resource(resource));
+                if (booking.$has('service')) {
+                  return booking.$get('service').then(function(service) {
+                    new_item.setService(new BBModel.Service(service));
+                    $scope.setBasketItem(new_item);
+                    $scope.setLoaded($scope);
+                    return $scope.decideNextPage(route);
+                  }, function(err) {
+                    return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
+                  });
+                } else {
+                  $scope.setBasketItem(new_item);
+                  $scope.setLoaded($scope);
+                  return $scope.decideNextPage(route);
+                }
+              });
+            } else {
+              if (booking.$has('service')) {
+                return booking.$get('service').then(function(service) {
+                  new_item.setService(new BBModel.Service(service));
+                  $scope.setBasketItem(new_item);
+                  $scope.setLoaded($scope);
+                  return $scope.decideNextPage(route);
+                }, function(err) {
+                  return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
+                });
+              } else {
+                $scope.setBasketItem(new_item);
+                $scope.setLoaded($scope);
+                return $scope.decideNextPage(route);
+              }
+            }
+          };
+        })(this));
+      });
+    };
+    return $scope.isMovable = function(booking) {
+      if (booking.min_cancellation_time) {
+        return moment().isBefore(booking.min_cancellation_time);
+      }
+      return booking.datetime.isAfter(moment());
+    };
+  });
+
+}).call(this);
+
+(function() {
   angular.module('BBMember').directive('memberBookingsTable', function($modal, $log, $rootScope, MemberLoginService, MemberBookingService, $compile, $templateCache) {
     var controller, link;
     controller = function($scope, $modal) {
@@ -122298,6 +122313,123 @@ SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
 
 (function() {
   'use strict';
+  angular.module('BB.Services').factory("PurchaseBookingService", function($q, halClient, BBModel) {
+    return {
+      update: function(booking) {
+        var data, deferred;
+        deferred = $q.defer();
+        data = booking.getPostData();
+        booking.srcBooking.$put('self', {}, data).then((function(_this) {
+          return function(booking) {
+            return deferred.resolve(new BBModel.Purchase.Booking(booking));
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            return deferred.reject(err, new BBModel.Purchase.Booking(booking));
+          };
+        })(this));
+        return deferred.promise;
+      },
+      addSurveyAnswersToBooking: function(booking) {
+        var data, deferred;
+        deferred = $q.defer();
+        data = booking.getPostData();
+        booking.$put('self', {}, data).then((function(_this) {
+          return function(booking) {
+            return deferred.resolve(new BBModel.Purchase.Booking(booking));
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            return deferred.reject(err, new BBModel.Purchase.Booking(booking));
+          };
+        })(this));
+        return deferred.promise;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BB.Services').factory("PurchaseService", function($q, halClient, BBModel, $window) {
+    return {
+      query: function(params) {
+        var defer, uri;
+        defer = $q.defer();
+        uri = params.url_root + "/api/v1/purchases/" + params.purchase_id;
+        halClient.$get(uri, params).then(function(purchase) {
+          purchase = new BBModel.Purchase.Total(purchase);
+          return defer.resolve(purchase);
+        }, function(err) {
+          return defer.reject(err);
+        });
+        return defer.promise;
+      },
+      bookingRefQuery: function(params) {
+        var defer, uri;
+        defer = $q.defer();
+        uri = new $window.UriTemplate.parse(params.url_root + "/api/v1/purchases/booking_ref/{booking_ref}{?raw}").expand(params);
+        halClient.$get(uri, params).then(function(purchase) {
+          purchase = new BBModel.Purchase.Total(purchase);
+          return defer.resolve(purchase);
+        }, function(err) {
+          return defer.reject(err);
+        });
+        return defer.promise;
+      },
+      update: function(params) {
+        var bdata, booking, data, defer, i, len, ref;
+        defer = $q.defer();
+        if (!params.purchase) {
+          defer.reject("No purchase present");
+          return defer.promise;
+        }
+        data = {};
+        if (params.bookings) {
+          bdata = [];
+          ref = params.bookings;
+          for (i = 0, len = ref.length; i < len; i++) {
+            booking = ref[i];
+            bdata.push(booking.getPostData());
+          }
+          data.bookings = bdata;
+        }
+        params.purchase.$put('self', {}, data).then((function(_this) {
+          return function(purchase) {
+            purchase = new BBModel.Purchase.Total(purchase);
+            return defer.resolve(purchase);
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            return defer.reject(err);
+          };
+        })(this));
+        return defer.promise;
+      },
+      delete_all: function(purchase) {
+        var defer;
+        defer = $q.defer();
+        if (!purchase) {
+          defer.reject("No purchase present");
+          return defer.promise;
+        }
+        purchase.$del('self').then(function(purchase) {
+          purchase = new BBModel.Purchase.Total(purchase);
+          return defer.resolve(purchase);
+        }, (function(_this) {
+          return function(err) {
+            return defer.reject(err);
+          };
+        })(this));
+        return defer.promise;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
   var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
@@ -122778,123 +122910,6 @@ SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
       return Purchase_Total;
 
     })(BaseModel);
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  angular.module('BB.Services').factory("PurchaseBookingService", function($q, halClient, BBModel) {
-    return {
-      update: function(booking) {
-        var data, deferred;
-        deferred = $q.defer();
-        data = booking.getPostData();
-        booking.srcBooking.$put('self', {}, data).then((function(_this) {
-          return function(booking) {
-            return deferred.resolve(new BBModel.Purchase.Booking(booking));
-          };
-        })(this), (function(_this) {
-          return function(err) {
-            return deferred.reject(err, new BBModel.Purchase.Booking(booking));
-          };
-        })(this));
-        return deferred.promise;
-      },
-      addSurveyAnswersToBooking: function(booking) {
-        var data, deferred;
-        deferred = $q.defer();
-        data = booking.getPostData();
-        booking.$put('self', {}, data).then((function(_this) {
-          return function(booking) {
-            return deferred.resolve(new BBModel.Purchase.Booking(booking));
-          };
-        })(this), (function(_this) {
-          return function(err) {
-            return deferred.reject(err, new BBModel.Purchase.Booking(booking));
-          };
-        })(this));
-        return deferred.promise;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BB.Services').factory("PurchaseService", function($q, halClient, BBModel, $window) {
-    return {
-      query: function(params) {
-        var defer, uri;
-        defer = $q.defer();
-        uri = params.url_root + "/api/v1/purchases/" + params.purchase_id;
-        halClient.$get(uri, params).then(function(purchase) {
-          purchase = new BBModel.Purchase.Total(purchase);
-          return defer.resolve(purchase);
-        }, function(err) {
-          return defer.reject(err);
-        });
-        return defer.promise;
-      },
-      bookingRefQuery: function(params) {
-        var defer, uri;
-        defer = $q.defer();
-        uri = new $window.UriTemplate.parse(params.url_root + "/api/v1/purchases/booking_ref/{booking_ref}{?raw}").expand(params);
-        halClient.$get(uri, params).then(function(purchase) {
-          purchase = new BBModel.Purchase.Total(purchase);
-          return defer.resolve(purchase);
-        }, function(err) {
-          return defer.reject(err);
-        });
-        return defer.promise;
-      },
-      update: function(params) {
-        var bdata, booking, data, defer, i, len, ref;
-        defer = $q.defer();
-        if (!params.purchase) {
-          defer.reject("No purchase present");
-          return defer.promise;
-        }
-        data = {};
-        if (params.bookings) {
-          bdata = [];
-          ref = params.bookings;
-          for (i = 0, len = ref.length; i < len; i++) {
-            booking = ref[i];
-            bdata.push(booking.getPostData());
-          }
-          data.bookings = bdata;
-        }
-        params.purchase.$put('self', {}, data).then((function(_this) {
-          return function(purchase) {
-            purchase = new BBModel.Purchase.Total(purchase);
-            return defer.resolve(purchase);
-          };
-        })(this), (function(_this) {
-          return function(err) {
-            return defer.reject(err);
-          };
-        })(this));
-        return defer.promise;
-      },
-      delete_all: function(purchase) {
-        var defer;
-        defer = $q.defer();
-        if (!purchase) {
-          defer.reject("No purchase present");
-          return defer.promise;
-        }
-        purchase.$del('self').then(function(purchase) {
-          purchase = new BBModel.Purchase.Total(purchase);
-          return defer.resolve(purchase);
-        }, (function(_this) {
-          return function(err) {
-            return defer.reject(err);
-          };
-        })(this));
-        return defer.promise;
-      }
-    };
   });
 
 }).call(this);
