@@ -377,4 +377,17 @@ app.directive 'apiUrl', ($rootScope) ->
     $rootScope.bb ||= {}
     $rootScope.bb.api_url = attrs.apiUrl
 
+app.directive 'bbBookingExport', ($compile) ->
+  restrict: 'AE'
+  scope: true
+  template: '<div bb-include="popout_export_booking" style="display: inline;"></div>'
+  link: (scope, element, attrs) ->
+
+    scope.$watch 'total', (newval, old) ->
+      if newval
+        scope.html = "
+          <a class='image img_outlook' title='Add this booking to an Outlook Calendar' href='#{scope.total.icalLink()}'><img alt='' src='//images.bookingbug.com/widget/outlook.png'></a>
+          <a class='image img_ical' title='Add this booking to an iCal Calendar' href='#{scope.total.webcalLink()}'><img alt='' src='//images.bookingbug.com/widget/ical.png'></a>
+          <a class='image img_gcal' title='Add this booking to Google Calendar' href='#{scope.total.gcalLink()}' target='_blank'><img src='//images.bookingbug.com/widget/gcal.png' border='0'></a>
+        "
 

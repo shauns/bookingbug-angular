@@ -122,7 +122,7 @@ angular.module('BB.Controllers').controller 'ItemDetails',
       return true
 
 
-  $scope.confirm_move = (form, route) ->
+  $scope.confirm_move = (route) ->
     confirming = true
     $scope.item ||= $scope.bb.current_item
    
@@ -137,11 +137,12 @@ angular.module('BB.Controllers').controller 'ItemDetails',
             if oldb.id == b.id
               $scope.bookings[_i] = b
 
-        $scope.purchase.bookings = $scope.bookings
+          $scope.purchase.bookings = $scope.bookings
         
         $scope.setLoaded $scope
         $scope.item.move_done = true
         $rootScope.$emit "booking:moved"
+        $scope.decideNextPage(route)
        , (err) =>
         $scope.setLoaded $scope
         AlertService.clear()
