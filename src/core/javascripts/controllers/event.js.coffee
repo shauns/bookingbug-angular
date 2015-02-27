@@ -49,7 +49,7 @@ angular.module('BB.Controllers').controller 'Event', ($scope,  $rootScope, Event
             item = new BBModel.BasketItem()
             angular.extend(item, base_item)
             item.tickets = angular.copy(ticket)
-            item.tickets.qty = 1
+            item.tickets.qty = ticket.qty
             $scope.bb.stackItem(item)
     # ok so we have them as stacked items
     # now push the stacked items to a basket

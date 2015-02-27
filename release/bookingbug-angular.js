@@ -55754,7 +55754,7 @@ if(window.jasmine || window.mocha) {
 
 "use strict";var TrNgGrid;(function(n){function ot(t){t.get(n.cellHeaderTemplateId)||t.put(n.cellHeaderTemplateId,'<div class="'+n.headerCellCssClass+'" ng-switch="isCustomized">  <div ng-switch-when="true">    <div ng-transclude=""><\/div>  <\/div>  <div ng-switch-default>    <div class="'+n.columnTitleCssClass+'">      {{columnTitle |'+n.translateFilter+":gridOptions.locale}}       <div "+n.columnSortDirectiveAttribute+'=""><\/div>    <\/div>    <div '+n.columnFilterDirectiveAttribute+'=""><\/div>  <\/div><\/div>');t.get(n.cellBodyTemplateId)||t.put(n.cellBodyTemplateId,'<div ng-attr-class="'+n.bodyCellCssClass+' text-{{columnOptions.displayAlign}}" ng-switch="isCustomized">  <div ng-switch-when="true">    <div ng-transclude=""><\/div>  <\/div>  <div ng-switch-default>{{gridDisplayItem[columnOptions.displayFieldName]}}<\/div><\/div>');t.get(n.columnFilterTemplateId)||t.put(n.columnFilterTemplateId,'<div ng-show="(gridOptions.enableFiltering&&columnOptions.enableFiltering!==false)||columnOptions.enableFiltering" class="'+n.columnFilterCssClass+'"> <div class="'+n.columnFilterInputWrapperCssClass+'">   <input class="form-control input-sm" type="text" ng-model="columnOptions.filter" ng-keypress="speedUpAsyncDataRetrieval($event)"><\/input> <\/div><\/div>');t.get(n.columnSortTemplateId)||t.put(n.columnSortTemplateId,"<div ng-attr-title=\"{{'Sort'|"+n.translateFilter+':gridOptions.locale}}" ng-show="(gridOptions.enableSorting&&columnOptions.enableSorting!==false)||columnOptions.enableSorting" ng-click="toggleSorting(columnOptions.fieldName)" class="'+n.columnSortCssClass+'" >   <div ng-class="{\''+n.columnSortActiveCssClass+"':gridOptions.orderBy==columnOptions.fieldName,'"+n.columnSortInactiveCssClass+"':gridOptions.orderBy!=columnOptions.fieldName,'"+n.columnSortNormalOrderCssClass+"':gridOptions.orderBy==columnOptions.fieldName&&!gridOptions.orderByReverse,'"+n.columnSortReverseOrderCssClass+"':gridOptions.orderBy==columnOptions.fieldName&&gridOptions.orderByReverse}\" >  <\/div><\/div>");t.put(n.cellFooterTemplateId)||t.put(n.cellFooterTemplateId,'<div class="'+n.footerCssClass+'" ng-switch="isCustomized">  <div ng-switch-when="true">    <div ng-transclude=""><\/div>  <\/div>  <div ng-switch-default>    <span '+n.globalFilterDirectiveAttribute+'=""><\/span>    <span '+n.pagerDirectiveAttribute+'=""><\/span>  <\/div><\/div>');t.get(n.footerGlobalFilterTemplateId)||t.put(n.footerGlobalFilterTemplateId,'<span ng-show="gridOptions.enableFiltering" class="pull-left form-group">  <input class="form-control" type="text" ng-model="gridOptions.filterBy" ng-keypress="speedUpAsyncDataRetrieval($event)" ng-attr-placeholder="{{\'Search\'|'+n.translateFilter+':gridOptions.locale}}"><\/input><\/span>');t.get(n.footerPagerTemplateId)||t.put(n.footerPagerTemplateId,'<span class="pull-right form-group"> <ul class="pagination">   <li ng-class="{disabled:!pageCanGoBack}" ng-if="extendedControlsActive">     <a href="" ng-click="pageCanGoBack&&navigateToPage(0)" ng-attr-title="{{\'First Page\'|'+n.translateFilter+':gridOptions.locale}}">         <span>&laquo;<\/span>     <\/a>   <\/li>   <li ng-class="{disabled:!pageCanGoBack}" ng-if="extendedControlsActive">     <a href="" ng-click="pageCanGoBack&&navigateToPage(gridOptions.currentPage - 1)" ng-attr-title="{{\'Previous Page\'|'+n.translateFilter+':gridOptions.locale}}">         <span>&lsaquo;<\/span>     <\/a>   <\/li>   <li ng-if="pageSelectionActive" ng-repeat="pageIndex in pageIndexes track by $index" ng-class="{disabled:pageIndex===null, active:pageIndex===gridOptions.currentPage}">      <span ng-if="pageIndex===null">...<\/span>      <a href="" ng-click="navigateToPage(pageIndex)" ng-if="pageIndex!==null" ng-attr-title="{{\'Page\'|'+n.translateFilter+':gridOptions.locale}}">{{pageIndex+1}}<\/a>   <\/li>   <li ng-class="{disabled:!pageCanGoForward}" ng-if="extendedControlsActive">     <a href="" ng-click="pageCanGoForward&&navigateToPage(gridOptions.currentPage + 1)" ng-attr-title="{{\'Next Page\'|'+n.translateFilter+':gridOptions.locale}}">         <span>&rsaquo;<\/span>     <\/a>   <\/li>   <li ng-class="{disabled:!pageCanGoForward}" ng-if="extendedControlsActive">     <a href="" ng-click="pageCanGoForward&&navigateToPage(lastPageIndex)" ng-attr-title="{{\'Last Page\'|'+n.translateFilter+':gridOptions.locale}}">         <span>&raquo;<\/span>     <\/a>   <\/li>   <li class="disabled" style="white-space: nowrap;">     <span ng-hide="totalItemsCount">{{\'No items to display\'|'+n.translateFilter+":gridOptions.locale}}<\/span>     <span ng-show=\"totalItemsCount\">       {{startItemIndex+1}} - {{endItemIndex+1}} {{'displayed'|"+n.translateFilter+":gridOptions.locale}}       <span>, {{totalItemsCount}} {{'in total'|"+n.translateFilter+":gridOptions.locale}}<\/span>     <\/span >    <\/li> <\/ul><\/span>")}var i,u,t,f,e,o,s;(function(n){n[n.None=0]="None";n[n.SingleRow=1]="SingleRow";n[n.MultiRow=2]="MultiRow";n[n.MultiRowWithKeyModifiers=3]="MultiRowWithKeyModifiers"})(n.SelectionMode||(n.SelectionMode={}));i=n.SelectionMode;n.defaultColumnOptions={cellWidth:null,cellHeight:null,displayAlign:null,displayFormat:null,displayName:null,filter:null,enableFiltering:null,enableSorting:null};n.translations={};n.debugMode=!1;u=!1;t="trNgGrid";n.sortFilter=t+"SortFilter";n.dataPagingFilter=t+"DataPagingFilter";n.translateFilter=t+"TranslateFilter";n.translationDateFormat=t+"DateFormat";n.dataFormattingFilter=t+"DataFormatFilter";var l="tr-ng-grid-body",a="field-name",d="is-customized",g="tr-ng-grid-footer-cell",v="trNgGridFooterCellTemplate",nt="tr-ng-grid-footer-cell-template";n.cellFooterTemplateId=v+".html";f="trNgGridGlobalFilter";n.globalFilterDirectiveAttribute="tr-ng-grid-global-filter";n.footerGlobalFilterTemplateId=f+".html";e="trNgGridPager";n.pagerDirectiveAttribute="tr-ng-grid-pager";n.footerPagerTemplateId=e+".html";var y="trNgGridHeaderCell",tt="tr-ng-grid-header-cell",p="trNgGridHeaderCellTemplate",it="tr-ng-grid-header-cell-template";n.cellHeaderTemplateId=p+".html";var w="trNgGridBodyCell",rt="tr-ng-grid-body-cell",b="trNgGridBodyCellTemplate",ut="tr-ng-grid-body-cell-template";n.cellBodyTemplateId=b+".html";o="trNgGridColumnSort";n.columnSortDirectiveAttribute="tr-ng-grid-column-sort";n.columnSortTemplateId=o+".html";s="trNgGridColumnFilter";n.columnFilterDirectiveAttribute="tr-ng-grid-column-filter";n.columnFilterTemplateId=s+".html";var k=function(n,t){var r,i,u;for(t=t.toUpperCase(),r=n.children(),i=0;i<r.length;i++)if(u=r[i],u.tagName==t)return angular.element(u);return null},st=function(n,t){var r,u,i,f;for(t=t.toUpperCase(),r=[],u=n.children(),i=0;i<u.length;i++)f=u[i],f.tagName==t&&r.push(angular.element(f));return r},r=function(n,t,i,r){var u=[],f=t.slice(0);return angular.forEach(n,function(n){for(var t=null,i=0;!t&&i<f.length;i++)t=f[i],t.fieldName===n.fieldName?f.splice(i,1):t=null;t?u.push(t):u.push(n)}),(i||r)&&angular.forEach(f,function(n){(i&&n.fieldName||r&&!n.fieldName)&&u.push(n)}),u},h=function(n,t,i,r){var u,e,f;i?(u=n.children(),e=angular.element(u[0]),u.length===1&&e.attr(r)||(n.empty(),f=angular.element("<div><\/div>").attr(r,""),n.append(f),angular.forEach(u,function(n){f.append(angular.element(n))}))):(n.empty(),n.append(angular.element("<div><\/div>").attr(r,"")))},ft=function(){function n(n,t){this.parent=n;this.cellElement=t;this.fieldName=t.attr(a);var i=t.children();this.isStandardColumn=i.length===0}return n}(),c=function(){function n(n,t,i,r,u){this.sectionTagName=n;this.sectionDirectiveAttribute=t;this.rowDirectiveAttribute=i;this.cellTagName=r;this.cellDirectiveAttribute=u;this.cellTagName=this.cellTagName.toUpperCase();this.cells=null}return n.prototype.configureSection=function(n,t){var i=this,u=this.getSectionElement(n,!0),f,e;return u.empty(),u.removeAttr("ng-non-bindable"),f=r(t,this.cells,!1,!1),e=this.getTemplatedRowElement(u,!0),angular.forEach(f,function(n,t){var r,u=n;r=u.parent===i&&u.cellElement?u.cellElement.clone(!0):angular.element("<table><"+i.cellTagName+"><\/"+i.cellTagName+"><\/table>").find(i.cellTagName);i.cellDirectiveAttribute&&r.attr(i.cellDirectiveAttribute,t);n.isStandardColumn||r.attr(d,"true");n.fieldName&&r.attr(a,n.fieldName);r.attr("ng-style","{'width':columnOptions.cellWidth,'height':columnOptions.cellHeight}");e.append(r)}),u},n.prototype.extractPartialColumnDefinitions=function(){return this.cells},n.prototype.discoverCells=function(n){var t=this,i;this.cells=[];i=this.getTemplatedRowElement(this.getSectionElement(n,!1),!1);i&&angular.forEach(i.children(),function(n){if(n=angular.element(n),n[0].tagName===t.cellTagName.toUpperCase()){var i=n.clone(!0);t.cells.push(new ft(t,i))}})},n.prototype.getSectionElement=function(n,t){var i=null;return n&&(i=k(n,this.sectionTagName)),!i&&t&&(i=angular.element("<table><"+this.sectionTagName+"><\/"+this.sectionTagName+"><\/table>").find(this.sectionTagName),n&&n.append(i)),t&&this.sectionDirectiveAttribute&&i.attr(this.sectionDirectiveAttribute,""),i},n.prototype.getTemplatedRowElement=function(n,t){var i=null;return n&&(i=k(n,"tr")),!i&&t&&(i=angular.element("<table><tr><\/tr><\/table>").find("tr"),n&&n.append(i)),t&&this.rowDirectiveAttribute&&i.attr(this.rowDirectiveAttribute,""),i},n}(),et=function(){function f(n,t,i,r){this.$compile=n;this.$parse=t;this.$timeout=i;u||(ot(r),u=!0)}return f.prototype.setupScope=function(t,r,u){var f=this,e=angular.element(r).scope().$new(),o,s;return this.gridOptions={immediateDataRetrieval:!0,items:[],fields:null,locale:"en",selectedItems:[],filterBy:null,filterByFields:{},orderBy:null,orderByReverse:!1,pageItems:null,currentPage:0,totalItems:null,enableFiltering:!0,enableSorting:!0,selectionMode:i[2],onDataRequiredDelay:1e3,onDataRequired:u.onDataRequired?t.onDataRequired:null,gridColumnDefs:[]},e.gridOptions=this.gridOptions,e.TrNgGrid=n,this.linkScope(e,t,"gridOptions",u),this.gridOptions.onDataRequired&&(o=function(){f.dataRequestPromise=null;f.gridOptions.immediateDataRetrieval=!1;f.gridOptions.onDataRequired(f.gridOptions)},s=function(){f.dataRequestPromise&&(f.$timeout.cancel(f.dataRequestPromise),f.dataRequestPromise=null);f.gridOptions.immediateDataRetrieval?o():f.dataRequestPromise=f.$timeout(function(){o()},f.gridOptions.onDataRequiredDelay,!0)},e.$watch("gridOptions.currentPage",function(n,t){n!==t&&s()}),e.$watchCollection("[gridOptions.filterBy, gridOptions.filterByFields, gridOptions.orderBy, gridOptions.orderByReverse, gridOptions.pageItems, ]",function(){if(f.gridOptions.currentPage!==0){f.gridOptions.currentPage=0;return}s()}),e.$watch("gridOptions.immediateDataRetrieval",function(n){n&&f.dataRequestPromise&&(f.$timeout.cancel(f.dataRequestPromise),o())})),e.$watch("gridOptions.selectionMode",function(n,t){if(n!==t)switch(n){case i[0]:f.gridOptions.selectedItems.splice(0);break;case i[1]:f.gridOptions.selectedItems.length>1&&f.gridOptions.selectedItems.splice(1)}}),e},f.prototype.speedUpAsyncDataRetrieval=function(n){n&&n.keyCode!=13||(this.gridOptions.immediateDataRetrieval=!0)},f.prototype.setColumnOptions=function(n,t){var i=this.gridOptions.gridColumnDefs[n];if(!i)throw"Invalid grid column options found for column index "+n+". Please report this error.";t=angular.extend(t,i);this.gridOptions.gridColumnDefs[n]=t},f.prototype.toggleSorting=function(n){this.gridOptions.orderBy!=n?this.gridOptions.orderBy=n:this.gridOptions.orderByReverse=!this.gridOptions.orderByReverse;this.speedUpAsyncDataRetrieval()},f.prototype.getFormattedFieldName=function(n){return n.replace(/[\.\[\]]/g,"_")},f.prototype.setFilter=function(n,t){t?this.gridOptions.filterByFields[n]=t:delete this.gridOptions.filterByFields[n];this.gridOptions.filterByFields=angular.extend({},this.gridOptions.filterByFields)},f.prototype.toggleItemSelection=function(n,t,r){var h,f,c,e,l,o,s,u;if(this.gridOptions.selectionMode!==i[0])switch(this.gridOptions.selectionMode){case i[3]:if(r.ctrlKey||r.shiftKey||r.metaKey){if(r.ctrlKey||r.metaKey)u=this.gridOptions.selectedItems.indexOf(t),u>=0?this.gridOptions.selectedItems.splice(u,1):this.gridOptions.selectedItems.push(t);else if(r.shiftKey){for(document.selection&&document.selection.empty?document.selection.empty():window.getSelection&&(h=window.getSelection(),h.removeAllRanges()),c=this.gridOptions.selectedItems[this.gridOptions.selectedItems.length-1],f=0;f<n.length&&n[f].$$_gridItem!==c;f++);for(f>=n.length&&(f=0),e=0;e<n.length&&n[e].$$_gridItem!==t;e++);if(e>=n.length)throw"Invalid selection on a key modifier selection mode";for(e<f&&(l=f,f=e,e=l),o=f;o<=e;o++)s=n[o].$$_gridItem,this.gridOptions.selectedItems.indexOf(s)<0&&this.gridOptions.selectedItems.push(s)}}else u=this.gridOptions.selectedItems.indexOf(t),this.gridOptions.selectedItems.splice(0),u<0&&this.gridOptions.selectedItems.push(t);break;case i[1]:u=this.gridOptions.selectedItems.indexOf(t);this.gridOptions.selectedItems.splice(0);u<0&&this.gridOptions.selectedItems.push(t);break;case i[2]:u=this.gridOptions.selectedItems.indexOf(t);u>=0?this.gridOptions.selectedItems.splice(u,1):this.gridOptions.selectedItems.push(t)}},f.prototype.discoverTemplates=function(n){this.templatedHeader=new c("thead",null,null,"th",tt);this.templatedBody=new c("tbody",l,null,"td",rt);this.templatedFooter=new c("tfoot",null,null,"td",g);this.templatedHeader.discoverCells(n);this.templatedFooter.discoverCells(n);this.templatedBody.discoverCells(n)},f.prototype.configureTableStructure=function(t,i,u){var h=this,e=t.$new(),y;i.empty();this.columnDefsItemsWatcherDeregistration&&(this.columnDefsItemsWatcherDeregistration(),this.columnDefsItemsWatcherDeregistration=null);this.columnDefsFieldsWatcherDeregistration&&(this.columnDefsFieldsWatcherDeregistration(),this.columnDefsFieldsWatcherDeregistration=null);this.columnDefsFieldsWatcherDeregistration=e.$watch("gridOptions.fields",function(n,r){angular.equals(n,r)||h.configureTableStructure(t,i,e)},!0);var c=this.templatedHeader.extractPartialColumnDefinitions(),a=this.templatedBody.extractPartialColumnDefinitions(),v=this.templatedFooter.extractPartialColumnDefinitions(),f=[],b=this.gridOptions.fields;if(b)angular.forEach(this.gridOptions.fields,function(n){n&&f.push({isStandardColumn:!0,fieldName:n})}),f=r(f,c,!1,!0),f=r(f,a,!1,!0);else if(c.length>0)f=r(c,a,!0,!0);else{if(!this.gridOptions.items||this.gridOptions.items.length==0){this.columnDefsItemsWatcherDeregistration=e.$watch("gridOptions.items.length",function(n){n&&h.configureTableStructure(t,i,e)});return}for(y in this.gridOptions.items[0])y.match(/^[_\$]/g)||f.push({isStandardColumn:!0,fieldName:y});f=r(f,a,!0,!0)}v.length==0&&v.push({isStandardColumn:!0});angular.forEach(f,function(n){n.fieldName&&(n.displayFieldName=h.getFormattedFieldName(n.fieldName))});this.gridOptions.gridColumnDefs=f;var p=this.templatedHeader.configureSection(i,f),w=this.templatedFooter.configureSection(i,v),o=this.templatedBody.configureSection(i,f),s=this.templatedBody.getTemplatedRowElement(o),k=this.templatedHeader.getTemplatedRowElement(p);o.attr(l,"");s.attr("ng-click","toggleItemSelection(gridItem, $event)");s.attr("ng-repeat","gridDisplayItem in filteredItems");s.attr("ng-init","gridItem=gridDisplayItem.$$_gridItem");s.attr("ng-class","{'"+n.rowSelectedCssClass+"':gridOptions.selectedItems.indexOf(gridItem)>=0}");p.replaceWith(this.$compile(p)(e));w.replaceWith(this.$compile(w)(e));o.replaceWith(this.$compile(o)(e));u&&this.$timeout(function(){return u.$destroy()})},f.prototype.computeFormattedItems=function(t){var f=t.gridOptions.items||[],i,l,r,o,u,a,c,s,h,e;for(n.debugMode&&this.log("formatting items of length "+f.length),i=t.formattedItems=t.formattedItems||[],t.gridOptions.onDataRequired?t.filteredItems=i:t.requiresReFilteringTrigger=!t.requiresReFilteringTrigger,l=t.gridOptions.gridColumnDefs,r=0;r<f.length;r++){for(o=f[r],a={gridItem:o};i.length>f.length&&(u=i[r]).$$_gridItem!==o;)i.splice(r,1);for(r<i.length?(u=i[r],u.$$_gridItem!==o&&(u={$$_gridItem:o},i[r]=u)):(u={$$_gridItem:o},i.push(u)),c=0;c<l.length;c++)try{s=l[c];h=s.fieldName;h&&(e=s.displayFormat,e?(e[0]!="."&&e[0]!="|"&&(e=" | "+e),u[s.displayFieldName]=t.$eval("gridItem."+h+e,a)):u[s.displayFieldName]=t.$eval("gridItem."+h,a))}catch(v){n.debugMode&&this.log("Field evaluation failed for <"+h+"> with error "+v)}}i.length>f.length&&i.splice(f.length,i.length-f.length)},f.prototype.computeFilteredItems=function(t){if(t.filterByDisplayFields={},t.gridOptions.filterByFields)for(var i in t.gridOptions.filterByFields)t.filterByDisplayFields[this.getFormattedFieldName(i)]=t.gridOptions.filterByFields[i];n.debugMode&&this.log("filtering items of length "+(t.formattedItems?t.formattedItems.length:0));t.filteredItems=t.$eval("formattedItems | filter:gridOptions.filterBy | filter:filterByDisplayFields | "+n.sortFilter+":gridOptions | "+n.dataPagingFilter+":gridOptions")},f.prototype.setupDisplayItemsArray=function(t){var r=this,i="[gridOptions.items,gridOptions.gridColumnDefs.length";angular.forEach(t.gridOptions.gridColumnDefs,function(n){if(n.displayFormat&&n.displayFormat[0]!="."){var t=n.displayFormat.split("|");angular.forEach(t,function(n){var t=n.split(":");t.length>1&&angular.forEach(t.slice(1),function(n){n=n.trim();n&&n!=="gridItem"&&n!=="gridDisplayItem"&&(i+=","+n)})})}});i+="]";n.debugMode&&this.log("re-formatting is set to watch for changes in "+i);t.$watch(i,function(){return r.computeFormattedItems(t)},!0);t.gridOptions.onDataRequired||(i="[requiresReFilteringTrigger, gridOptions.filterBy, gridOptions.filterByFields, gridOptions.orderBy, gridOptions.orderByReverse, gridOptions.currentPage, gridOptions.pageItems]",t.$watch(i,function(){r.computeFilteredItems(t)},!0))},f.prototype.linkAttrs=function(n,t){var r=function(n,i){if(typeof i!="undefined"){switch(i){case"true":i=!0;break;case"false":i=!1}t[n]=i}};for(var i in t)r(i,n[i]),function(t){n.$observe(t,function(n){return r(t,n)})}(i)},f.prototype.linkScope=function(t,i,r,u){var c=this,e=t[r],f,s,h,o;for(f in e)if(s=typeof u[f]!="undefined"&&u[f]!=null,s){h=!1;typeof i[f]!="undefined"&&i[f]!=null&&(e[f]=i[f],h=e[f]instanceof Array);o=null;try{o=this.$parse(u[f])}catch(l){}(function(u,f){f&&f.constant||i.$watch(u,function(n){e[u]=n});var o=f&&f.assign?f.assign:null;o&&t.$watch(r+"."+u,function(t){try{i[u]=t}catch(r){if(n.debugMode){c.log("Mirroring the property on the external scope failed with "+r);throw r;}}})})(f,o)}},f.prototype.log=function(n){console.log(t+"("+(new Date).getTime()+"): "+n)},f}();angular.module("trNgGrid",[]).directive(t,[function(){return{restrict:"A",scope:{items:"=",selectedItems:"=?",filterBy:"=?",filterByFields:"=?",orderBy:"=?",orderByReverse:"=?",pageItems:"=?",currentPage:"=?",totalItems:"=?",enableFiltering:"=?",enableSorting:"=?",enableSelections:"=?",enableMultiRowSelections:"=?",selectionMode:"@",locale:"@",onDataRequired:"&",onDataRequiredDelay:"=?",fields:"=?"},template:function(t){t.addClass(n.tableCssClass);angular.forEach(t.children(),function(n){n=angular.element(n);n.attr("ng-non-bindable","")})},controller:["$compile","$parse","$timeout","$templateCache",et],compile:function(){return{pre:function(n,t,i,r){r.discoverTemplates(t)},post:function(n,t,i,r){var u=r.setupScope(n,t,i);u.speedUpAsyncDataRetrieval=function(n){return r.speedUpAsyncDataRetrieval(n)};r.configureTableStructure(u,t);r.setupDisplayItemsArray(u)}}}}}]).directive(y,[function(){var i=function(n){if(n.columnOptions.displayName)n.columnTitle=n.columnOptions.displayName;else if(n.columnOptions.fieldName){var t=n.columnOptions.fieldName.match(/^[^\.\[\]]*/);t=t[0].split(/(?=[A-Z])/);t.length&&t[0].length&&(t[0]=t[0][0].toLocaleUpperCase()+t[0].substr(1));n.columnTitle=t.join(" ")}else n.columnTitle="[Invalid Field Name]"};return{restrict:"A",require:"^"+t,scope:!0,compile:function(t,r){var u=r.isCustomized=="true";return h(t,r,u,it),{pre:function(t,r,f,e){var s=parseInt(f[y]),o=angular.extend(t.gridOptions.gridColumnDefs[s],n.defaultColumnOptions);e.linkAttrs(f,o);t.columnOptions=o;t.isCustomized=u;t.toggleSorting=function(n){e.toggleSorting(n)};i(t);t.$watch("columnOptions.filter",function(n,t){n!==t&&e.setFilter(o.fieldName,n)})}}}}}]).directive(p,[function(){return{restrict:"A",templateUrl:n.cellHeaderTemplateId,transclude:!0,replace:!0}}]).directive("trNgGridBody",[function(){return{restrict:"A",require:"^"+t,scope:!0,compile:function(){return{pre:function(n,t,i,r){n.toggleItemSelection=function(t,i){r.toggleItemSelection(n.filteredItems,t,i)}}}}}}]).directive(w,[function(){return{restrict:"A",require:"^"+t,scope:!0,compile:function(n,t){var i=t.isCustomized=="true";return h(n,t,i,ut),{pre:function(n,t,r){n.columnOptions=n.gridOptions.gridColumnDefs[parseInt(r[w])];n.gridItem=n.gridDisplayItem.$$_gridItem;n.isCustomized=i}}}}}]).directive(b,[function(){return{restrict:"A",templateUrl:n.cellBodyTemplateId,transclude:!0,replace:!0}}]).directive("trNgGridFooterCell",[function(){return{restrict:"A",require:"^"+t,scope:!0,compile:function(n,t){var i=t.isCustomized=="true";return h(n,t,i,nt),{pre:function(n,t){n.isCustomized=i;t.attr("colspan",n.gridOptions.gridColumnDefs.length)}}}}}]).directive(v,[function(){return{restrict:"A",templateUrl:n.cellFooterTemplateId,transclude:!0,replace:!0}}]).directive(o,[function(){return{restrict:"A",replace:!0,templateUrl:n.columnSortTemplateId}}]).directive(s,[function(){return{restrict:"A",replace:!0,templateUrl:n.columnFilterTemplateId}}]).directive(f,[function(){return{restrict:"A",scope:!1,templateUrl:n.footerGlobalFilterTemplateId}}]).directive(e,[function(){var i=function(t){var f,i;if(t.totalItemsCount=typeof t.gridOptions.totalItems!="undefined"&&t.gridOptions.totalItems!=null?t.gridOptions.totalItems:t.gridOptions.items?t.gridOptions.items.length:0,t.isPaged=!!t.gridOptions.pageItems&&t.gridOptions.pageItems<t.totalItemsCount,t.extendedControlsActive=!1,t.lastPageIndex=!t.totalItemsCount||!t.isPaged?0:Math.floor(t.totalItemsCount/t.gridOptions.pageItems)+(t.totalItemsCount%t.gridOptions.pageItems?0:-1),t.gridOptions.currentPage>t.lastPageIndex&&(t.gridOptions.currentPage=t.lastPageIndex),t.startItemIndex=t.isPaged?t.gridOptions.pageItems*t.gridOptions.currentPage:0,t.endItemIndex=t.isPaged?t.startItemIndex+t.gridOptions.pageItems-1:t.totalItemsCount-1,t.endItemIndex>=t.totalItemsCount&&(t.endItemIndex=t.totalItemsCount-1),t.endItemIndex<t.startItemIndex&&(t.endItemIndex=t.startItemIndex),t.pageCanGoBack=t.isPaged&&t.gridOptions.currentPage>0,t.pageCanGoForward=t.isPaged&&t.gridOptions.currentPage<t.lastPageIndex,t.pageIndexes=t.pageIndexes||[],t.pageIndexes.splice(0),t.isPaged)if(t.lastPageIndex+1>n.defaultPagerMinifiedPageCountThreshold){t.extendedControlsActive=!0;var e=Math.floor(n.defaultPagerMinifiedPageCountThreshold/2),r=t.gridOptions.currentPage-e,u=t.gridOptions.currentPage+e;for(r<0?(u+=-r,r=0):u>t.lastPageIndex&&(r-=u-t.lastPageIndex,u=t.lastPageIndex),r>0&&(t.pageIndexes.push(null),r++),f=!1,u<t.lastPageIndex&&(f=!0,u--),i=r;i<=u;i++)t.pageIndexes.push(i);f&&t.pageIndexes.push(null)}else for(t.extendedControlsActive=!1,i=0;i<=t.lastPageIndex;i++)t.pageIndexes.push(i);t.pageSelectionActive=t.pageIndexes.length>1;t.navigateToPage=function(n){t.gridOptions.currentPage=n;t.speedUpAsyncDataRetrieval()};t.switchPageSelection=function(n,i){t.pageSelectionActive=i;n&&(n.preventDefault(),n.stopPropagation())}};return{restrict:"A",scope:!0,require:"^"+t,templateUrl:n.footerPagerTemplateId,replace:!0,compile:function(){return{pre:function(n,t,r,u){i(n,u)},post:function(n,t,r,u){n.$watchCollection("[gridOptions.currentPage, gridOptions.items.length, gridOptions.totalItems, gridOptions.pageItems]",function(){i(n,u)})}}}}}]).filter(n.sortFilter,["$filter","$parse",function(n,t){return function(i,r){var u,f;if(!r.orderBy||!r.gridColumnDefs)return i;for(u=null,f=0;f<r.gridColumnDefs.length&&(u=r.gridColumnDefs[f]).fieldName!==r.orderBy;u=null,f++);return u?n("orderBy")(i,function(n){var i=undefined;try{i=t("item.$$_gridItem."+u.fieldName)({item:n})}catch(r){}if(i===undefined)try{i=t("item."+u.displayFieldName)({item:n})}catch(r){}return i},r.orderByReverse):i}}]).filter(n.dataPagingFilter,function(){return function(n,t){var i,r;return(n&&(t.totalItems=n.length),!t.pageItems||!n||n.length==0)?n:(t.currentPage||(t.currentPage=0),i=t.currentPage*t.pageItems,i>=n.length&&(t.currentPage=0,i=0),r=t.currentPage*t.pageItems+t.pageItems,n.slice(i,r))}}).filter(n.translateFilter,["$filter",function(t){return function(i,r){var u,f,o,e,c,s,h;if(i instanceof Date)return(f=t(n.translateFilter)(n.translationDateFormat,r),f&&f!==n.translationDateFormat)?t("date")(i,f):i;if(!u)for(o=r.split(/[-_]/),e=o.length;e>0&&!u;e--)c=o.slice(0,e).join("-"),s=n.translations[c],s&&(u=s[i]);if(!u)try{h=t("translate");h&&(u=h(i))}catch(l){}return u||(u=i),u}}]).run(function(){n.tableCssClass="tr-ng-grid table table-bordered table-hover";n.cellCssClass="tr-ng-cell";n.headerCellCssClass="tr-ng-column-header "+n.cellCssClass;n.bodyCellCssClass=n.cellCssClass;n.columnTitleCssClass="tr-ng-title";n.columnSortCssClass="tr-ng-sort";n.columnFilterCssClass="tr-ng-column-filter";n.columnFilterInputWrapperCssClass="";n.columnSortActiveCssClass="tr-ng-sort-active text-info";n.columnSortInactiveCssClass="tr-ng-sort-inactive text-muted glyphicon glyphicon-chevron-down";n.columnSortReverseOrderCssClass="tr-ng-sort-order-reverse glyphicon glyphicon-chevron-down";n.columnSortNormalOrderCssClass="tr-ng-sort-order-normal glyphicon glyphicon-chevron-up";n.rowSelectedCssClass="active";n.footerCssClass="tr-ng-grid-footer form-inline"}).run(function(){n.defaultColumnOptions.displayAlign="left";n.defaultPagerMinifiedPageCountThreshold=3})})(TrNgGrid||(TrNgGrid={}));
 /**
- * @license AngularJS v1.3.13
+ * @license AngularJS v1.3.14
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -56171,7 +56171,6 @@ function htmlParser(html, handler) {
 }
 
 var hiddenPre=document.createElement("pre");
-var spaceRe = /^(\s*)([\s\S]*?)(\s*)$/;
 /**
  * decodes all entities into regular string
  * @param value
@@ -56180,22 +56179,10 @@ var spaceRe = /^(\s*)([\s\S]*?)(\s*)$/;
 function decodeEntities(value) {
   if (!value) { return ''; }
 
-  // Note: IE8 does not preserve spaces at the start/end of innerHTML
-  // so we must capture them and reattach them afterward
-  var parts = spaceRe.exec(value);
-  var spaceBefore = parts[1];
-  var spaceAfter = parts[3];
-  var content = parts[2];
-  if (content) {
-    hiddenPre.innerHTML=content.replace(/</g,"&lt;");
-    // innerText depends on styling as it doesn't display hidden elements.
-    // Therefore, it's better to use textContent not to cause unnecessary
-    // reflows. However, IE<9 don't support textContent so the innerText
-    // fallback is necessary.
-    content = 'textContent' in hiddenPre ?
-      hiddenPre.textContent : hiddenPre.innerText;
-  }
-  return spaceBefore + content + spaceAfter;
+  hiddenPre.innerHTML = value.replace(/</g,"&lt;");
+  // innerText depends on styling as it doesn't display hidden elements.
+  // Therefore, it's better to use textContent not to cause unnecessary reflows.
+  return hiddenPre.textContent;
 }
 
 /**
@@ -58492,7 +58479,7 @@ angular.module('ui.utils',  [
 ]);
 
 /**
- * @license AngularJS v1.3.13
+ * @license AngularJS v1.3.14
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -58705,6 +58692,7 @@ function shallowClearAndCopy(src, dst) {
  *   - HTTP GET "class" actions: `Resource.action([parameters], [success], [error])`
  *   - non-GET "class" actions: `Resource.action([parameters], postData, [success], [error])`
  *   - non-GET instance actions:  `instance.$action([parameters], [success], [error])`
+ *
  *
  *   Success callback is called with (value, responseHeaders) arguments. Error callback is called
  *   with (httpResponse) argument.
@@ -91307,9 +91295,9 @@ angular.module('schemaForm').provider('schemaFormDecorators',
                   // Do we have a condition? Then we slap on an ng-if on all children,
                   // but be nice to existing ng-if.
                   if (form.condition) {
-                    element.children().each(function() {
-                      var ngIf = this.getAttribute('ng-if');
-                      this.setAttribute(
+                    angular.forEach(element.children(),function(child) {
+                      var ngIf = child.getAttribute('ng-if');
+                      child.setAttribute(
                         'ng-if',
                         ngIf ?
                         '(' + ngIf +
@@ -93032,6 +93020,18 @@ angular.module('ui.calendar', [])
 
 (function() {
   'use strict';
+  angular.module('BBAdminEvents', ['BB', 'BBAdmin.Services', 'BBAdmin.Filters', 'BBAdmin.Controllers', 'trNgGrid']);
+
+  angular.module('BBAdminEvents').config(function($logProvider) {
+    return $logProvider.debugEnabled(true);
+  });
+
+  angular.module('BBAdminEventsMockE2E', ['BBAdminEvents', 'BBAdminMockE2E']);
+
+}).call(this);
+
+(function() {
+  'use strict';
   var app;
 
   app = angular.module('BB', ['BB.Controllers', 'BB.Filters', 'BB.Models', 'BB.Services', 'BB.Directives', 'angular-hal', 'ui.bootstrap', 'ngSanitize', 'ui.map', 'ui.utils', 'ngLocalData', 'ui.router', 'ngAnimate', 'angular-data.DSCacheFactory', 'schemaForm', 'ngStorage', 'angularFileUpload']);
@@ -93176,18 +93176,6 @@ angular.module('ui.calendar', [])
 
 (function() {
   'use strict';
-  angular.module('BBAdminEvents', ['BB', 'BBAdmin.Services', 'BBAdmin.Filters', 'BBAdmin.Controllers', 'trNgGrid']);
-
-  angular.module('BBAdminEvents').config(function($logProvider) {
-    return $logProvider.debugEnabled(true);
-  });
-
-  angular.module('BBAdminEventsMockE2E', ['BBAdminEvents', 'BBAdminMockE2E']);
-
-}).call(this);
-
-(function() {
-  'use strict';
   angular.module('BBMember', ['BB', 'BBMember.Directives', 'BBMember.Services', 'BBMember.Filters', 'BBMember.Controllers', 'BBMember.Models', 'trNgGrid', 'pascalprecht.translate']);
 
   angular.module('BBMember').config(function($logProvider) {
@@ -93226,18 +93214,6 @@ angular.module('ui.calendar', [])
 
 (function() {
   'use strict';
-  angular.module('BBAdminSettings', ['BB', 'BBAdmin.Services', 'BBAdmin.Filters', 'BBAdmin.Controllers', 'trNgGrid']);
-
-  angular.module('BBAdminSettings').config(function($logProvider) {
-    return $logProvider.debugEnabled(true);
-  });
-
-  angular.module('BBAdminSettingsMockE2E', ['BBAdminSettings', 'BBAdminMockE2E']);
-
-}).call(this);
-
-(function() {
-  'use strict';
   angular.module('BBAdminServices', ['BB', 'BBAdmin.Services', 'BBAdmin.Filters', 'BBAdmin.Controllers', 'trNgGrid', 'ui.calendar']);
 
   angular.module('BBAdminServices').config(function($logProvider) {
@@ -93245,6 +93221,18 @@ angular.module('ui.calendar', [])
   });
 
   angular.module('BBAdminServicesMockE2E', ['BBAdminServices', 'BBAdminMockE2E']);
+
+}).call(this);
+
+(function() {
+  'use strict';
+  angular.module('BBAdminSettings', ['BB', 'BBAdmin.Services', 'BBAdmin.Filters', 'BBAdmin.Controllers', 'trNgGrid']);
+
+  angular.module('BBAdminSettings').config(function($logProvider) {
+    return $logProvider.debugEnabled(true);
+  });
+
+  angular.module('BBAdminSettingsMockE2E', ['BBAdminSettings', 'BBAdminMockE2E']);
 
 }).call(this);
 
@@ -95630,1503 +95618,6 @@ function getURIparam( name ){
     schemaFormDecoratorsProvider.createDirective('datetime', 'bootstrap_ui_datetime_form.html');
     schemaFormDecoratorsProvider.addMapping('bootstrapDecorator', 'price', 'price_form.html');
     return schemaFormDecoratorsProvider.createDirective('price', 'price_form.html');
-  });
-
-}).call(this);
-
-(function() {
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  window.Collection.Client = (function(superClass) {
-    extend(Client, superClass);
-
-    function Client() {
-      return Client.__super__.constructor.apply(this, arguments);
-    }
-
-    Client.prototype.checkItem = function(item) {
-      return Client.__super__.checkItem.apply(this, arguments);
-    };
-
-    return Client;
-
-  })(window.Collection.Base);
-
-  angular.module('BB.Services').provider("ClientCollections", function() {
-    return {
-      $get: function() {
-        return new window.BaseCollections();
-      }
-    };
-  });
-
-}).call(this);
-
-
-angular.module('ngLocalData', ['angular-hal']).
- factory('$localCache', ['halClient', '$q', function( halClient, $q) {
-    data = {};
-
-    jsonData = function(data) {
-        return data && JSON.parse(data);
-    }
-
-    storage = function()
-    {
-      return sessionStorage
-    } 
-    localSave = function(key, item){
-      storage().setItem(key, item.$toStore())   
-    } 
-    localLoad = function(key){
-      res =  jsonData(storage().getItem(key))
-      if (res)
-      {  
-        r = halClient.createResource(res)
-        def = $q.defer()
-        def.resolve(r)
-        return def.promise
-      }
-      return null
-    } 
-    localDelete = function(key) {
-      storage().removeItem(key)
-    }
-
-    return {
-
-      set: function(key, val)
-      {
-        data[key] = val
-        val.then(function(item){
-          localSave(key, item)
-        })
-        return val
-      },
-      get: function(key)
-      {
-        localLoad(key)
-        if (!data[key])
-          data[key] = localLoad(key)
-        return data[key]
-      },
-      del: function(key)
-      {
-        localDelete(key)
-        delete data[key]
-      },
-      has: function(key)
-      {
-        if (!data[key])
-        { 
-          res = localLoad(key)
-          if (res)
-            data[key] = res
-        }
-        return (key in data)
-      }      
-    }
-
-}]).
- factory('$localData', ['$http', '$rootScope', function($http, $rootScope) {
-    function LocalDataFactory(name) {
-      function LocalData(value){
-        this.setStore(value);
-      }
-
-      LocalData.prototype.jsonData = function(data) {
-          return data && JSON.parse(data);
-      }
-
-      LocalData.prototype.storage = function()
-      {
-        return sessionStorage
-      }  
-
-      LocalData.prototype.localSave = function(item)
-      {
-        this.storage().setItem(this.store_name + item.id, JSON.stringify(item))
-      }
-
-
-      LocalData.prototype.localSaveIndex = function(ids)
-      {
-        this.storage().setItem(this.store_name, ids.join(","))
-        this.ids = ids;
-      }
-
-      LocalData.prototype.localLoadIndex = function()
-      {
-        store = this.storage().getItem(this.store_name)
-        records = (store && store.split(",")) || [];
-        return records
-      }
-
-      LocalData.prototype.localLoad = function( id)
-      {
-        return this.jsonData(this.storage().getItem(this.store_name + id))
-      }
-
-      LocalData.prototype.count = function()
-      {
-        return this.ids.length
-      }
-
-      LocalData.prototype.setStore = function(name)
-      {
-        this.store_name = name;
-        this.data_store = []
-        this.ids = this.localLoadIndex();
-        for (a = 0; a < this.ids.length; a++){
-          this.data_store.push(this.localLoad(this.ids[a]));
-        }
-    //    var channel = pusher.subscribe(name);
-    //    var ds = this;
-
-     //   channel.bind('add', function(data) {
-     //     ds.data_store.push(data);
-     //     $rootScope.$broadcast("Refresh_" + ds.store_name, "Updated");          
-     //   });
-
-      }
-
-      LocalData.prototype.update = function(data)
-      {
-        ids = []
-        for (x in data){
-          if (data[x].id){
-           ids.push(data[x].id)
-           this.localSave(data[x])
-         }
-        }
-        this.localSaveIndex(ids)
-      }
-
-      return new LocalData(name)
-
-    };
-
-
-    
-    return LocalDataFactory
-}]);
-
-/// <reference path="../../../typings/angularjs/angular.d.ts"/>
-"use strict";
-var TrNgGrid;
-(function (TrNgGrid) {
-    (function (SelectionMode) {
-        SelectionMode[SelectionMode["None"] = 0] = "None";
-        SelectionMode[SelectionMode["SingleRow"] = 1] = "SingleRow";
-        SelectionMode[SelectionMode["MultiRow"] = 2] = "MultiRow";
-        SelectionMode[SelectionMode["MultiRowWithKeyModifiers"] = 3] = "MultiRowWithKeyModifiers";
-    })(TrNgGrid.SelectionMode || (TrNgGrid.SelectionMode = {}));
-    var SelectionMode = TrNgGrid.SelectionMode;
-    // it's important to assign all the default column options, so we can match them with the column attributes in the markup
-    TrNgGrid.defaultColumnOptions = {
-        cellWidth: null,
-        cellHeight: null,
-        displayAlign: null,
-        displayFormat: null,
-        displayName: null,
-        filter: null,
-        enableFiltering: null,
-        enableSorting: null
-    };
-    TrNgGrid.translations = {};
-    TrNgGrid.debugMode = false;
-    var templatesConfigured = false;
-    var tableDirective = "trNgGrid";
-    TrNgGrid.sortFilter = tableDirective + "SortFilter";
-    TrNgGrid.dataPagingFilter = tableDirective + "DataPagingFilter";
-    TrNgGrid.translateFilter = tableDirective + "TranslateFilter";
-    TrNgGrid.translationDateFormat = tableDirective + "DateFormat";
-    TrNgGrid.dataFormattingFilter = tableDirective + "DataFormatFilter";
-    //var headerDirective="trNgGridHeader";
-    //var headerDirectiveAttribute = "tr-ng-grid-header";
-    var bodyDirective = "trNgGridBody";
-    var bodyDirectiveAttribute = "tr-ng-grid-body";
-    var fieldNameAttribute = "field-name";
-    var isCustomizedAttribute = "is-customized";
-    var cellFooterDirective = "trNgGridFooterCell";
-    var cellFooterDirectiveAttribute = "tr-ng-grid-footer-cell";
-    var cellFooterTemplateDirective = "trNgGridFooterCellTemplate";
-    var cellFooterTemplateDirectiveAttribute = "tr-ng-grid-footer-cell-template";
-    TrNgGrid.cellFooterTemplateId = cellFooterTemplateDirective + ".html";
-    var globalFilterDirective = "trNgGridGlobalFilter";
-    TrNgGrid.globalFilterDirectiveAttribute = "tr-ng-grid-global-filter";
-    TrNgGrid.footerGlobalFilterTemplateId = globalFilterDirective + ".html";
-    var pagerDirective = "trNgGridPager";
-    TrNgGrid.pagerDirectiveAttribute = "tr-ng-grid-pager";
-    TrNgGrid.footerPagerTemplateId = pagerDirective + ".html";
-    var cellHeaderDirective = "trNgGridHeaderCell";
-    var cellHeaderDirectiveAttribute = "tr-ng-grid-header-cell";
-    var cellHeaderTemplateDirective = "trNgGridHeaderCellTemplate";
-    var cellHeaderTemplateDirectiveAttribute = "tr-ng-grid-header-cell-template";
-    TrNgGrid.cellHeaderTemplateId = cellHeaderTemplateDirective + ".html";
-    var cellBodyDirective = "trNgGridBodyCell";
-    var cellBodyDirectiveAttribute = "tr-ng-grid-body-cell";
-    var cellBodyTemplateDirective = "trNgGridBodyCellTemplate";
-    var cellBodyTemplateDirectiveAttribute = "tr-ng-grid-body-cell-template";
-    TrNgGrid.cellBodyTemplateId = cellBodyTemplateDirective + ".html";
-    var columnSortDirective = "trNgGridColumnSort";
-    TrNgGrid.columnSortDirectiveAttribute = "tr-ng-grid-column-sort";
-    TrNgGrid.columnSortTemplateId = columnSortDirective + ".html";
-    var columnFilterDirective = "trNgGridColumnFilter";
-    TrNgGrid.columnFilterDirectiveAttribute = "tr-ng-grid-column-filter";
-    TrNgGrid.columnFilterTemplateId = columnFilterDirective + ".html";
-    var findChildByTagName = function (parent, childTag) {
-        childTag = childTag.toUpperCase();
-        var children = parent.children();
-        for (var childIndex = 0; childIndex < children.length; childIndex++) {
-            var childElement = children[childIndex];
-            if (childElement.tagName == childTag) {
-                return angular.element(childElement);
-            }
-        }
-        return null;
-    };
-    var findChildrenByTagName = function (parent, childTag) {
-        childTag = childTag.toUpperCase();
-        var retChildren = [];
-        var children = parent.children();
-        for (var childIndex = 0; childIndex < children.length; childIndex++) {
-            var childElement = children[childIndex];
-            if (childElement.tagName == childTag) {
-                retChildren.push(angular.element(childElement));
-            }
-        }
-        return retChildren;
-    };
-    /**
-     * Combines two sets of cell infos. The first set will take precedence in the checks but the combined items will contain items from the second set if they match.
-     */
-    var combineGridCellInfos = function (firstSet, secondSet, addExtraFieldItemsSecondSet, addExtraNonFieldItemsSecondSet) {
-        var combinedSet = [];
-        var secondTempSet = secondSet.slice(0);
-        angular.forEach(firstSet, function (firstSetColumn) {
-            // find a correspondence in the second set
-            var foundSecondSetColumn = null;
-            for (var secondSetColumnIndex = 0; !foundSecondSetColumn && secondSetColumnIndex < secondTempSet.length; secondSetColumnIndex++) {
-                foundSecondSetColumn = secondTempSet[secondSetColumnIndex];
-                if (foundSecondSetColumn.fieldName === firstSetColumn.fieldName) {
-                    secondTempSet.splice(secondSetColumnIndex, 1);
-                }
-                else {
-                    foundSecondSetColumn = null;
-                }
-            }
-            if (foundSecondSetColumn) {
-                combinedSet.push(foundSecondSetColumn);
-            }
-            else {
-                combinedSet.push(firstSetColumn);
-            }
-        });
-        // add the remaining items from the second set in the combined set
-        if (addExtraFieldItemsSecondSet || addExtraNonFieldItemsSecondSet) {
-            angular.forEach(secondTempSet, function (secondSetColumn) {
-                if ((addExtraFieldItemsSecondSet && secondSetColumn.fieldName) || (addExtraNonFieldItemsSecondSet && !secondSetColumn.fieldName)) {
-                    combinedSet.push(secondSetColumn);
-                }
-            });
-        }
-        return combinedSet;
-    };
-    var wrapTemplatedCell = function (templateElement, tAttrs, isCustomized, cellTemplateDirective) {
-        if (isCustomized) {
-            var childrenElements = templateElement.children();
-            var firstChildElement = angular.element(childrenElements[0]);
-            if (childrenElements.length !== 1 || !firstChildElement.attr(cellTemplateDirective)) {
-                // wrap the children of the custom template cell
-                templateElement.empty();
-                var templateWrapElement = angular.element("<div></div>").attr(cellTemplateDirective, "");
-                templateElement.append(templateWrapElement);
-                angular.forEach(childrenElements, function (childElement) {
-                    templateWrapElement.append(angular.element(childElement));
-                });
-            }
-        }
-        else {
-            templateElement.empty();
-            templateElement.append(angular.element("<div></div>").attr(cellTemplateDirective, ""));
-        }
-    };
-    var TemplatedCell = (function () {
-        function TemplatedCell(parent, cellElement) {
-            this.parent = parent;
-            this.cellElement = cellElement;
-            this.fieldName = cellElement.attr(fieldNameAttribute);
-            var customContent = cellElement.children();
-            this.isStandardColumn = customContent.length === 0;
-        }
-        return TemplatedCell;
-    })();
-    var TemplatedSection = (function () {
-        function TemplatedSection(sectionTagName, sectionDirectiveAttribute, rowDirectiveAttribute, cellTagName, cellDirectiveAttribute) {
-            this.sectionTagName = sectionTagName;
-            this.sectionDirectiveAttribute = sectionDirectiveAttribute;
-            this.rowDirectiveAttribute = rowDirectiveAttribute;
-            this.cellTagName = cellTagName;
-            this.cellDirectiveAttribute = cellDirectiveAttribute;
-            this.cellTagName = this.cellTagName.toUpperCase();
-            this.cells = null;
-        }
-        TemplatedSection.prototype.configureSection = function (gridElement, columnDefs) {
-            var _this = this;
-            var sectionElement = this.getSectionElement(gridElement, true);
-            sectionElement.empty();
-            sectionElement.removeAttr("ng-non-bindable");
-            // add the elements in order
-            var rowElementDefinitions = combineGridCellInfos(columnDefs, this.cells, false, false);
-            // grab the templated row
-            var templatedRowElement = this.getTemplatedRowElement(sectionElement, true);
-            angular.forEach(rowElementDefinitions, function (gridCell, index) {
-                var gridCellElement;
-                var templatedCell = gridCell;
-                // it might not be a templated cell, beware
-                if (templatedCell.parent === _this && templatedCell.cellElement) {
-                    gridCellElement = templatedCell.cellElement.clone(true);
-                }
-                else {
-                    gridCellElement = angular.element("<table><" + _this.cellTagName + "></" + _this.cellTagName + "></table>").find(_this.cellTagName);
-                }
-                // set it up
-                if (_this.cellDirectiveAttribute) {
-                    gridCellElement.attr(_this.cellDirectiveAttribute, index);
-                }
-                if (!gridCell.isStandardColumn) {
-                    gridCellElement.attr(isCustomizedAttribute, "true");
-                }
-                if (gridCell.fieldName) {
-                    gridCellElement.attr(fieldNameAttribute, gridCell.fieldName);
-                }
-                gridCellElement.attr("ng-style", "{\'width\':columnOptions.cellWidth,\'height\':columnOptions.cellHeight}");
-                // finally add it to the parent
-                templatedRowElement.append(gridCellElement);
-            });
-            return sectionElement;
-        };
-        TemplatedSection.prototype.extractPartialColumnDefinitions = function () {
-            return this.cells;
-        };
-        TemplatedSection.prototype.discoverCells = function (gridElement) {
-            var _this = this;
-            this.cells = [];
-            var templatedRow = this.getTemplatedRowElement(this.getSectionElement(gridElement, false), false);
-            if (templatedRow) {
-                angular.forEach(templatedRow.children(), function (childElement, childIndex) {
-                    childElement = angular.element(childElement);
-                    if (childElement[0].tagName === _this.cellTagName.toUpperCase()) {
-                        var templateElement = childElement.clone(true);
-                        _this.cells.push(new TemplatedCell(_this, templateElement));
-                    }
-                });
-            }
-        };
-        TemplatedSection.prototype.getSectionElement = function (gridElement, ensurePresent) {
-            var sectionElement = null;
-            if (gridElement) {
-                sectionElement = findChildByTagName(gridElement, this.sectionTagName);
-            }
-            if (!sectionElement && ensurePresent) {
-                // angular strikes again: https://groups.google.com/forum/#!topic/angular/7poFynsguNw
-                sectionElement = angular.element("<table><" + this.sectionTagName + "></" + this.sectionTagName + "></table>").find(this.sectionTagName);
-                if (gridElement) {
-                    gridElement.append(sectionElement);
-                }
-            }
-            if (ensurePresent && this.sectionDirectiveAttribute) {
-                sectionElement.attr(this.sectionDirectiveAttribute, "");
-            }
-            return sectionElement;
-        };
-        TemplatedSection.prototype.getTemplatedRowElement = function (sectionElement, ensurePresent) {
-            var rowElement = null;
-            if (sectionElement) {
-                rowElement = findChildByTagName(sectionElement, "tr");
-            }
-            if (!rowElement && ensurePresent) {
-                rowElement = angular.element("<table><tr></tr></table>").find("tr");
-                if (sectionElement) {
-                    sectionElement.append(rowElement);
-                }
-            }
-            if (ensurePresent && this.rowDirectiveAttribute) {
-                rowElement.attr(this.rowDirectiveAttribute, "");
-            }
-            return rowElement;
-        };
-        return TemplatedSection;
-    })();
-    var GridController = (function () {
-        function GridController($compile, $parse, $timeout, $templateCache) {
-            this.$compile = $compile;
-            this.$parse = $parse;
-            this.$timeout = $timeout;
-            if (!templatesConfigured) {
-                configureTemplates($templateCache);
-                templatesConfigured = true;
-            }
-        }
-        GridController.prototype.setupScope = function ($isolatedScope, $gridElement, $attrs) {
-            var _this = this;
-            // create a scope, used just by our grid
-            var gridScope = angular.element($gridElement).scope().$new();
-            // initialise the options
-            this.gridOptions = {
-                immediateDataRetrieval: true,
-                items: [],
-                fields: null,
-                locale: "en",
-                selectedItems: [],
-                filterBy: null,
-                filterByFields: {},
-                orderBy: null,
-                orderByReverse: false,
-                pageItems: null,
-                currentPage: 0,
-                totalItems: null,
-                enableFiltering: true,
-                enableSorting: true,
-                selectionMode: SelectionMode[2 /* MultiRow */],
-                onDataRequiredDelay: 1000,
-                onDataRequired: $attrs["onDataRequired"] ? $isolatedScope["onDataRequired"] : null,
-                gridColumnDefs: []
-            };
-            //link the outer scope with the internal one
-            gridScope.gridOptions = this.gridOptions;
-            gridScope.TrNgGrid = TrNgGrid;
-            this.linkScope(gridScope, $isolatedScope, "gridOptions", $attrs);
-            //set up watchers for some of the special attributes we support
-            if (this.gridOptions.onDataRequired) {
-                var retrieveDataCallback = function () {
-                    _this.dataRequestPromise = null;
-                    _this.gridOptions.immediateDataRetrieval = false;
-                    _this.gridOptions.onDataRequired(_this.gridOptions);
-                };
-                var scheduleDataRetrieval = function () {
-                    if (_this.dataRequestPromise) {
-                        _this.$timeout.cancel(_this.dataRequestPromise);
-                        _this.dataRequestPromise = null;
-                    }
-                    if (_this.gridOptions.immediateDataRetrieval) {
-                        retrieveDataCallback();
-                    }
-                    else {
-                        _this.dataRequestPromise = _this.$timeout(function () {
-                            retrieveDataCallback();
-                        }, _this.gridOptions.onDataRequiredDelay, true);
-                    }
-                };
-                gridScope.$watch("gridOptions.currentPage", function (newValue, oldValue) {
-                    if (newValue !== oldValue) {
-                        scheduleDataRetrieval();
-                    }
-                });
-                gridScope.$watchCollection("[" + "gridOptions.filterBy, " + "gridOptions.filterByFields, " + "gridOptions.orderBy, " + "gridOptions.orderByReverse, " + "gridOptions.pageItems, " + "]", function (newValues, oldValues) {
-                    // everything will reset the page index, with the exception of a page index change
-                    if (_this.gridOptions.currentPage !== 0) {
-                        _this.gridOptions.currentPage = 0;
-                        // the page index watch will activate, exit for now to avoid duplicate data requests
-                        return;
-                    }
-                    scheduleDataRetrieval();
-                });
-                gridScope.$watch("gridOptions.immediateDataRetrieval", function (newValue) {
-                    if (newValue && _this.dataRequestPromise) {
-                        _this.$timeout.cancel(_this.dataRequestPromise);
-                        retrieveDataCallback();
-                    }
-                });
-            }
-            // the new settings
-            gridScope.$watch("gridOptions.selectionMode", function (newValue, oldValue) {
-                if (newValue !== oldValue) {
-                    switch (newValue) {
-                        case SelectionMode[0 /* None */]:
-                            _this.gridOptions.selectedItems.splice(0);
-                            break;
-                        case SelectionMode[1 /* SingleRow */]:
-                            if (_this.gridOptions.selectedItems.length > 1) {
-                                _this.gridOptions.selectedItems.splice(1);
-                            }
-                            break;
-                    }
-                }
-            });
-            return gridScope;
-        };
-        GridController.prototype.speedUpAsyncDataRetrieval = function ($event) {
-            if (!$event || $event.keyCode == 13) {
-                this.gridOptions.immediateDataRetrieval = true;
-            }
-        };
-        GridController.prototype.setColumnOptions = function (columnIndex, columnOptions) {
-            var originalOptions = this.gridOptions.gridColumnDefs[columnIndex];
-            if (!originalOptions) {
-                throw "Invalid grid column options found for column index " + columnIndex + ". Please report this error.";
-            }
-            // copy a couple of options onto the incoming set of options
-            columnOptions = angular.extend(columnOptions, originalOptions);
-            // replace the original options 
-            this.gridOptions.gridColumnDefs[columnIndex] = columnOptions;
-        };
-        GridController.prototype.toggleSorting = function (propertyName) {
-            if (this.gridOptions.orderBy != propertyName) {
-                // the column has changed
-                this.gridOptions.orderBy = propertyName;
-            }
-            else {
-                // the sort direction has changed
-                this.gridOptions.orderByReverse = !this.gridOptions.orderByReverse;
-            }
-            this.speedUpAsyncDataRetrieval();
-        };
-        GridController.prototype.getFormattedFieldName = function (fieldName) {
-            return fieldName.replace(/[\.\[\]]/g, "_");
-        };
-        GridController.prototype.setFilter = function (fieldName, filter) {
-            if (!filter) {
-                delete (this.gridOptions.filterByFields[fieldName]);
-            }
-            else {
-                this.gridOptions.filterByFields[fieldName] = filter;
-            }
-            // in order for someone to successfully listen to changes made to this object, we need to replace it
-            this.gridOptions.filterByFields = angular.extend({}, this.gridOptions.filterByFields);
-        };
-        GridController.prototype.toggleItemSelection = function (filteredItems, item, $event) {
-            if (this.gridOptions.selectionMode === SelectionMode[0 /* None */])
-                return;
-            switch (this.gridOptions.selectionMode) {
-                case SelectionMode[3 /* MultiRowWithKeyModifiers */]:
-                    if (!$event.ctrlKey && !$event.shiftKey && !$event.metaKey) {
-                        // if neither key modifiers are pressed, clear the selection and start fresh
-                        var itemIndex = this.gridOptions.selectedItems.indexOf(item);
-                        this.gridOptions.selectedItems.splice(0);
-                        if (itemIndex < 0) {
-                            this.gridOptions.selectedItems.push(item);
-                        }
-                    }
-                    else {
-                        if ($event.ctrlKey || $event.metaKey) {
-                            // the ctrl key deselects or selects the item
-                            var itemIndex = this.gridOptions.selectedItems.indexOf(item);
-                            if (itemIndex >= 0) {
-                                this.gridOptions.selectedItems.splice(itemIndex, 1);
-                            }
-                            else {
-                                this.gridOptions.selectedItems.push(item);
-                            }
-                        }
-                        else if ($event.shiftKey) {
-                            // clear undesired selections, if the styles are not applied
-                            if (document.selection && document.selection.empty) {
-                                document.selection.empty();
-                            }
-                            else if (window.getSelection) {
-                                var sel = window.getSelection();
-                                sel.removeAllRanges();
-                            }
-                            // the shift key will always select items from the last selected item
-                            var firstItemIndex;
-                            var lastSelectedItem = this.gridOptions.selectedItems[this.gridOptions.selectedItems.length - 1];
-                            for (firstItemIndex = 0; firstItemIndex < filteredItems.length && filteredItems[firstItemIndex].$$_gridItem !== lastSelectedItem; firstItemIndex++)
-                                ;
-                            if (firstItemIndex >= filteredItems.length) {
-                                firstItemIndex = 0;
-                            }
-                            var lastItemIndex;
-                            for (lastItemIndex = 0; lastItemIndex < filteredItems.length && filteredItems[lastItemIndex].$$_gridItem !== item; lastItemIndex++)
-                                ;
-                            if (lastItemIndex >= filteredItems.length) {
-                                throw "Invalid selection on a key modifier selection mode";
-                            }
-                            if (lastItemIndex < firstItemIndex) {
-                                var tempIndex = firstItemIndex;
-                                firstItemIndex = lastItemIndex;
-                                lastItemIndex = tempIndex;
-                            }
-                            for (var currentItemIndex = firstItemIndex; currentItemIndex <= lastItemIndex; currentItemIndex++) {
-                                var currentItem = filteredItems[currentItemIndex].$$_gridItem;
-                                if (this.gridOptions.selectedItems.indexOf(currentItem) < 0) {
-                                    this.gridOptions.selectedItems.push(currentItem);
-                                }
-                            }
-                        }
-                    }
-                    break;
-                case SelectionMode[1 /* SingleRow */]:
-                    var itemIndex = this.gridOptions.selectedItems.indexOf(item);
-                    this.gridOptions.selectedItems.splice(0);
-                    if (itemIndex < 0) {
-                        this.gridOptions.selectedItems.push(item);
-                    }
-                    break;
-                case SelectionMode[2 /* MultiRow */]:
-                    var itemIndex = this.gridOptions.selectedItems.indexOf(item);
-                    if (itemIndex >= 0) {
-                        this.gridOptions.selectedItems.splice(itemIndex, 1);
-                    }
-                    else {
-                        this.gridOptions.selectedItems.push(item);
-                    }
-                    break;
-            }
-        };
-        GridController.prototype.discoverTemplates = function (gridElement) {
-            this.templatedHeader = new TemplatedSection("thead", null, null, "th", cellHeaderDirectiveAttribute);
-            this.templatedBody = new TemplatedSection("tbody", bodyDirectiveAttribute, null, "td", cellBodyDirectiveAttribute);
-            this.templatedFooter = new TemplatedSection("tfoot", null, null, "td", cellFooterDirectiveAttribute);
-            this.templatedHeader.discoverCells(gridElement);
-            this.templatedFooter.discoverCells(gridElement);
-            this.templatedBody.discoverCells(gridElement);
-        };
-        GridController.prototype.configureTableStructure = function (parentScope, gridElement, oldScope) {
-            var _this = this;
-            var scope = parentScope.$new();
-            gridElement.empty();
-            // make sure we're no longer watching for column defs
-            if (this.columnDefsItemsWatcherDeregistration) {
-                this.columnDefsItemsWatcherDeregistration();
-                this.columnDefsItemsWatcherDeregistration = null;
-            }
-            if (this.columnDefsFieldsWatcherDeregistration) {
-                this.columnDefsFieldsWatcherDeregistration();
-                this.columnDefsFieldsWatcherDeregistration = null;
-            }
-            // watch for a change in field values
-            // don't be tempted to use watchcollection, it always returns same values which can't be compared
-            // https://github.com/angular/angular.js/issues/2621
-            // which causes us the recompile even if we don't have to
-            this.columnDefsFieldsWatcherDeregistration = scope.$watch("gridOptions.fields", function (newValue, oldValue) {
-                if (!angular.equals(newValue, oldValue)) {
-                    _this.configureTableStructure(parentScope, gridElement, scope);
-                }
-            }, true);
-            // prepare a partial list of column definitions
-            var templatedHeaderPartialGridColumnDefs = this.templatedHeader.extractPartialColumnDefinitions();
-            var templatedBodyPartialGridColumnDefs = this.templatedBody.extractPartialColumnDefinitions();
-            var templatedFooterPartialGridColumnDefs = this.templatedFooter.extractPartialColumnDefinitions();
-            var finalPartialGridColumnDefs = [];
-            var fieldsEnforced = this.gridOptions.fields;
-            if (fieldsEnforced) {
-                // the fields bound to the options will take precedence
-                angular.forEach(this.gridOptions.fields, function (fieldName) {
-                    if (fieldName) {
-                        finalPartialGridColumnDefs.push({
-                            isStandardColumn: true,
-                            fieldName: fieldName
-                        });
-                    }
-                });
-                finalPartialGridColumnDefs = combineGridCellInfos(finalPartialGridColumnDefs, templatedHeaderPartialGridColumnDefs, false, true);
-                finalPartialGridColumnDefs = combineGridCellInfos(finalPartialGridColumnDefs, templatedBodyPartialGridColumnDefs, false, true);
-            }
-            else {
-                // check for the header markup
-                if (templatedHeaderPartialGridColumnDefs.length > 0) {
-                    // header and body will be used for fishing out the field names
-                    finalPartialGridColumnDefs = combineGridCellInfos(templatedHeaderPartialGridColumnDefs, templatedBodyPartialGridColumnDefs, true, true);
-                }
-                else {
-                    // the object itself will provide the field names
-                    if (!this.gridOptions.items || this.gridOptions.items.length == 0) {
-                        // register our interest for when we do have something to look at
-                        this.columnDefsItemsWatcherDeregistration = scope.$watch("gridOptions.items.length", function (newValue, oldValue) {
-                            if (newValue) {
-                                _this.configureTableStructure(parentScope, gridElement, scope);
-                            }
-                        });
-                        return;
-                    }
-                    for (var propName in this.gridOptions.items[0]) {
-                        // exclude the library properties
-                        if (!propName.match(/^[_\$]/g)) {
-                            finalPartialGridColumnDefs.push({
-                                isStandardColumn: true,
-                                fieldName: propName
-                            });
-                        }
-                    }
-                    // combine with the body template
-                    finalPartialGridColumnDefs = combineGridCellInfos(finalPartialGridColumnDefs, templatedBodyPartialGridColumnDefs, true, true);
-                }
-            }
-            // it's time to make final tweaks to the instances and recompile
-            if (templatedFooterPartialGridColumnDefs.length == 0) {
-                templatedFooterPartialGridColumnDefs.push({ isStandardColumn: true });
-            }
-            // compute the formatted field names
-            angular.forEach(finalPartialGridColumnDefs, function (columnDefs) {
-                if (columnDefs.fieldName) {
-                    columnDefs.displayFieldName = _this.getFormattedFieldName(columnDefs.fieldName);
-                }
-            });
-            this.gridOptions.gridColumnDefs = finalPartialGridColumnDefs;
-            var headerElement = this.templatedHeader.configureSection(gridElement, finalPartialGridColumnDefs);
-            var footerElement = this.templatedFooter.configureSection(gridElement, templatedFooterPartialGridColumnDefs);
-            var bodyElement = this.templatedBody.configureSection(gridElement, finalPartialGridColumnDefs);
-            var templatedBodyRowElement = this.templatedBody.getTemplatedRowElement(bodyElement);
-            var templatedHeaderRowElement = this.templatedHeader.getTemplatedRowElement(headerElement);
-            bodyElement.attr(bodyDirectiveAttribute, "");
-            templatedBodyRowElement.attr("ng-click", "toggleItemSelection(gridItem, $event)");
-            // when server-side get is active (scope.gridOptions.onDataRequired), the filtering through the standard filters should be disabled
-            /*if (this.gridOptions.onDataRequired) {
-                templatedBodyRowElement.attr("ng-repeat", "gridItem in gridOptions.items");
-            }
-            else {
-                templatedBodyRowElement.attr("ng-repeat", "gridItem in gridOptions.items | filter:gridOptions.filterBy | filter:gridOptions.filterByFields | orderBy:gridOptions.orderBy:gridOptions.orderByReverse | " + dataPagingFilter + ":gridOptions");
-            }*/
-            templatedBodyRowElement.attr("ng-repeat", "gridDisplayItem in filteredItems");
-            templatedBodyRowElement.attr("ng-init", "gridItem=gridDisplayItem.$$_gridItem");
-            templatedBodyRowElement.attr("ng-class", "{'" + TrNgGrid.rowSelectedCssClass + "':gridOptions.selectedItems.indexOf(gridItem)>=0}");
-            headerElement.replaceWith(this.$compile(headerElement)(scope));
-            footerElement.replaceWith(this.$compile(footerElement)(scope));
-            bodyElement.replaceWith(this.$compile(bodyElement)(scope));
-            if (oldScope) {
-                // an Angular bug is preventing us to destroy a scope inside the digest cycle
-                this.$timeout(function () { return oldScope.$destroy(); });
-            }
-        };
-        GridController.prototype.computeFormattedItems = function (scope) {
-            var input = scope.gridOptions.items || [];
-            TrNgGrid.debugMode && this.log("formatting items of length " + input.length);
-            var formattedItems = scope.formattedItems = (scope.formattedItems || []);
-            if (scope.gridOptions.onDataRequired) {
-                scope.filteredItems = formattedItems;
-            }
-            else {
-                scope.requiresReFilteringTrigger = !scope.requiresReFilteringTrigger;
-            }
-            var gridColumnDefs = scope.gridOptions.gridColumnDefs;
-            for (var inputIndex = 0; inputIndex < input.length; inputIndex++) {
-                var gridItem = input[inputIndex];
-                var outputItem;
-                // crate a temporary scope for holding a gridItem as we enumerate through the items
-                var localEvalVars = { gridItem: gridItem };
-                while (formattedItems.length > input.length && (outputItem = formattedItems[inputIndex]).$$_gridItem !== gridItem) {
-                    formattedItems.splice(inputIndex, 1);
-                }
-                if (inputIndex < formattedItems.length) {
-                    outputItem = formattedItems[inputIndex];
-                    if (outputItem.$$_gridItem !== gridItem) {
-                        outputItem = { $$_gridItem: gridItem };
-                        formattedItems[inputIndex] = outputItem;
-                    }
-                }
-                else {
-                    outputItem = { $$_gridItem: gridItem };
-                    formattedItems.push(outputItem);
-                }
-                for (var gridColumnDefIndex = 0; gridColumnDefIndex < gridColumnDefs.length; gridColumnDefIndex++) {
-                    try {
-                        var gridColumnDef = gridColumnDefs[gridColumnDefIndex];
-                        var fieldName = gridColumnDef.fieldName;
-                        if (fieldName) {
-                            var displayFormat = gridColumnDef.displayFormat;
-                            if (displayFormat) {
-                                if (displayFormat[0] != "." && displayFormat[0] != "|") {
-                                    // angular filter
-                                    displayFormat = " | " + displayFormat;
-                                }
-                                // apply the format
-                                outputItem[gridColumnDef.displayFieldName] = scope.$eval("gridItem." + fieldName + displayFormat, localEvalVars);
-                            }
-                            else {
-                                outputItem[gridColumnDef.displayFieldName] = scope.$eval("gridItem." + fieldName, localEvalVars);
-                            }
-                        }
-                    }
-                    catch (ex) {
-                        TrNgGrid.debugMode && this.log("Field evaluation failed for <" + fieldName + "> with error " + ex);
-                    }
-                }
-            }
-            // remove any extra elements from the formatted list
-            if (formattedItems.length > input.length) {
-                formattedItems.splice(input.length, formattedItems.length - input.length);
-            }
-        };
-        GridController.prototype.computeFilteredItems = function (scope) {
-            scope.filterByDisplayFields = {};
-            if (scope.gridOptions.filterByFields) {
-                for (var fieldName in scope.gridOptions.filterByFields) {
-                    scope.filterByDisplayFields[this.getFormattedFieldName(fieldName)] = scope.gridOptions.filterByFields[fieldName];
-                }
-            }
-            TrNgGrid.debugMode && this.log("filtering items of length " + (scope.formattedItems ? scope.formattedItems.length : 0));
-            scope.filteredItems = scope.$eval("formattedItems | filter:gridOptions.filterBy | filter:filterByDisplayFields | " + TrNgGrid.sortFilter + ":gridOptions | " + TrNgGrid.dataPagingFilter + ":gridOptions");
-            //debugger;
-        };
-        GridController.prototype.setupDisplayItemsArray = function (scope) {
-            var _this = this;
-            var watchExpression = "[gridOptions.items,gridOptions.gridColumnDefs.length";
-            angular.forEach(scope.gridOptions.gridColumnDefs, function (gridColumnDef) {
-                if (gridColumnDef.displayFormat && gridColumnDef.displayFormat[0] != '.') {
-                    // watch the parameters
-                    var displayfilters = gridColumnDef.displayFormat.split('|');
-                    angular.forEach(displayfilters, function (displayFilter) {
-                        var displayFilterParams = displayFilter.split(':');
-                        if (displayFilterParams.length > 1) {
-                            angular.forEach(displayFilterParams.slice(1), function (displayFilterParam) {
-                                displayFilterParam = displayFilterParam.trim();
-                                if (displayFilterParam && displayFilterParam !== "gridItem" && displayFilterParam !== "gridDisplayItem") {
-                                    watchExpression += "," + displayFilterParam;
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-            watchExpression += "]";
-            TrNgGrid.debugMode && this.log("re-formatting is set to watch for changes in " + watchExpression);
-            scope.$watch(watchExpression, function () { return _this.computeFormattedItems(scope); }, true);
-            if (!scope.gridOptions.onDataRequired) {
-                watchExpression = "[" + "requiresReFilteringTrigger, gridOptions.filterBy, gridOptions.filterByFields, gridOptions.orderBy, gridOptions.orderByReverse, gridOptions.currentPage, gridOptions.pageItems" + "]";
-                scope.$watch(watchExpression, function (newValue, oldValue) {
-                    _this.computeFilteredItems(scope);
-                }, true);
-            }
-        };
-        GridController.prototype.linkAttrs = function (tAttrs, localStorage) {
-            var propSetter = function (propName, propValue) {
-                if (typeof (propValue) === "undefined")
-                    return;
-                switch (propValue) {
-                    case "true":
-                        propValue = true;
-                        break;
-                    case "false":
-                        propValue = false;
-                        break;
-                }
-                localStorage[propName] = propValue;
-            };
-            for (var propName in localStorage) {
-                propSetter(propName, tAttrs[propName]);
-                // watch for changes
-                (function (propName) {
-                    tAttrs.$observe(propName, function (value) { return propSetter(propName, value); });
-                })(propName);
-            }
-        };
-        GridController.prototype.linkScope = function (internalScope, externalScope, scopeTargetIdentifier, attrs) {
-            // this method shouldn't even be here
-            // but it is because we want to allow people to either set attributes with either a constant or a watchable variable
-            var _this = this;
-            // watch for a resolution to issue #5951 on angular
-            // https://github.com/angular/angular.js/issues/5951
-            var target = internalScope[scopeTargetIdentifier];
-            for (var propName in target) {
-                var attributeExists = typeof (attrs[propName]) != "undefined" && attrs[propName] != null;
-                if (attributeExists) {
-                    var isArray = false;
-                    // initialise from the scope first
-                    if (typeof (externalScope[propName]) != "undefined" && externalScope[propName] != null) {
-                        target[propName] = externalScope[propName];
-                        isArray = target[propName] instanceof Array;
-                    }
-                    //allow arrays to be changed: if(!isArray){
-                    var compiledAttrGetter = null;
-                    try {
-                        compiledAttrGetter = this.$parse(attrs[propName]);
-                    }
-                    catch (ex) {
-                    }
-                    (function (propName, compiledAttrGetter) {
-                        if (!compiledAttrGetter || !compiledAttrGetter.constant) {
-                            // watch for a change in value and set it on our internal scope
-                            externalScope.$watch(propName, function (newValue, oldValue) {
-                                // debugMode && this.log("Property '" + propName + "' changed on the external scope from " + oldValue + " to " + newValue + ". Mirroring the parameter's value on the grid's internal scope.");
-                                target[propName] = newValue;
-                            });
-                        }
-                        var compiledAttrSetter = (compiledAttrGetter && compiledAttrGetter.assign) ? compiledAttrGetter.assign : null;
-                        if (compiledAttrSetter) {
-                            // a setter exists for the property, which means it's safe to mirror the internal prop on the external scope
-                            internalScope.$watch(scopeTargetIdentifier + "." + propName, function (newValue, oldValue) {
-                                try {
-                                    // debugMode && this.log("Property '" + propName + "' changed on the internal scope from " + oldValue + " to " + newValue + ". Mirroring the parameter's value on the external scope.");
-                                    externalScope[propName] = newValue;
-                                }
-                                catch (ex) {
-                                    if (TrNgGrid.debugMode) {
-                                        _this.log("Mirroring the property on the external scope failed with " + ex);
-                                        throw ex;
-                                    }
-                                }
-                            });
-                        }
-                    })(propName, compiledAttrGetter);
-                }
-            }
-        };
-        GridController.prototype.log = function (message) {
-            console.log(tableDirective + "(" + new Date().getTime() + "): " + message);
-        };
-        return GridController;
-    })();
-    angular.module("trNgGrid", []).directive(tableDirective, [
-        function () {
-            return {
-                restrict: 'A',
-                scope: {
-                    items: '=',
-                    selectedItems: '=?',
-                    filterBy: '=?',
-                    filterByFields: '=?',
-                    orderBy: '=?',
-                    orderByReverse: '=?',
-                    pageItems: '=?',
-                    currentPage: '=?',
-                    totalItems: '=?',
-                    enableFiltering: '=?',
-                    enableSorting: '=?',
-                    enableSelections: '=?',
-                    enableMultiRowSelections: '=?',
-                    selectionMode: '@',
-                    locale: '@',
-                    onDataRequired: '&',
-                    onDataRequiredDelay: '=?',
-                    fields: '=?'
-                },
-                template: function (templateElement, tAttrs) {
-                    templateElement.addClass(TrNgGrid.tableCssClass);
-                    // at this stage, no elements can be bound
-                    angular.forEach(templateElement.children(), function (childElement) {
-                        childElement = angular.element(childElement);
-                        childElement.attr("ng-non-bindable", "");
-                    });
-                },
-                controller: ["$compile", "$parse", "$timeout", "$templateCache", GridController],
-                compile: function (templateElement, tAttrs) {
-                    return {
-                        pre: function (isolatedScope, instanceElement, tAttrs, controller, transcludeFn) {
-                            controller.discoverTemplates(instanceElement);
-                        },
-                        post: function (isolatedScope, instanceElement, tAttrs, controller, transcludeFn) {
-                            var gridScope = controller.setupScope(isolatedScope, instanceElement, tAttrs);
-                            gridScope.speedUpAsyncDataRetrieval = function ($event) { return controller.speedUpAsyncDataRetrieval($event); };
-                            controller.configureTableStructure(gridScope, instanceElement);
-                            controller.setupDisplayItemsArray(gridScope);
-                        }
-                    };
-                }
-            };
-        }
-    ]).directive(cellHeaderDirective, [
-        function () {
-            var setupColumnTitle = function (scope) {
-                if (scope.columnOptions.displayName) {
-                    scope.columnTitle = scope.columnOptions.displayName;
-                }
-                else {
-                    if (!scope.columnOptions.fieldName) {
-                        scope.columnTitle = "[Invalid Field Name]";
-                    }
-                    else {
-                        // exclude nested notations
-                        var splitFieldName = scope.columnOptions.fieldName.match(/^[^\.\[\]]*/);
-                        // split by camel-casing
-                        splitFieldName = splitFieldName[0].split(/(?=[A-Z])/);
-                        if (splitFieldName.length && splitFieldName[0].length) {
-                            splitFieldName[0] = splitFieldName[0][0].toLocaleUpperCase() + splitFieldName[0].substr(1);
-                        }
-                        scope.columnTitle = splitFieldName.join(" ");
-                    }
-                }
-            };
-            return {
-                restrict: 'A',
-                require: '^' + tableDirective,
-                scope: true,
-                compile: function (templateElement, tAttrs) {
-                    var isCustomized = tAttrs['isCustomized'] == 'true';
-                    wrapTemplatedCell(templateElement, tAttrs, isCustomized, cellHeaderTemplateDirectiveAttribute);
-                    return {
-                        // we receive a reference to a real element that will appear in the DOM, after the controller was created, but before binding setup
-                        pre: function (scope, instanceElement, tAttrs, controller, $transclude) {
-                            // we're not interested in creating an isolated scope just to parse the element attributes,
-                            // so we're gonna have to do this manually
-                            var columnIndex = parseInt(tAttrs[cellHeaderDirective]);
-                            // create a clone of the default column options
-                            var columnOptions = angular.extend(scope.gridOptions.gridColumnDefs[columnIndex], TrNgGrid.defaultColumnOptions);
-                            // now match and observe the attributes
-                            controller.linkAttrs(tAttrs, columnOptions);
-                            // set up the new scope
-                            scope.columnOptions = columnOptions;
-                            scope.isCustomized = isCustomized;
-                            scope.toggleSorting = function (propertyName) {
-                                controller.toggleSorting(propertyName);
-                            };
-                            // set up the column title
-                            setupColumnTitle(scope);
-                            scope.$watch("columnOptions.filter", function (newValue, oldValue) {
-                                if (newValue !== oldValue) {
-                                    controller.setFilter(columnOptions.fieldName, newValue);
-                                }
-                            });
-                        }
-                    };
-                }
-            };
-        }
-    ]).directive(cellHeaderTemplateDirective, [
-        function () {
-            return {
-                restrict: 'A',
-                templateUrl: TrNgGrid.cellHeaderTemplateId,
-                transclude: true,
-                replace: true,
-            };
-        }
-    ]).directive(bodyDirective, [
-        function () {
-            return {
-                restrict: 'A',
-                require: '^' + tableDirective,
-                scope: true,
-                compile: function (templateElement, tAttrs) {
-                    return {
-                        pre: function (scope, compiledInstanceElement, tAttrs, controller) {
-                            scope.toggleItemSelection = function (item, $event) {
-                                controller.toggleItemSelection(scope.filteredItems, item, $event);
-                            };
-                        }
-                    };
-                }
-            };
-        }
-    ]).directive(cellBodyDirective, [
-        function () {
-            return {
-                restrict: 'A',
-                require: '^' + tableDirective,
-                scope: true,
-                compile: function (templateElement, tAttrs) {
-                    var isCustomized = tAttrs['isCustomized'] == 'true';
-                    wrapTemplatedCell(templateElement, tAttrs, isCustomized, cellBodyTemplateDirectiveAttribute);
-                    return {
-                        pre: function (scope, instanceElement, tAttrs, controller, $transclude) {
-                            scope.columnOptions = scope.gridOptions.gridColumnDefs[parseInt(tAttrs[cellBodyDirective])];
-                            scope.gridItem = scope.gridDisplayItem.$$_gridItem;
-                            scope.isCustomized = isCustomized;
-                        }
-                    };
-                }
-            };
-        }
-    ]).directive(cellBodyTemplateDirective, [
-        function () {
-            return {
-                restrict: 'A',
-                templateUrl: TrNgGrid.cellBodyTemplateId,
-                transclude: true,
-                replace: true
-            };
-        }
-    ]).directive(cellFooterDirective, [
-        function () {
-            return {
-                restrict: 'A',
-                require: '^' + tableDirective,
-                scope: true,
-                compile: function (templateElement, tAttrs) {
-                    var isCustomized = tAttrs['isCustomized'] == 'true';
-                    wrapTemplatedCell(templateElement, tAttrs, isCustomized, cellFooterTemplateDirectiveAttribute);
-                    return {
-                        pre: function (scope, instanceElement, tAttrs, controller, $transclude) {
-                            scope.isCustomized = isCustomized;
-                            instanceElement.attr("colspan", scope.gridOptions.gridColumnDefs.length);
-                        }
-                    };
-                }
-            };
-        }
-    ]).directive(cellFooterTemplateDirective, [
-        function () {
-            return {
-                restrict: 'A',
-                templateUrl: TrNgGrid.cellFooterTemplateId,
-                transclude: true,
-                replace: true
-            };
-        }
-    ]).directive(columnSortDirective, [
-        function () {
-            return {
-                restrict: 'A',
-                replace: true,
-                templateUrl: TrNgGrid.columnSortTemplateId
-            };
-        }
-    ]).directive(columnFilterDirective, [
-        function () {
-            return {
-                restrict: 'A',
-                replace: true,
-                templateUrl: TrNgGrid.columnFilterTemplateId
-            };
-        }
-    ]).directive(globalFilterDirective, [
-        function () {
-            return {
-                restrict: 'A',
-                scope: false,
-                templateUrl: TrNgGrid.footerGlobalFilterTemplateId,
-            };
-        }
-    ]).directive(pagerDirective, [
-        function () {
-            var setupScope = function (scope, controller) {
-                // do not set scope.gridOptions.totalItems, it might be set from the outside
-                scope.totalItemsCount = (typeof (scope.gridOptions.totalItems) != "undefined" && scope.gridOptions.totalItems != null) ? scope.gridOptions.totalItems : (scope.gridOptions.items ? scope.gridOptions.items.length : 0);
-                scope.isPaged = (!!scope.gridOptions.pageItems) && (scope.gridOptions.pageItems < scope.totalItemsCount);
-                scope.extendedControlsActive = false;
-                scope.lastPageIndex = (!scope.totalItemsCount || !scope.isPaged) ? 0 : (Math.floor(scope.totalItemsCount / scope.gridOptions.pageItems) + ((scope.totalItemsCount % scope.gridOptions.pageItems) ? 0 : -1));
-                if (scope.gridOptions.currentPage > scope.lastPageIndex) {
-                    // this will unfortunately trigger another query if in server side data query mode
-                    scope.gridOptions.currentPage = scope.lastPageIndex;
-                }
-                scope.startItemIndex = scope.isPaged ? (scope.gridOptions.pageItems * scope.gridOptions.currentPage) : 0;
-                scope.endItemIndex = scope.isPaged ? (scope.startItemIndex + scope.gridOptions.pageItems - 1) : scope.totalItemsCount - 1;
-                if (scope.endItemIndex >= scope.totalItemsCount) {
-                    scope.endItemIndex = scope.totalItemsCount - 1;
-                }
-                if (scope.endItemIndex < scope.startItemIndex) {
-                    scope.endItemIndex = scope.startItemIndex;
-                }
-                scope.pageCanGoBack = scope.isPaged && scope.gridOptions.currentPage > 0;
-                scope.pageCanGoForward = scope.isPaged && scope.gridOptions.currentPage < scope.lastPageIndex;
-                scope.pageIndexes = scope.pageIndexes || [];
-                scope.pageIndexes.splice(0);
-                if (scope.isPaged) {
-                    if (scope.lastPageIndex + 1 > TrNgGrid.defaultPagerMinifiedPageCountThreshold) {
-                        scope.extendedControlsActive = true;
-                        var pageIndexHalfRange = Math.floor(TrNgGrid.defaultPagerMinifiedPageCountThreshold / 2);
-                        var lowPageIndex = scope.gridOptions.currentPage - pageIndexHalfRange;
-                        var highPageIndex = scope.gridOptions.currentPage + pageIndexHalfRange;
-                        // compute the high and low
-                        if (lowPageIndex < 0) {
-                            highPageIndex += -lowPageIndex;
-                            lowPageIndex = 0;
-                        }
-                        else if (highPageIndex > scope.lastPageIndex) {
-                            lowPageIndex -= highPageIndex - scope.lastPageIndex;
-                            highPageIndex = scope.lastPageIndex;
-                        }
-                        // add the extra controls where needed
-                        if (lowPageIndex > 0) {
-                            scope.pageIndexes.push(null);
-                            lowPageIndex++;
-                        }
-                        var highPageEllipsed = false;
-                        if (highPageIndex < scope.lastPageIndex) {
-                            highPageEllipsed = true;
-                            highPageIndex--;
-                        }
-                        for (var pageIndex = lowPageIndex; pageIndex <= highPageIndex; pageIndex++) {
-                            scope.pageIndexes.push(pageIndex);
-                        }
-                        if (highPageEllipsed) {
-                            scope.pageIndexes.push(null);
-                        }
-                    }
-                    else {
-                        scope.extendedControlsActive = false;
-                        for (var pageIndex = 0; pageIndex <= scope.lastPageIndex; pageIndex++) {
-                            scope.pageIndexes.push(pageIndex);
-                        }
-                    }
-                }
-                scope.pageSelectionActive = scope.pageIndexes.length > 1;
-                scope.navigateToPage = function (pageIndex) {
-                    scope.gridOptions.currentPage = pageIndex;
-                    scope.speedUpAsyncDataRetrieval();
-                    /*$event.preventDefault();
-                    $event.stopPropagation();*/
-                };
-                scope.switchPageSelection = function ($event, pageSelectionActive) {
-                    scope.pageSelectionActive = pageSelectionActive;
-                    if ($event) {
-                        $event.preventDefault();
-                        $event.stopPropagation();
-                    }
-                };
-            };
-            //ng - model = "gridOptions.currentPage" 
-            return {
-                restrict: 'A',
-                scope: true,
-                require: '^' + tableDirective,
-                templateUrl: TrNgGrid.footerPagerTemplateId,
-                replace: true,
-                compile: function (templateElement, tAttrs) {
-                    return {
-                        pre: function (scope, compiledInstanceElement, tAttrs, controller) {
-                            setupScope(scope, controller);
-                        },
-                        post: function (scope, instanceElement, tAttrs, controller) {
-                            scope.$watchCollection("[gridOptions.currentPage, gridOptions.items.length, gridOptions.totalItems, gridOptions.pageItems]", function (newValues, oldValues) {
-                                setupScope(scope, controller);
-                            });
-                        }
-                    };
-                }
-            };
-        }
-    ]).filter(TrNgGrid.sortFilter, ["$filter", "$parse", function ($filter, $parse) {
-        return function (input, gridOptions) {
-            if (!gridOptions.orderBy || !gridOptions.gridColumnDefs) {
-                // not ready to sort, return the input array
-                return input;
-            }
-            // we'll need the column options
-            var columnOptions = null;
-            for (var columnOptionsIndex = 0; (columnOptionsIndex < gridOptions.gridColumnDefs.length) && ((columnOptions = gridOptions.gridColumnDefs[columnOptionsIndex]).fieldName !== gridOptions.orderBy); columnOptions = null, columnOptionsIndex++)
-                ;
-            if (!columnOptions) {
-                // unable to find any info about the selected field
-                return input;
-            }
-            var sortedInput = $filter("orderBy")(input, function (item) {
-                var fieldValue = undefined;
-                try {
-                    // get the value associated with the original grid item
-                    fieldValue = $parse("item.$$_gridItem." + columnOptions.fieldName)({ item: item });
-                }
-                catch (ex) {
-                }
-                if (fieldValue === undefined) {
-                    try {
-                        // next try the field on the display item, in case of computed fields
-                        fieldValue = $parse("item." + columnOptions.displayFieldName)({ item: item });
-                    }
-                    catch (ex) {
-                    }
-                }
-                return fieldValue;
-            }, gridOptions.orderByReverse);
-            return sortedInput;
-        };
-    }]).filter(TrNgGrid.dataPagingFilter, function () {
-        // when server-side logic is enabled, this directive should not be used!
-        return function (input, gridOptions) {
-            //currentPage?:number, pageItems?:number
-            if (input)
-                gridOptions.totalItems = input.length;
-            if (!gridOptions.pageItems || !input || input.length == 0)
-                return input;
-            if (!gridOptions.currentPage) {
-                gridOptions.currentPage = 0;
-            }
-            var startIndex = gridOptions.currentPage * gridOptions.pageItems;
-            if (startIndex >= input.length) {
-                gridOptions.currentPage = 0;
-                startIndex = 0;
-            }
-            var endIndex = gridOptions.currentPage * gridOptions.pageItems + gridOptions.pageItems;
-            return input.slice(startIndex, endIndex);
-        };
-    }).filter(TrNgGrid.translateFilter, ["$filter", function ($filter) {
-        return function (input, languageId) {
-            var translatedText;
-            // dates require special attention
-            if (input instanceof Date) {
-                // we're dealing with a date object, see if we have a localized format for it
-                var dateFormat = $filter(TrNgGrid.translateFilter)(TrNgGrid.translationDateFormat, languageId);
-                if (dateFormat && dateFormat !== TrNgGrid.translationDateFormat) {
-                    // call the date filter
-                    translatedText = $filter("date")(input, dateFormat);
-                    return translatedText;
-                }
-                return input;
-            }
-            if (!translatedText) {
-                var languageIdParts = languageId.split(/[-_]/);
-                for (var languageIdPartIndex = languageIdParts.length; (languageIdPartIndex > 0) && (!translatedText); languageIdPartIndex--) {
-                    var subLanguageId = languageIdParts.slice(0, languageIdPartIndex).join("-");
-                    var langTranslations = TrNgGrid.translations[subLanguageId];
-                    if (langTranslations) {
-                        translatedText = langTranslations[input];
-                    }
-                }
-            }
-            if (!translatedText) {
-                try {
-                    var externalTranslationFilter = $filter("translate");
-                    if (externalTranslationFilter) {
-                        translatedText = externalTranslationFilter(input);
-                    }
-                }
-                catch (ex) {
-                }
-            }
-            if (!translatedText) {
-                translatedText = input;
-            }
-            return translatedText;
-        };
-    }]).run(function () {
-        TrNgGrid.tableCssClass = "tr-ng-grid table table-bordered table-hover"; // at the time of coding, table-striped is not working properly with selection
-        TrNgGrid.cellCssClass = "tr-ng-cell";
-        TrNgGrid.headerCellCssClass = "tr-ng-column-header " + TrNgGrid.cellCssClass;
-        TrNgGrid.bodyCellCssClass = TrNgGrid.cellCssClass;
-        TrNgGrid.columnTitleCssClass = "tr-ng-title";
-        TrNgGrid.columnSortCssClass = "tr-ng-sort";
-        TrNgGrid.columnFilterCssClass = "tr-ng-column-filter";
-        TrNgGrid.columnFilterInputWrapperCssClass = "";
-        TrNgGrid.columnSortActiveCssClass = "tr-ng-sort-active text-info";
-        TrNgGrid.columnSortInactiveCssClass = "tr-ng-sort-inactive text-muted glyphicon glyphicon-chevron-down";
-        TrNgGrid.columnSortReverseOrderCssClass = "tr-ng-sort-order-reverse glyphicon glyphicon-chevron-down";
-        TrNgGrid.columnSortNormalOrderCssClass = "tr-ng-sort-order-normal glyphicon glyphicon-chevron-up";
-        TrNgGrid.rowSelectedCssClass = "active";
-        TrNgGrid.footerCssClass = "tr-ng-grid-footer form-inline";
-    }).run(function () {
-        TrNgGrid.defaultColumnOptions.displayAlign = 'left';
-        TrNgGrid.defaultPagerMinifiedPageCountThreshold = 3;
-    });
-    function configureTemplates($templateCache) {
-        // set up default templates
-        if (!$templateCache.get(TrNgGrid.cellHeaderTemplateId)) {
-            $templateCache.put(TrNgGrid.cellHeaderTemplateId, '<div class="' + TrNgGrid.headerCellCssClass + '" ng-switch="isCustomized">' + '  <div ng-switch-when="true">' + '    <div ng-transclude=""></div>' + '  </div>' + '  <div ng-switch-default>' + '    <div class="' + TrNgGrid.columnTitleCssClass + '">' + '      {{columnTitle |' + TrNgGrid.translateFilter + ':gridOptions.locale}}' + '       <div ' + TrNgGrid.columnSortDirectiveAttribute + '=""></div>' + '    </div>' + '    <div ' + TrNgGrid.columnFilterDirectiveAttribute + '=""></div>' + '  </div>' + '</div>');
-        }
-        if (!$templateCache.get(TrNgGrid.cellBodyTemplateId)) {
-            $templateCache.put(TrNgGrid.cellBodyTemplateId, '<div ng-attr-class="' + TrNgGrid.bodyCellCssClass + ' text-{{columnOptions.displayAlign}}" ng-switch="isCustomized">' + '  <div ng-switch-when="true">' + '    <div ng-transclude=""></div>' + '  </div>' + '  <div ng-switch-default>{{gridDisplayItem[columnOptions.displayFieldName]}}</div>' + '</div>');
-        }
-        if (!$templateCache.get(TrNgGrid.columnFilterTemplateId)) {
-            $templateCache.put(TrNgGrid.columnFilterTemplateId, '<div ng-show="(gridOptions.enableFiltering&&columnOptions.enableFiltering!==false)||columnOptions.enableFiltering" class="' + TrNgGrid.columnFilterCssClass + '">' + ' <div class="' + TrNgGrid.columnFilterInputWrapperCssClass + '">' + '   <input class="form-control input-sm" type="text" ng-model="columnOptions.filter" ng-keypress="speedUpAsyncDataRetrieval($event)"></input>' + ' </div>' + '</div>');
-        }
-        if (!$templateCache.get(TrNgGrid.columnSortTemplateId)) {
-            $templateCache.put(TrNgGrid.columnSortTemplateId, '<div ng-attr-title="{{\'Sort\'|' + TrNgGrid.translateFilter + ':gridOptions.locale}}"' + ' ng-show="(gridOptions.enableSorting&&columnOptions.enableSorting!==false)||columnOptions.enableSorting"' + ' ng-click="toggleSorting(columnOptions.fieldName)"' + ' class="' + TrNgGrid.columnSortCssClass + '" > ' + '  <div ng-class="{\'' + TrNgGrid.columnSortActiveCssClass + '\':gridOptions.orderBy==columnOptions.fieldName,\'' + TrNgGrid.columnSortInactiveCssClass + '\':gridOptions.orderBy!=columnOptions.fieldName,\'' + TrNgGrid.columnSortNormalOrderCssClass + '\':gridOptions.orderBy==columnOptions.fieldName&&!gridOptions.orderByReverse,\'' + TrNgGrid.columnSortReverseOrderCssClass + '\':gridOptions.orderBy==columnOptions.fieldName&&gridOptions.orderByReverse}" >' + '  </div>' + '</div>');
-        }
-        if (!$templateCache.put(TrNgGrid.cellFooterTemplateId)) {
-            $templateCache.put(TrNgGrid.cellFooterTemplateId, '<div class="' + TrNgGrid.footerCssClass + '" ng-switch="isCustomized">' + '  <div ng-switch-when="true">' + '    <div ng-transclude=""></div>' + '  </div>' + '  <div ng-switch-default>' + '    <span ' + TrNgGrid.globalFilterDirectiveAttribute + '=""></span>' + '    <span ' + TrNgGrid.pagerDirectiveAttribute + '=""></span>' + '  </div>' + '</div>');
-        }
-        if (!$templateCache.get(TrNgGrid.footerGlobalFilterTemplateId)) {
-            $templateCache.put(TrNgGrid.footerGlobalFilterTemplateId, '<span ng-show="gridOptions.enableFiltering" class="pull-left form-group">' + '  <input class="form-control" type="text" ng-model="gridOptions.filterBy" ng-keypress="speedUpAsyncDataRetrieval($event)" ng-attr-placeholder="{{\'Search\'|' + TrNgGrid.translateFilter + ':gridOptions.locale}}"></input>' + '</span>');
-        }
-        if (!$templateCache.get(TrNgGrid.footerPagerTemplateId)) {
-            $templateCache.put(TrNgGrid.footerPagerTemplateId, '<span class="pull-right form-group">' + ' <ul class="pagination">' + '   <li ng-class="{disabled:!pageCanGoBack}" ng-if="extendedControlsActive">' + '     <a href="" ng-click="pageCanGoBack&&navigateToPage(0)" ng-attr-title="{{\'First Page\'|' + TrNgGrid.translateFilter + ':gridOptions.locale}}">' + '         <span>&laquo;</span>' + '     </a>' + '   </li>' + '   <li ng-class="{disabled:!pageCanGoBack}" ng-if="extendedControlsActive">' + '     <a href="" ng-click="pageCanGoBack&&navigateToPage(gridOptions.currentPage - 1)" ng-attr-title="{{\'Previous Page\'|' + TrNgGrid.translateFilter + ':gridOptions.locale}}">' + '         <span>&lsaquo;</span>' + '     </a>' + '   </li>' + '   <li ng-if="pageSelectionActive" ng-repeat="pageIndex in pageIndexes track by $index" ng-class="{disabled:pageIndex===null, active:pageIndex===gridOptions.currentPage}">' + '      <span ng-if="pageIndex===null">...</span>' + '      <a href="" ng-click="navigateToPage(pageIndex)" ng-if="pageIndex!==null" ng-attr-title="{{\'Page\'|' + TrNgGrid.translateFilter + ':gridOptions.locale}}">{{pageIndex+1}}</a>' + '   </li>' + '   <li ng-class="{disabled:!pageCanGoForward}" ng-if="extendedControlsActive">' + '     <a href="" ng-click="pageCanGoForward&&navigateToPage(gridOptions.currentPage + 1)" ng-attr-title="{{\'Next Page\'|' + TrNgGrid.translateFilter + ':gridOptions.locale}}">' + '         <span>&rsaquo;</span>' + '     </a>' + '   </li>' + '   <li ng-class="{disabled:!pageCanGoForward}" ng-if="extendedControlsActive">' + '     <a href="" ng-click="pageCanGoForward&&navigateToPage(lastPageIndex)" ng-attr-title="{{\'Last Page\'|' + TrNgGrid.translateFilter + ':gridOptions.locale}}">' + '         <span>&raquo;</span>' + '     </a>' + '   </li>' + '   <li class="disabled" style="white-space: nowrap;">' + '     <span ng-hide="totalItemsCount">{{\'No items to display\'|' + TrNgGrid.translateFilter + ':gridOptions.locale}}</span>' + '     <span ng-show="totalItemsCount">' + '       {{startItemIndex+1}} - {{endItemIndex+1}} {{\'displayed\'|' + TrNgGrid.translateFilter + ':gridOptions.locale}}' + '       <span>, {{totalItemsCount}} {{\'in total\'|' + TrNgGrid.translateFilter + ':gridOptions.locale}}</span>' + '     </span > ' + '   </li>' + ' </ul>' + '</span>');
-        }
-    }
-})(TrNgGrid || (TrNgGrid = {}));
-(function() {
-  'use strict';
-  angular.module('BBAdminBooking').directive('bbAdminBookingClients', function() {
-    return {
-      restrict: 'AE',
-      replace: true,
-      scope: true,
-      controller: 'adminBookingClients'
-    };
-  });
-
-  angular.module('BBAdminBooking').controller('adminBookingClients', function($scope, $rootScope, $q, AdminClientService, ClientDetailsService, AlertService, ClientService, ValidatorService) {
-    $scope.validator = ValidatorService;
-    $scope.clientDef = $q.defer();
-    $scope.clientPromise = $scope.clientDef.promise;
-    $scope.per_page = 20;
-    $scope.total_entries = 0;
-    $scope.clients = [];
-    $scope.searchClients = false;
-    $scope.newClient = false;
-    $scope.no_clients = false;
-    $scope.search_error = false;
-    $scope.showSearch = (function(_this) {
-      return function() {
-        $scope.searchClients = true;
-        return $scope.newClient = false;
-      };
-    })(this);
-    $scope.showClientForm = (function(_this) {
-      return function() {
-        $scope.search_error = false;
-        $scope.no_clients = false;
-        $scope.searchClients = false;
-        return $scope.newClient = true;
-      };
-    })(this);
-    $scope.selectClient = (function(_this) {
-      return function(client) {
-        $scope.search_error = false;
-        $scope.no_clients = false;
-        $scope.setClient(client);
-        $scope.client.setValid(true);
-        return $scope.decideNextPage();
-      };
-    })(this);
-    $scope.checkSearch = (function(_this) {
-      return function(search) {
-        if (search.length >= 3) {
-          $scope.search_error = false;
-          return true;
-        } else {
-          $scope.search_error = true;
-          return false;
-        }
-      };
-    })(this);
-    $scope.createClient = (function(_this) {
-      return function(client_form) {
-        $scope.notLoaded($scope);
-        if ($scope.bb && $scope.bb.parent_client) {
-          $scope.client.parent_client_id = $scope.bb.parent_client.id;
-        }
-        if ($scope.client_details) {
-          $scope.client.setClientDetails($scope.client_details);
-        }
-        return ClientService.create_or_update($scope.bb.company, $scope.client).then(function(client) {
-          $scope.setLoaded($scope);
-          return $scope.selectClient(client);
-        }, function(err) {
-          return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
-        });
-      };
-    })(this);
-    $scope.getClients = function(currentPage, filterBy, filterByFields, orderBy, orderByReverse) {
-      var clientDef, params;
-      AlertService.clear();
-      $scope.no_clients = false;
-      $scope.search_error = false;
-      clientDef = $q.defer();
-      params = {
-        company: $scope.bb.company,
-        per_page: $scope.per_page,
-        filter_by: filterBy,
-        filter_by_fields: filterByFields,
-        order_by: orderBy,
-        order_by_reverse: orderByReverse
-      };
-      if (currentPage) {
-        params.page = currentPage + 1;
-      }
-      $rootScope.connection_started.then(function() {
-        $scope.notLoaded($scope);
-        if (!$rootScope.bb.api_url && $scope.bb.api_url) {
-          $rootScope.bb.api_url = $scope.bb.api_url;
-        }
-        return AdminClientService.query(params).then((function(_this) {
-          return function(clients) {
-            $scope.clients = clients.items;
-            $scope.setLoaded($scope);
-            $scope.setPageLoaded();
-            $scope.total_entries = clients.total_entries;
-            return clientDef.resolve(clients.items);
-          };
-        })(this), function(err) {
-          $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
-          return clientDef.reject(err);
-        });
-      });
-      return true;
-    };
-    return $scope.edit = function(item) {
-      return console.log(item);
-    };
   });
 
 }).call(this);
@@ -102076,6 +100567,111 @@ angular.module('ui.utils',  [
   "ui.validate"
 ]);
 !function(e){"use strict";function t(e){var n;if(null===e||void 0===e)return!1;if(r.isArray(e))return e.length>0;if("string"==typeof e||"number"==typeof e||"boolean"==typeof e)return!0;for(n in e)if(e.hasOwnProperty(n)&&t(e[n]))return!0;return!1}var n=function(){function e(e){this.options=e}return e.prototype.toString=function(){return JSON&&JSON.stringify?JSON.stringify(this.options):this.options},e}(),r=function(){function e(e){return"[object Array]"===Object.prototype.toString.apply(e)}function t(e){return"[object String]"===Object.prototype.toString.apply(e)}function n(e){return"[object Number]"===Object.prototype.toString.apply(e)}function r(e){return"[object Boolean]"===Object.prototype.toString.apply(e)}function i(e,t){var n,r="",i=!0;for(n=0;n<e.length;n+=1)i?i=!1:r+=t,r+=e[n];return r}function o(e,t){for(var n=[],r=0;r<e.length;r+=1)n.push(t(e[r]));return n}function s(e,t){for(var n=[],r=0;r<e.length;r+=1)t(e[r])&&n.push(e[r]);return n}function a(e){if("object"!=typeof e||null===e)return e;Object.freeze(e);var t,n;for(n in e)e.hasOwnProperty(n)&&(t=e[n],"object"==typeof t&&u(t));return e}function u(e){return"function"==typeof Object.freeze?a(e):e}return{isArray:e,isString:t,isNumber:n,isBoolean:r,join:i,map:o,filter:s,deepFreeze:u}}(),i=function(){function e(e){return e>="a"&&"z">=e||e>="A"&&"Z">=e}function t(e){return e>="0"&&"9">=e}function n(e){return t(e)||e>="a"&&"f">=e||e>="A"&&"F">=e}return{isAlpha:e,isDigit:t,isHexDigit:n}}(),o=function(){function e(e){var t,n,r="",i=s.encode(e);for(n=0;n<i.length;n+=1)t=i.charCodeAt(n),r+="%"+(16>t?"0":"")+t.toString(16).toUpperCase();return r}function t(e,t){return"%"===e.charAt(t)&&i.isHexDigit(e.charAt(t+1))&&i.isHexDigit(e.charAt(t+2))}function n(e,t){return parseInt(e.substr(t,2),16)}function r(e){if(!t(e,0))return!1;var r=n(e,1),i=s.numBytes(r);if(0===i)return!1;for(var o=1;i>o;o+=1)if(!t(e,3*o)||!s.isValidFollowingCharCode(n(e,3*o+1)))return!1;return!0}function o(e,r){var i=e.charAt(r);if(!t(e,r))return i;var o=n(e,r+1),a=s.numBytes(o);if(0===a)return i;for(var u=1;a>u;u+=1)if(!t(e,r+3*u)||!s.isValidFollowingCharCode(n(e,r+3*u+1)))return i;return e.substr(r,3*a)}var s={encode:function(e){return unescape(encodeURIComponent(e))},numBytes:function(e){return 127>=e?1:e>=194&&223>=e?2:e>=224&&239>=e?3:e>=240&&244>=e?4:0},isValidFollowingCharCode:function(e){return e>=128&&191>=e}};return{encodeCharacter:e,isPctEncoded:r,pctCharAt:o}}(),s=function(){function e(e){return i.isAlpha(e)||i.isDigit(e)||"_"===e||o.isPctEncoded(e)}function t(e){return i.isAlpha(e)||i.isDigit(e)||"-"===e||"."===e||"_"===e||"~"===e}function n(e){return":"===e||"/"===e||"?"===e||"#"===e||"["===e||"]"===e||"@"===e||"!"===e||"$"===e||"&"===e||"("===e||")"===e||"*"===e||"+"===e||","===e||";"===e||"="===e||"'"===e}return{isVarchar:e,isUnreserved:t,isReserved:n}}(),a=function(){function e(e,t){var n,r="",i="";for(("number"==typeof e||"boolean"==typeof e)&&(e=e.toString()),n=0;n<e.length;n+=i.length)i=e.charAt(n),r+=s.isUnreserved(i)||t&&s.isReserved(i)?i:o.encodeCharacter(i);return r}function t(t){return e(t,!0)}function n(e,t){var n=o.pctCharAt(e,t);return n.length>1?n:s.isReserved(n)||s.isUnreserved(n)?n:o.encodeCharacter(n)}function r(e){var t,n="",r="";for(t=0;t<e.length;t+=r.length)r=o.pctCharAt(e,t),n+=r.length>1?r:s.isReserved(r)||s.isUnreserved(r)?r:o.encodeCharacter(r);return n}return{encode:e,encodePassReserved:t,encodeLiteral:r,encodeLiteralCharacter:n}}(),u=function(){function e(e){t[e]={symbol:e,separator:"?"===e?"&":""===e||"+"===e||"#"===e?",":e,named:";"===e||"&"===e||"?"===e,ifEmpty:"&"===e||"?"===e?"=":"",first:"+"===e?"":e,encode:"+"===e||"#"===e?a.encodePassReserved:a.encode,toString:function(){return this.symbol}}}var t={};return e(""),e("+"),e("#"),e("."),e("/"),e(";"),e("?"),e("&"),{valueOf:function(e){return t[e]?t[e]:"=,!@|".indexOf(e)>=0?null:t[""]}}}(),f=function(){function e(e){this.literal=a.encodeLiteral(e)}return e.prototype.expand=function(){return this.literal},e.prototype.toString=e.prototype.expand,e}(),p=function(){function e(e){function t(){var t=e.substring(h,f);if(0===t.length)throw new n({expressionText:e,message:"a varname must be specified",position:f});c={varname:t,exploded:!1,maxLength:null},h=null}function r(){if(d===f)throw new n({expressionText:e,message:"after a ':' you have to specify the length",position:f});c.maxLength=parseInt(e.substring(d,f),10),d=null}var a,f,p=[],c=null,h=null,d=null,g="";for(a=function(t){var r=u.valueOf(t);if(null===r)throw new n({expressionText:e,message:"illegal use of reserved operator",position:f,operator:t});return r}(e.charAt(0)),f=a.symbol.length,h=f;f<e.length;f+=g.length){if(g=o.pctCharAt(e,f),null!==h){if("."===g){if(h===f)throw new n({expressionText:e,message:"a varname MUST NOT start with a dot",position:f});continue}if(s.isVarchar(g))continue;t()}if(null!==d){if(f===d&&"0"===g)throw new n({expressionText:e,message:"A :prefix must not start with digit 0",position:f});if(i.isDigit(g)){if(f-d>=4)throw new n({expressionText:e,message:"A :prefix must have max 4 digits",position:f});continue}r()}if(":"!==g)if("*"!==g){if(","!==g)throw new n({expressionText:e,message:"illegal character",character:g,position:f});p.push(c),c=null,h=f+1}else{if(null===c)throw new n({expressionText:e,message:"exploded without varspec",position:f});if(c.exploded)throw new n({expressionText:e,message:"exploded twice",position:f});if(c.maxLength)throw new n({expressionText:e,message:"an explode (*) MUST NOT follow to a prefix",position:f});c.exploded=!0}else{if(null!==c.maxLength)throw new n({expressionText:e,message:"only one :maxLength is allowed per varspec",position:f});if(c.exploded)throw new n({expressionText:e,message:"an exploeded varspec MUST NOT be varspeced",position:f});d=f+1}}return null!==h&&t(),null!==d&&r(),p.push(c),new l(e,a,p)}function t(t){var r,i,o=[],s=null,a=0;for(r=0;r<t.length;r+=1)if(i=t.charAt(r),null===a){if(null===s)throw new Error("reached unreachable code");if("{"===i)throw new n({templateText:t,message:"brace already opened",position:r});if("}"===i){if(s+1===r)throw new n({templateText:t,message:"empty braces",position:s});try{o.push(e(t.substring(s+1,r)))}catch(u){if(u.prototype===n.prototype)throw new n({templateText:t,message:u.options.message,position:s+u.options.position,details:u.options});throw u}s=null,a=r+1}}else{if("}"===i)throw new n({templateText:t,message:"unopened brace closed",position:r});"{"===i&&(r>a&&o.push(new f(t.substring(a,r))),a=null,s=r)}if(null!==s)throw new n({templateText:t,message:"unclosed brace",position:s});return a<t.length&&o.push(new f(t.substr(a))),new c(t,o)}return t}(),l=function(){function e(e){return JSON&&JSON.stringify?JSON.stringify(e):e}function n(e){if(!t(e))return!0;if(r.isString(e))return""===e;if(r.isNumber(e)||r.isBoolean(e))return!1;if(r.isArray(e))return 0===e.length;for(var n in e)if(e.hasOwnProperty(n))return!1;return!0}function i(e){var t,n=[];for(t in e)e.hasOwnProperty(t)&&n.push({name:t,value:e[t]});return n}function o(e,t,n){this.templateText=e,this.operator=t,this.varspecs=n}function s(e,t,n){var r="";if(n=n.toString(),t.named){if(r+=a.encodeLiteral(e.varname),""===n)return r+=t.ifEmpty;r+="="}return null!==e.maxLength&&(n=n.substr(0,e.maxLength)),r+=t.encode(n)}function u(e){return t(e.value)}function f(e,o,s){var f=[],p="";if(o.named){if(p+=a.encodeLiteral(e.varname),n(s))return p+=o.ifEmpty;p+="="}return r.isArray(s)?(f=s,f=r.filter(f,t),f=r.map(f,o.encode),p+=r.join(f,",")):(f=i(s),f=r.filter(f,u),f=r.map(f,function(e){return o.encode(e.name)+","+o.encode(e.value)}),p+=r.join(f,",")),p}function p(e,o,s){var f=r.isArray(s),p=[];return f?(p=s,p=r.filter(p,t),p=r.map(p,function(t){var r=a.encodeLiteral(e.varname);return r+=n(t)?o.ifEmpty:"="+o.encode(t)})):(p=i(s),p=r.filter(p,u),p=r.map(p,function(e){var t=a.encodeLiteral(e.name);return t+=n(e.value)?o.ifEmpty:"="+o.encode(e.value)})),r.join(p,o.separator)}function l(e,n){var o=[],s="";return r.isArray(n)?(o=n,o=r.filter(o,t),o=r.map(o,e.encode),s+=r.join(o,e.separator)):(o=i(n),o=r.filter(o,function(e){return t(e.value)}),o=r.map(o,function(t){return e.encode(t.name)+"="+e.encode(t.value)}),s+=r.join(o,e.separator)),s}return o.prototype.toString=function(){return this.templateText},o.prototype.expand=function(i){var o,a,u,c,h=[],d=!1,g=this.operator;for(o=0;o<this.varspecs.length;o+=1)if(a=this.varspecs[o],u=i[a.varname],null!==u&&void 0!==u)if(a.exploded&&(d=!0),c=r.isArray(u),"string"==typeof u||"number"==typeof u||"boolean"==typeof u)h.push(s(a,g,u));else{if(a.maxLength&&t(u))throw new Error("Prefix modifiers are not applicable to variables that have composite values. You tried to expand "+this+" with "+e(u));a.exploded?t(u)&&(g.named?h.push(p(a,g,u)):h.push(l(g,u))):(g.named||!n(u))&&h.push(f(a,g,u))}return 0===h.length?"":g.first+r.join(h,g.separator)},o}(),c=function(){function e(e,t){this.templateText=e,this.expressions=t,r.deepFreeze(this)}return e.prototype.toString=function(){return this.templateText},e.prototype.expand=function(e){var t,n="";for(t=0;t<this.expressions.length;t+=1)n+=this.expressions[t].expand(e);return n},e.parse=p,e.UriTemplateError=n,e}();e(c)}(function(e){"use strict";"undefined"!=typeof module?module.exports=e:"function"==typeof define?define([],function(){return e}):"undefined"!=typeof window?window.UriTemplate=e:global.UriTemplate=e});
+
+
+angular.module('BBAdmin.Directives').controller('CalController', function($scope) {
+    /* config object */
+    $scope.calendarConfig = {
+        height: 450,
+        editiable: true,
+        dayClick: function(){
+            scope.$apply($scope.alertEventOnClick);
+        }
+    };
+});
+
+(function() {
+  'use strict';
+  angular.module('BBAdmin.Directives').directive('bbPeopleList', function($rootScope) {
+    return {
+      restrict: 'AE',
+      replace: true,
+      scope: true,
+      controller: function($scope, $rootScope, PersonService, $q, BBModel, PersonModel) {
+        $rootScope.connection_started.then(function() {
+          return $scope.bb.company.getPeoplePromise().then(function(people) {
+            var i, len, person, results;
+            $scope.people = people;
+            results = [];
+            for (i = 0, len = people.length; i < len; i++) {
+              person = people[i];
+              results.push(person.show = true);
+            }
+            return results;
+          });
+        });
+        $scope.show_all_people = function() {
+          var i, len, ref, results, x;
+          ref = $scope.people;
+          results = [];
+          for (i = 0, len = ref.length; i < len; i++) {
+            x = ref[i];
+            results.push(x.show = true);
+          }
+          return results;
+        };
+        return $scope.hide_all_people = function() {
+          var i, len, ref, results, x;
+          ref = $scope.people;
+          results = [];
+          for (i = 0, len = ref.length; i < len; i++) {
+            x = ref[i];
+            results.push(x.show = false);
+          }
+          return results;
+        };
+      },
+      link: function(scope, element, attrs) {}
+    };
+  });
+
+  angular.module('BBAdmin.Directives').directive('bbBookingList', function() {
+    return {
+      restrict: 'AE',
+      replace: true,
+      scope: {
+        bookings: '=',
+        cancelled: '=',
+        params: '='
+      },
+      templateUrl: function(tElm, tAttrs) {
+        return tAttrs.template;
+      },
+      controller: function($scope, $filter) {
+        var status;
+        $scope.title = $scope.params.title;
+        status = $scope.params.status;
+        return $scope.$watch(function() {
+          return $scope.bookings;
+        }, function() {
+          var bookings, cancelled;
+          bookings = $scope.bookings;
+          cancelled = $scope.cancelled;
+          if (cancelled == null) {
+            cancelled = false;
+          }
+          if ((bookings != null)) {
+            bookings = $filter('filter')(bookings, function(booking) {
+              var ret;
+              ret = booking.is_cancelled === cancelled;
+              if ((status != null)) {
+                ret &= booking.hasStatus(status);
+              } else {
+                ret &= (booking.multi_status == null) || Object.keys(booking.multi_status).length === 0;
+              }
+              ret &= booking.status === 4;
+              return ret;
+            });
+            $scope.relevantBookings = $filter('orderBy')(bookings, 'datetime');
+          }
+          return $scope.relevantBookings != null ? $scope.relevantBookings : $scope.relevantBookings = [];
+        });
+      }
+    };
+  });
+
+}).call(this);
+
 (function() {
   angular.module('BBAdmin.Controllers').controller('BBAdminCtrl', function($controller, $scope, $location, $rootScope, halClient, $window, $http, $localCache, $q, BasketService, LoginService, AlertService, $sce, $element, $compile, $sniffer, $modal, $timeout, BBModel, BBWidget, SSOService, ErrorService, AppConfig, BookingCollections, SlotCollections, $state, AdminLoginService, AdminBookingService, $sessionStorage, $log, idleTimeout) {
     angular.extend(this, $controller('BBCtrl', {
@@ -102937,111 +101533,6 @@ SpaceMonitorCtrl.$inject = ['$scope', '$location', 'CompanyService'];
         });
       }
       return $scope.ok();
-    };
-  });
-
-}).call(this);
-
-
-
-angular.module('BBAdmin.Directives').controller('CalController', function($scope) {
-    /* config object */
-    $scope.calendarConfig = {
-        height: 450,
-        editiable: true,
-        dayClick: function(){
-            scope.$apply($scope.alertEventOnClick);
-        }
-    };
-});
-
-(function() {
-  'use strict';
-  angular.module('BBAdmin.Directives').directive('bbPeopleList', function($rootScope) {
-    return {
-      restrict: 'AE',
-      replace: true,
-      scope: true,
-      controller: function($scope, $rootScope, PersonService, $q, BBModel, PersonModel) {
-        $rootScope.connection_started.then(function() {
-          return $scope.bb.company.getPeoplePromise().then(function(people) {
-            var i, len, person, results;
-            $scope.people = people;
-            results = [];
-            for (i = 0, len = people.length; i < len; i++) {
-              person = people[i];
-              results.push(person.show = true);
-            }
-            return results;
-          });
-        });
-        $scope.show_all_people = function() {
-          var i, len, ref, results, x;
-          ref = $scope.people;
-          results = [];
-          for (i = 0, len = ref.length; i < len; i++) {
-            x = ref[i];
-            results.push(x.show = true);
-          }
-          return results;
-        };
-        return $scope.hide_all_people = function() {
-          var i, len, ref, results, x;
-          ref = $scope.people;
-          results = [];
-          for (i = 0, len = ref.length; i < len; i++) {
-            x = ref[i];
-            results.push(x.show = false);
-          }
-          return results;
-        };
-      },
-      link: function(scope, element, attrs) {}
-    };
-  });
-
-  angular.module('BBAdmin.Directives').directive('bbBookingList', function() {
-    return {
-      restrict: 'AE',
-      replace: true,
-      scope: {
-        bookings: '=',
-        cancelled: '=',
-        params: '='
-      },
-      templateUrl: function(tElm, tAttrs) {
-        return tAttrs.template;
-      },
-      controller: function($scope, $filter) {
-        var status;
-        $scope.title = $scope.params.title;
-        status = $scope.params.status;
-        return $scope.$watch(function() {
-          return $scope.bookings;
-        }, function() {
-          var bookings, cancelled;
-          bookings = $scope.bookings;
-          cancelled = $scope.cancelled;
-          if (cancelled == null) {
-            cancelled = false;
-          }
-          if ((bookings != null)) {
-            bookings = $filter('filter')(bookings, function(booking) {
-              var ret;
-              ret = booking.is_cancelled === cancelled;
-              if ((status != null)) {
-                ret &= booking.hasStatus(status);
-              } else {
-                ret &= (booking.multi_status == null) || Object.keys(booking.multi_status).length === 0;
-              }
-              ret &= booking.status === 4;
-              return ret;
-            });
-            $scope.relevantBookings = $filter('orderBy')(bookings, 'datetime');
-          }
-          return $scope.relevantBookings != null ? $scope.relevantBookings : $scope.relevantBookings = [];
-        });
-      }
     };
   });
 
@@ -103936,284 +102427,1497 @@ angular.module('BBAdmin.Directives').controller('CalController', function($scope
 }).call(this);
 
 (function() {
-  angular.module('BBAdminEvents').directive('eventChainTable', function(AdminCompanyService, AdminEventChainService, $modal, $log, ModalForm, $timeout) {
-    var controller, link;
-    controller = function($scope) {
-      var editSuccess;
-      $scope.fields = ['id', 'name', 'description'];
-      $scope.getEventChains = function() {
-        var params;
-        params = {
-          company: $scope.company
-        };
-        return AdminEventChainService.query(params).then(function(event_chains) {
-          return $scope.event_chains = event_chains;
+  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  window.Collection.Client = (function(superClass) {
+    extend(Client, superClass);
+
+    function Client() {
+      return Client.__super__.constructor.apply(this, arguments);
+    }
+
+    Client.prototype.checkItem = function(item) {
+      return Client.__super__.checkItem.apply(this, arguments);
+    };
+
+    return Client;
+
+  })(window.Collection.Base);
+
+  angular.module('BB.Services').provider("ClientCollections", function() {
+    return {
+      $get: function() {
+        return new window.BaseCollections();
+      }
+    };
+  });
+
+}).call(this);
+
+
+angular.module('ngLocalData', ['angular-hal']).
+ factory('$localCache', ['halClient', '$q', function( halClient, $q) {
+    data = {};
+
+    jsonData = function(data) {
+        return data && JSON.parse(data);
+    }
+
+    storage = function()
+    {
+      return sessionStorage
+    } 
+    localSave = function(key, item){
+      storage().setItem(key, item.$toStore())   
+    } 
+    localLoad = function(key){
+      res =  jsonData(storage().getItem(key))
+      if (res)
+      {  
+        r = halClient.createResource(res)
+        def = $q.defer()
+        def.resolve(r)
+        return def.promise
+      }
+      return null
+    } 
+    localDelete = function(key) {
+      storage().removeItem(key)
+    }
+
+    return {
+
+      set: function(key, val)
+      {
+        data[key] = val
+        val.then(function(item){
+          localSave(key, item)
+        })
+        return val
+      },
+      get: function(key)
+      {
+        localLoad(key)
+        if (!data[key])
+          data[key] = localLoad(key)
+        return data[key]
+      },
+      del: function(key)
+      {
+        localDelete(key)
+        delete data[key]
+      },
+      has: function(key)
+      {
+        if (!data[key])
+        { 
+          res = localLoad(key)
+          if (res)
+            data[key] = res
+        }
+        return (key in data)
+      }      
+    }
+
+}]).
+ factory('$localData', ['$http', '$rootScope', function($http, $rootScope) {
+    function LocalDataFactory(name) {
+      function LocalData(value){
+        this.setStore(value);
+      }
+
+      LocalData.prototype.jsonData = function(data) {
+          return data && JSON.parse(data);
+      }
+
+      LocalData.prototype.storage = function()
+      {
+        return sessionStorage
+      }  
+
+      LocalData.prototype.localSave = function(item)
+      {
+        this.storage().setItem(this.store_name + item.id, JSON.stringify(item))
+      }
+
+
+      LocalData.prototype.localSaveIndex = function(ids)
+      {
+        this.storage().setItem(this.store_name, ids.join(","))
+        this.ids = ids;
+      }
+
+      LocalData.prototype.localLoadIndex = function()
+      {
+        store = this.storage().getItem(this.store_name)
+        records = (store && store.split(",")) || [];
+        return records
+      }
+
+      LocalData.prototype.localLoad = function( id)
+      {
+        return this.jsonData(this.storage().getItem(this.store_name + id))
+      }
+
+      LocalData.prototype.count = function()
+      {
+        return this.ids.length
+      }
+
+      LocalData.prototype.setStore = function(name)
+      {
+        this.store_name = name;
+        this.data_store = []
+        this.ids = this.localLoadIndex();
+        for (a = 0; a < this.ids.length; a++){
+          this.data_store.push(this.localLoad(this.ids[a]));
+        }
+    //    var channel = pusher.subscribe(name);
+    //    var ds = this;
+
+     //   channel.bind('add', function(data) {
+     //     ds.data_store.push(data);
+     //     $rootScope.$broadcast("Refresh_" + ds.store_name, "Updated");          
+     //   });
+
+      }
+
+      LocalData.prototype.update = function(data)
+      {
+        ids = []
+        for (x in data){
+          if (data[x].id){
+           ids.push(data[x].id)
+           this.localSave(data[x])
+         }
+        }
+        this.localSaveIndex(ids)
+      }
+
+      return new LocalData(name)
+
+    };
+
+
+    
+    return LocalDataFactory
+}]);
+
+/// <reference path="../../../typings/angularjs/angular.d.ts"/>
+"use strict";
+var TrNgGrid;
+(function (TrNgGrid) {
+    (function (SelectionMode) {
+        SelectionMode[SelectionMode["None"] = 0] = "None";
+        SelectionMode[SelectionMode["SingleRow"] = 1] = "SingleRow";
+        SelectionMode[SelectionMode["MultiRow"] = 2] = "MultiRow";
+        SelectionMode[SelectionMode["MultiRowWithKeyModifiers"] = 3] = "MultiRowWithKeyModifiers";
+    })(TrNgGrid.SelectionMode || (TrNgGrid.SelectionMode = {}));
+    var SelectionMode = TrNgGrid.SelectionMode;
+    // it's important to assign all the default column options, so we can match them with the column attributes in the markup
+    TrNgGrid.defaultColumnOptions = {
+        cellWidth: null,
+        cellHeight: null,
+        displayAlign: null,
+        displayFormat: null,
+        displayName: null,
+        filter: null,
+        enableFiltering: null,
+        enableSorting: null
+    };
+    TrNgGrid.translations = {};
+    TrNgGrid.debugMode = false;
+    var templatesConfigured = false;
+    var tableDirective = "trNgGrid";
+    TrNgGrid.sortFilter = tableDirective + "SortFilter";
+    TrNgGrid.dataPagingFilter = tableDirective + "DataPagingFilter";
+    TrNgGrid.translateFilter = tableDirective + "TranslateFilter";
+    TrNgGrid.translationDateFormat = tableDirective + "DateFormat";
+    TrNgGrid.dataFormattingFilter = tableDirective + "DataFormatFilter";
+    //var headerDirective="trNgGridHeader";
+    //var headerDirectiveAttribute = "tr-ng-grid-header";
+    var bodyDirective = "trNgGridBody";
+    var bodyDirectiveAttribute = "tr-ng-grid-body";
+    var fieldNameAttribute = "field-name";
+    var isCustomizedAttribute = "is-customized";
+    var cellFooterDirective = "trNgGridFooterCell";
+    var cellFooterDirectiveAttribute = "tr-ng-grid-footer-cell";
+    var cellFooterTemplateDirective = "trNgGridFooterCellTemplate";
+    var cellFooterTemplateDirectiveAttribute = "tr-ng-grid-footer-cell-template";
+    TrNgGrid.cellFooterTemplateId = cellFooterTemplateDirective + ".html";
+    var globalFilterDirective = "trNgGridGlobalFilter";
+    TrNgGrid.globalFilterDirectiveAttribute = "tr-ng-grid-global-filter";
+    TrNgGrid.footerGlobalFilterTemplateId = globalFilterDirective + ".html";
+    var pagerDirective = "trNgGridPager";
+    TrNgGrid.pagerDirectiveAttribute = "tr-ng-grid-pager";
+    TrNgGrid.footerPagerTemplateId = pagerDirective + ".html";
+    var cellHeaderDirective = "trNgGridHeaderCell";
+    var cellHeaderDirectiveAttribute = "tr-ng-grid-header-cell";
+    var cellHeaderTemplateDirective = "trNgGridHeaderCellTemplate";
+    var cellHeaderTemplateDirectiveAttribute = "tr-ng-grid-header-cell-template";
+    TrNgGrid.cellHeaderTemplateId = cellHeaderTemplateDirective + ".html";
+    var cellBodyDirective = "trNgGridBodyCell";
+    var cellBodyDirectiveAttribute = "tr-ng-grid-body-cell";
+    var cellBodyTemplateDirective = "trNgGridBodyCellTemplate";
+    var cellBodyTemplateDirectiveAttribute = "tr-ng-grid-body-cell-template";
+    TrNgGrid.cellBodyTemplateId = cellBodyTemplateDirective + ".html";
+    var columnSortDirective = "trNgGridColumnSort";
+    TrNgGrid.columnSortDirectiveAttribute = "tr-ng-grid-column-sort";
+    TrNgGrid.columnSortTemplateId = columnSortDirective + ".html";
+    var columnFilterDirective = "trNgGridColumnFilter";
+    TrNgGrid.columnFilterDirectiveAttribute = "tr-ng-grid-column-filter";
+    TrNgGrid.columnFilterTemplateId = columnFilterDirective + ".html";
+    var findChildByTagName = function (parent, childTag) {
+        childTag = childTag.toUpperCase();
+        var children = parent.children();
+        for (var childIndex = 0; childIndex < children.length; childIndex++) {
+            var childElement = children[childIndex];
+            if (childElement.tagName == childTag) {
+                return angular.element(childElement);
+            }
+        }
+        return null;
+    };
+    var findChildrenByTagName = function (parent, childTag) {
+        childTag = childTag.toUpperCase();
+        var retChildren = [];
+        var children = parent.children();
+        for (var childIndex = 0; childIndex < children.length; childIndex++) {
+            var childElement = children[childIndex];
+            if (childElement.tagName == childTag) {
+                retChildren.push(angular.element(childElement));
+            }
+        }
+        return retChildren;
+    };
+    /**
+     * Combines two sets of cell infos. The first set will take precedence in the checks but the combined items will contain items from the second set if they match.
+     */
+    var combineGridCellInfos = function (firstSet, secondSet, addExtraFieldItemsSecondSet, addExtraNonFieldItemsSecondSet) {
+        var combinedSet = [];
+        var secondTempSet = secondSet.slice(0);
+        angular.forEach(firstSet, function (firstSetColumn) {
+            // find a correspondence in the second set
+            var foundSecondSetColumn = null;
+            for (var secondSetColumnIndex = 0; !foundSecondSetColumn && secondSetColumnIndex < secondTempSet.length; secondSetColumnIndex++) {
+                foundSecondSetColumn = secondTempSet[secondSetColumnIndex];
+                if (foundSecondSetColumn.fieldName === firstSetColumn.fieldName) {
+                    secondTempSet.splice(secondSetColumnIndex, 1);
+                }
+                else {
+                    foundSecondSetColumn = null;
+                }
+            }
+            if (foundSecondSetColumn) {
+                combinedSet.push(foundSecondSetColumn);
+            }
+            else {
+                combinedSet.push(firstSetColumn);
+            }
         });
-      };
-      $scope.newEventChain = function() {
-        return ModalForm["new"]({
-          company: $scope.company,
-          title: 'New Event Chain',
-          new_rel: 'new_event_chain',
-          post_rel: 'event_chains',
-          success: function(event_chain) {
-            return $scope.event_chains.push(event_chain);
-          }
-        });
-      };
-      $scope["delete"] = function(id) {
-        var event_chain;
-        event_chain = _.find($scope.event_chains, function(x) {
-          return x.id === id;
-        });
-        return event_chain.$del('self').then(function() {
-          return $scope.event_chains = _.reject($scope.event_chains, function(x) {
-            return x.id === id;
-          });
-        }, function(err) {
-          return $log.error("Failed to delete event_chain");
-        });
-      };
-      editSuccess = function(updated) {
-        updated.$flush('events');
-        return $scope.event_chains = _.map($scope.event_chains, function(event_chain) {
-          if (event_chain.id === updated.id) {
-            return updated;
-          } else {
-            return event_chain;
-          }
-        });
-      };
-      return $scope.edit = function(id) {
-        var event_chain;
-        event_chain = _.find($scope.event_chains, function(x) {
-          return x.id === id;
-        });
-        return event_chain.$get('events').then(function(collection) {
-          return collection.$get('events').then(function(events) {
-            event_chain.events = events;
-            return ModalForm.edit({
-              model: event_chain,
-              title: 'Edit Event Chain',
-              success: editSuccess
+        // add the remaining items from the second set in the combined set
+        if (addExtraFieldItemsSecondSet || addExtraNonFieldItemsSecondSet) {
+            angular.forEach(secondTempSet, function (secondSetColumn) {
+                if ((addExtraFieldItemsSecondSet && secondSetColumn.fieldName) || (addExtraNonFieldItemsSecondSet && !secondSetColumn.fieldName)) {
+                    combinedSet.push(secondSetColumn);
+                }
             });
-          });
-        });
-      };
+        }
+        return combinedSet;
     };
-    link = function(scope, element, attrs) {
-      if (scope.company) {
-        return scope.getEventChains();
-      } else {
-        return AdminCompanyService.query(attrs).then(function(company) {
-          scope.company = company;
-          return scope.getEventChains();
-        });
-      }
+    var wrapTemplatedCell = function (templateElement, tAttrs, isCustomized, cellTemplateDirective) {
+        if (isCustomized) {
+            var childrenElements = templateElement.children();
+            var firstChildElement = angular.element(childrenElements[0]);
+            if (childrenElements.length !== 1 || !firstChildElement.attr(cellTemplateDirective)) {
+                // wrap the children of the custom template cell
+                templateElement.empty();
+                var templateWrapElement = angular.element("<div></div>").attr(cellTemplateDirective, "");
+                templateElement.append(templateWrapElement);
+                angular.forEach(childrenElements, function (childElement) {
+                    templateWrapElement.append(angular.element(childElement));
+                });
+            }
+        }
+        else {
+            templateElement.empty();
+            templateElement.append(angular.element("<div></div>").attr(cellTemplateDirective, ""));
+        }
     };
-    return {
-      controller: controller,
-      link: link,
-      templateUrl: 'event_chain_table_main.html'
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdminEvents').directive('eventGroupTable', function(AdminCompanyService, AdminEventGroupService, $modal, $log, ModalForm) {
-    var controller, link;
-    controller = function($scope) {
-      $scope.getEventGroups = function() {
-        var params;
-        params = {
-          company: $scope.company
+    var TemplatedCell = (function () {
+        function TemplatedCell(parent, cellElement) {
+            this.parent = parent;
+            this.cellElement = cellElement;
+            this.fieldName = cellElement.attr(fieldNameAttribute);
+            var customContent = cellElement.children();
+            this.isStandardColumn = customContent.length === 0;
+        }
+        return TemplatedCell;
+    })();
+    var TemplatedSection = (function () {
+        function TemplatedSection(sectionTagName, sectionDirectiveAttribute, rowDirectiveAttribute, cellTagName, cellDirectiveAttribute) {
+            this.sectionTagName = sectionTagName;
+            this.sectionDirectiveAttribute = sectionDirectiveAttribute;
+            this.rowDirectiveAttribute = rowDirectiveAttribute;
+            this.cellTagName = cellTagName;
+            this.cellDirectiveAttribute = cellDirectiveAttribute;
+            this.cellTagName = this.cellTagName.toUpperCase();
+            this.cells = null;
+        }
+        TemplatedSection.prototype.configureSection = function (gridElement, columnDefs) {
+            var _this = this;
+            var sectionElement = this.getSectionElement(gridElement, true);
+            sectionElement.empty();
+            sectionElement.removeAttr("ng-non-bindable");
+            // add the elements in order
+            var rowElementDefinitions = combineGridCellInfos(columnDefs, this.cells, false, false);
+            // grab the templated row
+            var templatedRowElement = this.getTemplatedRowElement(sectionElement, true);
+            angular.forEach(rowElementDefinitions, function (gridCell, index) {
+                var gridCellElement;
+                var templatedCell = gridCell;
+                // it might not be a templated cell, beware
+                if (templatedCell.parent === _this && templatedCell.cellElement) {
+                    gridCellElement = templatedCell.cellElement.clone(true);
+                }
+                else {
+                    gridCellElement = angular.element("<table><" + _this.cellTagName + "></" + _this.cellTagName + "></table>").find(_this.cellTagName);
+                }
+                // set it up
+                if (_this.cellDirectiveAttribute) {
+                    gridCellElement.attr(_this.cellDirectiveAttribute, index);
+                }
+                if (!gridCell.isStandardColumn) {
+                    gridCellElement.attr(isCustomizedAttribute, "true");
+                }
+                if (gridCell.fieldName) {
+                    gridCellElement.attr(fieldNameAttribute, gridCell.fieldName);
+                }
+                gridCellElement.attr("ng-style", "{\'width\':columnOptions.cellWidth,\'height\':columnOptions.cellHeight}");
+                // finally add it to the parent
+                templatedRowElement.append(gridCellElement);
+            });
+            return sectionElement;
         };
-        return AdminEventGroupService.query(params).then(function(event_groups) {
-          $scope.event_groups_models = event_groups;
-          return $scope.event_groups = _.map(event_groups, function(event_group) {
-            return _.pick(event_group, 'id', 'name', 'mobile');
-          });
-        });
-      };
-      $scope.newEventGroup = function() {
-        return ModalForm["new"]({
-          company: $scope.company,
-          title: 'New Event Group',
-          new_rel: 'new_event_group',
-          post_rel: 'event_groups',
-          success: function(event_group) {
-            return $scope.event_groups.push(event_group);
-          }
-        });
-      };
-      $scope["delete"] = function(id) {
-        var event_group;
-        event_group = _.find($scope.event_groups_models, function(p) {
-          return p.id === id;
-        });
-        return event_group.$del('self').then(function() {
-          return $scope.event_groups = _.reject($scope.event_groups, function(p) {
-            return p.id === id;
-          });
-        }, function(err) {
-          return $log.error("Failed to delete event_group");
-        });
-      };
-      return $scope.edit = function(id) {
-        var event_group;
-        event_group = _.find($scope.event_groups_models, function(p) {
-          return p.id === id;
-        });
-        return ModalForm.edit({
-          model: event_group,
-          title: 'Edit Event Group'
-        });
-      };
-    };
-    link = function(scope, element, attrs) {
-      if (scope.company) {
-        return scope.getEventGroups();
-      } else {
-        return AdminCompanyService.query(attrs).then(function(company) {
-          scope.company = company;
-          return scope.getEventGroups();
-        });
-      }
-    };
-    return {
-      controller: controller,
-      link: link,
-      templateUrl: 'event_group_table_main.html'
-    };
-  });
-
-}).call(this);
-
+        TemplatedSection.prototype.extractPartialColumnDefinitions = function () {
+            return this.cells;
+        };
+        TemplatedSection.prototype.discoverCells = function (gridElement) {
+            var _this = this;
+            this.cells = [];
+            var templatedRow = this.getTemplatedRowElement(this.getSectionElement(gridElement, false), false);
+            if (templatedRow) {
+                angular.forEach(templatedRow.children(), function (childElement, childIndex) {
+                    childElement = angular.element(childElement);
+                    if (childElement[0].tagName === _this.cellTagName.toUpperCase()) {
+                        var templateElement = childElement.clone(true);
+                        _this.cells.push(new TemplatedCell(_this, templateElement));
+                    }
+                });
+            }
+        };
+        TemplatedSection.prototype.getSectionElement = function (gridElement, ensurePresent) {
+            var sectionElement = null;
+            if (gridElement) {
+                sectionElement = findChildByTagName(gridElement, this.sectionTagName);
+            }
+            if (!sectionElement && ensurePresent) {
+                // angular strikes again: https://groups.google.com/forum/#!topic/angular/7poFynsguNw
+                sectionElement = angular.element("<table><" + this.sectionTagName + "></" + this.sectionTagName + "></table>").find(this.sectionTagName);
+                if (gridElement) {
+                    gridElement.append(sectionElement);
+                }
+            }
+            if (ensurePresent && this.sectionDirectiveAttribute) {
+                sectionElement.attr(this.sectionDirectiveAttribute, "");
+            }
+            return sectionElement;
+        };
+        TemplatedSection.prototype.getTemplatedRowElement = function (sectionElement, ensurePresent) {
+            var rowElement = null;
+            if (sectionElement) {
+                rowElement = findChildByTagName(sectionElement, "tr");
+            }
+            if (!rowElement && ensurePresent) {
+                rowElement = angular.element("<table><tr></tr></table>").find("tr");
+                if (sectionElement) {
+                    sectionElement.append(rowElement);
+                }
+            }
+            if (ensurePresent && this.rowDirectiveAttribute) {
+                rowElement.attr(this.rowDirectiveAttribute, "");
+            }
+            return rowElement;
+        };
+        return TemplatedSection;
+    })();
+    var GridController = (function () {
+        function GridController($compile, $parse, $timeout, $templateCache) {
+            this.$compile = $compile;
+            this.$parse = $parse;
+            this.$timeout = $timeout;
+            if (!templatesConfigured) {
+                configureTemplates($templateCache);
+                templatesConfigured = true;
+            }
+        }
+        GridController.prototype.setupScope = function ($isolatedScope, $gridElement, $attrs) {
+            var _this = this;
+            // create a scope, used just by our grid
+            var gridScope = angular.element($gridElement).scope().$new();
+            // initialise the options
+            this.gridOptions = {
+                immediateDataRetrieval: true,
+                items: [],
+                fields: null,
+                locale: "en",
+                selectedItems: [],
+                filterBy: null,
+                filterByFields: {},
+                orderBy: null,
+                orderByReverse: false,
+                pageItems: null,
+                currentPage: 0,
+                totalItems: null,
+                enableFiltering: true,
+                enableSorting: true,
+                selectionMode: SelectionMode[2 /* MultiRow */],
+                onDataRequiredDelay: 1000,
+                onDataRequired: $attrs["onDataRequired"] ? $isolatedScope["onDataRequired"] : null,
+                gridColumnDefs: []
+            };
+            //link the outer scope with the internal one
+            gridScope.gridOptions = this.gridOptions;
+            gridScope.TrNgGrid = TrNgGrid;
+            this.linkScope(gridScope, $isolatedScope, "gridOptions", $attrs);
+            //set up watchers for some of the special attributes we support
+            if (this.gridOptions.onDataRequired) {
+                var retrieveDataCallback = function () {
+                    _this.dataRequestPromise = null;
+                    _this.gridOptions.immediateDataRetrieval = false;
+                    _this.gridOptions.onDataRequired(_this.gridOptions);
+                };
+                var scheduleDataRetrieval = function () {
+                    if (_this.dataRequestPromise) {
+                        _this.$timeout.cancel(_this.dataRequestPromise);
+                        _this.dataRequestPromise = null;
+                    }
+                    if (_this.gridOptions.immediateDataRetrieval) {
+                        retrieveDataCallback();
+                    }
+                    else {
+                        _this.dataRequestPromise = _this.$timeout(function () {
+                            retrieveDataCallback();
+                        }, _this.gridOptions.onDataRequiredDelay, true);
+                    }
+                };
+                gridScope.$watch("gridOptions.currentPage", function (newValue, oldValue) {
+                    if (newValue !== oldValue) {
+                        scheduleDataRetrieval();
+                    }
+                });
+                gridScope.$watchCollection("[" + "gridOptions.filterBy, " + "gridOptions.filterByFields, " + "gridOptions.orderBy, " + "gridOptions.orderByReverse, " + "gridOptions.pageItems, " + "]", function (newValues, oldValues) {
+                    // everything will reset the page index, with the exception of a page index change
+                    if (_this.gridOptions.currentPage !== 0) {
+                        _this.gridOptions.currentPage = 0;
+                        // the page index watch will activate, exit for now to avoid duplicate data requests
+                        return;
+                    }
+                    scheduleDataRetrieval();
+                });
+                gridScope.$watch("gridOptions.immediateDataRetrieval", function (newValue) {
+                    if (newValue && _this.dataRequestPromise) {
+                        _this.$timeout.cancel(_this.dataRequestPromise);
+                        retrieveDataCallback();
+                    }
+                });
+            }
+            // the new settings
+            gridScope.$watch("gridOptions.selectionMode", function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    switch (newValue) {
+                        case SelectionMode[0 /* None */]:
+                            _this.gridOptions.selectedItems.splice(0);
+                            break;
+                        case SelectionMode[1 /* SingleRow */]:
+                            if (_this.gridOptions.selectedItems.length > 1) {
+                                _this.gridOptions.selectedItems.splice(1);
+                            }
+                            break;
+                    }
+                }
+            });
+            return gridScope;
+        };
+        GridController.prototype.speedUpAsyncDataRetrieval = function ($event) {
+            if (!$event || $event.keyCode == 13) {
+                this.gridOptions.immediateDataRetrieval = true;
+            }
+        };
+        GridController.prototype.setColumnOptions = function (columnIndex, columnOptions) {
+            var originalOptions = this.gridOptions.gridColumnDefs[columnIndex];
+            if (!originalOptions) {
+                throw "Invalid grid column options found for column index " + columnIndex + ". Please report this error.";
+            }
+            // copy a couple of options onto the incoming set of options
+            columnOptions = angular.extend(columnOptions, originalOptions);
+            // replace the original options 
+            this.gridOptions.gridColumnDefs[columnIndex] = columnOptions;
+        };
+        GridController.prototype.toggleSorting = function (propertyName) {
+            if (this.gridOptions.orderBy != propertyName) {
+                // the column has changed
+                this.gridOptions.orderBy = propertyName;
+            }
+            else {
+                // the sort direction has changed
+                this.gridOptions.orderByReverse = !this.gridOptions.orderByReverse;
+            }
+            this.speedUpAsyncDataRetrieval();
+        };
+        GridController.prototype.getFormattedFieldName = function (fieldName) {
+            return fieldName.replace(/[\.\[\]]/g, "_");
+        };
+        GridController.prototype.setFilter = function (fieldName, filter) {
+            if (!filter) {
+                delete (this.gridOptions.filterByFields[fieldName]);
+            }
+            else {
+                this.gridOptions.filterByFields[fieldName] = filter;
+            }
+            // in order for someone to successfully listen to changes made to this object, we need to replace it
+            this.gridOptions.filterByFields = angular.extend({}, this.gridOptions.filterByFields);
+        };
+        GridController.prototype.toggleItemSelection = function (filteredItems, item, $event) {
+            if (this.gridOptions.selectionMode === SelectionMode[0 /* None */])
+                return;
+            switch (this.gridOptions.selectionMode) {
+                case SelectionMode[3 /* MultiRowWithKeyModifiers */]:
+                    if (!$event.ctrlKey && !$event.shiftKey && !$event.metaKey) {
+                        // if neither key modifiers are pressed, clear the selection and start fresh
+                        var itemIndex = this.gridOptions.selectedItems.indexOf(item);
+                        this.gridOptions.selectedItems.splice(0);
+                        if (itemIndex < 0) {
+                            this.gridOptions.selectedItems.push(item);
+                        }
+                    }
+                    else {
+                        if ($event.ctrlKey || $event.metaKey) {
+                            // the ctrl key deselects or selects the item
+                            var itemIndex = this.gridOptions.selectedItems.indexOf(item);
+                            if (itemIndex >= 0) {
+                                this.gridOptions.selectedItems.splice(itemIndex, 1);
+                            }
+                            else {
+                                this.gridOptions.selectedItems.push(item);
+                            }
+                        }
+                        else if ($event.shiftKey) {
+                            // clear undesired selections, if the styles are not applied
+                            if (document.selection && document.selection.empty) {
+                                document.selection.empty();
+                            }
+                            else if (window.getSelection) {
+                                var sel = window.getSelection();
+                                sel.removeAllRanges();
+                            }
+                            // the shift key will always select items from the last selected item
+                            var firstItemIndex;
+                            var lastSelectedItem = this.gridOptions.selectedItems[this.gridOptions.selectedItems.length - 1];
+                            for (firstItemIndex = 0; firstItemIndex < filteredItems.length && filteredItems[firstItemIndex].$$_gridItem !== lastSelectedItem; firstItemIndex++)
+                                ;
+                            if (firstItemIndex >= filteredItems.length) {
+                                firstItemIndex = 0;
+                            }
+                            var lastItemIndex;
+                            for (lastItemIndex = 0; lastItemIndex < filteredItems.length && filteredItems[lastItemIndex].$$_gridItem !== item; lastItemIndex++)
+                                ;
+                            if (lastItemIndex >= filteredItems.length) {
+                                throw "Invalid selection on a key modifier selection mode";
+                            }
+                            if (lastItemIndex < firstItemIndex) {
+                                var tempIndex = firstItemIndex;
+                                firstItemIndex = lastItemIndex;
+                                lastItemIndex = tempIndex;
+                            }
+                            for (var currentItemIndex = firstItemIndex; currentItemIndex <= lastItemIndex; currentItemIndex++) {
+                                var currentItem = filteredItems[currentItemIndex].$$_gridItem;
+                                if (this.gridOptions.selectedItems.indexOf(currentItem) < 0) {
+                                    this.gridOptions.selectedItems.push(currentItem);
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case SelectionMode[1 /* SingleRow */]:
+                    var itemIndex = this.gridOptions.selectedItems.indexOf(item);
+                    this.gridOptions.selectedItems.splice(0);
+                    if (itemIndex < 0) {
+                        this.gridOptions.selectedItems.push(item);
+                    }
+                    break;
+                case SelectionMode[2 /* MultiRow */]:
+                    var itemIndex = this.gridOptions.selectedItems.indexOf(item);
+                    if (itemIndex >= 0) {
+                        this.gridOptions.selectedItems.splice(itemIndex, 1);
+                    }
+                    else {
+                        this.gridOptions.selectedItems.push(item);
+                    }
+                    break;
+            }
+        };
+        GridController.prototype.discoverTemplates = function (gridElement) {
+            this.templatedHeader = new TemplatedSection("thead", null, null, "th", cellHeaderDirectiveAttribute);
+            this.templatedBody = new TemplatedSection("tbody", bodyDirectiveAttribute, null, "td", cellBodyDirectiveAttribute);
+            this.templatedFooter = new TemplatedSection("tfoot", null, null, "td", cellFooterDirectiveAttribute);
+            this.templatedHeader.discoverCells(gridElement);
+            this.templatedFooter.discoverCells(gridElement);
+            this.templatedBody.discoverCells(gridElement);
+        };
+        GridController.prototype.configureTableStructure = function (parentScope, gridElement, oldScope) {
+            var _this = this;
+            var scope = parentScope.$new();
+            gridElement.empty();
+            // make sure we're no longer watching for column defs
+            if (this.columnDefsItemsWatcherDeregistration) {
+                this.columnDefsItemsWatcherDeregistration();
+                this.columnDefsItemsWatcherDeregistration = null;
+            }
+            if (this.columnDefsFieldsWatcherDeregistration) {
+                this.columnDefsFieldsWatcherDeregistration();
+                this.columnDefsFieldsWatcherDeregistration = null;
+            }
+            // watch for a change in field values
+            // don't be tempted to use watchcollection, it always returns same values which can't be compared
+            // https://github.com/angular/angular.js/issues/2621
+            // which causes us the recompile even if we don't have to
+            this.columnDefsFieldsWatcherDeregistration = scope.$watch("gridOptions.fields", function (newValue, oldValue) {
+                if (!angular.equals(newValue, oldValue)) {
+                    _this.configureTableStructure(parentScope, gridElement, scope);
+                }
+            }, true);
+            // prepare a partial list of column definitions
+            var templatedHeaderPartialGridColumnDefs = this.templatedHeader.extractPartialColumnDefinitions();
+            var templatedBodyPartialGridColumnDefs = this.templatedBody.extractPartialColumnDefinitions();
+            var templatedFooterPartialGridColumnDefs = this.templatedFooter.extractPartialColumnDefinitions();
+            var finalPartialGridColumnDefs = [];
+            var fieldsEnforced = this.gridOptions.fields;
+            if (fieldsEnforced) {
+                // the fields bound to the options will take precedence
+                angular.forEach(this.gridOptions.fields, function (fieldName) {
+                    if (fieldName) {
+                        finalPartialGridColumnDefs.push({
+                            isStandardColumn: true,
+                            fieldName: fieldName
+                        });
+                    }
+                });
+                finalPartialGridColumnDefs = combineGridCellInfos(finalPartialGridColumnDefs, templatedHeaderPartialGridColumnDefs, false, true);
+                finalPartialGridColumnDefs = combineGridCellInfos(finalPartialGridColumnDefs, templatedBodyPartialGridColumnDefs, false, true);
+            }
+            else {
+                // check for the header markup
+                if (templatedHeaderPartialGridColumnDefs.length > 0) {
+                    // header and body will be used for fishing out the field names
+                    finalPartialGridColumnDefs = combineGridCellInfos(templatedHeaderPartialGridColumnDefs, templatedBodyPartialGridColumnDefs, true, true);
+                }
+                else {
+                    // the object itself will provide the field names
+                    if (!this.gridOptions.items || this.gridOptions.items.length == 0) {
+                        // register our interest for when we do have something to look at
+                        this.columnDefsItemsWatcherDeregistration = scope.$watch("gridOptions.items.length", function (newValue, oldValue) {
+                            if (newValue) {
+                                _this.configureTableStructure(parentScope, gridElement, scope);
+                            }
+                        });
+                        return;
+                    }
+                    for (var propName in this.gridOptions.items[0]) {
+                        // exclude the library properties
+                        if (!propName.match(/^[_\$]/g)) {
+                            finalPartialGridColumnDefs.push({
+                                isStandardColumn: true,
+                                fieldName: propName
+                            });
+                        }
+                    }
+                    // combine with the body template
+                    finalPartialGridColumnDefs = combineGridCellInfos(finalPartialGridColumnDefs, templatedBodyPartialGridColumnDefs, true, true);
+                }
+            }
+            // it's time to make final tweaks to the instances and recompile
+            if (templatedFooterPartialGridColumnDefs.length == 0) {
+                templatedFooterPartialGridColumnDefs.push({ isStandardColumn: true });
+            }
+            // compute the formatted field names
+            angular.forEach(finalPartialGridColumnDefs, function (columnDefs) {
+                if (columnDefs.fieldName) {
+                    columnDefs.displayFieldName = _this.getFormattedFieldName(columnDefs.fieldName);
+                }
+            });
+            this.gridOptions.gridColumnDefs = finalPartialGridColumnDefs;
+            var headerElement = this.templatedHeader.configureSection(gridElement, finalPartialGridColumnDefs);
+            var footerElement = this.templatedFooter.configureSection(gridElement, templatedFooterPartialGridColumnDefs);
+            var bodyElement = this.templatedBody.configureSection(gridElement, finalPartialGridColumnDefs);
+            var templatedBodyRowElement = this.templatedBody.getTemplatedRowElement(bodyElement);
+            var templatedHeaderRowElement = this.templatedHeader.getTemplatedRowElement(headerElement);
+            bodyElement.attr(bodyDirectiveAttribute, "");
+            templatedBodyRowElement.attr("ng-click", "toggleItemSelection(gridItem, $event)");
+            // when server-side get is active (scope.gridOptions.onDataRequired), the filtering through the standard filters should be disabled
+            /*if (this.gridOptions.onDataRequired) {
+                templatedBodyRowElement.attr("ng-repeat", "gridItem in gridOptions.items");
+            }
+            else {
+                templatedBodyRowElement.attr("ng-repeat", "gridItem in gridOptions.items | filter:gridOptions.filterBy | filter:gridOptions.filterByFields | orderBy:gridOptions.orderBy:gridOptions.orderByReverse | " + dataPagingFilter + ":gridOptions");
+            }*/
+            templatedBodyRowElement.attr("ng-repeat", "gridDisplayItem in filteredItems");
+            templatedBodyRowElement.attr("ng-init", "gridItem=gridDisplayItem.$$_gridItem");
+            templatedBodyRowElement.attr("ng-class", "{'" + TrNgGrid.rowSelectedCssClass + "':gridOptions.selectedItems.indexOf(gridItem)>=0}");
+            headerElement.replaceWith(this.$compile(headerElement)(scope));
+            footerElement.replaceWith(this.$compile(footerElement)(scope));
+            bodyElement.replaceWith(this.$compile(bodyElement)(scope));
+            if (oldScope) {
+                // an Angular bug is preventing us to destroy a scope inside the digest cycle
+                this.$timeout(function () { return oldScope.$destroy(); });
+            }
+        };
+        GridController.prototype.computeFormattedItems = function (scope) {
+            var input = scope.gridOptions.items || [];
+            TrNgGrid.debugMode && this.log("formatting items of length " + input.length);
+            var formattedItems = scope.formattedItems = (scope.formattedItems || []);
+            if (scope.gridOptions.onDataRequired) {
+                scope.filteredItems = formattedItems;
+            }
+            else {
+                scope.requiresReFilteringTrigger = !scope.requiresReFilteringTrigger;
+            }
+            var gridColumnDefs = scope.gridOptions.gridColumnDefs;
+            for (var inputIndex = 0; inputIndex < input.length; inputIndex++) {
+                var gridItem = input[inputIndex];
+                var outputItem;
+                // crate a temporary scope for holding a gridItem as we enumerate through the items
+                var localEvalVars = { gridItem: gridItem };
+                while (formattedItems.length > input.length && (outputItem = formattedItems[inputIndex]).$$_gridItem !== gridItem) {
+                    formattedItems.splice(inputIndex, 1);
+                }
+                if (inputIndex < formattedItems.length) {
+                    outputItem = formattedItems[inputIndex];
+                    if (outputItem.$$_gridItem !== gridItem) {
+                        outputItem = { $$_gridItem: gridItem };
+                        formattedItems[inputIndex] = outputItem;
+                    }
+                }
+                else {
+                    outputItem = { $$_gridItem: gridItem };
+                    formattedItems.push(outputItem);
+                }
+                for (var gridColumnDefIndex = 0; gridColumnDefIndex < gridColumnDefs.length; gridColumnDefIndex++) {
+                    try {
+                        var gridColumnDef = gridColumnDefs[gridColumnDefIndex];
+                        var fieldName = gridColumnDef.fieldName;
+                        if (fieldName) {
+                            var displayFormat = gridColumnDef.displayFormat;
+                            if (displayFormat) {
+                                if (displayFormat[0] != "." && displayFormat[0] != "|") {
+                                    // angular filter
+                                    displayFormat = " | " + displayFormat;
+                                }
+                                // apply the format
+                                outputItem[gridColumnDef.displayFieldName] = scope.$eval("gridItem." + fieldName + displayFormat, localEvalVars);
+                            }
+                            else {
+                                outputItem[gridColumnDef.displayFieldName] = scope.$eval("gridItem." + fieldName, localEvalVars);
+                            }
+                        }
+                    }
+                    catch (ex) {
+                        TrNgGrid.debugMode && this.log("Field evaluation failed for <" + fieldName + "> with error " + ex);
+                    }
+                }
+            }
+            // remove any extra elements from the formatted list
+            if (formattedItems.length > input.length) {
+                formattedItems.splice(input.length, formattedItems.length - input.length);
+            }
+        };
+        GridController.prototype.computeFilteredItems = function (scope) {
+            scope.filterByDisplayFields = {};
+            if (scope.gridOptions.filterByFields) {
+                for (var fieldName in scope.gridOptions.filterByFields) {
+                    scope.filterByDisplayFields[this.getFormattedFieldName(fieldName)] = scope.gridOptions.filterByFields[fieldName];
+                }
+            }
+            TrNgGrid.debugMode && this.log("filtering items of length " + (scope.formattedItems ? scope.formattedItems.length : 0));
+            scope.filteredItems = scope.$eval("formattedItems | filter:gridOptions.filterBy | filter:filterByDisplayFields | " + TrNgGrid.sortFilter + ":gridOptions | " + TrNgGrid.dataPagingFilter + ":gridOptions");
+            //debugger;
+        };
+        GridController.prototype.setupDisplayItemsArray = function (scope) {
+            var _this = this;
+            var watchExpression = "[gridOptions.items,gridOptions.gridColumnDefs.length";
+            angular.forEach(scope.gridOptions.gridColumnDefs, function (gridColumnDef) {
+                if (gridColumnDef.displayFormat && gridColumnDef.displayFormat[0] != '.') {
+                    // watch the parameters
+                    var displayfilters = gridColumnDef.displayFormat.split('|');
+                    angular.forEach(displayfilters, function (displayFilter) {
+                        var displayFilterParams = displayFilter.split(':');
+                        if (displayFilterParams.length > 1) {
+                            angular.forEach(displayFilterParams.slice(1), function (displayFilterParam) {
+                                displayFilterParam = displayFilterParam.trim();
+                                if (displayFilterParam && displayFilterParam !== "gridItem" && displayFilterParam !== "gridDisplayItem") {
+                                    watchExpression += "," + displayFilterParam;
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+            watchExpression += "]";
+            TrNgGrid.debugMode && this.log("re-formatting is set to watch for changes in " + watchExpression);
+            scope.$watch(watchExpression, function () { return _this.computeFormattedItems(scope); }, true);
+            if (!scope.gridOptions.onDataRequired) {
+                watchExpression = "[" + "requiresReFilteringTrigger, gridOptions.filterBy, gridOptions.filterByFields, gridOptions.orderBy, gridOptions.orderByReverse, gridOptions.currentPage, gridOptions.pageItems" + "]";
+                scope.$watch(watchExpression, function (newValue, oldValue) {
+                    _this.computeFilteredItems(scope);
+                }, true);
+            }
+        };
+        GridController.prototype.linkAttrs = function (tAttrs, localStorage) {
+            var propSetter = function (propName, propValue) {
+                if (typeof (propValue) === "undefined")
+                    return;
+                switch (propValue) {
+                    case "true":
+                        propValue = true;
+                        break;
+                    case "false":
+                        propValue = false;
+                        break;
+                }
+                localStorage[propName] = propValue;
+            };
+            for (var propName in localStorage) {
+                propSetter(propName, tAttrs[propName]);
+                // watch for changes
+                (function (propName) {
+                    tAttrs.$observe(propName, function (value) { return propSetter(propName, value); });
+                })(propName);
+            }
+        };
+        GridController.prototype.linkScope = function (internalScope, externalScope, scopeTargetIdentifier, attrs) {
+            // this method shouldn't even be here
+            // but it is because we want to allow people to either set attributes with either a constant or a watchable variable
+            var _this = this;
+            // watch for a resolution to issue #5951 on angular
+            // https://github.com/angular/angular.js/issues/5951
+            var target = internalScope[scopeTargetIdentifier];
+            for (var propName in target) {
+                var attributeExists = typeof (attrs[propName]) != "undefined" && attrs[propName] != null;
+                if (attributeExists) {
+                    var isArray = false;
+                    // initialise from the scope first
+                    if (typeof (externalScope[propName]) != "undefined" && externalScope[propName] != null) {
+                        target[propName] = externalScope[propName];
+                        isArray = target[propName] instanceof Array;
+                    }
+                    //allow arrays to be changed: if(!isArray){
+                    var compiledAttrGetter = null;
+                    try {
+                        compiledAttrGetter = this.$parse(attrs[propName]);
+                    }
+                    catch (ex) {
+                    }
+                    (function (propName, compiledAttrGetter) {
+                        if (!compiledAttrGetter || !compiledAttrGetter.constant) {
+                            // watch for a change in value and set it on our internal scope
+                            externalScope.$watch(propName, function (newValue, oldValue) {
+                                // debugMode && this.log("Property '" + propName + "' changed on the external scope from " + oldValue + " to " + newValue + ". Mirroring the parameter's value on the grid's internal scope.");
+                                target[propName] = newValue;
+                            });
+                        }
+                        var compiledAttrSetter = (compiledAttrGetter && compiledAttrGetter.assign) ? compiledAttrGetter.assign : null;
+                        if (compiledAttrSetter) {
+                            // a setter exists for the property, which means it's safe to mirror the internal prop on the external scope
+                            internalScope.$watch(scopeTargetIdentifier + "." + propName, function (newValue, oldValue) {
+                                try {
+                                    // debugMode && this.log("Property '" + propName + "' changed on the internal scope from " + oldValue + " to " + newValue + ". Mirroring the parameter's value on the external scope.");
+                                    externalScope[propName] = newValue;
+                                }
+                                catch (ex) {
+                                    if (TrNgGrid.debugMode) {
+                                        _this.log("Mirroring the property on the external scope failed with " + ex);
+                                        throw ex;
+                                    }
+                                }
+                            });
+                        }
+                    })(propName, compiledAttrGetter);
+                }
+            }
+        };
+        GridController.prototype.log = function (message) {
+            console.log(tableDirective + "(" + new Date().getTime() + "): " + message);
+        };
+        return GridController;
+    })();
+    angular.module("trNgGrid", []).directive(tableDirective, [
+        function () {
+            return {
+                restrict: 'A',
+                scope: {
+                    items: '=',
+                    selectedItems: '=?',
+                    filterBy: '=?',
+                    filterByFields: '=?',
+                    orderBy: '=?',
+                    orderByReverse: '=?',
+                    pageItems: '=?',
+                    currentPage: '=?',
+                    totalItems: '=?',
+                    enableFiltering: '=?',
+                    enableSorting: '=?',
+                    enableSelections: '=?',
+                    enableMultiRowSelections: '=?',
+                    selectionMode: '@',
+                    locale: '@',
+                    onDataRequired: '&',
+                    onDataRequiredDelay: '=?',
+                    fields: '=?'
+                },
+                template: function (templateElement, tAttrs) {
+                    templateElement.addClass(TrNgGrid.tableCssClass);
+                    // at this stage, no elements can be bound
+                    angular.forEach(templateElement.children(), function (childElement) {
+                        childElement = angular.element(childElement);
+                        childElement.attr("ng-non-bindable", "");
+                    });
+                },
+                controller: ["$compile", "$parse", "$timeout", "$templateCache", GridController],
+                compile: function (templateElement, tAttrs) {
+                    return {
+                        pre: function (isolatedScope, instanceElement, tAttrs, controller, transcludeFn) {
+                            controller.discoverTemplates(instanceElement);
+                        },
+                        post: function (isolatedScope, instanceElement, tAttrs, controller, transcludeFn) {
+                            var gridScope = controller.setupScope(isolatedScope, instanceElement, tAttrs);
+                            gridScope.speedUpAsyncDataRetrieval = function ($event) { return controller.speedUpAsyncDataRetrieval($event); };
+                            controller.configureTableStructure(gridScope, instanceElement);
+                            controller.setupDisplayItemsArray(gridScope);
+                        }
+                    };
+                }
+            };
+        }
+    ]).directive(cellHeaderDirective, [
+        function () {
+            var setupColumnTitle = function (scope) {
+                if (scope.columnOptions.displayName) {
+                    scope.columnTitle = scope.columnOptions.displayName;
+                }
+                else {
+                    if (!scope.columnOptions.fieldName) {
+                        scope.columnTitle = "[Invalid Field Name]";
+                    }
+                    else {
+                        // exclude nested notations
+                        var splitFieldName = scope.columnOptions.fieldName.match(/^[^\.\[\]]*/);
+                        // split by camel-casing
+                        splitFieldName = splitFieldName[0].split(/(?=[A-Z])/);
+                        if (splitFieldName.length && splitFieldName[0].length) {
+                            splitFieldName[0] = splitFieldName[0][0].toLocaleUpperCase() + splitFieldName[0].substr(1);
+                        }
+                        scope.columnTitle = splitFieldName.join(" ");
+                    }
+                }
+            };
+            return {
+                restrict: 'A',
+                require: '^' + tableDirective,
+                scope: true,
+                compile: function (templateElement, tAttrs) {
+                    var isCustomized = tAttrs['isCustomized'] == 'true';
+                    wrapTemplatedCell(templateElement, tAttrs, isCustomized, cellHeaderTemplateDirectiveAttribute);
+                    return {
+                        // we receive a reference to a real element that will appear in the DOM, after the controller was created, but before binding setup
+                        pre: function (scope, instanceElement, tAttrs, controller, $transclude) {
+                            // we're not interested in creating an isolated scope just to parse the element attributes,
+                            // so we're gonna have to do this manually
+                            var columnIndex = parseInt(tAttrs[cellHeaderDirective]);
+                            // create a clone of the default column options
+                            var columnOptions = angular.extend(scope.gridOptions.gridColumnDefs[columnIndex], TrNgGrid.defaultColumnOptions);
+                            // now match and observe the attributes
+                            controller.linkAttrs(tAttrs, columnOptions);
+                            // set up the new scope
+                            scope.columnOptions = columnOptions;
+                            scope.isCustomized = isCustomized;
+                            scope.toggleSorting = function (propertyName) {
+                                controller.toggleSorting(propertyName);
+                            };
+                            // set up the column title
+                            setupColumnTitle(scope);
+                            scope.$watch("columnOptions.filter", function (newValue, oldValue) {
+                                if (newValue !== oldValue) {
+                                    controller.setFilter(columnOptions.fieldName, newValue);
+                                }
+                            });
+                        }
+                    };
+                }
+            };
+        }
+    ]).directive(cellHeaderTemplateDirective, [
+        function () {
+            return {
+                restrict: 'A',
+                templateUrl: TrNgGrid.cellHeaderTemplateId,
+                transclude: true,
+                replace: true,
+            };
+        }
+    ]).directive(bodyDirective, [
+        function () {
+            return {
+                restrict: 'A',
+                require: '^' + tableDirective,
+                scope: true,
+                compile: function (templateElement, tAttrs) {
+                    return {
+                        pre: function (scope, compiledInstanceElement, tAttrs, controller) {
+                            scope.toggleItemSelection = function (item, $event) {
+                                controller.toggleItemSelection(scope.filteredItems, item, $event);
+                            };
+                        }
+                    };
+                }
+            };
+        }
+    ]).directive(cellBodyDirective, [
+        function () {
+            return {
+                restrict: 'A',
+                require: '^' + tableDirective,
+                scope: true,
+                compile: function (templateElement, tAttrs) {
+                    var isCustomized = tAttrs['isCustomized'] == 'true';
+                    wrapTemplatedCell(templateElement, tAttrs, isCustomized, cellBodyTemplateDirectiveAttribute);
+                    return {
+                        pre: function (scope, instanceElement, tAttrs, controller, $transclude) {
+                            scope.columnOptions = scope.gridOptions.gridColumnDefs[parseInt(tAttrs[cellBodyDirective])];
+                            scope.gridItem = scope.gridDisplayItem.$$_gridItem;
+                            scope.isCustomized = isCustomized;
+                        }
+                    };
+                }
+            };
+        }
+    ]).directive(cellBodyTemplateDirective, [
+        function () {
+            return {
+                restrict: 'A',
+                templateUrl: TrNgGrid.cellBodyTemplateId,
+                transclude: true,
+                replace: true
+            };
+        }
+    ]).directive(cellFooterDirective, [
+        function () {
+            return {
+                restrict: 'A',
+                require: '^' + tableDirective,
+                scope: true,
+                compile: function (templateElement, tAttrs) {
+                    var isCustomized = tAttrs['isCustomized'] == 'true';
+                    wrapTemplatedCell(templateElement, tAttrs, isCustomized, cellFooterTemplateDirectiveAttribute);
+                    return {
+                        pre: function (scope, instanceElement, tAttrs, controller, $transclude) {
+                            scope.isCustomized = isCustomized;
+                            instanceElement.attr("colspan", scope.gridOptions.gridColumnDefs.length);
+                        }
+                    };
+                }
+            };
+        }
+    ]).directive(cellFooterTemplateDirective, [
+        function () {
+            return {
+                restrict: 'A',
+                templateUrl: TrNgGrid.cellFooterTemplateId,
+                transclude: true,
+                replace: true
+            };
+        }
+    ]).directive(columnSortDirective, [
+        function () {
+            return {
+                restrict: 'A',
+                replace: true,
+                templateUrl: TrNgGrid.columnSortTemplateId
+            };
+        }
+    ]).directive(columnFilterDirective, [
+        function () {
+            return {
+                restrict: 'A',
+                replace: true,
+                templateUrl: TrNgGrid.columnFilterTemplateId
+            };
+        }
+    ]).directive(globalFilterDirective, [
+        function () {
+            return {
+                restrict: 'A',
+                scope: false,
+                templateUrl: TrNgGrid.footerGlobalFilterTemplateId,
+            };
+        }
+    ]).directive(pagerDirective, [
+        function () {
+            var setupScope = function (scope, controller) {
+                // do not set scope.gridOptions.totalItems, it might be set from the outside
+                scope.totalItemsCount = (typeof (scope.gridOptions.totalItems) != "undefined" && scope.gridOptions.totalItems != null) ? scope.gridOptions.totalItems : (scope.gridOptions.items ? scope.gridOptions.items.length : 0);
+                scope.isPaged = (!!scope.gridOptions.pageItems) && (scope.gridOptions.pageItems < scope.totalItemsCount);
+                scope.extendedControlsActive = false;
+                scope.lastPageIndex = (!scope.totalItemsCount || !scope.isPaged) ? 0 : (Math.floor(scope.totalItemsCount / scope.gridOptions.pageItems) + ((scope.totalItemsCount % scope.gridOptions.pageItems) ? 0 : -1));
+                if (scope.gridOptions.currentPage > scope.lastPageIndex) {
+                    // this will unfortunately trigger another query if in server side data query mode
+                    scope.gridOptions.currentPage = scope.lastPageIndex;
+                }
+                scope.startItemIndex = scope.isPaged ? (scope.gridOptions.pageItems * scope.gridOptions.currentPage) : 0;
+                scope.endItemIndex = scope.isPaged ? (scope.startItemIndex + scope.gridOptions.pageItems - 1) : scope.totalItemsCount - 1;
+                if (scope.endItemIndex >= scope.totalItemsCount) {
+                    scope.endItemIndex = scope.totalItemsCount - 1;
+                }
+                if (scope.endItemIndex < scope.startItemIndex) {
+                    scope.endItemIndex = scope.startItemIndex;
+                }
+                scope.pageCanGoBack = scope.isPaged && scope.gridOptions.currentPage > 0;
+                scope.pageCanGoForward = scope.isPaged && scope.gridOptions.currentPage < scope.lastPageIndex;
+                scope.pageIndexes = scope.pageIndexes || [];
+                scope.pageIndexes.splice(0);
+                if (scope.isPaged) {
+                    if (scope.lastPageIndex + 1 > TrNgGrid.defaultPagerMinifiedPageCountThreshold) {
+                        scope.extendedControlsActive = true;
+                        var pageIndexHalfRange = Math.floor(TrNgGrid.defaultPagerMinifiedPageCountThreshold / 2);
+                        var lowPageIndex = scope.gridOptions.currentPage - pageIndexHalfRange;
+                        var highPageIndex = scope.gridOptions.currentPage + pageIndexHalfRange;
+                        // compute the high and low
+                        if (lowPageIndex < 0) {
+                            highPageIndex += -lowPageIndex;
+                            lowPageIndex = 0;
+                        }
+                        else if (highPageIndex > scope.lastPageIndex) {
+                            lowPageIndex -= highPageIndex - scope.lastPageIndex;
+                            highPageIndex = scope.lastPageIndex;
+                        }
+                        // add the extra controls where needed
+                        if (lowPageIndex > 0) {
+                            scope.pageIndexes.push(null);
+                            lowPageIndex++;
+                        }
+                        var highPageEllipsed = false;
+                        if (highPageIndex < scope.lastPageIndex) {
+                            highPageEllipsed = true;
+                            highPageIndex--;
+                        }
+                        for (var pageIndex = lowPageIndex; pageIndex <= highPageIndex; pageIndex++) {
+                            scope.pageIndexes.push(pageIndex);
+                        }
+                        if (highPageEllipsed) {
+                            scope.pageIndexes.push(null);
+                        }
+                    }
+                    else {
+                        scope.extendedControlsActive = false;
+                        for (var pageIndex = 0; pageIndex <= scope.lastPageIndex; pageIndex++) {
+                            scope.pageIndexes.push(pageIndex);
+                        }
+                    }
+                }
+                scope.pageSelectionActive = scope.pageIndexes.length > 1;
+                scope.navigateToPage = function (pageIndex) {
+                    scope.gridOptions.currentPage = pageIndex;
+                    scope.speedUpAsyncDataRetrieval();
+                    /*$event.preventDefault();
+                    $event.stopPropagation();*/
+                };
+                scope.switchPageSelection = function ($event, pageSelectionActive) {
+                    scope.pageSelectionActive = pageSelectionActive;
+                    if ($event) {
+                        $event.preventDefault();
+                        $event.stopPropagation();
+                    }
+                };
+            };
+            //ng - model = "gridOptions.currentPage" 
+            return {
+                restrict: 'A',
+                scope: true,
+                require: '^' + tableDirective,
+                templateUrl: TrNgGrid.footerPagerTemplateId,
+                replace: true,
+                compile: function (templateElement, tAttrs) {
+                    return {
+                        pre: function (scope, compiledInstanceElement, tAttrs, controller) {
+                            setupScope(scope, controller);
+                        },
+                        post: function (scope, instanceElement, tAttrs, controller) {
+                            scope.$watchCollection("[gridOptions.currentPage, gridOptions.items.length, gridOptions.totalItems, gridOptions.pageItems]", function (newValues, oldValues) {
+                                setupScope(scope, controller);
+                            });
+                        }
+                    };
+                }
+            };
+        }
+    ]).filter(TrNgGrid.sortFilter, ["$filter", "$parse", function ($filter, $parse) {
+        return function (input, gridOptions) {
+            if (!gridOptions.orderBy || !gridOptions.gridColumnDefs) {
+                // not ready to sort, return the input array
+                return input;
+            }
+            // we'll need the column options
+            var columnOptions = null;
+            for (var columnOptionsIndex = 0; (columnOptionsIndex < gridOptions.gridColumnDefs.length) && ((columnOptions = gridOptions.gridColumnDefs[columnOptionsIndex]).fieldName !== gridOptions.orderBy); columnOptions = null, columnOptionsIndex++)
+                ;
+            if (!columnOptions) {
+                // unable to find any info about the selected field
+                return input;
+            }
+            var sortedInput = $filter("orderBy")(input, function (item) {
+                var fieldValue = undefined;
+                try {
+                    // get the value associated with the original grid item
+                    fieldValue = $parse("item.$$_gridItem." + columnOptions.fieldName)({ item: item });
+                }
+                catch (ex) {
+                }
+                if (fieldValue === undefined) {
+                    try {
+                        // next try the field on the display item, in case of computed fields
+                        fieldValue = $parse("item." + columnOptions.displayFieldName)({ item: item });
+                    }
+                    catch (ex) {
+                    }
+                }
+                return fieldValue;
+            }, gridOptions.orderByReverse);
+            return sortedInput;
+        };
+    }]).filter(TrNgGrid.dataPagingFilter, function () {
+        // when server-side logic is enabled, this directive should not be used!
+        return function (input, gridOptions) {
+            //currentPage?:number, pageItems?:number
+            if (input)
+                gridOptions.totalItems = input.length;
+            if (!gridOptions.pageItems || !input || input.length == 0)
+                return input;
+            if (!gridOptions.currentPage) {
+                gridOptions.currentPage = 0;
+            }
+            var startIndex = gridOptions.currentPage * gridOptions.pageItems;
+            if (startIndex >= input.length) {
+                gridOptions.currentPage = 0;
+                startIndex = 0;
+            }
+            var endIndex = gridOptions.currentPage * gridOptions.pageItems + gridOptions.pageItems;
+            return input.slice(startIndex, endIndex);
+        };
+    }).filter(TrNgGrid.translateFilter, ["$filter", function ($filter) {
+        return function (input, languageId) {
+            var translatedText;
+            // dates require special attention
+            if (input instanceof Date) {
+                // we're dealing with a date object, see if we have a localized format for it
+                var dateFormat = $filter(TrNgGrid.translateFilter)(TrNgGrid.translationDateFormat, languageId);
+                if (dateFormat && dateFormat !== TrNgGrid.translationDateFormat) {
+                    // call the date filter
+                    translatedText = $filter("date")(input, dateFormat);
+                    return translatedText;
+                }
+                return input;
+            }
+            if (!translatedText) {
+                var languageIdParts = languageId.split(/[-_]/);
+                for (var languageIdPartIndex = languageIdParts.length; (languageIdPartIndex > 0) && (!translatedText); languageIdPartIndex--) {
+                    var subLanguageId = languageIdParts.slice(0, languageIdPartIndex).join("-");
+                    var langTranslations = TrNgGrid.translations[subLanguageId];
+                    if (langTranslations) {
+                        translatedText = langTranslations[input];
+                    }
+                }
+            }
+            if (!translatedText) {
+                try {
+                    var externalTranslationFilter = $filter("translate");
+                    if (externalTranslationFilter) {
+                        translatedText = externalTranslationFilter(input);
+                    }
+                }
+                catch (ex) {
+                }
+            }
+            if (!translatedText) {
+                translatedText = input;
+            }
+            return translatedText;
+        };
+    }]).run(function () {
+        TrNgGrid.tableCssClass = "tr-ng-grid table table-bordered table-hover"; // at the time of coding, table-striped is not working properly with selection
+        TrNgGrid.cellCssClass = "tr-ng-cell";
+        TrNgGrid.headerCellCssClass = "tr-ng-column-header " + TrNgGrid.cellCssClass;
+        TrNgGrid.bodyCellCssClass = TrNgGrid.cellCssClass;
+        TrNgGrid.columnTitleCssClass = "tr-ng-title";
+        TrNgGrid.columnSortCssClass = "tr-ng-sort";
+        TrNgGrid.columnFilterCssClass = "tr-ng-column-filter";
+        TrNgGrid.columnFilterInputWrapperCssClass = "";
+        TrNgGrid.columnSortActiveCssClass = "tr-ng-sort-active text-info";
+        TrNgGrid.columnSortInactiveCssClass = "tr-ng-sort-inactive text-muted glyphicon glyphicon-chevron-down";
+        TrNgGrid.columnSortReverseOrderCssClass = "tr-ng-sort-order-reverse glyphicon glyphicon-chevron-down";
+        TrNgGrid.columnSortNormalOrderCssClass = "tr-ng-sort-order-normal glyphicon glyphicon-chevron-up";
+        TrNgGrid.rowSelectedCssClass = "active";
+        TrNgGrid.footerCssClass = "tr-ng-grid-footer form-inline";
+    }).run(function () {
+        TrNgGrid.defaultColumnOptions.displayAlign = 'left';
+        TrNgGrid.defaultPagerMinifiedPageCountThreshold = 3;
+    });
+    function configureTemplates($templateCache) {
+        // set up default templates
+        if (!$templateCache.get(TrNgGrid.cellHeaderTemplateId)) {
+            $templateCache.put(TrNgGrid.cellHeaderTemplateId, '<div class="' + TrNgGrid.headerCellCssClass + '" ng-switch="isCustomized">' + '  <div ng-switch-when="true">' + '    <div ng-transclude=""></div>' + '  </div>' + '  <div ng-switch-default>' + '    <div class="' + TrNgGrid.columnTitleCssClass + '">' + '      {{columnTitle |' + TrNgGrid.translateFilter + ':gridOptions.locale}}' + '       <div ' + TrNgGrid.columnSortDirectiveAttribute + '=""></div>' + '    </div>' + '    <div ' + TrNgGrid.columnFilterDirectiveAttribute + '=""></div>' + '  </div>' + '</div>');
+        }
+        if (!$templateCache.get(TrNgGrid.cellBodyTemplateId)) {
+            $templateCache.put(TrNgGrid.cellBodyTemplateId, '<div ng-attr-class="' + TrNgGrid.bodyCellCssClass + ' text-{{columnOptions.displayAlign}}" ng-switch="isCustomized">' + '  <div ng-switch-when="true">' + '    <div ng-transclude=""></div>' + '  </div>' + '  <div ng-switch-default>{{gridDisplayItem[columnOptions.displayFieldName]}}</div>' + '</div>');
+        }
+        if (!$templateCache.get(TrNgGrid.columnFilterTemplateId)) {
+            $templateCache.put(TrNgGrid.columnFilterTemplateId, '<div ng-show="(gridOptions.enableFiltering&&columnOptions.enableFiltering!==false)||columnOptions.enableFiltering" class="' + TrNgGrid.columnFilterCssClass + '">' + ' <div class="' + TrNgGrid.columnFilterInputWrapperCssClass + '">' + '   <input class="form-control input-sm" type="text" ng-model="columnOptions.filter" ng-keypress="speedUpAsyncDataRetrieval($event)"></input>' + ' </div>' + '</div>');
+        }
+        if (!$templateCache.get(TrNgGrid.columnSortTemplateId)) {
+            $templateCache.put(TrNgGrid.columnSortTemplateId, '<div ng-attr-title="{{\'Sort\'|' + TrNgGrid.translateFilter + ':gridOptions.locale}}"' + ' ng-show="(gridOptions.enableSorting&&columnOptions.enableSorting!==false)||columnOptions.enableSorting"' + ' ng-click="toggleSorting(columnOptions.fieldName)"' + ' class="' + TrNgGrid.columnSortCssClass + '" > ' + '  <div ng-class="{\'' + TrNgGrid.columnSortActiveCssClass + '\':gridOptions.orderBy==columnOptions.fieldName,\'' + TrNgGrid.columnSortInactiveCssClass + '\':gridOptions.orderBy!=columnOptions.fieldName,\'' + TrNgGrid.columnSortNormalOrderCssClass + '\':gridOptions.orderBy==columnOptions.fieldName&&!gridOptions.orderByReverse,\'' + TrNgGrid.columnSortReverseOrderCssClass + '\':gridOptions.orderBy==columnOptions.fieldName&&gridOptions.orderByReverse}" >' + '  </div>' + '</div>');
+        }
+        if (!$templateCache.put(TrNgGrid.cellFooterTemplateId)) {
+            $templateCache.put(TrNgGrid.cellFooterTemplateId, '<div class="' + TrNgGrid.footerCssClass + '" ng-switch="isCustomized">' + '  <div ng-switch-when="true">' + '    <div ng-transclude=""></div>' + '  </div>' + '  <div ng-switch-default>' + '    <span ' + TrNgGrid.globalFilterDirectiveAttribute + '=""></span>' + '    <span ' + TrNgGrid.pagerDirectiveAttribute + '=""></span>' + '  </div>' + '</div>');
+        }
+        if (!$templateCache.get(TrNgGrid.footerGlobalFilterTemplateId)) {
+            $templateCache.put(TrNgGrid.footerGlobalFilterTemplateId, '<span ng-show="gridOptions.enableFiltering" class="pull-left form-group">' + '  <input class="form-control" type="text" ng-model="gridOptions.filterBy" ng-keypress="speedUpAsyncDataRetrieval($event)" ng-attr-placeholder="{{\'Search\'|' + TrNgGrid.translateFilter + ':gridOptions.locale}}"></input>' + '</span>');
+        }
+        if (!$templateCache.get(TrNgGrid.footerPagerTemplateId)) {
+            $templateCache.put(TrNgGrid.footerPagerTemplateId, '<span class="pull-right form-group">' + ' <ul class="pagination">' + '   <li ng-class="{disabled:!pageCanGoBack}" ng-if="extendedControlsActive">' + '     <a href="" ng-click="pageCanGoBack&&navigateToPage(0)" ng-attr-title="{{\'First Page\'|' + TrNgGrid.translateFilter + ':gridOptions.locale}}">' + '         <span>&laquo;</span>' + '     </a>' + '   </li>' + '   <li ng-class="{disabled:!pageCanGoBack}" ng-if="extendedControlsActive">' + '     <a href="" ng-click="pageCanGoBack&&navigateToPage(gridOptions.currentPage - 1)" ng-attr-title="{{\'Previous Page\'|' + TrNgGrid.translateFilter + ':gridOptions.locale}}">' + '         <span>&lsaquo;</span>' + '     </a>' + '   </li>' + '   <li ng-if="pageSelectionActive" ng-repeat="pageIndex in pageIndexes track by $index" ng-class="{disabled:pageIndex===null, active:pageIndex===gridOptions.currentPage}">' + '      <span ng-if="pageIndex===null">...</span>' + '      <a href="" ng-click="navigateToPage(pageIndex)" ng-if="pageIndex!==null" ng-attr-title="{{\'Page\'|' + TrNgGrid.translateFilter + ':gridOptions.locale}}">{{pageIndex+1}}</a>' + '   </li>' + '   <li ng-class="{disabled:!pageCanGoForward}" ng-if="extendedControlsActive">' + '     <a href="" ng-click="pageCanGoForward&&navigateToPage(gridOptions.currentPage + 1)" ng-attr-title="{{\'Next Page\'|' + TrNgGrid.translateFilter + ':gridOptions.locale}}">' + '         <span>&rsaquo;</span>' + '     </a>' + '   </li>' + '   <li ng-class="{disabled:!pageCanGoForward}" ng-if="extendedControlsActive">' + '     <a href="" ng-click="pageCanGoForward&&navigateToPage(lastPageIndex)" ng-attr-title="{{\'Last Page\'|' + TrNgGrid.translateFilter + ':gridOptions.locale}}">' + '         <span>&raquo;</span>' + '     </a>' + '   </li>' + '   <li class="disabled" style="white-space: nowrap;">' + '     <span ng-hide="totalItemsCount">{{\'No items to display\'|' + TrNgGrid.translateFilter + ':gridOptions.locale}}</span>' + '     <span ng-show="totalItemsCount">' + '       {{startItemIndex+1}} - {{endItemIndex+1}} {{\'displayed\'|' + TrNgGrid.translateFilter + ':gridOptions.locale}}' + '       <span>, {{totalItemsCount}} {{\'in total\'|' + TrNgGrid.translateFilter + ':gridOptions.locale}}</span>' + '     </span > ' + '   </li>' + ' </ul>' + '</span>');
+        }
+    }
+})(TrNgGrid || (TrNgGrid = {}));
 (function() {
   'use strict';
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  angular.module('BB.Models').factory("Admin.EventModel", function($q, BBModel, BaseModel) {
-    var Admin_Event;
-    return Admin_Event = (function(superClass) {
-      extend(Admin_Event, superClass);
-
-      function Admin_Event(data) {
-        Admin_Event.__super__.constructor.call(this, data);
-      }
-
-      return Admin_Event;
-
-    })(BaseModel);
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  angular.module('BB.Models').factory("Admin.EventChainModel", function($q, BBModel, BaseModel) {
-    var Admin_EventChain;
-    return Admin_EventChain = (function(superClass) {
-      extend(Admin_EventChain, superClass);
-
-      function Admin_EventChain(data) {
-        Admin_EventChain.__super__.constructor.call(this, data);
-      }
-
-      return Admin_EventChain;
-
-    })(BaseModel);
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
-
-  angular.module('BB.Models').factory("Admin.EventGroupModel", function($q, BBModel, BaseModel) {
-    var Admin_EventGroup;
-    return Admin_EventGroup = (function(superClass) {
-      extend(Admin_EventGroup, superClass);
-
-      function Admin_EventGroup(data) {
-        Admin_EventGroup.__super__.constructor.call(this, data);
-      }
-
-      return Admin_EventGroup;
-
-    })(BaseModel);
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BBAdminEvents').factory('AdminEventChainService', function($q, BBModel) {
+  angular.module('BBAdminBooking').directive('bbAdminBookingClients', function() {
     return {
-      query: function(params) {
-        var company, defer;
-        company = params.company;
-        defer = $q.defer();
-        company.$get('event_chains').then(function(collection) {
-          return collection.$get('event_chains').then(function(event_chains) {
-            var e, models;
-            models = (function() {
-              var i, len, results;
-              results = [];
-              for (i = 0, len = event_chains.length; i < len; i++) {
-                e = event_chains[i];
-                results.push(new BBModel.Admin.EventChain(e));
-              }
-              return results;
-            })();
-            return defer.resolve(models);
-          }, function(err) {
-            return defer.reject(err);
-          });
-        }, function(err) {
-          return defer.reject(err);
-        });
-        return defer.promise;
-      }
+      restrict: 'AE',
+      replace: true,
+      scope: true,
+      controller: 'adminBookingClients'
     };
   });
 
-}).call(this);
-
-(function() {
-  angular.module('BBAdminEvents').factory('AdminEventGroupService', function($q, BBModel) {
-    return {
-      query: function(params) {
-        var company, defer;
-        company = params.company;
-        defer = $q.defer();
-        company.$get('event_groups').then(function(collection) {
-          return collection.$get('event_groups').then(function(event_groups) {
-            var e, models;
-            models = (function() {
-              var i, len, results;
-              results = [];
-              for (i = 0, len = event_groups.length; i < len; i++) {
-                e = event_groups[i];
-                results.push(new BBModel.Admin.EventGroup(e));
-              }
-              return results;
-            })();
-            return defer.resolve(models);
-          }, function(err) {
-            return defer.reject(err);
-          });
+  angular.module('BBAdminBooking').controller('adminBookingClients', function($scope, $rootScope, $q, AdminClientService, ClientDetailsService, AlertService, ClientService, ValidatorService) {
+    $scope.validator = ValidatorService;
+    $scope.clientDef = $q.defer();
+    $scope.clientPromise = $scope.clientDef.promise;
+    $scope.per_page = 20;
+    $scope.total_entries = 0;
+    $scope.clients = [];
+    $scope.searchClients = false;
+    $scope.newClient = false;
+    $scope.no_clients = false;
+    $scope.search_error = false;
+    $scope.showSearch = (function(_this) {
+      return function() {
+        $scope.searchClients = true;
+        return $scope.newClient = false;
+      };
+    })(this);
+    $scope.showClientForm = (function(_this) {
+      return function() {
+        $scope.search_error = false;
+        $scope.no_clients = false;
+        $scope.searchClients = false;
+        return $scope.newClient = true;
+      };
+    })(this);
+    $scope.selectClient = (function(_this) {
+      return function(client) {
+        $scope.search_error = false;
+        $scope.no_clients = false;
+        $scope.setClient(client);
+        $scope.client.setValid(true);
+        return $scope.decideNextPage();
+      };
+    })(this);
+    $scope.checkSearch = (function(_this) {
+      return function(search) {
+        if (search.length >= 3) {
+          $scope.search_error = false;
+          return true;
+        } else {
+          $scope.search_error = true;
+          return false;
+        }
+      };
+    })(this);
+    $scope.createClient = (function(_this) {
+      return function(client_form) {
+        $scope.notLoaded($scope);
+        if ($scope.bb && $scope.bb.parent_client) {
+          $scope.client.parent_client_id = $scope.bb.parent_client.id;
+        }
+        if ($scope.client_details) {
+          $scope.client.setClientDetails($scope.client_details);
+        }
+        return ClientService.create_or_update($scope.bb.company, $scope.client).then(function(client) {
+          $scope.setLoaded($scope);
+          return $scope.selectClient(client);
         }, function(err) {
-          return defer.reject(err);
+          return $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
         });
-        return defer.promise;
+      };
+    })(this);
+    $scope.getClients = function(currentPage, filterBy, filterByFields, orderBy, orderByReverse) {
+      var clientDef, params;
+      AlertService.clear();
+      $scope.no_clients = false;
+      $scope.search_error = false;
+      clientDef = $q.defer();
+      params = {
+        company: $scope.bb.company,
+        per_page: $scope.per_page,
+        filter_by: filterBy,
+        filter_by_fields: filterByFields,
+        order_by: orderBy,
+        order_by_reverse: orderByReverse
+      };
+      if (currentPage) {
+        params.page = currentPage + 1;
       }
+      $rootScope.connection_started.then(function() {
+        $scope.notLoaded($scope);
+        if (!$rootScope.bb.api_url && $scope.bb.api_url) {
+          $rootScope.bb.api_url = $scope.bb.api_url;
+        }
+        return AdminClientService.query(params).then((function(_this) {
+          return function(clients) {
+            $scope.clients = clients.items;
+            $scope.setLoaded($scope);
+            $scope.setPageLoaded();
+            $scope.total_entries = clients.total_entries;
+            return clientDef.resolve(clients.items);
+          };
+        })(this), function(err) {
+          $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong');
+          return clientDef.reject(err);
+        });
+      });
+      return true;
+    };
+    return $scope.edit = function(item) {
+      return console.log(item);
     };
   });
 
@@ -106924,7 +106628,7 @@ angular.module('BBAdmin.Directives').controller('CalController', function($scope
               item = new BBModel.BasketItem();
               angular.extend(item, base_item);
               item.tickets = angular.copy(ticket);
-              item.tickets.qty = 1;
+              item.tickets.qty = ticket.qty;
               $scope.bb.stackItem(item);
           }
         }
@@ -108701,6 +108405,102 @@ angular.module('BBAdmin.Directives').controller('CalController', function($scope
 
 (function() {
   'use strict';
+  angular.module('BB.Directives').directive('bbPayment', function($window, $location, $sce) {
+    var error, getHost, linker, sendLoadEvent;
+    error = function(scope, message) {
+      return scope.error(message);
+    };
+    getHost = function(url) {
+      var a;
+      a = document.createElement('a');
+      a.href = url;
+      return a['protocol'] + '//' + a['host'];
+    };
+    sendLoadEvent = function(element, origin, scope) {
+      var payload, referrer;
+      referrer = $location.protocol() + "://" + $location.host();
+      if ($location.port()) {
+        referrer += ":" + $location.port();
+      }
+      payload = {
+        'type': 'load',
+        'message': referrer,
+        'custom_partial_url': scope.bb.custom_partial_url
+      };
+      return element.find('iframe')[0].contentWindow.postMessage(payload, origin);
+    };
+    linker = function(scope, element, attributes) {
+      element.find('iframe').bind('load', (function(_this) {
+        return function(event) {
+          var origin, url;
+          url = scope.bb.total.$href('new_payment');
+          origin = getHost(url);
+          return sendLoadEvent(element, origin, scope);
+        };
+      })(this));
+      return $window.addEventListener('message', (function(_this) {
+        return function(event) {
+          return scope.$apply(function() {
+            switch (event.data.type) {
+              case "submitting":
+                return scope.callNotLoaded();
+              case "error":
+                scope.callSetLoaded();
+                return error(scope, event.data.message);
+              case "payment_complete":
+                scope.callSetLoaded();
+                return scope.paymentDone();
+            }
+          });
+        };
+      })(this), false);
+    };
+    return {
+      restrict: 'AE',
+      replace: true,
+      scope: true,
+      controller: 'Payment',
+      link: linker
+    };
+  });
+
+  angular.module('BB.Controllers').controller('Payment', function($scope, $rootScope, $q, $location, $window, $sce, $log, $timeout) {
+    $scope.controller = "public.controllers.Payment";
+    $rootScope.connection_started.then((function(_this) {
+      return function() {
+        if ($scope.total) {
+          $scope.bb.total = $scope.total;
+        }
+        if (!$scope.bb.total.total_price || parseFloat($scope.bb.total.total_price) === 0.0) {
+          $scope.decideNextPage();
+          return;
+        }
+        return $scope.url = $sce.trustAsResourceUrl($scope.bb.total.$href('new_payment'));
+      };
+    })(this));
+    $scope.callNotLoaded = (function(_this) {
+      return function() {
+        return $scope.notLoaded($scope);
+      };
+    })(this);
+    $scope.callSetLoaded = (function(_this) {
+      return function() {
+        return $scope.setLoaded($scope);
+      };
+    })(this);
+    $scope.paymentDone = function() {
+      $scope.bb.payment_status = "complete";
+      return $scope.decideNextPage();
+    };
+    return $scope.error = function(message) {
+      return $log.warn("Payment Failure: " + message);
+    };
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
   angular.module('BB.Directives').directive('bbPayForm', function($window, $timeout, $sce, $http, $compile, $document, $location) {
     var applyCustomPartials, linker;
     applyCustomPartials = function(custom_partial_url, scope, element) {
@@ -108802,102 +108602,6 @@ angular.module('BBAdmin.Directives').controller('CalController', function($scope
         return submitPaymentForm();
       };
     })(this);
-  });
-
-}).call(this);
-
-(function() {
-  'use strict';
-  angular.module('BB.Directives').directive('bbPayment', function($window, $location, $sce) {
-    var error, getHost, linker, sendLoadEvent;
-    error = function(scope, message) {
-      return scope.error(message);
-    };
-    getHost = function(url) {
-      var a;
-      a = document.createElement('a');
-      a.href = url;
-      return a['protocol'] + '//' + a['host'];
-    };
-    sendLoadEvent = function(element, origin, scope) {
-      var payload, referrer;
-      referrer = $location.protocol() + "://" + $location.host();
-      if ($location.port()) {
-        referrer += ":" + $location.port();
-      }
-      payload = {
-        'type': 'load',
-        'message': referrer,
-        'custom_partial_url': scope.bb.custom_partial_url
-      };
-      return element.find('iframe')[0].contentWindow.postMessage(payload, origin);
-    };
-    linker = function(scope, element, attributes) {
-      element.find('iframe').bind('load', (function(_this) {
-        return function(event) {
-          var origin, url;
-          url = scope.bb.total.$href('new_payment');
-          origin = getHost(url);
-          return sendLoadEvent(element, origin, scope);
-        };
-      })(this));
-      return $window.addEventListener('message', (function(_this) {
-        return function(event) {
-          return scope.$apply(function() {
-            switch (event.data.type) {
-              case "submitting":
-                return scope.callNotLoaded();
-              case "error":
-                scope.callSetLoaded();
-                return error(scope, event.data.message);
-              case "payment_complete":
-                scope.callSetLoaded();
-                return scope.paymentDone();
-            }
-          });
-        };
-      })(this), false);
-    };
-    return {
-      restrict: 'AE',
-      replace: true,
-      scope: true,
-      controller: 'Payment',
-      link: linker
-    };
-  });
-
-  angular.module('BB.Controllers').controller('Payment', function($scope, $rootScope, $q, $location, $window, $sce, $log, $timeout) {
-    $scope.controller = "public.controllers.Payment";
-    $rootScope.connection_started.then((function(_this) {
-      return function() {
-        if ($scope.total) {
-          $scope.bb.total = $scope.total;
-        }
-        if (!$scope.bb.total.total_price || parseFloat($scope.bb.total.total_price) === 0.0) {
-          $scope.decideNextPage();
-          return;
-        }
-        return $scope.url = $sce.trustAsResourceUrl($scope.bb.total.$href('new_payment'));
-      };
-    })(this));
-    $scope.callNotLoaded = (function(_this) {
-      return function() {
-        return $scope.notLoaded($scope);
-      };
-    })(this);
-    $scope.callSetLoaded = (function(_this) {
-      return function() {
-        return $scope.setLoaded($scope);
-      };
-    })(this);
-    $scope.paymentDone = function() {
-      $scope.bb.payment_status = "complete";
-      return $scope.decideNextPage();
-    };
-    return $scope.error = function(message) {
-      return $log.warn("Payment Failure: " + message);
-    };
   });
 
 }).call(this);
@@ -111425,7 +111129,7 @@ angular.module('BBAdmin.Directives').controller('CalController', function($scope
     return {
       restrict: 'AE',
       scope: true,
-      template: '<div bb-include="popout_export_booking"></div>',
+      template: '<div bb-include="popout_export_booking" style="display: inline;"></div>',
       link: function(scope, element, attrs) {
         return scope.$watch('total', function(newval, old) {
           if (newval) {
@@ -120836,6 +120540,290 @@ angular.module('BBAdmin.Directives').controller('CalController', function($scope
 }).call(this);
 
 (function() {
+  angular.module('BBAdminEvents').directive('eventChainTable', function(AdminCompanyService, AdminEventChainService, $modal, $log, ModalForm, $timeout) {
+    var controller, link;
+    controller = function($scope) {
+      var editSuccess;
+      $scope.fields = ['id', 'name', 'description'];
+      $scope.getEventChains = function() {
+        var params;
+        params = {
+          company: $scope.company
+        };
+        return AdminEventChainService.query(params).then(function(event_chains) {
+          return $scope.event_chains = event_chains;
+        });
+      };
+      $scope.newEventChain = function() {
+        return ModalForm["new"]({
+          company: $scope.company,
+          title: 'New Event Chain',
+          new_rel: 'new_event_chain',
+          post_rel: 'event_chains',
+          success: function(event_chain) {
+            return $scope.event_chains.push(event_chain);
+          }
+        });
+      };
+      $scope["delete"] = function(id) {
+        var event_chain;
+        event_chain = _.find($scope.event_chains, function(x) {
+          return x.id === id;
+        });
+        return event_chain.$del('self').then(function() {
+          return $scope.event_chains = _.reject($scope.event_chains, function(x) {
+            return x.id === id;
+          });
+        }, function(err) {
+          return $log.error("Failed to delete event_chain");
+        });
+      };
+      editSuccess = function(updated) {
+        updated.$flush('events');
+        return $scope.event_chains = _.map($scope.event_chains, function(event_chain) {
+          if (event_chain.id === updated.id) {
+            return updated;
+          } else {
+            return event_chain;
+          }
+        });
+      };
+      return $scope.edit = function(id) {
+        var event_chain;
+        event_chain = _.find($scope.event_chains, function(x) {
+          return x.id === id;
+        });
+        return event_chain.$get('events').then(function(collection) {
+          return collection.$get('events').then(function(events) {
+            event_chain.events = events;
+            return ModalForm.edit({
+              model: event_chain,
+              title: 'Edit Event Chain',
+              success: editSuccess
+            });
+          });
+        });
+      };
+    };
+    link = function(scope, element, attrs) {
+      if (scope.company) {
+        return scope.getEventChains();
+      } else {
+        return AdminCompanyService.query(attrs).then(function(company) {
+          scope.company = company;
+          return scope.getEventChains();
+        });
+      }
+    };
+    return {
+      controller: controller,
+      link: link,
+      templateUrl: 'event_chain_table_main.html'
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdminEvents').directive('eventGroupTable', function(AdminCompanyService, AdminEventGroupService, $modal, $log, ModalForm) {
+    var controller, link;
+    controller = function($scope) {
+      $scope.getEventGroups = function() {
+        var params;
+        params = {
+          company: $scope.company
+        };
+        return AdminEventGroupService.query(params).then(function(event_groups) {
+          $scope.event_groups_models = event_groups;
+          return $scope.event_groups = _.map(event_groups, function(event_group) {
+            return _.pick(event_group, 'id', 'name', 'mobile');
+          });
+        });
+      };
+      $scope.newEventGroup = function() {
+        return ModalForm["new"]({
+          company: $scope.company,
+          title: 'New Event Group',
+          new_rel: 'new_event_group',
+          post_rel: 'event_groups',
+          success: function(event_group) {
+            return $scope.event_groups.push(event_group);
+          }
+        });
+      };
+      $scope["delete"] = function(id) {
+        var event_group;
+        event_group = _.find($scope.event_groups_models, function(p) {
+          return p.id === id;
+        });
+        return event_group.$del('self').then(function() {
+          return $scope.event_groups = _.reject($scope.event_groups, function(p) {
+            return p.id === id;
+          });
+        }, function(err) {
+          return $log.error("Failed to delete event_group");
+        });
+      };
+      return $scope.edit = function(id) {
+        var event_group;
+        event_group = _.find($scope.event_groups_models, function(p) {
+          return p.id === id;
+        });
+        return ModalForm.edit({
+          model: event_group,
+          title: 'Edit Event Group'
+        });
+      };
+    };
+    link = function(scope, element, attrs) {
+      if (scope.company) {
+        return scope.getEventGroups();
+      } else {
+        return AdminCompanyService.query(attrs).then(function(company) {
+          scope.company = company;
+          return scope.getEventGroups();
+        });
+      }
+    };
+    return {
+      controller: controller,
+      link: link,
+      templateUrl: 'event_group_table_main.html'
+    };
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  angular.module('BB.Models').factory("Admin.EventModel", function($q, BBModel, BaseModel) {
+    var Admin_Event;
+    return Admin_Event = (function(superClass) {
+      extend(Admin_Event, superClass);
+
+      function Admin_Event(data) {
+        Admin_Event.__super__.constructor.call(this, data);
+      }
+
+      return Admin_Event;
+
+    })(BaseModel);
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  angular.module('BB.Models').factory("Admin.EventChainModel", function($q, BBModel, BaseModel) {
+    var Admin_EventChain;
+    return Admin_EventChain = (function(superClass) {
+      extend(Admin_EventChain, superClass);
+
+      function Admin_EventChain(data) {
+        Admin_EventChain.__super__.constructor.call(this, data);
+      }
+
+      return Admin_EventChain;
+
+    })(BaseModel);
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
+  var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
+
+  angular.module('BB.Models').factory("Admin.EventGroupModel", function($q, BBModel, BaseModel) {
+    var Admin_EventGroup;
+    return Admin_EventGroup = (function(superClass) {
+      extend(Admin_EventGroup, superClass);
+
+      function Admin_EventGroup(data) {
+        Admin_EventGroup.__super__.constructor.call(this, data);
+      }
+
+      return Admin_EventGroup;
+
+    })(BaseModel);
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdminEvents').factory('AdminEventChainService', function($q, BBModel) {
+    return {
+      query: function(params) {
+        var company, defer;
+        company = params.company;
+        defer = $q.defer();
+        company.$get('event_chains').then(function(collection) {
+          return collection.$get('event_chains').then(function(event_chains) {
+            var e, models;
+            models = (function() {
+              var i, len, results;
+              results = [];
+              for (i = 0, len = event_chains.length; i < len; i++) {
+                e = event_chains[i];
+                results.push(new BBModel.Admin.EventChain(e));
+              }
+              return results;
+            })();
+            return defer.resolve(models);
+          }, function(err) {
+            return defer.reject(err);
+          });
+        }, function(err) {
+          return defer.reject(err);
+        });
+        return defer.promise;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BBAdminEvents').factory('AdminEventGroupService', function($q, BBModel) {
+    return {
+      query: function(params) {
+        var company, defer;
+        company = params.company;
+        defer = $q.defer();
+        company.$get('event_groups').then(function(collection) {
+          return collection.$get('event_groups').then(function(event_groups) {
+            var e, models;
+            models = (function() {
+              var i, len, results;
+              results = [];
+              for (i = 0, len = event_groups.length; i < len; i++) {
+                e = event_groups[i];
+                results.push(new BBModel.Admin.EventGroup(e));
+              }
+              return results;
+            })();
+            return defer.resolve(models);
+          }, function(err) {
+            return defer.reject(err);
+          });
+        }, function(err) {
+          return defer.reject(err);
+        });
+        return defer.promise;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
   angular.module('BBAdminServices').directive('personTable', function(AdminCompanyService, AdminPersonService, $modal, $log, ModalForm) {
     var controller, link;
     controller = function($scope) {
@@ -122314,6 +122302,123 @@ angular.module('BBAdmin.Directives').controller('CalController', function($scope
 
 (function() {
   'use strict';
+  angular.module('BB.Services').factory("PurchaseBookingService", function($q, halClient, BBModel) {
+    return {
+      update: function(booking) {
+        var data, deferred;
+        deferred = $q.defer();
+        data = booking.getPostData();
+        booking.srcBooking.$put('self', {}, data).then((function(_this) {
+          return function(booking) {
+            return deferred.resolve(new BBModel.Purchase.Booking(booking));
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            return deferred.reject(err, new BBModel.Purchase.Booking(booking));
+          };
+        })(this));
+        return deferred.promise;
+      },
+      addSurveyAnswersToBooking: function(booking) {
+        var data, deferred;
+        deferred = $q.defer();
+        data = booking.getPostData();
+        booking.$put('self', {}, data).then((function(_this) {
+          return function(booking) {
+            return deferred.resolve(new BBModel.Purchase.Booking(booking));
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            return deferred.reject(err, new BBModel.Purchase.Booking(booking));
+          };
+        })(this));
+        return deferred.promise;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('BB.Services').factory("PurchaseService", function($q, halClient, BBModel, $window) {
+    return {
+      query: function(params) {
+        var defer, uri;
+        defer = $q.defer();
+        uri = params.url_root + "/api/v1/purchases/" + params.purchase_id;
+        halClient.$get(uri, params).then(function(purchase) {
+          purchase = new BBModel.Purchase.Total(purchase);
+          return defer.resolve(purchase);
+        }, function(err) {
+          return defer.reject(err);
+        });
+        return defer.promise;
+      },
+      bookingRefQuery: function(params) {
+        var defer, uri;
+        defer = $q.defer();
+        uri = new $window.UriTemplate.parse(params.url_root + "/api/v1/purchases/booking_ref/{booking_ref}{?raw}").expand(params);
+        halClient.$get(uri, params).then(function(purchase) {
+          purchase = new BBModel.Purchase.Total(purchase);
+          return defer.resolve(purchase);
+        }, function(err) {
+          return defer.reject(err);
+        });
+        return defer.promise;
+      },
+      update: function(params) {
+        var bdata, booking, data, defer, i, len, ref;
+        defer = $q.defer();
+        if (!params.purchase) {
+          defer.reject("No purchase present");
+          return defer.promise;
+        }
+        data = {};
+        if (params.bookings) {
+          bdata = [];
+          ref = params.bookings;
+          for (i = 0, len = ref.length; i < len; i++) {
+            booking = ref[i];
+            bdata.push(booking.getPostData());
+          }
+          data.bookings = bdata;
+        }
+        params.purchase.$put('self', {}, data).then((function(_this) {
+          return function(purchase) {
+            purchase = new BBModel.Purchase.Total(purchase);
+            return defer.resolve(purchase);
+          };
+        })(this), (function(_this) {
+          return function(err) {
+            return defer.reject(err);
+          };
+        })(this));
+        return defer.promise;
+      },
+      delete_all: function(purchase) {
+        var defer;
+        defer = $q.defer();
+        if (!purchase) {
+          defer.reject("No purchase present");
+          return defer.promise;
+        }
+        purchase.$del('self').then(function(purchase) {
+          purchase = new BBModel.Purchase.Total(purchase);
+          return defer.resolve(purchase);
+        }, (function(_this) {
+          return function(err) {
+            return defer.reject(err);
+          };
+        })(this));
+        return defer.promise;
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  'use strict';
   var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
@@ -122798,164 +122903,47 @@ angular.module('BBAdmin.Directives').controller('CalController', function($scope
 
 }).call(this);
 
-(function() {
-  'use strict';
-  angular.module('BB.Services').factory("PurchaseBookingService", function($q, halClient, BBModel) {
-    return {
-      update: function(booking) {
-        var data, deferred;
-        deferred = $q.defer();
-        data = booking.getPostData();
-        booking.srcBooking.$put('self', {}, data).then((function(_this) {
-          return function(booking) {
-            return deferred.resolve(new BBModel.Purchase.Booking(booking));
-          };
-        })(this), (function(_this) {
-          return function(err) {
-            return deferred.reject(err, new BBModel.Purchase.Booking(booking));
-          };
-        })(this));
-        return deferred.promise;
-      },
-      addSurveyAnswersToBooking: function(booking) {
-        var data, deferred;
-        deferred = $q.defer();
-        data = booking.getPostData();
-        booking.$put('self', {}, data).then((function(_this) {
-          return function(booking) {
-            return deferred.resolve(new BBModel.Purchase.Booking(booking));
-          };
-        })(this), (function(_this) {
-          return function(err) {
-            return deferred.reject(err, new BBModel.Purchase.Booking(booking));
-          };
-        })(this));
-        return deferred.promise;
-      }
-    };
-  });
-
-}).call(this);
-
-(function() {
-  angular.module('BB.Services').factory("PurchaseService", function($q, halClient, BBModel, $window) {
-    return {
-      query: function(params) {
-        var defer, uri;
-        defer = $q.defer();
-        uri = params.url_root + "/api/v1/purchases/" + params.purchase_id;
-        halClient.$get(uri, params).then(function(purchase) {
-          purchase = new BBModel.Purchase.Total(purchase);
-          return defer.resolve(purchase);
-        }, function(err) {
-          return defer.reject(err);
-        });
-        return defer.promise;
-      },
-      bookingRefQuery: function(params) {
-        var defer, uri;
-        defer = $q.defer();
-        uri = new $window.UriTemplate.parse(params.url_root + "/api/v1/purchases/booking_ref/{booking_ref}{?raw}").expand(params);
-        halClient.$get(uri, params).then(function(purchase) {
-          purchase = new BBModel.Purchase.Total(purchase);
-          return defer.resolve(purchase);
-        }, function(err) {
-          return defer.reject(err);
-        });
-        return defer.promise;
-      },
-      update: function(params) {
-        var bdata, booking, data, defer, i, len, ref;
-        defer = $q.defer();
-        if (!params.purchase) {
-          defer.reject("No purchase present");
-          return defer.promise;
-        }
-        data = {};
-        if (params.bookings) {
-          bdata = [];
-          ref = params.bookings;
-          for (i = 0, len = ref.length; i < len; i++) {
-            booking = ref[i];
-            bdata.push(booking.getPostData());
-          }
-          data.bookings = bdata;
-        }
-        params.purchase.$put('self', {}, data).then((function(_this) {
-          return function(purchase) {
-            purchase = new BBModel.Purchase.Total(purchase);
-            return defer.resolve(purchase);
-          };
-        })(this), (function(_this) {
-          return function(err) {
-            return defer.reject(err);
-          };
-        })(this));
-        return defer.promise;
-      },
-      delete_all: function(purchase) {
-        var defer;
-        defer = $q.defer();
-        if (!purchase) {
-          defer.reject("No purchase present");
-          return defer.promise;
-        }
-        purchase.$del('self').then(function(purchase) {
-          purchase = new BBModel.Purchase.Total(purchase);
-          return defer.resolve(purchase);
-        }, (function(_this) {
-          return function(err) {
-            return defer.reject(err);
-          };
-        })(this));
-        return defer.promise;
-      }
-    };
-  });
-
-}).call(this);
-
-angular.module("BB").run(["$templateCache", function($templateCache) {$templateCache.put("bootstrap_ui_datetime_form.html","<div class=\"form-group\" ng-class=\"{\'has-error\': hasError()}\">\n\n  <div datetimepicker ng-model=\"$$value$$\" schema-validate=\"form\"></div>\n\n  <span class=\"help-block\">{{ (hasError() && errorMessage(schemaError())) || form.description}}</span>\n</div>\n");
-$templateCache.put("bootstrap_ui_time_form.html","<div class=\"form-group\" ng-class=\"{\'has-error\': hasError()}\">\n  <label class=\"control-label\" ng-show=\"showTitle()\">{{form.title}}</label>\n\n  <div timepicker ng-model=\"$$value$$\" show-meridian=\"false\"></div>\n\n  <span class=\"help-block\">{{ (hasError() && errorMessage(schemaError())) || form.description}}</span>\n</div>\n");
-$templateCache.put("datetimepicker.html","<label class=\"control-label\">Date</label>\n<p class=\"input-group\">\n  <input type=\"text\" datepicker-popup=\"dd-MMMM-yyyy\" ng-model=\"$$value$$\"\n  class=\"form-control\" is-open=\"opened\"></input>\n  <span class=\"input-group-btn\">\n    <button type=\"button\" class=\"btn btn-default\" ng-click=\"open($event)\">\n      <i class=\"glyphicon glyphicon-calendar\"></i>\n    </button>\n  </span>\n</p>\n<label class=\"control-label\">Time</label>\n<div timepicker ng-model=\"$$value$$\" show-meridian=\"false\"></div>\n");
-$templateCache.put("modal_form.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"modal_form\" ng-submit=\"submit(modal_form)\">\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\"\n    sf-model=\"form_model\" sf-options=\"{formDefaults: {feedback: false}}\">\n  </div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\n  </div>\n</form>\n");
-$templateCache.put("price_form.html","<div class=\"form-group\" ng-class=\"{\'has-error\': hasError()}\">\n  <label class=\"control-label\" ng-show=\"showTitle()\">{{form.title}}</label>\n\n  <div pricepicker ng-model=\"$$value$$\" currency=\"{{form.currency}}\"></div>\n\n  <span class=\"help-block\">{{ (hasError() && errorMessage(schemaError())) || form.description}}</span>\n</div>\n");
-$templateCache.put("edit_booking_modal_form.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"booking_form\" ng-submit=\"submit(booking)\">\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"booking\">\n    <ul>\n      <li>{{model.full_describe}}</li>\n      <li>{{model.person_name}}</li>\n      <li>{{model.describe}}</li>\n    </ul>\n  </div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Dismiss</button>\n  </div>\n</form>\n");
-$templateCache.put("login.html","<form name=\"login_form\" ng-submit=\"submit()\" class=\"form-horizontal\"\n  role=\"form\">\n  <div class=\"alert alert-danger\" role=\"alert\" ng-if=\"alert && alert.length > 0\">{{alert}}</div>\n  <div ng-class=\"{\'form-group\': true, \'has-error\': emailIsInvalid()}\">\n    <label for=\"email\" class=\"col-sm-2 control-label\">Email</label>\n    <div class=\"col-sm-10\">\n      <input type=\"email\" ng-model=\"email\" name=\"email\" class=\"form-control\"\n        id=\"email\" placeholder=\"Email\" required autofocus>\n    </div>\n  </div>\n  <div ng-class=\"{\'form-group\': true, \'has-error\': passwordIsInvalid()}\">\n    <label for=\"password\" class=\"col-sm-2 control-label\">Password</label>\n    <div class=\"col-sm-10\">\n      <input type=\"password\" ng-model=\"password\" name=\"password\"\n        class=\"form-control\" id=\"password\" placeholder=\"Password\" required>\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <div class=\"col-sm-offset-2 col-sm-10\">\n      <button type=\"submit\" class=\"btn btn-primary\">Log In</button>\n    </div>\n  </div>\n</form>\n");
-$templateCache.put("login_modal_form.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"login_form\" ng-submit=\"submit(login_form)\">\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\"\n    sf-model=\"login_form\">\n  </div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Dismiss</button>\n  </div>\n</form>\n");
-$templateCache.put("member_bookings_table.html","<div ng-show=\"loading\"><img src=\'/BB_wait.gif\' class=\"loader\"></div>\n<table tr-ng-grid=\"\" items=\"bookings\" enable-filtering=\"false\"\n  ng-hide=\"loading\" fields=\"fields\">\n  <thead>\n    <tr>\n      <th field-name=\"describe\" display-name=\"Date/Time\"></th>\n      <th field-name=\"full_describe\" display-name=\"Description\"></th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"delete(gridItem.id)\">\n            Cancel\n        </button>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"edit(gridItem.id)\">\n            Details\n        </button>\n      </td>\n    </tr>\n  </tbody>\n</table>\n\n");
-$templateCache.put("pick_company.html","<form name=\"pick_company_form\" ng-submit=\"selectedCompany()\" role=\"form\">\n  <p>Pick Company</p>\n  <div ng-repeat=\"admin in administrators\" class=\"radio\">\n    <label>\n      <input id=\"company{{admin.company_id}}\" type=\"radio\"\n        ng-model=\"$parent.selected_admin\" ng-value=\"admin\" required\n        name=\"company\">\n      {{admin.company_name}}\n    </label>\n  </div>\n  <input type=\"submit\" class=\"btn btn-default\">\n</form>\n");
-$templateCache.put("pick_company_modal_form.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"pick_company_form\" ng-submit=\"submit(pick_company_form)\">\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\"\n    sf-model=\"pick_company_form\">\n  </div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Dismiss</button>\n  </div>\n</form>\n");
-$templateCache.put("basket.html","<div>\n  <h1>Not a mini basket</h1>\n</div>");
-$templateCache.put("basket_mini.html","<div class=\"bb-mini-basket\">\n  <span class=\'glyphicon glyphicon-shopping-cart\'></span>\n  <span>{{basketStatus}}</span>\n  <span ng-if=\"basketItemCount\">\n    <a href=\'#\' ng-click=\"BasketCtrl.empty()\" class=\"btn btn-default btn-xs\">\n      <span class=\"glyphicon glyphicon-remove-circle\"></span>\n    </a>\n    <a href=\'#\' ng-click=\"BasketCtrl.view()\" class=\"btn btn-default btn-xs\">\n      <span class=\"glyphicon glyphicon-edit\"></span>\n    </a>\n  </span>\n</div>");
-$templateCache.put("breadcrumb.html","<div class=\"breadcrumbs-holder\" ng-init=\"setBasicRoute([])\">\n  <ol class=\"breadcrumb\">\n    <li ng-repeat=\"step in steps\" type=\"button\" ng-class=\"{active: $last}\" href=\"\" ng-click=\"loadStep(step.number)\" >\n      <a href=\"\" ng-click=\"loadStep(step.number)\" ng-if=\"!$last\">\n        <span class=\"step-num\">{{step.number}}.</span>\n        <span class=\"step-title\">{{step.title}}</span>\n      </a>\n      <span class=\"step-num\" ng-if=\"$last\">{{step.number}}.</span>\n      <span class=\"step-title\" ng-if=\"$last\">{{step.title}}</span>\n    </li>\n  </ol>\n</div>\n");
-$templateCache.put("breadcrumb_complex.html","<div class=\"container breadcrumbs\" ng-init=\"setRoute([\n  {page:\'service_list\', title: \'Set a Service\'},\n  {page:\'person_list\', title: \'Pick a Person\'},\n  {page:\'day\', title: \'Select a Date\'}\n  ])\">\n\n  <div class=\"row\">\n    <tabset>\n      <tab ng-repeat=\"step in allSteps\" heading=\"{{step.title}}\" active=\"step.active\" disabled=\"!step.passed\" select=\"loadStep(step.number)\">\n      </tab>\n    </tabset>\n\n    <div class=\"breadcrumbs\">\n      <span ng-repeat=\"step in steps\">\n        <a ng-if=\"!$last\" href=\"\" ng-click=\"loadStep(step.number)\" class=\"btn default med flat\">  {{step.number}}.\n        </a>\n        <div ng-if=\"$last\" class=\"step\">{{step.number}}. {{step.title}}</div>\n      <span>\n    </div>\n  </div>\n</div>");
-$templateCache.put("check_items.html","<div ng-controller=\"ItemDetails\" ng-init=\"checkStepTitle(\'Confirm Details\')\">\n  <div class=\"bb-booking\">\n    <div class=\"bb-frame\">\n      <div class=\"bb-head\">\n        <h2>Your details</h2>\n      </div>\n      <form name=\"client_form\" class=\"bb-form\" role=\"form\">\n        <div class=\"bb-node\">\n          <h3>Client</h3>\n          <ul>\n            <li>\n              <label>Name:</label><span>{{client.getName()}}</span>\n            </li>\n            <li>\n              <label>Email:</label><span>{{client.email}}</span>\n            </li>\n            <li>\n              <label>Address:</label><span>{{client.addressSingleLine()}}</span>\n            </li>\n          </ul>\n        </div>\n        <div class=\"bb-node\" ng-if=\"!product\">\n          <h3>Booking</h3>\n            <ul>\n              <li>\n                <label>Details:</label><span>{{item.describe()}}</span>\n              </li>\n              <li>\n                <label>Date:</label>\n                <span>{{item.booking_date(\"dddd, MMMM Do YYYY\")}}</span>\n              </li>\n              <li>\n                <label>Time:</label><span>{{item.booking_time()}}</span>\n              </li>\n              <li ng-show=\"item.hasPrice()\">\n                <label>Price:</label><span>{{item.printed_price}}</span>\n              </li>\n            </ul>\n        </div>\n        <div class=\"bb-node\" ng-if=\"product\">\n          <h3>Product</h3>\n          <ul>\n            <li>\n              <label>Name:</label><span>{{product.name}}</span>\n            </li>\n          </ul>\n        </div>\n        <div ng-controller=\'CustomBookingText\' class=\"message-node\">\n          <div ng-repeat=\"msg in messages\">{{msg}}</div>\n        </div>\n        <div ng-show=\"item_details.hasQuestions\" class=\"question-node\">\n          <h3>Questions</h3>\n          <ul>\n            <li ng-repeat=\"question in item_details.questions\"\n              bb-question-line ng-show=\"question.currentlyShown\">\n              <label>{{question.name}}:</label> \n              <span>\n                <input bb-question=\"question\" class=\"form-control\"/><br/>\n                <small>{{question.help_text}}</small>\n              </span>\n            </li>\n          </ul>\n        </div>\n      </form>\n    </div>\n    <div class=\"bb-actions\">\n      <div class=\"bb-prev\">\n      </div>\n      <div class=\"bb-current\">\n      </div>\n      <div class=\"bb-next\">\n        <a href=\"\" class=\"bb-btn-next\" ng-disabled=\"!client_form.$valid\"\n          ng-click=\"confirm(client_form)\">Confirm</a>\n      </div>\n    </div>\n  </div>\n</div>\n");
-$templateCache.put("checkout.html","<div ng-controller=\"Checkout\">\n  <div class=\"bb-checkout\">\n\n    <div ng-show=\"checkoutFailed\" class=\"bb-frame\">\n      <div class=\"bb-head\">\n        <h3>\n          I\'m sorry, for some reason this booking failed. Please Try again.\n        </h3>\n      </div>\n      <div>\n        <p>I\'m sorry, for some reason this booking failed. Please Try again.</p>\n      </div>\n    </div>\n\n    <div ng-show=\"total\" class=\"bb-frame\">  \n      <div class=\"bb-head\">\n        <h2>Your details<h2>\n      </div>\n      <div class=\"bb-node\">\n      <h3>Client Details</h3>\n        <ul>\n          <li>\n            <label>Name:</label><span>{{client.getName()}}</span>\n          </li>\n          <li>\n            <label>Email:</label><span>{{client.email}}</span>\n          </li>\n          <li>\n            <label>Address:</label><span>{{client.addressSingleLine()}}</span>\n          </li>\n        </ul>\n      </div>\n\n      <div class=\"bb-node\">\n        <h3>Booking Confirmation Details</h3>\n        <ul class=\"show_list\" ng-repeat=\"i in total.items\">\n          <li>\n            <label>Service:</label><span>{{i.full_describe}}</span>\n          </li>\n          <li>\n            <label>Date/Time:</label><span>{{i.describe}}</span>\n          </li>\n        </ul>\n      </div>\n\n\n      <div class=\"bb-node calendar-node\">\n        <h3>Export to calendar</h3>\n        <ul class=\"show_list\" ng-repeat=\"i in total.items\">\n          <li>\n            <label>Links :</label>\n            <span>\n              <a class=\"image\" title=\"Add this booking to an Outlook Calendar\" href=\"{{total.icalLink()}}\"><img alt=\"\" src=\"http://uk.bookingbug.com/assets/outlook.png\"></a>\n              <a class=\"image\" title=\"Export this booking to an iCal Calendar\" href=\"{{total.webcalLink()}}\"><img alt=\"\" src=\"http://uk.bookingbug.com/assets/ical.png\"></a>\n              <a class=\"image\" title=\"Export this booking to Google Calendar\" href=\"{{total.gcalLink()}}\" target=\"_blank\"><img src=\"http://uk.bookingbug.com/assets/gcal.png\" border=\"0\"></a>\n            </span>\n          </li>\n        </ul>\n      </div>\n\n      <div ng-controller=\'CustomConfirmationText\' class=\"message-node\">\n        <div ng-repeat=\"msg in messages\">{{msg}}</div>\n      </div>\n\n\n    </div>\n\n    <div class=\"bb-actions\">\n      <div class=\"bb-prev\">\n      </div>\n      <div class=\"bb-current\">\n      </div>\n      <div class=\"bb-next\">\n        <payment_button value=\"Make Payment\" class=\"bb-btn-next\"\n          ng-if=\"total.$has(\'new_payment\')\" total=\"total\" bb=\"bb\"\n          decide-next-page=\"decideNextPage\">\n        </payment_button>\n        <a href=\"\" class=\"bb-btn-next\" ng-click=\"print()\">Print</a>\n      </div>\n    </div>\n\n  </div>\n</div>\n");
-$templateCache.put("content_main.html","<div ng-include=\"bb_main\"\n      ng-hide=\"hide_page\"\n      onload=\"initPage()\"\n      bbContent=\"null\">\n</div>\n");
-$templateCache.put("dash.html","<h1>Dashboard</h1>\n  <div class=\"dashcontainer\" ng-controller=\"DashboardContainer\" style=\"\">\n\n  <div class=\"row\">\n\n    <div class=\"col-md-4\">\n      <h4>Pick a Location/Service</h4>\n\n      <div ng-controller=\"CompanyList\" ng-init=\"init()\">\n\n        <div class=\"\" ng-repeat=\"comp in companies\"  >\n          <h3>{{comp.name}}</h3>\n\n          <div ng-controller=\"PersonList\" ng-init=\"init(comp)\">\n\n            <a class=\"\" ng-repeat=\"person in all_people\"  style=\"margin-left:20px;font-size:14px;display:block;cursor:pointer;\">\n              {{person.name}}\n            </a>\n          </div>\n        </div>\n      </div>\n\n      <div ng-show=\"selectedSlot\">\n        <div ng-controller=\"SelectedSlotDetails\" class=\"side_details\">\n          <div ng-include=\"showItemView\">\n          </div>\n        </div>\n      </div>  \n\n    </div> \n\n    <div class=\"col-md-8\">\n\n      <div ng-controller=\"CalendarCtrl\" ng-init=\"init()\">\n\n        <div ui-calendar=\"uiConfig.calendar\" ng-model=\"eventSources\" calendar=\"myCalendar\">\n      </div>\n\n    </div>\n  </div>\n\n\n    <div id=\"dialog-modal\" title=\"\" display:none;>\n      \n    </div>\n  </div>\n");
-$templateCache.put("day.html","<div bb-month-availability ng-init=\"checkStepTitle(\'Pick a date\')\" id=\"day_page\">\n  <div class=\"bb-navigation container\">\n      <div class=\"bb-nav\">\n          <a href=\"\" class=\"bb-btn-prev btn btn-default pull-left\" ng-click=\"subtract(\'months\',1)\" ng-disabled=\"isPast()\">Prev Month</a>\n          <span class=\"bb-date\">{{format_date(\'MMMM YYYY\')}}</span>\n          <a href=\"\" class=\"bb-btn-next btn btn-default pull-right\" ng-click=\"add(\'months\',1)\">Next Month</a>\n      </div>\n  </div>\n\n  <div class=\"bb-date-pick container\">\n    <div class=\"bb-month-frame panel panel-default\" id=\"frame\">\n      <div class=\"bb-month-name panel-heading text-primary\">\n        <h2>{{format_date(\'MMMM\')}}<h2>\n      </div>\n      <table class=\"bb-month\">\n        <tr ng-repeat=\"week in weeks\">\n          <td ng-repeat=\"day in week\">    \n            <a href=\"\" ng-disabled=\"day.off(month)\" class=\"time-slot\n              {{day.class(month)}} btn btn-default\" ng-click=\"selectDay(day)\">\n              {{day.day()}}\n            </a>\n          </td>\n        <tr>  \n      </table>\n    </div>\n  </div>\n  \n</div>\n");
-$templateCache.put("event.html","<div bb-event ng-init=\"checkStepTitle(\'Details\')\" class=\"bb_wrap\">\n\n  <div class=\"bb-client\">\n    <div class=\"bb-frame\">\n      <div class=\"bb-head\">\n        <h2>{{event.chain.name}} {{event.date.format(\"Do MMMM YY\")}}<h2>\n      </div>\n      <form name=\"client_form\" class=\"bb-form\" role=\"form\">\n\n        <table>\n          <tr><th></th><th class=\"col-sm-6\">Type</th><th class=\"col-sm-3\">Price</th><th class=\"col-sm-3\">Qty</th></tr>\n          <tr ng-repeat=\"ticket in event.tickets\" class=\"row\">\n            <td class=\"col-sm-6\">{{ticket.fullName()}}</td>\n            <td class=\"col-sm-3\">{{ticket.price | icurrency:\"GBP\"}}  <small ng-if=\"ticket.counts_as\"><i>(for {{ticket.counts_as}})</i></small></td>\n            <td class=\"col-sm-3\">\n              <span ng-if=\"selected_tickets\">{{ticket.qty}}</span>\n              <select ng-if=\"!selected_tickets\" ng-model=\"ticket.qty\" ng-options=\"n as n for n in ticket.getRange(20)\"></select>\n            </td>\n          </tr>\n        </table>\n        <br clear=\'all\'/>\n        <button ng-if=\"!selected_tickets\" class=\"btn primary pull-right\" ng-click=\"selectTickets()\">Next</button>\n        <br clear=\'all\'/>\n      </form>\n    </div>\n  </div>\n  <div ng-if=\"selected_tickets\">\n    <!-- First enter your details -->\n    <div ng-controller=\"PageController\">\n\n      <div bb-client-details>\n        <div class=\"bb-client\">\n          <div class=\"bb-frame\">\n            <div class=\"bb-head\">\n              <h2><%=_(\"Your details\")%><h2>\n            </div>\n            <form name=\"client_form\" class=\"bb-form\" role=\"form\">\n              <div class=\"bb-entry\">\n                <label>First Name:</label>\n                <div class=\"bb-field\">\n                  <input type=\"text\" ng-model=\"client.first_name\" class=\"form-control\" autofocus/>\n                </div>\n              </div>\n              <div class=\"bb-entry\">\n                <label>Last Name:</label>\n                <div class=\"bb-field\">\n                  <input type=\"text\" ng-model=\"client.last_name\" class=\"form-control\"/>\n                </div>\n              </div>\n              <div class=\"bb-entry\">\n                <label>E-mail:</label>\n                <div class=\"bb-field\">\n                  <input type=\"email\" ng-model=\"client.email\" class=\"form-control\"/>\n                </div>\n              </div>\n\n              <div ng-show=\"client_details.hasQuestions\">\n                <div class=\"bb-head\">\n                  <h2><%=_(\"Questions\")%></h2>\n                </div>\n                <div ng-show=\"client_details.hasQuestions\">\n                  <div class=\"bb-entry\" ng-repeat=\"question in client_details.questions\">\n                    <label>{{question.name}}</label> \n                    <div class=\"bb-field\">\n                      <input bb-question=\"question\"/>\n                      <small>{{question.help_text}}</small>\n                    </div>\n                  </div>\n                </div>\n              </div>\n            </form>\n          </div>\n        </div>\n      </div>\n                \n      <div ng-repeat=\"item in bb.basket.items\" class=\"bb-frame\">\n        <div bb-item-details=\"item\">\n          <form name=\"booking_form\" class=\"bb-form\" role=\"form\" novalidate>\n            <div ng-show=\"item_details.hasQuestions\" class=\"question-node\">\n              <h3><%=_(\"Questions\")%></h3>\n              <div class=\"bb-entry\" ng-repeat=\"question in item_details.questions\" bb-question-line ng-show=\"question.currentlyShown\">\n                <label>{{question.name}}:</label>\n                <div class=\"bb-field\">\n                  <input bb-question=\"question\" class=\"form-control\"/><br/>\n                  <small>{{question.help_text}}</small>\n                </div>\n              </div>\n            </div>\n          </form>\n        </div>\n      </div>\n\n      <div class=\"bb-actions\">\n        <div class=\"bb-prev\"></div>\n        <div class=\"bb-current\">\n          <a href=\"\" class=\"bb-btn-action\" ng-click=\"reset()\"><%=_(\"Clear\")%></a>\n        </div>\n        <div class=\"bb-next\">\n\n          <button class=\"btn btn-primary btn-next\" ng-click=\"checkReady() && routeReady()\"><span>Book</span></button>\n\n        </div>\n      </div>\n      \n    </div>\n\n  </div>\n</div>\n");
-$templateCache.put("event_group_list.html","<div bb-event-groups ng-init=\"checkStepTitle(\'Pick an event type\')\" class=\"bb_wrap\">\n\n  <div class=\"bb-services bb-list\">\n    <div class=\"bb-list-item\">\n      <div class=\"bb-item\" ng-click=\"selectItem(item)\" ng-repeat=\"item in items\">\n        <div class=\"bb-desc\">\n          <div class=\"bb-price\">\n            {{item.price | currency:\"GBP\"}}\n          </div>\n          <div class=\"bb-txt\">\n            <h5>{{item.name}}</h5>\n            <small>{{item.description}}</small>\n          </div> \n        </div>\n      </div>\n    </div>\n  </div>\n  \n</div>");
-$templateCache.put("event_list.html","<div bb-events ng-init=\"checkStepTitle(\'Pick an event\')\" id=\"event_list_page\" class=\"bb_wrap\">\n\n  <div class=\"container\" ng-if=\"items.length == 1\">\n    <div class=\"bb-txt\">\n      <h3>{{items[0].description}}</h3>\n      <p>Date/Time: {{items[0].date.format(\'ddd Do MMM h:mma\')}}, {{items[0].printDuration()}}</p>\n      <p>Spaces: {{items[0].getSpacesLeft()}} of {{items[0].num_spaces}} spaces left</p>\n    </div>\n    <button ng-click=\"selectItem(items[0])\" class=\"btn pull-right\">Book</button>\n  </div>\n\n  <div class=\"bb-events bb-list\">\n\n\n    <div class=\"bb-list-item\">\n\n      <ul class=\"bb-dates-list make-row\" ng-if=\"item_dates\">\n        <li class=\"bb-date-item col-sm-1\" ng-click=\"showDate(date)\" ng-repeat=\"date in item_dates\" ng-class=\"{selected: date.idate == selected_date.idate}\">\n          <b>{{date.date.format(\"dd Do MMM\")}}</b><br/>\n          <small>{{date.count}} Sessions</small>\n        </li>\n        <li class=\"bb-date-item col-sm-1\" ng-click=\"open($event)\">\n          Pick a date\n           <input type=\"text\" class=\"form-control\" datepicker-popup=\"{{format}}\" ng-model=\"pick.date\" is-open=\"opened\" min-date=\"\" max-date=\"\" datepicker-options=\"\"  ng-required=\"true\" close-text=\"Close\" />\n        </li>\n      </ul>\n      <br/>\n\n\n      <div class=\"bb-item\" ng-click=\"selectItem(item)\" ng-repeat=\"item in items | filter:{idate: selected_date.idate}\">\n        <div class=\"bb-desc\">\n          <div class=\"bb-txt\">\n            <h5>{{item.description}} : {{item.price | icurrency}}</h5>\n            <p>Date/Time: <b>{{item.date.format(\'ddd Do MMM h:mma\')}}, {{item.printDuration()}},</b> Spaces: <b>{{item.getSpacesLeft()}} of {{item.num_spaces}} spaces left</b></p>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n\n</div>\n");
-$templateCache.put("loader.html","<div class=\'bb-loader\' ng-hide=\'scopeLoaded\'>\n  <div id=\'loading_icon\'>\n    <div id=\'wait_graphic\'>&nbsp;</div>\n  </div>\n</div>");
-$templateCache.put("main.html","<div bb-breadcrumb></div>\n<div ng-show=\"loading\"><img src=\'/BB_wait.gif\' class=\"loader\"></div>\n<div ng-hide=\"loading\"><div bb-content></div></div>\n");
-$templateCache.put("service_list.html","<div bb-services ng-init=\"checkStepTitle(\'Select a service\')\"\n  id=\"service_list_page\" class=\"bb_wrap\">\n\n  <div class=\"bb-services bb-list\">\n    <div class=\"bb-list-item container\">\n      <div class=\"bb-item\" ng-click=\"selectItem(item)\" ng-repeat=\"item in items\">\n        <div class=\"bb-desc form-control\">\n          <div class=\"bb-txt col-sm-10\">\n            <h5>{{item.name}}</h5>\n            <small>{{item.description}}</small>\n          </div> \n          <div class=\"bb-price col-sm-2 btn-default\">\n            <span ng-show=\"item.price > 0\">{{item.price | currency:\"GBP\"}}</span>\n            <span ng-show=\"item.price == 0\">Free</span>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n  \n</div>\n");
-$templateCache.put("time.html","<div bb-times ng-init=\"checkStepTitle(\'Select a time\')\" id=\"time_page\">\n\n  <div class=\"bb-navigation container\">\n    <div class=\"bb-nav text-center\">\n      <button type=\"button\" class=\"bb-btn-prev btn btn-primary pull-left\" ng-click=\"subtract(\'days\',1)\">Previous Day</button>\n      <span class=\"bb-date\">{{format_date(\'Do MMM YYYY\')}}</span>\n      <button type=\"button\" class=\"bb-btn-next btn btn-primary pull-right\" ng-click=\"add(\'days\',1)\">Next Day</button>\n    </div>\n  </div>\n\n  <div>\n    <div ng-hide=\"slots\">\n      <span class=\"no_value\">No available times</span>\n    </div>\n    <div class=\"bb-times container\">\n      <div class=\"bb-time panel panel-default\">\n        <div class=\"clearfix\">\n          <div class=\"time-slot col-sm-2\" ng-repeat=\"slot in slots\">\n            <button type=\"button\" class=\"btn btn-default btn-block\" ng-click=\"selectSlot(slot)\">{{slot.print_time()}}</button>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n\n</div>\n");
-$templateCache.put("admin_login.html","<div>\n  <form name=\"login_form\" ng-submit=\"login()\" class=\"form-horizontal\"\n  role=\"form\">\n    <div class=\"alert alert-danger\" role=\"alert\" ng-if=\"alert && alert.length > 0\">{{alert}}</div>\n\n    <div ng-class=\"{\'form-group\': true, \'has-error\': emailIsInvalid()}\">\n      <label for=\"email\" class=\"col-sm-2 control-label\">Email</label>\n      <div class=\"col-sm-10\">\n        <input type=\"email\" ng-model=\"login.email\" name=\"email\" class=\"form-control\"\n          id=\"email\" placeholder=\"Email\" required autofocus>\n      </div>\n    </div>\n\n    <div ng-class=\"{\'form-group\': true, \'has-error\': passwordIsInvalid()}\">\n      <label for=\"password\" class=\"col-sm-2 control-label\">Password</label>\n      <div class=\"col-sm-10\">\n        <input type=\"password\" ng-model=\"login.password\" name=\"password\"\n          class=\"form-control\" id=\"password\" placeholder=\"Password\" required>\n      </div>\n    </div>\n\n    <div class=\"form-group\">\n      <div class=\"col-sm-offset-2 col-sm-10\">\n        <button type=\"submit\" class=\"btn btn-primary\">Log In</button>\n      </div>\n    </div>\n  </form>\n</div>\n");
-$templateCache.put("pick_company.html","<form name=\"pick_company_form\" ng-submit=\"selectedCompany()\" role=\"form\">\n  <p>Pick Company</p>\n  <div ng-repeat=\"admin in administrators\" class=\"radio\">\n    <label>\n      <input id=\"company{{admin.company_id}}\" type=\"radio\"\n        ng-model=\"$parent.selected_admin\" ng-value=\"admin\" required\n        name=\"company\">\n      {{admin.company_name}}\n    </label>\n  </div>\n  <input type=\"submit\" class=\"btn btn-default\">\n</form>\n");
-$templateCache.put("event_chain_table_main.html","<button class=\"btn btn-default\" ng-click=\"newEventChain()\">New Event Chain</button>\n<table tr-ng-grid=\"\" items=\"event_chains\" fields=\"fields\">\n   <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"delete(gridDisplayItem.id)\">\n            Delete\n        </button>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"edit(gridDisplayItem.id)\">\n            Edit\n        </button>\n      </td>\n    </tr>\n  </tbody>\n</table>\n");
-$templateCache.put("event_group_table_main.html","<button class=\"btn btn-default\" ng-click=\"newEventGroup()\">New Event Group</button>\n<table tr-ng-grid=\"\" items=\"event_groups\">\n   <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"delete(gridDisplayItem.id)\">\n            Delete\n        </button>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"edit(gridDisplayItem.id)\">\n            Edit\n        </button>\n      </td>\n    </tr>\n  </tbody>\n</table>\n");
-$templateCache.put("person_form.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"person_form\" ng-submit=\"submit(person_form)\">\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"person\">\n  </div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\n  </div>\n</form>\n");
-$templateCache.put("person_table_main.html","<button class=\"btn btn-default\" ng-click=\"newPerson()\">New Person</button>\n<table tr-ng-grid=\"\" items=\"people\">\n   <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"delete(gridDisplayItem.id)\">\n            Delete\n        </button>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"edit(gridDisplayItem.id)\">\n            Edit\n        </button>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"schedule(gridDisplayItem.id)\">\n            Schedule\n        </button>\n      </td>\n    </tr>\n  </tbody>\n</table>\n");
-$templateCache.put("resource_form.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"resource_form\" ng-submit=\"submit(resource_form)\">\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"resource\">\n  </div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\n  </div>\n</form>\n");
-$templateCache.put("resource_table_main.html","<button class=\"btn btn-default\" ng-click=\"newResource()\">New Resource</button>\n<table tr-ng-grid=\"\" items=\"resources\">\n   <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"delete(gridDisplayItem.id)\">\n            Delete\n        </button>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"edit(gridDisplayItem.id)\">\n            Edit\n        </button>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"schedule(gridDisplayItem.id)\">\n            Schedule\n        </button>\n      </td>\n    </tr>\n  </tbody>\n</table>");
-$templateCache.put("schedule_cal_form.html","<div class=\"form-group\" ng-class=\"{\'has-error\': hasError()}\">\n  <label class=\"control-label\" ng-show=\"showTitle()\">{{form.title}}</label>\n\n  <div schedule-cal ng-model=\"$$value$$\"></div>\n\n  <span class=\"help-block\">{{ (hasError() && errorMessage(schemaError())) || form.description}}</span>\n</div>\n");
-$templateCache.put("schedule_cal_main.html","<div ui-calendar=\"options.calendar\" ng-model=\"eventSources\"\n  ng-if=\"eventSources\" calendar=\"scheduleCal\"></div>\n");
-$templateCache.put("schedule_edit_form.html","<div class=\"form-group\" ng-class=\"{\'has-error\': hasError()}\">\n  <label class=\"control-label\" ng-show=\"showTitle()\">{{form.title}}</label>\n\n  <div schedule-edit ng-model=\"$$value$$\"></div>\n\n  <span class=\"help-block\">{{ (hasError() && errorMessage(schemaError())) || form.description}}</span>\n</div>\n");
-$templateCache.put("schedule_edit_main.html","<tabset>\n  <tab heading=\"weekdays\">\n    <table>\n      <thead>\n        <tr>\n          <th><!--empty cell--></th>\n          <th ng-repeat=\"weekday in weekdays\">{{weekday | datetime : \'ddd\'}}</th>\n        </tr>\n      </thead>\n      <tbody>\n        <tr ng-repeat=\"timeRange in timeRanges\" ng-init=\"$last ? lastHour() : null\">\n          <td class=\"hour-label\">{{timeRange.label | datetime : \'HH:mm\'}}</td>\n          <td class=\"eng-item\" ng-repeat=\"weekday in weekdays\" ng-init=\"$last ?\n            lastDate() : null\" id=\"{{weekday | datetime : \'d\'}}|{{timeRange.range}}\"></td>\n        </tr>\n      </tbody>\n    </table>\n  </tab>\n  <tab heading=\"dates\">\n    <table>\n      <thead>\n        <tr>\n          <th><!--empty cell--></th>\n          <th ng-repeat=\"date in dates\">{{date | datetime : \'D MMM\'}}</th>\n        </tr>\n      </thead>\n      <tbody>\n        <tr ng-repeat=\"timeRange in timeRanges\" ng-init=\"$last ? lastHour() : null\">\n          <td class=\"hour-label\">{{timeRange.label | datetime : \'HH:mm\'}}</td>\n          <td class=\"eng-item\" ng-repeat=\"date in dates\" ng-init=\"$last ?\n            lastDate() : null\" id=\"{{date | datetime : \'YYYY-MM-DD\'}}|{{timeRange.range}}\"></td>\n        </tr>\n      </tbody>\n    </table>\n  </tab>\n");
-$templateCache.put("schedule_table_main.html","<button class=\"btn btn-default\" ng-click=\"newSchedule()\">New Schedule</button>\n<table tr-ng-grid=\"\" items=\"schedules\">\n   <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"delete(gridDisplayItem.id)\">\n            Delete\n        </button>\n        <button class=\"btn btn-default btn-sm\"\n          ng-click=\"edit(gridDisplayItem.id)\">\n            Edit\n        </button>\n      </td>\n    </tr>\n  </tbody>\n</table>\n");
-$templateCache.put("service_form.html","<div class=\"modal-header\">\n	<h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"service_form\" ng-submit=\"submit(service_form)\">\n	<div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"service\"></div>\n	<div class=\"modal-footer\">\n		<input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n		<button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\n	</div>\n</form>");
-$templateCache.put("service_table_main.html","<button class=\"btn btn-default\" ng-click=\"newService()\">New Service</button>\n<table tr-ng-grid=\"\" items=\"services\">\n	<tbody>\n		<tr>\n			<td>\n				<button class=\"btn btn-default btn-sm\" ng-click=\"edit(gridDisplayItem.id)\">Edit</button>\n			</td>\n		</tr>\n	</tbody>\n</table>");
-$templateCache.put("admin_form.html","<div class=\"modal-header\">\n  <h3 class=\"modal-title\">{{title}}</h3>\n</div>\n<form name=\"administrator_form\" ng-submit=\"submit(administrator_form)\">\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"admin\"></div>\n  <div class=\"modal-footer\">\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\n  </div>\n</form>");
-$templateCache.put("admin_table_main.html","<button class=\"btn btn-default\" ng-click=\"newAdministrator()\">New Administrator</button>\n<table tr-ng-grid=\"\" items=\"administrators\">\n   <tbody>\n    <tr>\n      <td>\n        <button class=\"btn btn-default btn-sm\" ng-click=\"edit(gridDisplayItem.id)\">Edit</button>\n      </td>\n    </tr>\n  </tbody>\n</table>\n");}]);
+angular.module("BB").run(["$templateCache", function($templateCache) {$templateCache.put("bootstrap_ui_datetime_form.html","<div class=\"form-group\" ng-class=\"{\'has-error\': hasError()}\">\r\n\r\n  <div datetimepicker ng-model=\"$$value$$\" schema-validate=\"form\"></div>\r\n\r\n  <span class=\"help-block\">{{ (hasError() && errorMessage(schemaError())) || form.description}}</span>\r\n</div>\r\n");
+$templateCache.put("bootstrap_ui_time_form.html","<div class=\"form-group\" ng-class=\"{\'has-error\': hasError()}\">\r\n  <label class=\"control-label\" ng-show=\"showTitle()\">{{form.title}}</label>\r\n\r\n  <div timepicker ng-model=\"$$value$$\" show-meridian=\"false\"></div>\r\n\r\n  <span class=\"help-block\">{{ (hasError() && errorMessage(schemaError())) || form.description}}</span>\r\n</div>\r\n");
+$templateCache.put("datetimepicker.html","<label class=\"control-label\">Date</label>\r\n<p class=\"input-group\">\r\n  <input type=\"text\" datepicker-popup=\"dd-MMMM-yyyy\" ng-model=\"$$value$$\"\r\n  class=\"form-control\" is-open=\"opened\"></input>\r\n  <span class=\"input-group-btn\">\r\n    <button type=\"button\" class=\"btn btn-default\" ng-click=\"open($event)\">\r\n      <i class=\"glyphicon glyphicon-calendar\"></i>\r\n    </button>\r\n  </span>\r\n</p>\r\n<label class=\"control-label\">Time</label>\r\n<div timepicker ng-model=\"$$value$$\" show-meridian=\"false\"></div>\r\n");
+$templateCache.put("modal_form.html","<div class=\"modal-header\">\r\n  <h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"modal_form\" ng-submit=\"submit(modal_form)\">\r\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\"\r\n    sf-model=\"form_model\" sf-options=\"{formDefaults: {feedback: false}}\">\r\n  </div>\r\n  <div class=\"modal-footer\">\r\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\r\n  </div>\r\n</form>\r\n");
+$templateCache.put("price_form.html","<div class=\"form-group\" ng-class=\"{\'has-error\': hasError()}\">\r\n  <label class=\"control-label\" ng-show=\"showTitle()\">{{form.title}}</label>\r\n\r\n  <div pricepicker ng-model=\"$$value$$\" currency=\"{{form.currency}}\"></div>\r\n\r\n  <span class=\"help-block\">{{ (hasError() && errorMessage(schemaError())) || form.description}}</span>\r\n</div>\r\n");
+$templateCache.put("edit_booking_modal_form.html","<div class=\"modal-header\">\r\n  <h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"booking_form\" ng-submit=\"submit(booking)\">\r\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"booking\">\r\n    <ul>\r\n      <li>{{model.full_describe}}</li>\r\n      <li>{{model.person_name}}</li>\r\n      <li>{{model.describe}}</li>\r\n    </ul>\r\n  </div>\r\n  <div class=\"modal-footer\">\r\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Dismiss</button>\r\n  </div>\r\n</form>\r\n");
+$templateCache.put("login.html","<form name=\"login_form\" ng-submit=\"submit()\" class=\"form-horizontal\"\r\n  role=\"form\">\r\n  <div class=\"alert alert-danger\" role=\"alert\" ng-if=\"alert && alert.length > 0\">{{alert}}</div>\r\n  <div ng-class=\"{\'form-group\': true, \'has-error\': emailIsInvalid()}\">\r\n    <label for=\"email\" class=\"col-sm-2 control-label\">Email</label>\r\n    <div class=\"col-sm-10\">\r\n      <input type=\"email\" ng-model=\"email\" name=\"email\" class=\"form-control\"\r\n        id=\"email\" placeholder=\"Email\" required autofocus>\r\n    </div>\r\n  </div>\r\n  <div ng-class=\"{\'form-group\': true, \'has-error\': passwordIsInvalid()}\">\r\n    <label for=\"password\" class=\"col-sm-2 control-label\">Password</label>\r\n    <div class=\"col-sm-10\">\r\n      <input type=\"password\" ng-model=\"password\" name=\"password\"\r\n        class=\"form-control\" id=\"password\" placeholder=\"Password\" required>\r\n    </div>\r\n  </div>\r\n  <div class=\"form-group\">\r\n    <div class=\"col-sm-offset-2 col-sm-10\">\r\n      <button type=\"submit\" class=\"btn btn-primary\">Log In</button>\r\n    </div>\r\n  </div>\r\n</form>\r\n");
+$templateCache.put("login_modal_form.html","<div class=\"modal-header\">\r\n  <h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"login_form\" ng-submit=\"submit(login_form)\">\r\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\"\r\n    sf-model=\"login_form\">\r\n  </div>\r\n  <div class=\"modal-footer\">\r\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Dismiss</button>\r\n  </div>\r\n</form>\r\n");
+$templateCache.put("member_bookings_table.html","<div ng-show=\"loading\"><img src=\'/BB_wait.gif\' class=\"loader\"></div>\r\n<table tr-ng-grid=\"\" items=\"bookings\" enable-filtering=\"false\"\r\n  ng-hide=\"loading\" fields=\"fields\">\r\n  <thead>\r\n    <tr>\r\n      <th field-name=\"describe\" display-name=\"Date/Time\"></th>\r\n      <th field-name=\"full_describe\" display-name=\"Description\"></th>\r\n    </tr>\r\n  </thead>\r\n  <tbody>\r\n    <tr>\r\n      <td>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"delete(gridItem.id)\">\r\n            Cancel\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"edit(gridItem.id)\">\r\n            Details\r\n        </button>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n\r\n");
+$templateCache.put("pick_company.html","<form name=\"pick_company_form\" ng-submit=\"selectedCompany()\" role=\"form\">\r\n  <p>Pick Company</p>\r\n  <div ng-repeat=\"admin in administrators\" class=\"radio\">\r\n    <label>\r\n      <input id=\"company{{admin.company_id}}\" type=\"radio\"\r\n        ng-model=\"$parent.selected_admin\" ng-value=\"admin\" required\r\n        name=\"company\">\r\n      {{admin.company_name}}\r\n    </label>\r\n  </div>\r\n  <input type=\"submit\" class=\"btn btn-default\">\r\n</form>\r\n");
+$templateCache.put("pick_company_modal_form.html","<div class=\"modal-header\">\r\n  <h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"pick_company_form\" ng-submit=\"submit(pick_company_form)\">\r\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\"\r\n    sf-model=\"pick_company_form\">\r\n  </div>\r\n  <div class=\"modal-footer\">\r\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Dismiss</button>\r\n  </div>\r\n</form>\r\n");
+$templateCache.put("basket.html","<div>\r\n  <h1>Not a mini basket</h1>\r\n</div>");
+$templateCache.put("basket_mini.html","<div class=\"bb-mini-basket\">\r\n  <span class=\'glyphicon glyphicon-shopping-cart\'></span>\r\n  <span>{{basketStatus}}</span>\r\n  <span ng-if=\"basketItemCount\">\r\n    <a href=\'#\' ng-click=\"BasketCtrl.empty()\" class=\"btn btn-default btn-xs\">\r\n      <span class=\"glyphicon glyphicon-remove-circle\"></span>\r\n    </a>\r\n    <a href=\'#\' ng-click=\"BasketCtrl.view()\" class=\"btn btn-default btn-xs\">\r\n      <span class=\"glyphicon glyphicon-edit\"></span>\r\n    </a>\r\n  </span>\r\n</div>");
+$templateCache.put("breadcrumb.html","<div class=\"breadcrumbs-holder\" ng-init=\"setBasicRoute([])\">\r\n  <ol class=\"breadcrumb\">\r\n    <li ng-repeat=\"step in steps\" type=\"button\" ng-class=\"{active: $last}\" href=\"\" ng-click=\"loadStep(step.number)\" >\r\n      <a href=\"\" ng-click=\"loadStep(step.number)\" ng-if=\"!$last\">\r\n        <span class=\"step-num\">{{step.number}}.</span>\r\n        <span class=\"step-title\">{{step.title}}</span>\r\n      </a>\r\n      <span class=\"step-num\" ng-if=\"$last\">{{step.number}}.</span>\r\n      <span class=\"step-title\" ng-if=\"$last\">{{step.title}}</span>\r\n    </li>\r\n  </ol>\r\n</div>\r\n");
+$templateCache.put("breadcrumb_complex.html","<div class=\"container breadcrumbs\" ng-init=\"setRoute([\r\n  {page:\'service_list\', title: \'Set a Service\'},\r\n  {page:\'person_list\', title: \'Pick a Person\'},\r\n  {page:\'day\', title: \'Select a Date\'}\r\n  ])\">\r\n\r\n  <div class=\"row\">\r\n    <tabset>\r\n      <tab ng-repeat=\"step in allSteps\" heading=\"{{step.title}}\" active=\"step.active\" disabled=\"!step.passed\" select=\"loadStep(step.number)\">\r\n      </tab>\r\n    </tabset>\r\n\r\n    <div class=\"breadcrumbs\">\r\n      <span ng-repeat=\"step in steps\">\r\n        <a ng-if=\"!$last\" href=\"\" ng-click=\"loadStep(step.number)\" class=\"btn default med flat\">  {{step.number}}.\r\n        </a>\r\n        <div ng-if=\"$last\" class=\"step\">{{step.number}}. {{step.title}}</div>\r\n      <span>\r\n    </div>\r\n  </div>\r\n</div>");
+$templateCache.put("checkout.html","<div ng-controller=\"Checkout\">\r\n  <div class=\"bb-checkout\">\r\n\r\n    <div ng-show=\"checkoutFailed\" class=\"bb-frame\">\r\n      <div class=\"bb-head\">\r\n        <h3>\r\n          I\'m sorry, for some reason this booking failed. Please Try again.\r\n        </h3>\r\n      </div>\r\n      <div>\r\n        <p>I\'m sorry, for some reason this booking failed. Please Try again.</p>\r\n      </div>\r\n    </div>\r\n\r\n    <div ng-show=\"total\" class=\"bb-frame\">  \r\n      <div class=\"bb-head\">\r\n        <h2>Your details<h2>\r\n      </div>\r\n      <div class=\"bb-node\">\r\n      <h3>Client Details</h3>\r\n        <ul>\r\n          <li>\r\n            <label>Name:</label><span>{{client.getName()}}</span>\r\n          </li>\r\n          <li>\r\n            <label>Email:</label><span>{{client.email}}</span>\r\n          </li>\r\n          <li>\r\n            <label>Address:</label><span>{{client.addressSingleLine()}}</span>\r\n          </li>\r\n        </ul>\r\n      </div>\r\n\r\n      <div class=\"bb-node\">\r\n        <h3>Booking Confirmation Details</h3>\r\n        <ul class=\"show_list\" ng-repeat=\"i in total.items\">\r\n          <li>\r\n            <label>Service:</label><span>{{i.full_describe}}</span>\r\n          </li>\r\n          <li>\r\n            <label>Date/Time:</label><span>{{i.describe}}</span>\r\n          </li>\r\n        </ul>\r\n      </div>\r\n\r\n\r\n      <div class=\"bb-node calendar-node\">\r\n        <h3>Export to calendar</h3>\r\n        <ul class=\"show_list\" ng-repeat=\"i in total.items\">\r\n          <li>\r\n            <label>Links :</label>\r\n            <span>\r\n              <a class=\"image\" title=\"Add this booking to an Outlook Calendar\" href=\"{{total.icalLink()}}\"><img alt=\"\" src=\"http://uk.bookingbug.com/assets/outlook.png\"></a>\r\n              <a class=\"image\" title=\"Export this booking to an iCal Calendar\" href=\"{{total.webcalLink()}}\"><img alt=\"\" src=\"http://uk.bookingbug.com/assets/ical.png\"></a>\r\n              <a class=\"image\" title=\"Export this booking to Google Calendar\" href=\"{{total.gcalLink()}}\" target=\"_blank\"><img src=\"http://uk.bookingbug.com/assets/gcal.png\" border=\"0\"></a>\r\n            </span>\r\n          </li>\r\n        </ul>\r\n      </div>\r\n\r\n      <div ng-controller=\'CustomConfirmationText\' class=\"message-node\">\r\n        <div ng-repeat=\"msg in messages\">{{msg}}</div>\r\n      </div>\r\n\r\n\r\n    </div>\r\n\r\n    <div class=\"bb-actions\">\r\n      <div class=\"bb-prev\">\r\n      </div>\r\n      <div class=\"bb-current\">\r\n      </div>\r\n      <div class=\"bb-next\">\r\n        <payment_button value=\"Make Payment\" class=\"bb-btn-next\"\r\n          ng-if=\"total.$has(\'new_payment\')\" total=\"total\" bb=\"bb\"\r\n          decide-next-page=\"decideNextPage\">\r\n        </payment_button>\r\n        <a href=\"\" class=\"bb-btn-next\" ng-click=\"print()\">Print</a>\r\n      </div>\r\n    </div>\r\n\r\n  </div>\r\n</div>\r\n");
+$templateCache.put("check_items.html","<div ng-controller=\"ItemDetails\" ng-init=\"checkStepTitle(\'Confirm Details\')\">\r\n  <div class=\"bb-booking\">\r\n    <div class=\"bb-frame\">\r\n      <div class=\"bb-head\">\r\n        <h2>Your details</h2>\r\n      </div>\r\n      <form name=\"client_form\" class=\"bb-form\" role=\"form\">\r\n        <div class=\"bb-node\">\r\n          <h3>Client</h3>\r\n          <ul>\r\n            <li>\r\n              <label>Name:</label><span>{{client.getName()}}</span>\r\n            </li>\r\n            <li>\r\n              <label>Email:</label><span>{{client.email}}</span>\r\n            </li>\r\n            <li>\r\n              <label>Address:</label><span>{{client.addressSingleLine()}}</span>\r\n            </li>\r\n          </ul>\r\n        </div>\r\n        <div class=\"bb-node\" ng-if=\"!product\">\r\n          <h3>Booking</h3>\r\n            <ul>\r\n              <li>\r\n                <label>Details:</label><span>{{item.describe()}}</span>\r\n              </li>\r\n              <li>\r\n                <label>Date:</label>\r\n                <span>{{item.booking_date(\"dddd, MMMM Do YYYY\")}}</span>\r\n              </li>\r\n              <li>\r\n                <label>Time:</label><span>{{item.booking_time()}}</span>\r\n              </li>\r\n              <li ng-show=\"item.hasPrice()\">\r\n                <label>Price:</label><span>{{item.printed_price}}</span>\r\n              </li>\r\n            </ul>\r\n        </div>\r\n        <div class=\"bb-node\" ng-if=\"product\">\r\n          <h3>Product</h3>\r\n          <ul>\r\n            <li>\r\n              <label>Name:</label><span>{{product.name}}</span>\r\n            </li>\r\n          </ul>\r\n        </div>\r\n        <div ng-controller=\'CustomBookingText\' class=\"message-node\">\r\n          <div ng-repeat=\"msg in messages\">{{msg}}</div>\r\n        </div>\r\n        <div ng-show=\"item_details.hasQuestions\" class=\"question-node\">\r\n          <h3>Questions</h3>\r\n          <ul>\r\n            <li ng-repeat=\"question in item_details.questions\"\r\n              bb-question-line ng-show=\"question.currentlyShown\">\r\n              <label>{{question.name}}:</label> \r\n              <span>\r\n                <input bb-question=\"question\" class=\"form-control\"/><br/>\r\n                <small>{{question.help_text}}</small>\r\n              </span>\r\n            </li>\r\n          </ul>\r\n        </div>\r\n      </form>\r\n    </div>\r\n    <div class=\"bb-actions\">\r\n      <div class=\"bb-prev\">\r\n      </div>\r\n      <div class=\"bb-current\">\r\n      </div>\r\n      <div class=\"bb-next\">\r\n        <a href=\"\" class=\"bb-btn-next\" ng-disabled=\"!client_form.$valid\"\r\n          ng-click=\"confirm(client_form)\">Confirm</a>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>\r\n");
+$templateCache.put("content_main.html","<div ng-include=\"bb_main\"\r\n      ng-hide=\"hide_page\"\r\n      onload=\"initPage()\"\r\n      bbContent=\"null\">\r\n</div>\r\n");
+$templateCache.put("dash.html","<h1>Dashboard</h1>\r\n  <div class=\"dashcontainer\" ng-controller=\"DashboardContainer\" style=\"\">\r\n\r\n  <div class=\"row\">\r\n\r\n    <div class=\"col-md-4\">\r\n      <h4>Pick a Location/Service</h4>\r\n\r\n      <div ng-controller=\"CompanyList\" ng-init=\"init()\">\r\n\r\n        <div class=\"\" ng-repeat=\"comp in companies\"  >\r\n          <h3>{{comp.name}}</h3>\r\n\r\n          <div ng-controller=\"PersonList\" ng-init=\"init(comp)\">\r\n\r\n            <a class=\"\" ng-repeat=\"person in all_people\"  style=\"margin-left:20px;font-size:14px;display:block;cursor:pointer;\">\r\n              {{person.name}}\r\n            </a>\r\n          </div>\r\n        </div>\r\n      </div>\r\n\r\n      <div ng-show=\"selectedSlot\">\r\n        <div ng-controller=\"SelectedSlotDetails\" class=\"side_details\">\r\n          <div ng-include=\"showItemView\">\r\n          </div>\r\n        </div>\r\n      </div>  \r\n\r\n    </div> \r\n\r\n    <div class=\"col-md-8\">\r\n\r\n      <div ng-controller=\"CalendarCtrl\" ng-init=\"init()\">\r\n\r\n        <div ui-calendar=\"uiConfig.calendar\" ng-model=\"eventSources\" calendar=\"myCalendar\">\r\n      </div>\r\n\r\n    </div>\r\n  </div>\r\n\r\n\r\n    <div id=\"dialog-modal\" title=\"\" display:none;>\r\n      \r\n    </div>\r\n  </div>\r\n");
+$templateCache.put("day.html","<div bb-month-availability ng-init=\"checkStepTitle(\'Pick a date\')\" id=\"day_page\">\r\n  <div class=\"bb-navigation container\">\r\n      <div class=\"bb-nav\">\r\n          <a href=\"\" class=\"bb-btn-prev btn btn-default pull-left\" ng-click=\"subtract(\'months\',1)\" ng-disabled=\"isPast()\">Prev Month</a>\r\n          <span class=\"bb-date\">{{format_date(\'MMMM YYYY\')}}</span>\r\n          <a href=\"\" class=\"bb-btn-next btn btn-default pull-right\" ng-click=\"add(\'months\',1)\">Next Month</a>\r\n      </div>\r\n  </div>\r\n\r\n  <div class=\"bb-date-pick container\">\r\n    <div class=\"bb-month-frame panel panel-default\" id=\"frame\">\r\n      <div class=\"bb-month-name panel-heading text-primary\">\r\n        <h2>{{format_date(\'MMMM\')}}<h2>\r\n      </div>\r\n      <table class=\"bb-month\">\r\n        <tr ng-repeat=\"week in weeks\">\r\n          <td ng-repeat=\"day in week\">    \r\n            <a href=\"\" ng-disabled=\"day.off(month)\" class=\"time-slot\r\n              {{day.class(month)}} btn btn-default\" ng-click=\"selectDay(day)\">\r\n              {{day.day()}}\r\n            </a>\r\n          </td>\r\n        <tr>  \r\n      </table>\r\n    </div>\r\n  </div>\r\n  \r\n</div>\r\n");
+$templateCache.put("event.html","<div bb-event ng-init=\"checkStepTitle(\'Details\')\" class=\"bb_wrap\">\r\n\r\n  <div class=\"bb-client\">\r\n    <div class=\"bb-frame\">\r\n      <div class=\"bb-head\">\r\n        <h2>{{event.chain.name}} {{event.date.format(\"Do MMMM YY\")}}<h2>\r\n      </div>\r\n      <form name=\"client_form\" class=\"bb-form\" role=\"form\">\r\n\r\n        <table>\r\n          <tr><th></th><th class=\"col-sm-6\">Type</th><th class=\"col-sm-3\">Price</th><th class=\"col-sm-3\">Qty</th></tr>\r\n          <tr ng-repeat=\"ticket in event.tickets\" class=\"row\">\r\n            <td class=\"col-sm-6\">{{ticket.fullName()}}</td>\r\n            <td class=\"col-sm-3\">{{ticket.price | icurrency:\"GBP\"}}  <small ng-if=\"ticket.counts_as\"><i>(for {{ticket.counts_as}})</i></small></td>\r\n            <td class=\"col-sm-3\">\r\n              <span ng-if=\"selected_tickets\">{{ticket.qty}}</span>\r\n              <select ng-if=\"!selected_tickets\" ng-model=\"ticket.qty\" ng-options=\"n as n for n in ticket.getRange(20)\"></select>\r\n            </td>\r\n          </tr>\r\n        </table>\r\n        <br clear=\'all\'/>\r\n        <button ng-if=\"!selected_tickets\" class=\"btn primary pull-right\" ng-click=\"selectTickets()\">Next</button>\r\n        <br clear=\'all\'/>\r\n      </form>\r\n    </div>\r\n  </div>\r\n  <div ng-if=\"selected_tickets\">\r\n    <!-- First enter your details -->\r\n    <div ng-controller=\"PageController\">\r\n\r\n      <div bb-client-details>\r\n        <div class=\"bb-client\">\r\n          <div class=\"bb-frame\">\r\n            <div class=\"bb-head\">\r\n              <h2><%=_(\"Your details\")%><h2>\r\n            </div>\r\n            <form name=\"client_form\" class=\"bb-form\" role=\"form\">\r\n              <div class=\"bb-entry\">\r\n                <label>First Name:</label>\r\n                <div class=\"bb-field\">\r\n                  <input type=\"text\" ng-model=\"client.first_name\" class=\"form-control\" autofocus/>\r\n                </div>\r\n              </div>\r\n              <div class=\"bb-entry\">\r\n                <label>Last Name:</label>\r\n                <div class=\"bb-field\">\r\n                  <input type=\"text\" ng-model=\"client.last_name\" class=\"form-control\"/>\r\n                </div>\r\n              </div>\r\n              <div class=\"bb-entry\">\r\n                <label>E-mail:</label>\r\n                <div class=\"bb-field\">\r\n                  <input type=\"email\" ng-model=\"client.email\" class=\"form-control\"/>\r\n                </div>\r\n              </div>\r\n\r\n              <div ng-show=\"client_details.hasQuestions\">\r\n                <div class=\"bb-head\">\r\n                  <h2><%=_(\"Questions\")%></h2>\r\n                </div>\r\n                <div ng-show=\"client_details.hasQuestions\">\r\n                  <div class=\"bb-entry\" ng-repeat=\"question in client_details.questions\">\r\n                    <label>{{question.name}}</label> \r\n                    <div class=\"bb-field\">\r\n                      <input bb-question=\"question\"/>\r\n                      <small>{{question.help_text}}</small>\r\n                    </div>\r\n                  </div>\r\n                </div>\r\n              </div>\r\n            </form>\r\n          </div>\r\n        </div>\r\n      </div>\r\n                \r\n      <div ng-repeat=\"item in bb.basket.items\" class=\"bb-frame\">\r\n        <div bb-item-details=\"item\">\r\n          <form name=\"booking_form\" class=\"bb-form\" role=\"form\" novalidate>\r\n            <div ng-show=\"item_details.hasQuestions\" class=\"question-node\">\r\n              <h3><%=_(\"Questions\")%></h3>\r\n              <div class=\"bb-entry\" ng-repeat=\"question in item_details.questions\" bb-question-line ng-show=\"question.currentlyShown\">\r\n                <label>{{question.name}}:</label>\r\n                <div class=\"bb-field\">\r\n                  <input bb-question=\"question\" class=\"form-control\"/><br/>\r\n                  <small>{{question.help_text}}</small>\r\n                </div>\r\n              </div>\r\n            </div>\r\n          </form>\r\n        </div>\r\n      </div>\r\n\r\n      <div class=\"bb-actions\">\r\n        <div class=\"bb-prev\"></div>\r\n        <div class=\"bb-current\">\r\n          <a href=\"\" class=\"bb-btn-action\" ng-click=\"reset()\"><%=_(\"Clear\")%></a>\r\n        </div>\r\n        <div class=\"bb-next\">\r\n\r\n          <button class=\"btn btn-primary btn-next\" ng-click=\"checkReady() && routeReady()\"><span>Book</span></button>\r\n\r\n        </div>\r\n      </div>\r\n      \r\n    </div>\r\n\r\n  </div>\r\n</div>\r\n");
+$templateCache.put("event_group_list.html","<div bb-event-groups ng-init=\"checkStepTitle(\'Pick an event type\')\" class=\"bb_wrap\">\r\n\r\n  <div class=\"bb-services bb-list\">\r\n    <div class=\"bb-list-item\">\r\n      <div class=\"bb-item\" ng-click=\"selectItem(item)\" ng-repeat=\"item in items\">\r\n        <div class=\"bb-desc\">\r\n          <div class=\"bb-price\">\r\n            {{item.price | currency:\"GBP\"}}\r\n          </div>\r\n          <div class=\"bb-txt\">\r\n            <h5>{{item.name}}</h5>\r\n            <small>{{item.description}}</small>\r\n          </div> \r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n  \r\n</div>");
+$templateCache.put("event_list.html","<div bb-events ng-init=\"checkStepTitle(\'Pick an event\')\" id=\"event_list_page\" class=\"bb_wrap\">\r\n\r\n  <div class=\"container\" ng-if=\"items.length == 1\">\r\n    <div class=\"bb-txt\">\r\n      <h3>{{items[0].description}}</h3>\r\n      <p>Date/Time: {{items[0].date.format(\'ddd Do MMM h:mma\')}}, {{items[0].printDuration()}}</p>\r\n      <p>Spaces: {{items[0].getSpacesLeft()}} of {{items[0].num_spaces}} spaces left</p>\r\n    </div>\r\n    <button ng-click=\"selectItem(items[0])\" class=\"btn pull-right\">Book</button>\r\n  </div>\r\n\r\n  <div class=\"bb-events bb-list\">\r\n\r\n\r\n    <div class=\"bb-list-item\">\r\n\r\n      <ul class=\"bb-dates-list make-row\" ng-if=\"item_dates\">\r\n        <li class=\"bb-date-item col-sm-1\" ng-click=\"showDate(date)\" ng-repeat=\"date in item_dates\" ng-class=\"{selected: date.idate == selected_date.idate}\">\r\n          <b>{{date.date.format(\"dd Do MMM\")}}</b><br/>\r\n          <small>{{date.count}} Sessions</small>\r\n        </li>\r\n        <li class=\"bb-date-item col-sm-1\" ng-click=\"open($event)\">\r\n          Pick a date\r\n           <input type=\"text\" class=\"form-control\" datepicker-popup=\"{{format}}\" ng-model=\"pick.date\" is-open=\"opened\" min-date=\"\" max-date=\"\" datepicker-options=\"\"  ng-required=\"true\" close-text=\"Close\" />\r\n        </li>\r\n      </ul>\r\n      <br/>\r\n\r\n\r\n      <div class=\"bb-item\" ng-click=\"selectItem(item)\" ng-repeat=\"item in items | filter:{idate: selected_date.idate}\">\r\n        <div class=\"bb-desc\">\r\n          <div class=\"bb-txt\">\r\n            <h5>{{item.description}} : {{item.price | icurrency}}</h5>\r\n            <p>Date/Time: <b>{{item.date.format(\'ddd Do MMM h:mma\')}}, {{item.printDuration()}},</b> Spaces: <b>{{item.getSpacesLeft()}} of {{item.num_spaces}} spaces left</b></p>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n</div>\r\n");
+$templateCache.put("loader.html","<div class=\'bb-loader\' ng-hide=\'scopeLoaded\'>\r\n  <div id=\'loading_icon\'>\r\n    <div id=\'wait_graphic\'>&nbsp;</div>\r\n  </div>\r\n</div>");
+$templateCache.put("main.html","<div bb-breadcrumb></div>\r\n<div ng-show=\"loading\"><img src=\'/BB_wait.gif\' class=\"loader\"></div>\r\n<div ng-hide=\"loading\"><div bb-content></div></div>\r\n");
+$templateCache.put("service_list.html","<div bb-services ng-init=\"checkStepTitle(\'Select a service\')\"\r\n  id=\"service_list_page\" class=\"bb_wrap\">\r\n\r\n  <div class=\"bb-services bb-list\">\r\n    <div class=\"bb-list-item container\">\r\n      <div class=\"bb-item\" ng-click=\"selectItem(item)\" ng-repeat=\"item in items\">\r\n        <div class=\"bb-desc form-control\">\r\n          <div class=\"bb-txt col-sm-10\">\r\n            <h5>{{item.name}}</h5>\r\n            <small>{{item.description}}</small>\r\n          </div> \r\n          <div class=\"bb-price col-sm-2 btn-default\">\r\n            <span ng-show=\"item.price > 0\">{{item.price | currency:\"GBP\"}}</span>\r\n            <span ng-show=\"item.price == 0\">Free</span>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n  \r\n</div>\r\n");
+$templateCache.put("time.html","<div bb-times ng-init=\"checkStepTitle(\'Select a time\')\" id=\"time_page\">\r\n\r\n  <div class=\"bb-navigation container\">\r\n    <div class=\"bb-nav text-center\">\r\n      <button type=\"button\" class=\"bb-btn-prev btn btn-primary pull-left\" ng-click=\"subtract(\'days\',1)\">Previous Day</button>\r\n      <span class=\"bb-date\">{{format_date(\'Do MMM YYYY\')}}</span>\r\n      <button type=\"button\" class=\"bb-btn-next btn btn-primary pull-right\" ng-click=\"add(\'days\',1)\">Next Day</button>\r\n    </div>\r\n  </div>\r\n\r\n  <div>\r\n    <div ng-hide=\"slots\">\r\n      <span class=\"no_value\">No available times</span>\r\n    </div>\r\n    <div class=\"bb-times container\">\r\n      <div class=\"bb-time panel panel-default\">\r\n        <div class=\"clearfix\">\r\n          <div class=\"time-slot col-sm-2\" ng-repeat=\"slot in slots\">\r\n            <button type=\"button\" class=\"btn btn-default btn-block\" ng-click=\"selectSlot(slot)\">{{slot.print_time()}}</button>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n</div>\r\n");
+$templateCache.put("admin_login.html","<div>\r\n  <form name=\"login_form\" ng-submit=\"login()\" class=\"form-horizontal\"\r\n  role=\"form\">\r\n    <div class=\"alert alert-danger\" role=\"alert\" ng-if=\"alert && alert.length > 0\">{{alert}}</div>\r\n\r\n    <div ng-class=\"{\'form-group\': true, \'has-error\': emailIsInvalid()}\">\r\n      <label for=\"email\" class=\"col-sm-2 control-label\">Email</label>\r\n      <div class=\"col-sm-10\">\r\n        <input type=\"email\" ng-model=\"login.email\" name=\"email\" class=\"form-control\"\r\n          id=\"email\" placeholder=\"Email\" required autofocus>\r\n      </div>\r\n    </div>\r\n\r\n    <div ng-class=\"{\'form-group\': true, \'has-error\': passwordIsInvalid()}\">\r\n      <label for=\"password\" class=\"col-sm-2 control-label\">Password</label>\r\n      <div class=\"col-sm-10\">\r\n        <input type=\"password\" ng-model=\"login.password\" name=\"password\"\r\n          class=\"form-control\" id=\"password\" placeholder=\"Password\" required>\r\n      </div>\r\n    </div>\r\n\r\n    <div class=\"form-group\">\r\n      <div class=\"col-sm-offset-2 col-sm-10\">\r\n        <button type=\"submit\" class=\"btn btn-primary\">Log In</button>\r\n      </div>\r\n    </div>\r\n  </form>\r\n</div>\r\n");
+$templateCache.put("pick_company.html","<form name=\"pick_company_form\" ng-submit=\"selectedCompany()\" role=\"form\">\r\n  <p>Pick Company</p>\r\n  <div ng-repeat=\"admin in administrators\" class=\"radio\">\r\n    <label>\r\n      <input id=\"company{{admin.company_id}}\" type=\"radio\"\r\n        ng-model=\"$parent.selected_admin\" ng-value=\"admin\" required\r\n        name=\"company\">\r\n      {{admin.company_name}}\r\n    </label>\r\n  </div>\r\n  <input type=\"submit\" class=\"btn btn-default\">\r\n</form>\r\n");
+$templateCache.put("event_chain_table_main.html","<button class=\"btn btn-default\" ng-click=\"newEventChain()\">New Event Chain</button>\r\n<table tr-ng-grid=\"\" items=\"event_chains\" fields=\"fields\">\r\n   <tbody>\r\n    <tr>\r\n      <td>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"delete(gridDisplayItem.id)\">\r\n            Delete\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"edit(gridDisplayItem.id)\">\r\n            Edit\r\n        </button>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n");
+$templateCache.put("event_group_table_main.html","<button class=\"btn btn-default\" ng-click=\"newEventGroup()\">New Event Group</button>\r\n<table tr-ng-grid=\"\" items=\"event_groups\">\r\n   <tbody>\r\n    <tr>\r\n      <td>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"delete(gridDisplayItem.id)\">\r\n            Delete\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"edit(gridDisplayItem.id)\">\r\n            Edit\r\n        </button>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n");
+$templateCache.put("person_form.html","<div class=\"modal-header\">\r\n  <h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"person_form\" ng-submit=\"submit(person_form)\">\r\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"person\">\r\n  </div>\r\n  <div class=\"modal-footer\">\r\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\r\n  </div>\r\n</form>\r\n");
+$templateCache.put("person_table_main.html","<button class=\"btn btn-default\" ng-click=\"newPerson()\">New Person</button>\r\n<table tr-ng-grid=\"\" items=\"people\">\r\n   <tbody>\r\n    <tr>\r\n      <td>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"delete(gridDisplayItem.id)\">\r\n            Delete\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"edit(gridDisplayItem.id)\">\r\n            Edit\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"schedule(gridDisplayItem.id)\">\r\n            Schedule\r\n        </button>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n");
+$templateCache.put("resource_form.html","<div class=\"modal-header\">\r\n  <h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"resource_form\" ng-submit=\"submit(resource_form)\">\r\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"resource\">\r\n  </div>\r\n  <div class=\"modal-footer\">\r\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\r\n  </div>\r\n</form>\r\n");
+$templateCache.put("resource_table_main.html","<button class=\"btn btn-default\" ng-click=\"newResource()\">New Resource</button>\r\n<table tr-ng-grid=\"\" items=\"resources\">\r\n   <tbody>\r\n    <tr>\r\n      <td>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"delete(gridDisplayItem.id)\">\r\n            Delete\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"edit(gridDisplayItem.id)\">\r\n            Edit\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"schedule(gridDisplayItem.id)\">\r\n            Schedule\r\n        </button>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>");
+$templateCache.put("schedule_cal_form.html","<div class=\"form-group\" ng-class=\"{\'has-error\': hasError()}\">\r\n  <label class=\"control-label\" ng-show=\"showTitle()\">{{form.title}}</label>\r\n\r\n  <div schedule-cal ng-model=\"$$value$$\"></div>\r\n\r\n  <span class=\"help-block\">{{ (hasError() && errorMessage(schemaError())) || form.description}}</span>\r\n</div>\r\n");
+$templateCache.put("schedule_cal_main.html","<div ui-calendar=\"options.calendar\" ng-model=\"eventSources\"\r\n  ng-if=\"eventSources\" calendar=\"scheduleCal\"></div>\r\n");
+$templateCache.put("schedule_edit_form.html","<div class=\"form-group\" ng-class=\"{\'has-error\': hasError()}\">\r\n  <label class=\"control-label\" ng-show=\"showTitle()\">{{form.title}}</label>\r\n\r\n  <div schedule-edit ng-model=\"$$value$$\"></div>\r\n\r\n  <span class=\"help-block\">{{ (hasError() && errorMessage(schemaError())) || form.description}}</span>\r\n</div>\r\n");
+$templateCache.put("schedule_edit_main.html","<tabset>\r\n  <tab heading=\"weekdays\">\r\n    <table>\r\n      <thead>\r\n        <tr>\r\n          <th><!--empty cell--></th>\r\n          <th ng-repeat=\"weekday in weekdays\">{{weekday | datetime : \'ddd\'}}</th>\r\n        </tr>\r\n      </thead>\r\n      <tbody>\r\n        <tr ng-repeat=\"timeRange in timeRanges\" ng-init=\"$last ? lastHour() : null\">\r\n          <td class=\"hour-label\">{{timeRange.label | datetime : \'HH:mm\'}}</td>\r\n          <td class=\"eng-item\" ng-repeat=\"weekday in weekdays\" ng-init=\"$last ?\r\n            lastDate() : null\" id=\"{{weekday | datetime : \'d\'}}|{{timeRange.range}}\"></td>\r\n        </tr>\r\n      </tbody>\r\n    </table>\r\n  </tab>\r\n  <tab heading=\"dates\">\r\n    <table>\r\n      <thead>\r\n        <tr>\r\n          <th><!--empty cell--></th>\r\n          <th ng-repeat=\"date in dates\">{{date | datetime : \'D MMM\'}}</th>\r\n        </tr>\r\n      </thead>\r\n      <tbody>\r\n        <tr ng-repeat=\"timeRange in timeRanges\" ng-init=\"$last ? lastHour() : null\">\r\n          <td class=\"hour-label\">{{timeRange.label | datetime : \'HH:mm\'}}</td>\r\n          <td class=\"eng-item\" ng-repeat=\"date in dates\" ng-init=\"$last ?\r\n            lastDate() : null\" id=\"{{date | datetime : \'YYYY-MM-DD\'}}|{{timeRange.range}}\"></td>\r\n        </tr>\r\n      </tbody>\r\n    </table>\r\n  </tab>\r\n");
+$templateCache.put("schedule_table_main.html","<button class=\"btn btn-default\" ng-click=\"newSchedule()\">New Schedule</button>\r\n<table tr-ng-grid=\"\" items=\"schedules\">\r\n   <tbody>\r\n    <tr>\r\n      <td>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"delete(gridDisplayItem.id)\">\r\n            Delete\r\n        </button>\r\n        <button class=\"btn btn-default btn-sm\"\r\n          ng-click=\"edit(gridDisplayItem.id)\">\r\n            Edit\r\n        </button>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n");
+$templateCache.put("service_form.html","<div class=\"modal-header\">\r\n	<h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"service_form\" ng-submit=\"submit(service_form)\">\r\n	<div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"service\"></div>\r\n	<div class=\"modal-footer\">\r\n		<input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n		<button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\r\n	</div>\r\n</form>");
+$templateCache.put("service_table_main.html","<button class=\"btn btn-default\" ng-click=\"newService()\">New Service</button>\r\n<table tr-ng-grid=\"\" items=\"services\">\r\n	<tbody>\r\n		<tr>\r\n			<td>\r\n				<button class=\"btn btn-default btn-sm\" ng-click=\"edit(gridDisplayItem.id)\">Edit</button>\r\n			</td>\r\n		</tr>\r\n	</tbody>\r\n</table>");
+$templateCache.put("admin_form.html","<div class=\"modal-header\">\r\n  <h3 class=\"modal-title\">{{title}}</h3>\r\n</div>\r\n<form name=\"administrator_form\" ng-submit=\"submit(administrator_form)\">\r\n  <div class=\"modal-body\" sf-schema=\"schema\" sf-form=\"form\" sf-model=\"admin\"></div>\r\n  <div class=\"modal-footer\">\r\n    <input type=\"submit\" class=\"btn btn-primary\" value=\"OK\">\r\n    <button class=\"btn btn-default\" ng-click=\"cancel($event)\">Cancel</button>\r\n  </div>\r\n</form>");
+$templateCache.put("admin_table_main.html","<button class=\"btn btn-default\" ng-click=\"newAdministrator()\">New Administrator</button>\r\n<table tr-ng-grid=\"\" items=\"administrators\">\r\n   <tbody>\r\n    <tr>\r\n      <td>\r\n        <button class=\"btn btn-default btn-sm\" ng-click=\"edit(gridDisplayItem.id)\">Edit</button>\r\n      </td>\r\n    </tr>\r\n  </tbody>\r\n</table>\r\n");}]);
