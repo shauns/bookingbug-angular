@@ -2,6 +2,13 @@ angular.module('BBAdminServices').directive 'scheduleCal', (uiCalendarConfig) ->
 
   controller = ($scope) ->
 
+    $scope.eventSources = [
+      {
+        events: (start, end, timezone, callback) ->
+          callback($scope.getEvents())
+      }
+    ]
+
     $scope.options =
       calendar:
         editable: true
@@ -10,9 +17,6 @@ angular.module('BBAdminServices').directive 'scheduleCal', (uiCalendarConfig) ->
           left: 'today,prev,next'
           center: 'title'
           right: 'month,agendaWeek,agendaDay'
-        dayClick: (day) ->
-          $scope.$$childTail.scheduleCal.fullCalendar('changeView', 'agendaDay')
-          $scope.$$childTail.scheduleCal.fullCalendar('gotoDate', day)
         selectHelper: true
         select: (start, end, jsEvent, view) ->
           $scope.addRange(start, end)
@@ -20,29 +24,46 @@ angular.module('BBAdminServices').directive 'scheduleCal', (uiCalendarConfig) ->
 
   link = (scope, element, attrs, ngModel) ->
 
+    scope.getEvents = () ->
+      rangesToEvents(ngModel.$viewValue)
+
     diffInDays = (start, end) ->
       moment.duration(end.diff(start)).days()
 
+    insertRange = (ranges, range) ->
+      ranges.splice(_.sortedIndex(ranges, range), 0, range)
+      ranges
+
+    joinRanges = (ranges) ->
+      _.reduce(ranges, (m, range) ->
+        if m == ""
+          range
+        else if range.slice(0, 4) <= m.slice(m.length - 4, m.length)
+          m.slice(0, m.length - 4) + range.slice(5, 9)
+        else
+          [m,range].join()
+      , "")
+
+    addNewRange = (ranges = "", range) ->
+      joinRanges(insertRange(ranges.split(','), range))
+
     scope.addRange = (start, end) ->
-      console.log 'add range'
-      ranges = ngModel.$viewValue
-      _.each(_.range(diffInDays(start, end) + 1), (i) ->
-        date = moment(start).add(i, 'days')
+      start_time = start.format('HHmm')
+      end_time = end.format('HHmm')
+      ngModel.$setViewValue(_.reduce(_.range(diffInDays(start, end) + 1), (ranges, i) ->
+        date = moment(start).add(i, 'days').format('YYYY-MM-DD')
         if i == 0
           if diffInDays(start, end) > 1
-            ranges[date.format('YYYY-MM-DD')] =
-              [start.format('HHmm'),'0000'].join('-')
+            ranges[date] = addNewRange(ranges[date], [start_time,'0000'].join('-'))
           else
-            ranges[date.format('YYYY-MM-DD')] =
-              [start.format('HHmm'),end.format('HHmm')].join('-')
-        else if date.format('YYYY-MM-DD') == end.format('YYYY-MM-DD')
-          ranges[date.format('YYYY-MM-DD')] =
-            ['0000',end.format('HHmm')].join('-')
+            ranges[date] = addNewRange(ranges[date], [start_time,end_time].join('-'))
+        else if date == end.format('YYYY-MM-DD')
+          ranges[date] = addNewRange(ranges[date], ['0000',end_time].join('-'))
         else
-          ranges[date.format('YYYY-MM-DD')] = '0000-0000'
-      )
-      ngModel.$setViewValue(ranges)
-      console.log ngModel.$viewValue
+          ranges[date] = '0000-0000'
+        ranges
+      , ngModel.$viewValue))
+      ngModel.$render()
 
     filterModelByDates = (model) ->
       _.pick model, (value, key) ->
@@ -61,8 +82,9 @@ angular.module('BBAdminServices').directive 'scheduleCal', (uiCalendarConfig) ->
       ,[])
 
     ngModel.$render = () ->
-      scope.eventSources =
-        events: rangesToEvents(ngModel.$viewValue)
+      if scope.$$childTail
+        scope.$$childTail.scheduleCal.fullCalendar('refetchEvents')
+        scope.$$childTail.scheduleCal.fullCalendar('unselect')
 
   {
     controller: controller
