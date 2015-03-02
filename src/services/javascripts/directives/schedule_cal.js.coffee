@@ -1,4 +1,4 @@
-angular.module('BBAdminServices').directive 'scheduleCal', (uiCalendarConfig) ->
+angular.module('BBAdminServices').directive 'scheduleCal', (uiCalendarConfig, ScheduleRules) ->
 
   controller = ($scope) ->
 
@@ -20,66 +20,32 @@ angular.module('BBAdminServices').directive 'scheduleCal', (uiCalendarConfig) ->
         selectHelper: true
         select: (start, end, jsEvent, view) ->
           $scope.addRange(start, end)
+        eventResizeStop: (event, jsEvent, ui, view) ->
+          $scope.addRange(event.start, event.end)
+        eventDrop: (event, delta, revertFunc, jsEvent, ui, view) ->
+          if event.start.hasTime()
+            orig =
+              start: moment(event.start).subtract(delta)
+              end: moment(event.end).subtract(delta)
+            $scope.removeRange(orig.start, orig.end)
+            $scope.addRange(event.start, event.end)
 
 
   link = (scope, element, attrs, ngModel) ->
 
+    scheduleRules = () ->
+      new ScheduleRules(ngModel.$viewValue)
+
     scope.getEvents = () ->
-      rangesToEvents(ngModel.$viewValue)
-
-    diffInDays = (start, end) ->
-      moment.duration(end.diff(start)).days()
-
-    insertRange = (ranges, range) ->
-      ranges.splice(_.sortedIndex(ranges, range), 0, range)
-      ranges
-
-    joinRanges = (ranges) ->
-      _.reduce(ranges, (m, range) ->
-        if m == ""
-          range
-        else if range.slice(0, 4) <= m.slice(m.length - 4, m.length)
-          m.slice(0, m.length - 4) + range.slice(5, 9)
-        else
-          [m,range].join()
-      , "")
-
-    addNewRange = (ranges = "", range) ->
-      joinRanges(insertRange(ranges.split(','), range))
+      scheduleRules().toEvents()
 
     scope.addRange = (start, end) ->
-      start_time = start.format('HHmm')
-      end_time = end.format('HHmm')
-      ngModel.$setViewValue(_.reduce(_.range(diffInDays(start, end) + 1), (ranges, i) ->
-        date = moment(start).add(i, 'days').format('YYYY-MM-DD')
-        if i == 0
-          if diffInDays(start, end) > 1
-            ranges[date] = addNewRange(ranges[date], [start_time,'0000'].join('-'))
-          else
-            ranges[date] = addNewRange(ranges[date], [start_time,end_time].join('-'))
-        else if date == end.format('YYYY-MM-DD')
-          ranges[date] = addNewRange(ranges[date], ['0000',end_time].join('-'))
-        else
-          ranges[date] = '0000-0000'
-        ranges
-      , ngModel.$viewValue))
+      ngModel.$setViewValue(scheduleRules().addRange(start, end))
       ngModel.$render()
 
-    filterModelByDates = (model) ->
-      _.pick model, (value, key) ->
-        key.match(/^\d{4}-\d{2}-\d{2}$/)
-
-    formatTime = (time) ->
-      [time[0..1],time[2..3]].join(':')
-
-    rangesToEvents = (model) ->
-      _.reduce(filterModelByDates(model), (memo, ranges, date) ->
-        memo = memo.concat(_.map(ranges.split(','), (range) ->
-          start: date + "T" + formatTime(range.split('-')[0])
-          end: date + "T" + formatTime(range.split('-')[1])
-        ))
-        memo
-      ,[])
+    scope.removeRange = (start, end) ->
+      ngModel.$setViewValue(scheduleRules().removeRange(start, end))
+      ngModel.$render()
 
     ngModel.$render = () ->
       if scope.$$childTail
