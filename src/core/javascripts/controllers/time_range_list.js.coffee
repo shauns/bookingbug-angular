@@ -104,6 +104,9 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
     # to be saved as a variable as functions cannot be passed into the
     # AngluarUI date picker
     $scope.selected_date = $scope.selected_day.toDate()
+    
+    isSubtractValid()
+
     return
 
 
@@ -146,11 +149,26 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
     $element.addClass('subtract')
     $scope.add(type, -amount)
 
-
+  # deprecated due to performance issues, use $scope.is_subtract_valid and $scope.subtract_length instead
   $scope.isSubtractValid = (type, amount) ->
     return true if !$scope.start_date
     date = $scope.start_date.clone().subtract(amount, type)
     return !date.isBefore(moment(), 'day')
+
+
+  isSubtractValid = () ->
+    $scope.is_subtract_valid = true
+
+    diff = Math.ceil($scope.selected_day.diff(moment(), 'day', true))
+    $scope.subtract_length = if diff < $scope.time_range_length then diff else $scope.time_range_length
+    $scope.is_subtract_valid = false if diff <= 0
+
+    if $scope.subtract_length > 1
+      $scope.subtract_string = "Prev #{$scope.subtract_length} days"
+    else if $scope.subtract_length is 1
+      $scope.subtract_string = "Prev day"
+    else
+      $scope.subtract_string = "Prev"
  
 
   # called on datepicker date change
