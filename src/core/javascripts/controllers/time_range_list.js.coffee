@@ -299,18 +299,7 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
 
       promise.then (dateTimeArr) ->
         $scope.days = []
-        # if it is a move booking, set the date it occurs on to be availble if not already marked as available
-        # doesn't handle multi day bookings as we don't handle multiday bookings
-        if $scope.bb.moving_booking?
-          move_date = $scope.bb.moving_booking.datetime
-          if date <= move_date && edate >= move_date
-            if dateTimeArr[move_date.toISODate()].length == 0
-              v = move_date.minutes() + move_date.hours() * 60
-              dateTimeArr[move_date.toISODate()].splice(0, 0, new BBModel.TimeSlot({time: v, avail: 1}, curItem))
-            else
-              for slot in dateTimeArr[move_date.toISODate()]
-                if (curItem.time and curItem.time.time is slot.time)
-                  slot.avail = 1
+
         for pair in _.sortBy(_.pairs(dateTimeArr), (pair) -> pair[0])
           d = pair[0]
           timeSlotsArr = pair[1]
@@ -322,14 +311,6 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
               curItem.earliest_time = moment(d).add(timeSlotsArr[0].time, 'minutes')
             if !curItem.earliest_time_slot || curItem.earliest_time_slot.date.isAfter(d)
               curItem.earliest_time_slot = {date: moment(d).add(timeSlotsArr[0].time, 'minutes'), time: timeSlotsArr[0].time}
-
-          # restores data when using the back/forward buttons
-          # add the date and time to the cuurent item if was selected before.
-     #     if day.date.isSame($scope.selected_date) && $scope.selected_slot
-     #       for slot in timeSlotsArr
-     #         if slot.time is $scope.selected_slot.time
-     #           $scope.bb.current_item.date = day
-     #           $scope.bb.current_item.time = slot
 
           # padding is used to ensure that a list of time slots is always padded
           # out with a certain of values, if its a partial set of results
