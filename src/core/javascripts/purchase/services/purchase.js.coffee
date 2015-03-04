@@ -29,7 +29,7 @@ angular.module('BB.Services').factory "PurchaseService", ($q, halClient, BBModel
       defer.reject("No purchase present")
       return defer.promise
 
-    # only send email on the alst items we're moving - otherwise we'#ll send an email on each item!
+    # only send email on the last item we're moving - otherwise we'll send an email on each item!
     data = {}
 
     if params.bookings

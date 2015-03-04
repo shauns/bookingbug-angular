@@ -79,7 +79,7 @@ app.directive  'bbSlotGrouper', () ->
     scope.grouped_slots = []
     for slot in slots
       scope.grouped_slots.push(slot) if slot.time >= scope.$eval(attrs.startTime) && slot.time < scope.$eval(attrs.endTime)
-      scope.has_slots = scope.grouped_slots.length > 0
+    scope.has_slots = scope.grouped_slots.length > 0
 
 
 # bbForm

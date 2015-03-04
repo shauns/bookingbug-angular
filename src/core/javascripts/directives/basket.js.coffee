@@ -16,7 +16,7 @@ angular.module('BB.Directives').directive 'bbBasket', (PathSvc) ->
     else PathSvc.directivePartial "basket"
   controllerAs : 'BasketCtrl'
 
-  controller : ($scope) ->
+  controller : ($scope, $modal, BasketService) ->
     $scope.setUsingBasket true
 
     this.empty = () ->
@@ -24,6 +24,25 @@ angular.module('BB.Directives').directive 'bbBasket', (PathSvc) ->
 
     this.view = ->
       $scope.$eval('viewBasket()')
+
+    $scope.showBasketDetails = () ->
+      if $scope.bb.current_page == "basket"
+        return false
+      else            
+        modalInstance = $modal.open
+          templateUrl: $scope.getPartial "basket_details"
+          scope: $scope
+          controller: BasketInstanceCtrl
+          resolve: 
+            basket: ->
+              $scope.bb.basket
+
+    BasketInstanceCtrl = ($scope,  $rootScope, $modalInstance, basket) ->
+
+      $scope.basket = basket
+
+      $scope.cancel = () ->
+        $modalInstance.dismiss "cancel"
 
     $scope.$watch ->
       $scope.basketItemCount = len = if $scope.bb.basket then $scope.bb.basket.length() else 0

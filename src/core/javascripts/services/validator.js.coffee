@@ -39,6 +39,9 @@ angular.module('BB.Services').factory 'ValidatorService', ($rootScope, AlertServ
 
   us_phone_number: /(^[\d \(\)-]{9,16})$/
 
+  # Strict email check that also checks for the top domain level too part 1 of 2.
+  # email_pattern: /^[a-z0-9!#$%&'*+=?^_\/`{|}~.-]+@.[a-z0-9!#$%&'*+=?^_`{|}~.-]+[.]{1}[a-z0-9-]{2,20}$/i
+
   getUKPostcodePattern: () ->
     return uk_postcode_regex_lenient
 
@@ -65,6 +68,9 @@ angular.module('BB.Services').factory 'ValidatorService', ($rootScope, AlertServ
   getGeocodeResult: () ->
     return geocode_result if geocode_result
 
+  # Strict email check that also checks for the top domain level too part 2 of 2.
+  # getEmailPatten: () ->
+  #   return email_pattern
 
   validatePostcode: (form, prms) ->
     AlertService.clear()

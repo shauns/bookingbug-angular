@@ -39,12 +39,10 @@ angular.module('BB.Models').factory "BBWidget", ($q, BBModel, BasketService, $ur
         event_group = @convertToDashSnakeCase(@current_item.event_group.name) if @current_item.event_group
         date = @current_item.date.date.toISODate() if @current_item.date
         time = @current_item.time.time if @current_item.time
-        company = @convertToDashSnakeCase(@current_item.company.name) if @current_item.company
-
+        company = @convertToDashSnakeCase(@current_item.company.name) if @current_item.company 
       prms = angular.copy(@route_values) if @route_values
       prms ||= {}
       angular.extend(prms,{page: page, company: company, service: service_name, event_group: event_group, date: date, time: time})
-
       url = pattern.format(prms)
       url = url.replace(/\/+$/, "")
       $location.path(url)
@@ -248,7 +246,7 @@ angular.module('BB.Models').factory "BBWidget", ($q, BBModel, BasketService, $ur
     totalStackedItemsDuration: ->
       duration = 0
       for item in @stacked_items
-        duration += item.service.listed_duration if item.service and item.service.duration
+        duration += item.service.listed_duration if item.service and item.service.listed_duration
       return duration
 
 

@@ -159,6 +159,7 @@ angular.module('BB.Services').factory "BasketService", ($q, $rootScope, BBModel,
         $rootScope.$broadcast('updateBookings')
         tot = new BBModel.Purchase.Total(total)
         $rootScope.$broadcast('newCheckout', tot)
+        basket.clear()
         deferred.resolve(tot)
       , (err) ->
         deferred.reject(err)
