@@ -1,12 +1,10 @@
-angular.module('BBAdminServices').directive 'scheduleCal', (uiCalendarConfig, ScheduleRules) ->
+angular.module('BBAdminServices').directive 'scheduleCalendar', (uiCalendarConfig, ScheduleRules) ->
 
   controller = ($scope) ->
 
     $scope.eventSources = [
-      {
-        events: (start, end, timezone, callback) ->
-          callback($scope.getEvents())
-      }
+      events: (start, end, timezone, callback) ->
+        callback($scope.getEvents())
     ]
 
     $scope.options =
@@ -29,6 +27,9 @@ angular.module('BBAdminServices').directive 'scheduleCal', (uiCalendarConfig, Sc
               end: moment(event.end).subtract(delta)
             $scope.removeRange(orig.start, orig.end)
             $scope.addRange(event.start, event.end)
+
+    $scope.render = () ->
+      $scope.$$childTail.scheduleCal.fullCalendar('render')
 
 
   link = (scope, element, attrs, ngModel) ->
@@ -57,20 +58,6 @@ angular.module('BBAdminServices').directive 'scheduleCal', (uiCalendarConfig, Sc
     link: link
     templateUrl: 'schedule_cal_main.html'
     require: 'ngModel'
-    scope: {}
+    scope:
+      render: '=?'
   }
-
-
-angular.module('schemaForm').config (schemaFormProvider,
-    schemaFormDecoratorsProvider, sfPathProvider) ->
-
-  schemaFormDecoratorsProvider.addMapping(
-    'bootstrapDecorator'
-    'scheduleCalendar'
-    'schedule_cal_form.html'
-  )
-
-  schemaFormDecoratorsProvider.createDirective(
-    'scheduleCalendar'
-    'schedule_cal_form.html'
-  )
