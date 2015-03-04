@@ -30,35 +30,37 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope, Co
 
 
   $scope.init = (options) ->
-    if options.move_route
-      $scope.move_route = options.move_route
-
-    if options.move_all
-      $scope.move_all = options.move_all
-
-    if options.login_redirect
-      $scope.requireLogin({redirect: options.login_redirect})
-    
-    $scope.replace_page = if options.replace_page then true else false
-
     $scope.notLoaded $scope
+    $scope.move_route = options.move_route if options.move_route
+    $scope.move_all = options.move_all if options.move_all
+    $scope.requireLogin({redirect: options.login_redirect}) if options.login_redirect
     $scope.fail_msg = options.fail_msg if options.fail_msg
-    if options.member_sso
-      SSOService.memberLogin(options).then (login) ->
-        $scope.load()
-      , (err) ->
-        $scope.setLoaded $scope
-        failMsg()
+ 
+    # is there a purchase total already in scope?
+    if $scope.bb.total
+      $scope.load($scope.bb.total.long_id)
+    else if $scope.bb.purchase
+      $scope.purchase = $scope.bb.purchase
+      $scope.bookings = $scope.bb.purchase.bookings
+      $scope.messages = $scope.purchase.confirm_messages if $scope.purchase.confirm_messages
+      $scope.setLoaded $scope
     else
-      $scope.load()
+      if options.member_sso
+        SSOService.memberLogin(options).then (login) ->
+          $scope.load()
+        , (err) ->
+          $scope.setLoaded $scope
+          failMsg()
+      else
+        $scope.load()
 
 
   $scope.load = (id) ->
     $scope.notLoaded $scope
-    id ||= QueryStringService('ref')
-    if QueryStringService('booking_id')
-      id = QueryStringService('booking_id')
-    unless $scope.loaded
+
+    id = getPurchaseID()
+
+    unless $scope.loaded || !id
       $rootScope.widget_started.then () =>
         $scope.waiting_for_conn_started.then () =>
           company_id = getCompanyID()
@@ -73,7 +75,7 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope, Co
               purchase.$get('company').then (company) =>
                 setPurchaseCompany(company)
             $scope.purchase = purchase
-            $scope.total = $scope.purchase
+            $scope.bb.purchase = purchase
             $scope.price = !($scope.purchase.price == 0)
 
             $scope.purchase.getBookingsPromise().then (bookings) ->
@@ -92,6 +94,7 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope, Co
               purchase.$get('client').then (client) =>
                 $scope.setClient(new BBModel.Client(client))
             $scope.purchase.getConfirmMessages().then (messages) ->
+              $scope.purchase.confirm_messages = messages
               $scope.messages = messages
           , (err) ->
             $scope.setLoaded $scope
@@ -143,7 +146,12 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope, Co
       matches = /^.*print_purchase\/(.*?)(?:\?|$)/.exec($location.absUrl())
     unless matches
       matches = /^.*print_purchase_jl\/(.*?)(?:\?|$)/.exec($location.absUrl())
-    id = matches[1] if matches
+   
+    if matches
+      id = matches[1] 
+    else
+      id = QueryStringService('ref') if QueryStringService('ref')
+    id = QueryStringService('booking_id')  if QueryStringService('booking_id')
     id
 
 
@@ -153,7 +161,6 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope, Co
       return $scope.moveAll(route, options)
 
     $scope.notLoaded $scope
-    $scope.clearPage() if !$scope.replace_page
     $scope.initWidget({company_id: booking.company_id, no_route: true})
     $timeout () =>
       $rootScope.connection_started.then () =>
@@ -181,7 +188,6 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope, Co
   $scope.moveAll = ( route, options = {}) ->
     route ||= $scope.move_route
     $scope.notLoaded $scope
-    $scope.clearPage() if !$scope.replace_page
     $scope.initWidget({company_id: $scope.bookings[0].company_id, no_route: true})
     $timeout () =>
       $rootScope.connection_started.then () =>
@@ -213,7 +219,6 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope, Co
 
   # delete a single booking
   $scope.delete = (booking) ->
-    $scope.clearPage() if !$scope.replace_page
     modalInstance = $modal.open
       templateUrl: $scope.getPartial "cancel_modal"
       controller: ModalDelete
@@ -228,7 +233,6 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope, Co
 
   # delete all bookings assoicated to the purchase
   $scope.delete_all = () ->
-    $scope.clearPage() if !$scope.replace_page
     modalInstance = $modal.open
       templateUrl: $scope.getPartial "cancel_modal"
       controller: ModalDeleteAll
@@ -284,15 +288,6 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope, Co
     #   Could be used to upload files to CouchDB, imgur, etc... html5 FileReader is needed. 
     #   It could also be used to monitor the progress of a normal http post/put request with large data*/
     # $scope.upload = $upload.http({...})  see 88#issuecomment-31366487 for sample code.
-
-
-  # is there a purchase total already in scope?
-  if $scope.bb.total
-    $scope.load($scope.bb.total.long_id)
-  else
-    id = getPurchaseID()
-    if id
-      $scope.load(id)
 
 
   $scope.createBasketItem = (booking) ->

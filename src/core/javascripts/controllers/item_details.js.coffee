@@ -132,22 +132,19 @@ angular.module('BB.Controllers').controller 'ItemDetails',
       $scope.notLoaded $scope
       PurchaseBookingService.update($scope.item).then (booking) ->
         b = new BBModel.Purchase.Booking(booking)
-        if $scope.bookings
-          for oldb, _i in $scope.bookings
-            if oldb.id == b.id
-              $scope.bookings[_i] = b
-
-          $scope.purchase.bookings = $scope.bookings
-        
+	
+        if $scope.bb.purchase
+          for oldb, _i in $scope.bb.purchase.bookings
+            $scope.bb.purchase.bookings[_i] = b if oldb.id == b.id
+	    
         $scope.setLoaded $scope
         $scope.item.move_done = true
         $rootScope.$emit "booking:moved"
         $scope.decideNextPage(route)
+        AlertService.add("info", { msg: "Your booking has been moved to #{b.datetime.format('dddd Do MMMM [at] h.mma')}" })
        , (err) =>
         $scope.setLoaded $scope
-        AlertService.clear()
-        AlertService.add("danger", { msg: "Failed to Move Booking" })
-
+        AlertService.add("danger", { msg: "Failed to move booking. Please try again." })
     else
       $scope.decideNextPage(route)
 

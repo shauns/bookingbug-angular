@@ -644,7 +644,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
       return if $scope.setPageRoute($rootScope.Route.Basket)
       return $scope.showPage('basket')
     else if $scope.bb.moving_booking && $scope.bb.basket.readyToCheckout()
-      return $scope.showPage('move_done')
+      return $scope.showPage('purchase')
     else if ($scope.bb.basket.readyToCheckout() && $scope.bb.payment_status == null)
       return if $scope.setPageRoute($rootScope.Route.Checkout)
       return $scope.showPage('checkout')
