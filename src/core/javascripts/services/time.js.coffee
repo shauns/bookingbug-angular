@@ -80,26 +80,20 @@ angular.module('BB.Services').factory "TimeService", ($q, BBModel, halClient) ->
     deferred.promise
 
 
-  merge_times: (all_events, service, item) =>
+  merge_times: (all_events, service, item) ->
     return [] if !all_events || all_events.length == 0
 
     sorted_times = []
     for ev in all_events
       if ev.times
         for i in ev.times
-          # set it not set, currently unavaialble, or randomly based on the number of events
+          # set it not set, currently unavailable, or randomly based on the number of events
           if !sorted_times[i.time] || sorted_times[i.time].avail == 0 || (Math.floor(Math.random()*all_events.length) == 0 && i.avail > 0)
             i.event_id = ev.event_id
             sorted_times[i.time] = i
-        # if we have an item - which an already booked item - make sure that's int he l;ist of time slots we can select - iee. that we can select the current slot
-        if item && item.id && item.held && item.held.event_id == ev.event_id && item.held.time && !sorted_times[item.held.time.time] && item.held.date && item.held.date.date.toISODate() == ev.date
-          sorted_times[item.held.time.time] = item.held.time
-          # remote this entry from the cache - just in case - we know it has a held item in it so lets just not keep it in case that goes later!
-          halClient.clearCache(ev.$href("self"))
-        else if item && item.id && item.event_id == ev.event_id && item.time && !sorted_times[item.time.time] && item.date && item.date.date.toISODate() == ev.date
-          sorted_times[item.time.time] = item.time
-          # remote this entry from the cache - just in case - we know it has a held item in it so lets just not keep it in case that goes later!
-          halClient.clearCache(ev.$href("self"))
+        # if we have an item - which an already booked item - make sure that it's the list of time slots we can select - i.e. that we can select the current slot
+        @checkCurrentItem(item.held, sorted_times, ev) if item.held
+        @checkCurrentItem(item, sorted_times, ev)
 
     times = []
     date_times = {}
@@ -108,3 +102,11 @@ angular.module('BB.Services').factory "TimeService", ($q, BBModel, halClient) ->
         times.push(new BBModel.TimeSlot(i, service))
     times
 
+
+  checkCurrentItem: (item, sorted_times, ev) ->
+    if item && item.id && item.event_id == ev.event_id && item.time && !sorted_times[item.time.time] && item.date && item.date.date.toISODate() == ev.date
+      sorted_times[item.time.time] = item.time
+      # remote this entry from the cache - just in case - we know it has a held item in it so lets just not keep it in case that goes later!
+      halClient.clearCache(ev.$href("self"))
+    else if item && item.id && item.event_id == ev.event_id && item.time && sorted_times[item.time.time] && item.date && item.date.date.toISODate() == ev.date
+      sorted_times[item.time.time].avail = 1
