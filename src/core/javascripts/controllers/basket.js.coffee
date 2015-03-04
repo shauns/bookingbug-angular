@@ -34,7 +34,7 @@ angular.module('BB.Directives').directive 'bbBasketList', () ->
   controller : 'BasketList'
 
 
-angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, BasketService, $q, AlertService) ->
+angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, BasketService, $q, AlertService, ErrorService) ->
   $scope.controller = "public.controllers.BasketList"
   $scope.setUsingBasket(true)
   $scope.items = $scope.bb.basket.items
@@ -48,8 +48,14 @@ angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, 
     $scope.decideNextPage(route)
 
   $scope.checkout = (route) =>
+    # Reset the basket to the last item whereas the curren_item is not complete and should not be in the basket and that way, we can proceed to checkout instead of hard-coding it on the html page.
     $scope.setReadyToCheckout(true)
-    $scope.decideNextPage(route)
+    if $scope.bb.basket.items.length > 0
+      $scope.decideNextPage(route)
+    else
+      AlertService.clear()
+      AlertService.add('info',ErrorService.getError('EMPTY_BASKET_FOR_CHECKOUT'))
+      return false
 
 
   $scope.applyCoupon = (coupon) =>

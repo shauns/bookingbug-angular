@@ -118,7 +118,7 @@ angular.module('BB.Controllers').controller 'TimeList', ($attrs, $element, $scop
       if !$scope.selected_date && $scope.data_source && $scope.data_source.date
         $scope.selected_date = $scope.data_source.date.date
 
-      pslots = TimeService.query({company: $scope.bb.company, cItem: $scope.data_source, item_link: $scope.item_link_source, date: $scope.selected_date, client: $scope.client })
+      pslots = TimeService.query({company: $scope.bb.company, cItem: $scope.data_source, item_link: $scope.item_link_source, date: $scope.selected_date, client: $scope.client, available: 1 })
       
       pslots.finally =>
         $scope.setLoaded $scope
