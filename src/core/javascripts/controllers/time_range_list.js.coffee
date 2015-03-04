@@ -59,6 +59,8 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
       selected_day        = if $attrs.bbSelectedDay? then moment($scope.$eval($attrs.bbSelectedDay)) else moment($scope.options.selected_day)
       $scope.selected_day = selected_day if moment.isMoment(selected_day)
 
+    $scope.options.ignore_min_advance_datetime = if $scope.options.ignore_min_advance_datetime then true else false
+
     # initialise the time range
     # last selected day is set (i.e, a user has already selected a date)
     if !$scope.start_date && $scope.last_selected_date
@@ -236,7 +238,7 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
     curItem = $scope.bb.current_item
 
     # has a service been selected?
-    if curItem.service
+    if curItem.service and !$scope.options.ignore_min_advance_datetime
       $scope.min_date = curItem.service.min_advance_datetime
       $scope.max_date = curItem.service.max_advance_datetime
       # if the selected day is before the services min_advance_datetime, adjust the time range
@@ -347,7 +349,7 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
               curItem.requestedTimeUnavailable()
               AlertService.add("danger", { msg: "Sorry, your requested time slot is not available. Please choose a different time." })
         $scope.updateHideStatus()
-      , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
+      , (err) -> $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
     else
       $scope.setLoaded $scope
 
