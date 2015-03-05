@@ -464,6 +464,12 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
         person.then (res) =>
           $scope.bb.item_defaults.person = new BBModel.Person(res)
 
+      if $scope.bb.item_defaults.person_ref
+        person = halClient.$get($scope.bb.api_url + '/api/v1/' + company_id + '/people/find_by_ref/' + $scope.bb.item_defaults.person_ref)
+        $scope.bb.default_setup_promises.push(person)
+        person.then (res) =>
+        $scope.bb.item_defaults.person = new BBModel.Person(res)
+
       if $scope.bb.item_defaults.service
         service = halClient.$get($scope.bb.api_url + '/api/v1/' + company_id + '/services/' + $scope.bb.item_defaults.service )
         $scope.bb.default_setup_promises.push(service)
