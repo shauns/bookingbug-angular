@@ -206,10 +206,10 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
       $scope.filterChanged()
 
    
-  $scope.$watch 'pick.date', (newValue, oldValue) =>
-    if newValue
-      $scope.start_date = moment(newValue)
-      $scope.end_date = moment(newValue)
+  $scope.$watch 'pick.date', (new_val, old_val) =>
+    if new_val
+      $scope.start_date = moment(new_val)
+      $scope.end_date = moment(new_val)
       $scope.init()
 
 
