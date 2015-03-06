@@ -7,59 +7,44 @@ angular.module('BB.Models').factory "ScheduleRules", () ->
     constructor: (rules = {}) ->
       @rules = rules
 
-    addWeekdayRange: (start, end) ->
-      days = @diffInDays(start, end)
-      if days == 0
-        day = start.format('d')
-        ranges = if @rules[day] then @rules[day].split(',') else []
-        range = [start.format('HHmm'), end.format('HHmm')].join('-')
-        @rules[day] = @joinRanges(@insertRange(ranges, range))
-      else
-        for i in [0..days]
-          date = moment(start).add(i, 'days')
-          if i == 0
-            @addRange(start, moment(start).endOf('day'))
-          else if i == days
-            @addRange(moment(end).startOf('day'), end)
-          else
-            @rules[date.format('d')] = '0000-2359'
-      @rules
-
     addRange: (start, end) ->
-      days = @diffInDays(start, end)
-      if days == 0
-        date = start.format('YYYY-MM-DD')
-        ranges = if @rules[date] then @rules[date].split(',') else []
-        range = [start.format('HHmm'), end.format('HHmm')].join('-')
-        @rules[date] = @joinRanges(@insertRange(ranges, range))
-      else
-        for i in [0..days]
-          date = moment(start).add(i, 'days')
-          if i == 0
-            @addRange(start, moment(start).endOf('day'))
-          else if i == days
-            @addRange(moment(end).startOf('day'), end)
-          else
-            @rules[date.format('YYYY-MM-DD')] = '0000-2359'
-      @rules
+      @applyFunctionToDateRange(start, end, 'YYYY-MM-DD', @addRangeToDate)
 
     removeRange: (start, end) ->
+      @applyFunctionToDateRange(start, end, 'YYYY-MM-DD', @removeRangeFromDate)
+
+    addWeekdayRange: (start, end) ->
+      @applyFunctionToDateRange(start, end, 'd', @addRangeToDate)
+
+    addRangeToDate: (date, range) =>
+      ranges = if @rules[date] then @rules[date].split(',') else []
+      @rules[date] = @joinRanges(@insertRange(ranges, range))
+
+    removeRangeFromDate: (date, range) =>
+      ranges = if @rules[date] then @rules[date].split(',') else []
+      @rules[date] = @joinRanges(_.without(ranges, range))
+      delete @rules[date] if @rules[date] == ''
+
+    applyFunctionToDateRange: (start, end, format, func) ->
       days = @diffInDays(start, end)
       if days == 0
-        date = start.format('YYYY-MM-DD')
-        ranges = if @rules[date] then @rules[date].split(',') else []
+        date = start.format(format)
         range = [start.format('HHmm'), end.format('HHmm')].join('-')
-        @rules[date] = @joinRanges(_.without(ranges, range))
-        delete @rules[date] if @rules[date] == ''
+        func(date, range)
       else
-        for i in [0..days]
+        end_time = moment(start).endOf('day')
+        @applyFunctionToDateRange(start, end_time, format, func)
+        _.each([1..days], (i) =>
           date = moment(start).add(i, 'days')
-          if i == 0
-            @removeRange(start, moment(start).endOf('day'))
-          else if i == days
-            @removeRange(moment(end).startOf('day'), end)
+          if i == days
+            unless end.hour() == 0 && end.minute() == 0
+              start_time = moment(end).startOf('day')
+              @applyFunctionToDateRange(start_time, end, format, func)
           else
-            delete @rules[date.format('YYYY-MM-DD')]
+            start_time = moment(date).startOf('day')
+            end_time = moment(date).endOf('day')
+            @applyFunctionToDateRange(start_time, end_time, format, func)
+        )
       @rules
 
     diffInDays: (start, end) ->
