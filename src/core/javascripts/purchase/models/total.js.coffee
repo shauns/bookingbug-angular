@@ -26,18 +26,14 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window, BBModel
     getItems: =>
       defer = $q.defer()
       defer.resolve(@items) if @items
-      items = []
-      @getBookingsPromise().then (bookings) =>
-        items = items.concat(bookings) if bookings? && bookings.length > 0
-        @getPackages().then (packages) ->
-          items = items.concat(packages) if packages? && packages.length > 0
-          defer.resolve(items)
-        , () ->
-          defer.resolve(items)
-      , () ->
-        @getPackages().then (packages) ->
-          items = items.concat(packages) if packages? && packages.length > 0
-          defer.resolve(items)
+      $q.all([
+        @getBookingsPromise()
+        @getCourseBookingsPromise()
+        @getPackages()
+        @getProducts()
+      ]).then () =>
+        @items = [@bookings, @course_bookings, @packages, @products]
+        defer.resolve(@items)
       defer.promise
 
     getBookingsPromise: =>
@@ -52,11 +48,26 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window, BBModel
         defer.reject("No bookings")
       defer.promise
 
+    getCourseBookingsPromise: =>
+      console.log 'get course bookings'
+      defer = $q.defer()
+      defer.resolve(@course_bookings) if @course_bookings
+      if @_data.$has('course_bookings')
+        @_data.$get('course_bookings').then (bookings) =>
+          @course_bookings = (new BBModel.Purchase.CourseBooking(b) for b in bookings)
+          $q.all(_.map(@course_bookings, (b) -> b.getBookings())).then () =>
+            console.log @course_bookings
+            defer.resolve(@course_bookings)
+      else
+        defer.reject("No bookings")
+      defer.promise
+
     getPackages: =>
       defer = $q.defer()
       defer.resolve(@packages) if @packages
       if @_data.$has('packages')
         @_data.$get('packages').then (packages) =>
+          @packages = packages
           defer.resolve(@packages)
       else
         defer.reject('No packages')
@@ -67,6 +78,7 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window, BBModel
       defer.resolve(@products) if @products
       if @_data.$has('products')
         @_data.$get('products').then (products) =>
+          @products = products
           defer.resolve(@products)
       else
         defer.reject('No products')

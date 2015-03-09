@@ -22,7 +22,7 @@ angular.module('BB.Models').service "BBModel", ($q, $injector) ->
 
 
   # purchase models
-  purchase_models = ['Booking', 'Total']
+  purchase_models = ['Booking', 'Total', 'CourseBooking']
   pfuncs = {}
   for model in purchase_models
     do (model) =>  
