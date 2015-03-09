@@ -1,77 +1,144 @@
-<div ng-controller="ItemDetails" ng-init="checkStepTitle('Confirm Details')">
-  <div class="bb-booking">
-    <div class="bb-frame">
-      <div class="bb-head">
-        <h2>Your details</h2>
-      </div>
-      <form name="client_form" class="bb-form" role="form">
-        <div class="bb-node">
-          <h3>Client</h3>
-          <ul>
-            <li>
-              <label>Name:</label><span>{{client.getName()}}</span>
-            </li>
-            <li>
-              <label>Email:</label><span>{{client.email}}</span>
-            </li>
-            <li>
-              <label>Address:</label><span>{{client.addressSingleLine()}}</span>
-            </li>
-          </ul>
-        </div>
-        <div class="bb-node" ng-if="!product">
-          <h3>Booking</h3>
-            <ul>
-              <li>
-                <label>Details:</label><span>{{item.describe()}}</span>
-              </li>
-              <li>
-                <label>Date:</label>
-                <span>{{item.booking_date("dddd, MMMM Do YYYY")}}</span>
-              </li>
-              <li>
-                <label>Time:</label><span>{{item.booking_time()}}</span>
-              </li>
-              <li ng-show="item.hasPrice()">
-                <label>Price:</label><span>{{item.printed_price}}</span>
-              </li>
-            </ul>
-        </div>
-        <div class="bb-node" ng-if="product">
-          <h3>Product</h3>
-          <ul>
-            <li>
-              <label>Name:</label><span>{{product.name}}</span>
-            </li>
-          </ul>
-        </div>
-        <div ng-controller='CustomBookingText' class="message-node">
-          <div ng-repeat="msg in messages">{{msg}}</div>
-        </div>
-        <div ng-show="item_details.hasQuestions" class="question-node">
-          <h3>Questions</h3>
-          <ul>
-            <li ng-repeat="question in item_details.questions"
-              bb-question-line ng-show="question.currentlyShown">
-              <label>{{question.name}}:</label> 
-              <span>
-                <input bb-question="question" class="form-control"/><br/>
-                <small>{{question.help_text}}</small>
-              </span>
-            </li>
-          </ul>
-        </div>
-      </form>
+<div bb-page ng-init="checkStepTitle('Review')">
+  <div bb-item-details >
+
+    <div bb-include="service_item_aggregate">
     </div>
-    <div class="bb-actions">
-      <div class="bb-prev">
+
+    <div class="bb-subcontent">
+
+      <form name="booking_form" role="form" novalidate bb-form class="form-horizontal">
+
+        <div ng-form name="client_form" class="bb-form" role="form" novalidate>
+
+          <h2 class="booking-form-header">Your details</h2>
+
+          <div class="form-group" ng-class="{'has-error': client_form.first_name.$invalid && (client_form.first_name.$dirty || booking_form.submitted)}">
+            <label for="first_name" class="control-label col-sm-4">First Name*:</label>
+            <div class="col-sm-5">
+              <input type="text" name="first_name" id"first_name" required ng-model="client.first_name" class="form-control"/>
+            </div>
+            <div class="col-sm-offset-4 messages">
+              <div class="error-message" ng-show="client_form.first_name.$invalid && booking_form.submitted">
+                Please enter your first name
+              </div>
+            </div> 
+          </div>
+
+          <div class="form-group" ng-class="{'has-error': client_form.last_name.$invalid && (client_form.last_name.$dirty|| booking_form.submitted)}">
+            <label for="last_name" class="control-label col-sm-4">Last Name*:</label>
+            <div class="col-sm-5">
+              <input type="text" name="last_name" id="last_name" required ng-model="client.last_name" class="form-control"/>
+            </div>
+            <div class="col-sm-offset-4 messages">
+              <div class="error-message" ng-show="client_form.last_name.$invalid && booking_form.submitted">
+                Please enter your last name
+              </div>          
+            </div>
+          </div>
+
+          <div class="form-group" ng-class="{'has-error': client_form.email.$invalid && (client_form.email.$dirty|| booking_form.submitted)}">
+            <label for="email" class="control-label col-sm-4">E-mail*:</label>
+            <div class="col-sm-5">
+              <input type="email" name="email" id="email" required ng-model="client.email" class="form-control"/>
+            </div>
+            <div class="col-sm-offset-4 messages">
+              <div class="error-message" ng-show="client_form.email.$invalid && booking_form.submitted">
+                Please enter a valid email address
+              </div>          
+            </div>
+          </div>
+
+          <div class="form-group" ng-class="{'has-error': client_form.mobile.$invalid && ((client_form.mobile.$dirty && !client_form.mobile.$focused) || booking_form.submitted)}">
+            <label for="mobile" class="control-label col-sm-4">Mobile:</label>
+            <div class="col-sm-5">
+              <input type="text" name="mobile" id="mobile" ng-pattern="validator.getUKMobilePattern(true)" ng-model="client.mobile" class="form-control" bb-focus/>
+            </div>
+          </div>
+
+          <div bb-client-details ng-show="client_details.hasQuestions">
+
+            <div class="form-group" ng-repeat="question in client_details.questions" ng-if="question.currentlyShown" bb-question-line ng-class="{ 'check': question.detail_type == 'check', 'has-error': client_form['q' + question.id].$invalid && (client_form['q' + question.id].$dirty || booking_form.submitted)}">
+              <label ng-hide="question.detail_type == 'check'" for="{{question.id}}" class="control-label col-sm-4">{{question.name}}<span ng-show="question.required">*</span></label>
+              <div ng-show="question.detail_type == 'check'" class="col-sm-4 hidden-xs">&nbsp;</div>
+              <div class="col-sm-5">
+                <input bb-question="question"/>
+              </div>
+              <div class="col-sm-offset-4 messages">
+                <div class="error-message" ng-show="client_form['q' + question.id].$invalid && ( client_form['q' + question.id].$dirty || booking_form.submitted )">
+                  This field is required
+                </div>
+              </div> 
+            </div>   
+
+          </div>
+
+          <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-5">
+               <p class="form-control-static">*Required fields</p>
+            </div>
+          </div>
+
+
+        </div><!--client_form-->
+
+        <div ng-show="item_details.hasQuestions" ng-form name="booking_questions_form" class="bb-form" role="form" novalidate>
+
+          <h2 class="booking-form-header">Other information</h2>
+
+          <div class="form-group" ng-repeat="question in item_details.questions" ng-if="question.id != '17581' && question.currentlyShown" bb-question-line ng-class="{'has-error': booking_questions_form['q' + question.id].$invalid && (booking_questions_form['q' + question.id].$dirty || booking_form.submitted)}">
+            <label for="{{question.id}}" class="control-label col-sm-4">{{question.name}}<span ng-show="question.required">*</span></label>
+            <div class="col-sm-5">
+              <input bb-question="question"/>
+            </div>
+            <div class="col-sm-offset-4 messages">
+              <div class="error-message" ng-show="booking_questions_form['q' + question.id].$invalid && ( booking_questions_form['q' + question.id].$dirty || booking_form.submitted )">
+                This field is required
+              </div>
+            </div> 
+          </div>
+
+        </div><!--booking_questions_form-->
+
+
+      </form><!--booking_form-->
+
+
+  <!--     <form name="client_form" ng-submit="validator.validateForm(client_form)" class="form-horizontal" role="form" bb-form-resettable bb-form novalidate>
+        <div bb-custom-booking-text class="bb-message-node">
+          <div ng-repeat="msg in messages" ng-bind-html="msg">
+          </div>
+        </div>
+        <div ng-show="item_details.hasQuestions">
+          <h2 class="booking-form-header">Questions</h2>
+          <div ng-repeat="question in item_details.questions" bb-question-line ng-show="question.currentlyShown">
+            <div class="form-group" ng-class="{'has-error': client_form['q' + question.id].$invalid && (!client_form['q' + question.id].$pristine || client_form.submitted), 'bb-check-space': (question.detail_type == 'check')}">
+              <label bb-question-label="question" class="control-label col-sm-offset-1 col-sm-3" ng-show="question.name" for="{{question.id}}">{{question.name}}:</label>
+              <div class="col-sm-5">
+                <input bb-question="question"/>
+                <div class="bb-help-text">
+                  <small ng-show="question.help_text">{{question.help_text}}<hr/></small>
+                </div>
+              </div>
+              <div class="col-sm-offset-4 messages">
+                <div class="error-message" ng-show="client_form['q' + question.id].$invalid && client_form.submitted">
+                  This field is required
+                </div>
+              </div> 
+            </div>
+          </div>
+
+      </form> -->
+
+    </div>
+
+    <div class="row bb-step-navigation">
+      <div class="col-sm-9 col-sm-push-3 text-right">
+        <button href="" class="btn btn-primary pull-right" ng-click="confirm(booking_form) && validator.validateForm(booking_form) && checkReady() && routeReady()">Confirm</button>
       </div>
-      <div class="bb-current">
-      </div>
-      <div class="bb-next">
-        <a href="" class="bb-btn-next" ng-disabled="!client_form.$valid"
-          ng-click="confirm(client_form)">Confirm</a>
+      <div class="col-sm-3 col-sm-pull-9">
+        <button type="button" class="btn btn-default pull-left" bb-debounce ng-click="loadPreviousStep()" ng-show="bb.current_step > 1">Back</button>
       </div>
     </div>
+
   </div>
 </div>

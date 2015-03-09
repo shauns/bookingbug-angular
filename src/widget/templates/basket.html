@@ -1,3 +1,75 @@
-<div>
-  <h1>Not a mini basket</h1>
+<div bb-basket-list ng-init="checkStepTitle('Check Your Basket')" class="bb-basket">
+	<div class="row">
+
+
+		<div class="col-sm-12">
+			<div class="bb-subcontent">
+
+				<h2 class="bb-section-title">Your basket</h2>
+				<div class="bb-empty-basket-full-screen" ng-hide="items">
+					<h3>There are no items in the basket</h3>
+					<p>Please press the add another item button if you wish to add a product or service.</p>
+				</div>
+				<table class="table table-bordered" ng-show="items">
+					<thead>
+						<tr>
+							<th>Item</th>
+							<th>Price</th>
+							<th>&nbsp;</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="item in items" ng-class="{'last-item': $last}">
+							<td>
+			 					<p>
+			 						{{item.describe()}}
+			 						<br/> 
+			 						<small>{{item.date.date | datetime: "h:mma dddd Do MMMM":false}}</small>
+			 						<br/>
+			 						<small>{{item.resource.getAddress() | address_single_line }}</small>
+			 					</p>
+			 					<p></p>
+							</td>
+							<td class="text-right">
+								{{item.price | currency}}
+							</td>
+							<td class="text-center">
+			 					<span class="glyphicon glyphicon-trash" aria-hidden="true" ng-click="deleteBasketItem(item)"></span>
+							</td>
+			  		</tr>
+						<tr data-ng-if="basket.total_price > 0">
+							<th class="text-right">Total</th>
+							<th class="text-right">{{basket.total_price | currency}}</th>
+							<th>&nbsp;</th>
+						</tr>
+						<tr data-ng-if="basket.total_due_price > 0">
+							<th class="text-right">Total Due Now</th>
+							<th class="text-right">{{basket.total_due_price | currency}}</th>
+							<th>&nbsp;</th>
+						</tr>
+					</tbody>
+			  </table>
+
+				<div ng-if="bb.company_settings.has_coupons" class="bb-coupon-box">
+					<span>Apply a coupon </span>
+					<input ng-model="coupon_code"/>
+					<button type="button" class="btn btn-primary btn-xs" ng-click="applyCoupon(coupon_code)">Apply</button>
+				</div>
+
+			</div>
+		</div>
+
+		<div class="col-sm-12">
+			<div class="row bb-step-navigation">
+				<div class="col-sm-9 col-sm-push-3 text-right">
+					<button type="button" class="btn btn-primary" ng-click="addAnother('service_list')">Add another item</button>
+					<button type="button" class="btn btn-primary" ng-click="checkout('checkout')">Checkout</button>
+				</div>
+				<div class="col-sm-3 col-sm-pull-9">
+					<button type="button" class="btn btn-default" ng-click="loadPreviousStep()" ng-show="bb.current_step > 1"><span>Back</span></button>
+				</div>
+			</div>	
+		</div>
+
+	</div>
 </div>

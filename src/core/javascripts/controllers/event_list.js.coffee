@@ -20,7 +20,7 @@ angular.module('BB.Directives').directive 'bbEvents', () ->
     return
 
 
-angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, EventService, $q, PageControllerService, FormDataStoreService, $filter) ->
+angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, EventService, $q, PageControllerService, FormDataStoreService, $filter, PaginationService) ->
   $scope.controller = "public.controllers.EventList"
   $scope.notLoaded $scope
   angular.extend(this, new PageControllerService($scope, $q))
@@ -29,7 +29,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
   $scope.end_date = moment().add(1, 'year')
   $scope.filters = {}
   $scope.price_options = [0,1000,2500,5000]
-  $scope.pagination = {current_page: 1, page_size: 10, num_pages: null, max_size: 5, num_items: null}
+  $scope.pagination = PaginationService.initialise({page_size: 10, max_size: 5})
 
 
   FormDataStoreService.init 'EventList', $scope, [
@@ -161,7 +161,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
       isFullyBooked()
 
       $scope.filtered_items = $scope.items
-      $scope.pagination.num_items = $scope.filtered_items.length
+      PaginationService.pageChanged($scope.pagination, $scope.filtered_items.length)
 
 
       $scope.setLoaded $scope
@@ -325,5 +325,5 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
 
 
   $scope.pageChanged = () ->
+    PaginationService.pageChanged($scope.pagination, $scope.filtered_items.length)
     $rootScope.$emit "page:changed"
-

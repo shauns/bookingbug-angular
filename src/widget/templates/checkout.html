@@ -1,83 +1,81 @@
-<div ng-controller="Checkout">
-  <div class="bb-checkout">
+<div bb-checkout class="bb-checkout">
+  <div class="row">
+    <div class="col-sm-offset-2 col-sm-8 col-md-offset-2 col-md-8">
 
-    <div ng-show="checkoutFailed" class="bb-frame">
-      <div class="bb-head">
-        <h3>
-          I'm sorry, for some reason this booking failed. Please Try again.
-        </h3>
+      <div class="bb-subcontent">
+
+        <div class="confirmation-header bb-confirmation-border-margin">
+          <h2>Booking Confirmation</h2>
+          <p class="bb-confirmation-p-alignment">Thanks. Your booking is now confirmed. We have you emailed you the details below.</p>
+          <div class="row hidden-print text-right" >
+            <button type="button" class="btn btn-link" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</button>
+            <div bb-booking-export class="bb-booking-export"></div>
+          </div>
+        </div>
+
+        <div ng-show="total">
+          <ul class="confirmation-summary" ng-repeat="i in total.items">
+            <li ng-if="i.id" class="row confirmation-summary-item">
+              <div class="col-sm-3">Booking Reference:</div>
+              <div class="col-sm-9">{{i.id }}</div>
+            </li>
+            <li ng-if="i.full_describe" class="row confirmation-summary-item" >
+              <div class="col-sm-3">Service:</div>
+              <div class="col-sm-9">{{i.full_describe}}</div>
+            </li>
+            <li ng-if="i.describe" class="row confirmation-summary-item" >
+              <div class="col-sm-3">Date and Time:</div>
+              <div class="col-sm-9">{{i.describe}}</div>
+            </li>
+            <li ng-if="i.price" class="row confirmation-summary-item" >
+              <div class="col-sm-3">Price:</div>
+              <div class="col-sm-9">£{{i.price}}</div>
+            </li>
+          </ul>
+          <ul ng-show="total.items[0].address" class="confirmation-summary">
+            <li class="row confirmation-summary-item">
+              <div class="col-sm-12"> 
+                Location:
+              </div> 
+            </li>
+            <li class="row confirmation-summary-item">
+              <div class="col-sm-12">
+                <a ng-href="//maps.google.com/?q={{total.items[0].address.lat}},{{total.items[0].address.long}}&z=15" target="_blank">
+                  <img ng-src="//maps.googleapis.com/maps/api/staticmap?center={{total.items[0].address.lat}},{{total.items[0].address.long}}&zoom=15&size=520x150&markers={{total.items[0].address.lat}},{{total.items[0].address.long}}&scale=2" alt="Map of {{total.items[0].address | address_single_line}}" title="{{total.items[0].address | address_single_line}}" class="img-responsive"/>
+                </a>
+              </div>
+            </li>
+            <li class="row confirmation-summary-item">
+              <div class="col-sm-12">
+                <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>{{total.items[0].address | address_single_line }}
+              </div>
+            </li>
+          </ul>
+          <div ng-if="total.$has('new_payment')" class="col-sm-12 bb-checkout-pay-button-div">
+            <div payment-button 
+              value="Pay" 
+              class="btn btn-primary" 
+              total="total" 
+              bb="bb"
+              decide-next-page="decideNextPage">
+            </div>
+          </div>
+          <div bb-custom-confirmation-text class="bb-message-buffer">
+            <div ng-repeat="msg in messages" ng-bind-html="msg" class="bb-message">
+            </div>
+          </div>
+        </div>
+
       </div>
-      <div>
-        <p>I'm sorry, for some reason this booking failed. Please Try again.</p>
-      </div>
+
     </div>
-
-    <div ng-show="total" class="bb-frame">  
-      <div class="bb-head">
-        <h2>Your details<h2>
-      </div>
-      <div class="bb-node">
-      <h3>Client Details</h3>
-        <ul>
-          <li>
-            <label>Name:</label><span>{{client.getName()}}</span>
-          </li>
-          <li>
-            <label>Email:</label><span>{{client.email}}</span>
-          </li>
-          <li>
-            <label>Address:</label><span>{{client.addressSingleLine()}}</span>
-          </li>
-        </ul>
-      </div>
-
-      <div class="bb-node">
-        <h3>Booking Confirmation Details</h3>
-        <ul class="show_list" ng-repeat="i in total.items">
-          <li>
-            <label>Service:</label><span>{{i.full_describe}}</span>
-          </li>
-          <li>
-            <label>Date/Time:</label><span>{{i.describe}}</span>
-          </li>
-        </ul>
-      </div>
-
-
-      <div class="bb-node calendar-node">
-        <h3>Export to calendar</h3>
-        <ul class="show_list" ng-repeat="i in total.items">
-          <li>
-            <label>Links :</label>
-            <span>
-              <a class="image" title="Add this booking to an Outlook Calendar" href="{{total.icalLink()}}"><img alt="" src="http://uk.bookingbug.com/assets/outlook.png"></a>
-              <a class="image" title="Export this booking to an iCal Calendar" href="{{total.webcalLink()}}"><img alt="" src="http://uk.bookingbug.com/assets/ical.png"></a>
-              <a class="image" title="Export this booking to Google Calendar" href="{{total.gcalLink()}}" target="_blank"><img src="http://uk.bookingbug.com/assets/gcal.png" border="0"></a>
-            </span>
-          </li>
-        </ul>
-      </div>
-
-      <div ng-controller='CustomConfirmationText' class="message-node">
-        <div ng-repeat="msg in messages">{{msg}}</div>
-      </div>
-
-
-    </div>
-
-    <div class="bb-actions">
-      <div class="bb-prev">
-      </div>
-      <div class="bb-current">
-      </div>
-      <div class="bb-next">
-        <payment_button value="Make Payment" class="bb-btn-next"
-          ng-if="total.$has('new_payment')" total="total" bb="bb"
-          decide-next-page="decideNextPage">
-        </payment_button>
-        <a href="" class="bb-btn-next" ng-click="print()">Print</a>
-      </div>
-    </div>
-
   </div>
+</div>
+
+<div class="bb-step-navigation">
+</div>
+
+<div ng-show="isLoaded" class="powered-by visible-print">
+  <p>Bookings powered by <span style="color:#087f94">booking</span><span style="color:#88c66f">bug</p>
+  <a href="http://www.bookingbug.com" style="text-decoration:none" target="_blank"></a>
 </div>

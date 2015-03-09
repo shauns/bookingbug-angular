@@ -74,6 +74,21 @@ gulp.task('stylesheets', function() {
     .pipe(gulp.dest('release'));
 });
 
+gulp.task('theme', function() {
+  gulp.src('src/*/stylesheets/bb_light_theme.scss')
+    .pipe(sass({errLogToConsole: true}))
+    .pipe(flatten())
+    .pipe(concat('bb-theme.css'))
+    .pipe(gulp.dest('release'));
+});
+
+gulp.task('fonts', function() {
+  gulp.src('src/*/fonts/*')
+    .pipe(flatten())
+    .pipe(gulp.dest('release/fonts'));
+});
+
+
 gulp.task('watch', function() {
   gulp.watch(['./src/**/*', '!./**/*~'], ['assets']);
 });
@@ -85,6 +100,6 @@ gulp.task('webserver', function() {
   });
 });
 
-gulp.task('assets', ['clean', 'javascripts', 'images', 'stylesheets']);
+gulp.task('assets', ['clean', 'javascripts', 'images', 'stylesheets','fonts', 'theme']);
 
 gulp.task('default', ['assets', 'watch', 'webserver']);

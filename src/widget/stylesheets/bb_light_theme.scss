@@ -1,0 +1,130 @@
+@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400);
+
+#bb {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 300;
+
+  h1, h2, h3, h4, h5, h6 {
+    padding: 0;
+    margin: 0;
+    margin-bottom: 15px; margin-bottom: 1.5rem;
+    font-weight: 200;
+  }
+
+  // Alerts
+
+  .alert {
+    font-size: 16px;
+    font-size: 1.6rem;
+  }
+
+
+  // Breadcrumb
+
+  .breadcrumb {
+    padding: 0px;
+    list-style: none;
+    background-color: transparent;
+    margin-bottom: 30px;
+    li {
+      button {
+        color: #fff;
+        font-size: 12px;
+        font-size: 1.2rem;
+        width: 100%;
+      }
+      button.active {
+        color: #000000;
+        @media (max-width: 768px) {
+          padding-left: 0px;
+        }
+      }
+      button.passed {
+        color: #CCC;
+      }
+    }
+    > li + li:before {
+      content: none;
+    }
+
+    .glyphicon-chevron-right {
+      padding-left: 24px;
+    }
+  }
+
+  // Form (see _form.scss)
+
+  // Modals
+
+  .modal-title {
+    font-size: 22px; 
+    font-size: 2.2rem;
+  }
+
+  .modal-header {
+    border-bottom: none;
+  }
+
+  .modal-body {
+    padding-bottom: 0;
+    font-size: 16px;
+    font-size: 1.6rem;
+  }
+
+  .modal-footer {
+    border-top: none;
+  }
+
+  .move-booking-container {
+    min-height: 800px;
+  }
+
+  // Panels
+
+  .panel {
+    border-top: none;
+    &:first-child {
+      border-top: 1px solid #dddddd;
+    }
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+    background-color: #fff;
+    box-shadow: none;
+    margin-bottom: 15px;
+    &:last-child {
+      margin-bottom: 20px;
+    }
+  }
+
+  // .panel:hover {
+  //   background-color: #f4f4f4;
+  // }
+
+  .panel-group .panel + .panel {
+    margin-top: 0;
+    border-top: none;
+  }
+
+  .panel-title {
+    font-size: 24px;
+    font-size: 2.4rem;
+    font-weight: 200;
+    padding-bottom: 15px;
+  }
+
+  // Check boxes.
+
+  .radio label, .checkbox label {
+    font-weight: 300;
+  }
+
+  .glyphicon-trash:hover {
+    cursor: pointer;
+  }
+
+  .glyphicon-shopping-cart:hover {
+    cursor: pointer;
+  }
+
+}
