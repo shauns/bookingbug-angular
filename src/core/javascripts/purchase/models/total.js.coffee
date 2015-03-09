@@ -49,7 +49,6 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window, BBModel
       defer.promise
 
     getCourseBookingsPromise: =>
-      console.log 'get course bookings'
       defer = $q.defer()
       defer.resolve(@course_bookings) if @course_bookings
       if @_data.$has('course_bookings')
