@@ -106,37 +106,67 @@ app.directive 'bbForm', ($bbug) ->
 
 # bbAddressMap
 # Adds behaviour to select first invalid input 
-app.directive 'bbAddressMap', ($q) ->
-  restrict: 'A'
-  scope: true
-  replace: true
-  link: (scope) ->
-    # map_ready_def   = $q.defer()
-    # scope.mapReady  = map_ready_def.promise
+app.directive 'bbAddressMap', ($document) ->
 
-  controller: ($scope, $element, $attrs, $q) ->
+  controller: ($scope, $element, $attrs) ->
+
+    $scope.isDraggable = $document.width() > 480
 
     $scope.$watch $attrs.bbAddressMap, (new_val, old_val) ->
-      $scope.init(new_val)
+      
+      return if !new_val
+
+      map_item = new_val
+
+      $scope.map = { 
+        center: { 
+          latitude: map_item.lat, 
+          longitude: map_item.long 
+        }, 
+        zoom: 15
+      }
+
+      $scope.options = {
+        scrollwheel: false,
+        draggable: $scope.isDraggable
+      }
+
+      $scope.marker = {
+        id: 0,
+        coords: {
+          latitude: map_item.lat,
+          longitude: map_item.long
+        }
+      }
+
+  # Old code.
+  # link: (scope) ->
+  #   # map_ready_def   = $q.defer()
+  #   # scope.mapReady  = map_ready_def.promise
+
+  # controller: ($scope, $element, $attrs, $q) ->
+
+  #   $scope.$watch $attrs.bbAddressMap, (new_val, old_val) ->
+  #     $scope.init(new_val)
 
 
-    $scope.init = (address) ->
+  #   $scope.init = (address) ->
 
-      map_ready_def     = $q.defer()
-      $scope.mapLoaded  = $q.defer()
-      $scope.mapReady   = map_ready_def.promise
-      $scope.map_init   = $scope.mapLoaded.promise
-      $scope.mapMarkers = []
+  #     map_ready_def     = $q.defer()
+  #     $scope.mapLoaded  = $q.defer()
+  #     $scope.mapReady   = map_ready_def.promise
+  #     $scope.map_init   = $scope.mapLoaded.promise
+  #     $scope.mapMarkers = []
 
-      $scope.latlong = new google.maps.LatLng(address.lat,address.long)
-      $scope.mapOptions = {center: $scope.latlong, zoom: 6, mapTypeId: google.maps.MapTypeId.ROADMAP}
-      map_ready_def.resolve(true)
+  #     $scope.latlong = new google.maps.LatLng(address.lat,address.long)
+  #     $scope.mapOptions = {center: $scope.latlong, zoom: 6, mapTypeId: google.maps.MapTypeId.ROADMAP}
+  #     map_ready_def.resolve(true)
 
-      $scope.map_init.then () ->
-        marker = new google.maps.Marker({
-          map: $scope.myMap,
-          position: $scope.latlong
-        })
-        $scope.mapMarkers.push(marker)
+  #     $scope.map_init.then () ->
+  #       marker = new google.maps.Marker({
+  #         map: $scope.myMap,
+  #         position: $scope.latlong
+  #       })
+  #       $scope.mapMarkers.push(marker)
 
 
