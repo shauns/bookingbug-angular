@@ -32,7 +32,7 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window, BBModel
         @getPackages()
         @getProducts()
       ]).then () =>
-        @items = [@bookings, @course_bookings, @packages, @products]
+        @items = @bookings.concat(@course_bookings).concat(@packages).concat(@products)
         defer.resolve(@items)
       defer.promise
 
