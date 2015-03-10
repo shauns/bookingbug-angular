@@ -218,7 +218,6 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
       $scope.setLoaded $scope
       return false
     else
-      item.image = $scope.event_groups[item.service_id].image if $scope.event_groups and $scope.event_groups[item.service_id].image
       $scope.bb.current_item.setEvent(item)
       $scope.bb.current_item.ready = false
       $q.all($scope.bb.current_item.promises).then () ->
@@ -229,27 +228,14 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
 
   $scope.setReady = () ->
     return false if !$scope.event 
-    # $scope.event.image = $scope.event_groups[$scope.event.service_id].image if $scope.event_groups[$scope.event.service_id].image
     $scope.bb.current_item.setEvent($scope.event)
     return true
 
 
   loadEventGroups = () ->
     $scope.bb.company.getEventGroupsPromise().then (items) ->
-
       $scope.event_groups = _.indexBy(items, 'id')
      
-      for event_group_id, event_group of $scope.event_groups
-        event_group.getImagesPromise().then (images) ->
-          # TODO pick most promiment image
-          if images and images.length > 0
-            image = images[0]
-            image.background_css = {'background-image': 'url(' + image.url + ')'}
-            $scope.event_groups[images[0].foreign_key].image = image
-            # debugger
-            # colorThief = new ColorThief()
-            # colorThief.getColor image.url
-
 
   $scope.filterEvents = (item) ->
     result = (item.date.isSame(moment($scope.filters.date), 'day') or !$scope.filters.date?) and
@@ -322,3 +308,4 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
   $scope.pageChanged = () ->
     PaginationService.pageChanged($scope.pagination, $scope.filtered_items.length)
     $rootScope.$emit "page:changed"
+
