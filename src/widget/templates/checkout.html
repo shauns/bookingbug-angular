@@ -40,9 +40,12 @@
             </li>
             <li class="row confirmation-summary-item">
               <div class="col-sm-12">
-                <a ng-href="//maps.google.com/?q={{total.items[0].address.lat}},{{total.items[0].address.long}}&z=15" target="_blank">
-                  <img ng-src="//maps.googleapis.com/maps/api/staticmap?center={{total.items[0].address.lat}},{{total.items[0].address.long}}&zoom=15&size=520x150&markers={{total.items[0].address.lat}},{{total.items[0].address.long}}&scale=2" alt="Map of {{total.items[0].address | address_single_line}}" title="{{total.items[0].address | address_single_line}}" class="img-responsive"/>
-                </a>
+                <div bb-address-map="total.items[0].address">
+                  <ui-gmap-google-map ng-if="total.items[0].address.lat" center='map.center' zoom='map.zoom' options="options">
+                    <ui-gmap-marker coords="marker.coords" idkey="marker.id">
+                    </ui-gmap-marker>
+                  </ui-gmap-google-map>
+                </div>
               </div>
             </li>
             <li class="row confirmation-summary-item">

@@ -10152,6 +10152,8 @@ html {
     #bb .bb-thankyou-focus h2 {
       text-align: center;
       margin: 10% 3% 10%; }
+  #bb .angular-google-map-container {
+    height: 200px; }
   #bb .bb-basket table.table, #bb div[bb-basket-list] table.table {
     color: #000000; }
   #bb .bb-basket .bb-coupon-box, #bb div[bb-basket-list] .bb-coupon-box {
