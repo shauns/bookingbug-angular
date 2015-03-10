@@ -18,7 +18,8 @@ app = angular.module('BB', [
   'angular-data.DSCacheFactory', # newer version of jmdobry angular cache
   'schemaForm',
   'ngStorage',
-  'angularFileUpload'
+  'angularFileUpload',
+  'uiGmapgoogle-maps'
 ])
 
 

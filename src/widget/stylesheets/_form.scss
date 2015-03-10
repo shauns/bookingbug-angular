@@ -16,7 +16,7 @@
 }
 
 .booking-form-header {
-  border-bottom: 1px solid #666;
+  border-bottom: 1px solid #DDD;
   padding-bottom: 10px;
   margin-bottom: 20px;
   font-size: 26px; 
@@ -51,14 +51,9 @@
 
 
 label {
-  font-weight: 300;
+  font-weight: 400;
 }
 
-
-.input-group-btn:last-child > .btn {
-  border-left: none;
-  padding-bottom: 7px;
-}
 
 .input-group-btn:last-child > .btn.btn-lg {
   padding: 10px 16px;

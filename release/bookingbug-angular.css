@@ -9822,6 +9822,7 @@ html {
   font-size: 1.6rem;
   color: #000000;
   background-color: #FFFFFF;
+  margin: 0;
   /* GMAP START */
   /* GMAP END */ }
   #bb .btn-icon {
@@ -9845,6 +9846,8 @@ html {
     #bb .button-group.bordered {
       border-top: 1px solid #DDD;
       margin-top: 30px; }
+  #bb .date-picker .input-group-btn .btn {
+    height: 34px; }
   #bb .form-control::-moz-placeholder, #bb .form-question::-moz-placeholder {
     color: #CCC;
     opacity: 1; }
@@ -9871,7 +9874,7 @@ html {
     text-align: center;
     margin: 15px 0 20px; }
   #bb .booking-form-header {
-    border-bottom: 1px solid #666;
+    border-bottom: 1px solid #DDD;
     padding-bottom: 10px;
     margin-bottom: 20px;
     font-size: 26px;
@@ -9894,10 +9897,7 @@ html {
   #bb .booking-summary-wrapper {
     margin-bottom: 30px; }
   #bb label {
-    font-weight: 300; }
-  #bb .input-group-btn:last-child > .btn {
-    border-left: none;
-    padding-bottom: 7px; }
+    font-weight: 400; }
   #bb .input-group-btn:last-child > .btn.btn-lg, #bb .btn-group-lg.input-group-btn:last-child > .btn {
     padding: 10px 16px; }
   #bb .error-message {
@@ -10034,7 +10034,7 @@ html {
           margin-bottom: 10px;
           margin-top: 10px; } }
   #bb .event-summary-list {
-    margin-bottom: 15px; }
+    margin-bottom: 5px; }
     #bb .event-summary-list li {
       padding-bottom: 5px; }
       #bb .event-summary-list li .bb-icon, #bb .event-summary-list li .glyphicon {
@@ -10104,7 +10104,7 @@ html {
     display: block;
     margin: 0 auto; }
   #bb #loading_icon #wait_graphic {
-    background: url("images/BB_wait.gif");
+    background: url("BB_wait.gif");
     width: 118px;
     height: 118px; }
   #bb .powered-by {
@@ -10633,8 +10633,6 @@ html {
     margin-bottom: 45px; }
   #bb #bb-event .event-description, #bb div[bb-event] .event-description, #bb .event .event-description {
     margin-bottom: 0; }
-  #bb #bb-event .heading, #bb div[bb-event] .heading, #bb .event .heading {
-    margin-top: 15px; }
   #bb #bb-event .ticket-list li, #bb div[bb-event] .ticket-list li, #bb .event .ticket-list li {
     padding-bottom: 15px;
     padding-top: 15px;
@@ -10676,14 +10674,20 @@ html {
     @media (max-width: 767px) {
       #bb #bb-event .bb-coupon-box .form-control, #bb div[bb-event] .bb-coupon-box .form-control, #bb .event .bb-coupon-box .form-control {
         margin-bottom: 10px; } }
-  #bb #bb-event .event-header, #bb div[bb-event] .event-header, #bb .event .event-header {
+  #bb #bb-event .panel-body, #bb div[bb-event] .panel-body, #bb .event .panel-body {
+    padding: 15px 0; }
+  #bb #bb-event.no-image .event-header, #bb div[bb-event].no-image .event-header, #bb .event.no-image .event-header {
+    margin: 20px 0 25px 0; }
+    #bb #bb-event.no-image .event-header .event-summary-list, #bb div[bb-event].no-image .event-header .event-summary-list, #bb .event.no-image .event-header .event-summary-list {
+      margin-bottom: 0; }
+  #bb #bb-event.has-image .event-header, #bb div[bb-event].has-image .event-header, #bb .event.has-image .event-header {
     width: 100%;
     height: 300px;
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
     position: relative; }
-    #bb #bb-event .event-header:before, #bb div[bb-event] .event-header:before, #bb .event .event-header:before {
+    #bb #bb-event.has-image .event-header:before, #bb div[bb-event].has-image .event-header:before, #bb .event.has-image .event-header:before {
       content: '';
       position: absolute;
       top: 0;
@@ -10691,16 +10695,14 @@ html {
       bottom: 0;
       left: 0;
       background-image: linear-gradient(to bottom, rgba(30, 87, 153, 0) 30%, #353535 100%); }
-    #bb #bb-event .event-header .event-details, #bb div[bb-event] .event-header .event-details, #bb .event .event-header .event-details {
+    #bb #bb-event.has-image .event-header .event-details, #bb div[bb-event].has-image .event-header .event-details, #bb .event.has-image .event-header .event-details {
       position: absolute;
       bottom: 0;
       color: #FFF;
       padding: 15px; }
-      #bb #bb-event .event-header .event-details h1, #bb div[bb-event] .event-header .event-details h1, #bb .event .event-header .event-details h1 {
+      #bb #bb-event.has-image .event-header .event-details h1, #bb div[bb-event].has-image .event-header .event-details h1, #bb .event.has-image .event-header .event-details h1 {
         color: white; }
-    #bb #bb-event .event-header .event-summary-list, #bb div[bb-event] .event-header .event-summary-list, #bb .event .event-header .event-summary-list {
-      margin-bottom: 0; }
-    #bb #bb-event .event-header .bb-icon, #bb #bb-event .event-header .glyphicon, #bb div[bb-event] .event-header .bb-icon, #bb div[bb-event] .event-header .glyphicon, #bb .event .event-header .bb-icon, #bb .event .event-header .glyphicon {
+    #bb #bb-event.has-image .event-header .bb-icon, #bb #bb-event.has-image .event-header .glyphicon, #bb div[bb-event].has-image .event-header .bb-icon, #bb div[bb-event].has-image .event-header .glyphicon, #bb .event.has-image .event-header .bb-icon, #bb .event.has-image .event-header .glyphicon {
       color: #FFF; }
   #bb #bb-event .map-canvas, #bb div[bb-event] .map-canvas, #bb .event .map-canvas {
     height: 200px; }

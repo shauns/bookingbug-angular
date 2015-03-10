@@ -71,7 +71,6 @@ angular.module('BB.Controllers').controller 'MapCtrl',
       for key, value of options.map_options
         $scope.mapOptions[key] = value
 
-
     map_ready_def.resolve(true)
 
   , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')

@@ -27,13 +27,13 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window, BBModel
       defer = $q.defer()
       defer.resolve(@items) if @items
       $q.all([
-        @getBookingsPromise()
-        @getCourseBookingsPromise()
-        @getPackages()
+        @getBookingsPromise(),
+        @getCourseBookingsPromise(),
+        @getPackages(),
         @getProducts()
-      ]).then () =>
-        @items = @bookings.concat(@course_bookings).concat(@packages).concat(@products)
-        defer.resolve(@items)
+      ]).then (result) ->
+        items = _.flatten(result)
+        defer.resolve(items)
       defer.promise
 
     getBookingsPromise: =>
@@ -45,7 +45,7 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window, BBModel
           @bookings.sort (a, b) => a.datetime.unix() - b.datetime.unix()
           defer.resolve(@bookings)
       else
-        defer.reject("No bookings")
+        defer.resolve([])
       defer.promise
 
     getCourseBookingsPromise: =>
@@ -58,7 +58,7 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window, BBModel
             console.log @course_bookings
             defer.resolve(@course_bookings)
       else
-        defer.reject("No bookings")
+        defer.resolve([])
       defer.promise
 
     getPackages: =>
@@ -69,7 +69,7 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window, BBModel
           @packages = packages
           defer.resolve(@packages)
       else
-        defer.reject('No packages')
+        defer.resolve([])
       defer.promise
 
     getProducts: =>
@@ -80,7 +80,7 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window, BBModel
           @products = products
           defer.resolve(@products)
       else
-        defer.reject('No products')
+        defer.resolve([])
       defer.promise
 
     getMessages: (booking_texts, msg_type) =>

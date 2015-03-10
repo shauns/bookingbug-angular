@@ -31,6 +31,8 @@ gulp.task('javascripts', function() {
   javascripts = gulp.src(mainBowerFiles({filter: new RegExp('.js$')}).concat([
         './bower_components/jquery-visible/jquery.visible.js',
         './bower_components/moment/locale/en-gb.js',
+        './bower_components/lodash/dist/lodash.js',
+        './bower_components/angular-google-maps/dist/angular-google-maps.js',
         './src/javascripts/core/main.js.coffee', 
         './src/*/javascripts/main.js.coffee', 
         './src/*/main.js.coffee', 
