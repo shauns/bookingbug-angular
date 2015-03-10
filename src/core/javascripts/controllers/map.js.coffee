@@ -34,6 +34,7 @@ angular.module('BB.Controllers').controller 'MapCtrl',
   $scope.defaultPin           ||= null
   $scope.hide_not_live_stores = false
   $scope.address              = $scope.$eval $attrs.bbAddress or null
+  $scope.error_msg            = options.error_msg or "You need to select a store"
   $scope.notLoaded $scope
   
   #TODO: webshim for gulp
@@ -268,6 +269,11 @@ angular.module('BB.Controllers').controller 'MapCtrl',
 
   $scope.selectItem = (item, route) ->
     return if !$scope.$debounce(1000)
+
+    if !item
+      AlertService.warning({msg:$scope.error_msg})
+      return
+
     $scope.notLoaded $scope
 
     # if the selected store changes, emit an event. the form data store uses
