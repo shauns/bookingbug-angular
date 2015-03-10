@@ -171,13 +171,8 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
   isFullyBooked = () ->
     full_events = []
     for item in $scope.items
-      item.getDuration()
-      if item.num_spaces == item.spaces_booked
-        full_events.push(item)
-      else
-        item.qty = 1
-    if (full_events.length) == $scope.items.length
-      $scope.fully_booked = true
+      full_events.push(item) if item.num_spaces == item.spaces_booked
+    $scope.fully_booked = true if full_events.length == $scope.items.length
 
 
   # accepts moment date object
