@@ -1,0 +1,95 @@
+<div ng-show="loading"><img src='/BB_wait.gif' class="loader"></div>
+<div class="bb-member-bookings" ng-hide="loading">
+
+   <tabset class="bb-tabs">
+
+    <tab>
+      <tab-heading>
+        Upcoming Bookings
+      </tab-heading>
+
+      <div id="member" class="bb-upcoming">
+        <div class="bb-head">
+          <span id="your_bookings">Your future appointments:</span>
+        </div>
+        <div id="bookings">
+
+          <div ng-if="upcoming_bookings.length == 0">
+            <h3>You don't currently have any appointments.</h3>
+          </div>
+
+          <div ng-repeat="booking in upcoming_bookings | filter:{deleted: false} | orderBy: booking.datetime.unix()" class="booking-row">
+
+            <div class="type">
+              <div style="background-color:{{booking.getColour()}}"></div>
+            </div>
+
+            <div class="datetime">
+              <div>{{booking.datetime.format('Do MMM YYYY HH:mm')}}</div>
+            </div>
+
+            <div class="describe">
+              <div class="detail">{{booking.full_describe}}</div>
+              <div class="resource">{{booking.resource}}</div>
+            </div>
+
+            <div class="bb-bookings-action">
+              <button ng-click="cancel(booking)" class="bb-btn-remove bb-push">Cancel</button>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </tab>
+
+    <tab>
+      <tab-heading>
+        Past bookings
+      </tab-heading>
+
+      <div id="member" class="bb-past">
+        <div class="bb-head">
+          <span id="your_bookings">Your past appointments:</span>
+        </div>
+        <div id="bookings">
+
+          <div ng-if="past_bookings.length == 0">
+            <h3>You don't currently have any appointments.</h3>
+          </div>
+
+          <div ng-repeat="booking in past_bookings | filter:{deleted: false} | startFrom: (pagination.current_page - 1) * pagination.page_size | limitTo: pagination.page_size | orderBy: booking.datetime.unix()" class="booking-row">
+
+            <div class="type">
+              <div style="background-color:{{booking.getColour()}}"></div>
+            </div>
+
+            <div class="datetime">
+              <div>{{booking.datetime.format('Do MMM YYYY HH:mm')}}</div>
+            </div>
+
+            <div class="describe">
+              <div class="detail">{{booking.full_describe}}</div>
+              <div class="resource">{{booking.resource}}</div>
+            </div>
+
+            <div class="bb-bookings-action">
+            </div>
+
+          </div>
+
+          <pagination total-items="pagination.num_items"
+                      ng-model="pagination.current_page"
+                      items-per-page="pagination.page_size"
+                      max-size="pagination.max_size" boundary-links="true"
+                                                     rotate="false"
+                                                     num-pages="pagination.num_pages"
+                                                     ng-show="past_bookings"></pagination>
+
+
+        </div>
+      </div>
+    </tab>
+
+  </tabset>
+</div>
