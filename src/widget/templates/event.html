@@ -1,6 +1,6 @@
 <div bb-page>
 
-  <div bb-event>
+  <div bb-event ng-class="{'has-image': event.image, 'no-image': !event.image}">
 
     <div class="event-header" ng-style="event.image.background_css">
       <div class="event-details">
@@ -106,7 +106,6 @@
                 </div>
               </form>
             </div>
-
           </div>
         </div>
       </div>
@@ -185,8 +184,10 @@
           </div>
 
           <div ng-repeat="item in bb.basket.timeItems()" bb-count-ticket-types="bb.basket.timeItems()">
-            <div bb-item-details="item">
 
+            <h2 class="booking-form-header">Ticket {{$index + 1}}</h2>
+
+            <div bb-item-details="item">
               <div ng-form name="booking_questions_form">
                 <div class="form-group" ng-repeat="question in item_details.questions" ng-if="question.currentlyShown" bb-question-line ng-class="{'has-error': booking_questions_form['q' + question.id].$invalid && (booking_questions_form['q' + question.id].$dirty || booking_form.submitted)}">
                   <label for="{{question.id}}" class="control-label col-sm-4">{{question.name}}</label>
@@ -202,7 +203,7 @@
               </div>
 
             </div>
-          <!-- </div> -->
+          </div>
 
           <div class="button-group bordered">
             <div class="row">
