@@ -354,7 +354,7 @@ angular.module('BB.Directives').directive 'bbMapTheSecond', () ->
 
 angular.module('BB.Controllers').controller 'MapCtrl',
 ($scope, $element, $attrs, $rootScope, AlertService, ErrorService, FormDataStoreService, $q, $window, $timeout, $document) ->
-  alert "Firing bbMapTheSecond"
+
   $scope.controller = "public.controllers.MapCtrl"
 
   $rootScope.connection_started.then ->
@@ -379,16 +379,12 @@ angular.module('BB.Controllers').controller 'MapCtrl',
         latlong = new google.maps.LatLng(comp.address.lat,comp.address.long)
         $scope.mapBounds.extend(latlong)
 
-    console.log $scope.companies
-    console.log $scope.mapBounds
-
-    # Refine code from here
     $scope.map = {
       center: {
-        latitude: 51.508530,
-        longitude: -0.076132
+        latitude: $scope.mapBounds.getCenter().k,
+        longitude: $scope.mapBounds.getCenter().D
       },
-      zoom: 6,
+      zoom: 10,
       bounds: {}
     }
    
@@ -399,3 +395,18 @@ angular.module('BB.Controllers').controller 'MapCtrl',
       draggable: $scope.isDraggable
     }
 
+    $scope.markers = []
+
+    # Need to get the template URL in here.
+    for comp, index in $scope.companies
+      if comp.address.lat && comp.address.long
+        marker = {
+          id: index,
+          latitude: comp.address.lat
+          longitude: comp.address.long
+          title: comp.name
+          show: true
+         }
+        $scope.markers.push(marker)
+
+    console.log $scope.markers
