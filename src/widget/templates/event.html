@@ -233,7 +233,12 @@
           <div ng-if="event.chain.address" ui-options="mapOptions" class="map-canvas" ng-delayed="ui-map" ng-delayed-value="myMap" ng-delayed-watch="mapReady" ng-delayed-ready="mapLoaded"></div>
           <div ng-repeat="marker in mapMarkers" ui-map-marker="mapMarkers[$index]"></div>
         </div> -->
-
+        <div bb-address-map="event.chain.address">
+          <ui-gmap-google-map ng-if="event.chain.address.lat"center='map.center' zoom='map.zoom' options="options">
+            <ui-gmap-marker coords="marker.coords" idkey="marker.id">
+            </ui-gmap-marker>
+          </ui-gmap-google-map>
+        </div>
       </div>
     </div>
 

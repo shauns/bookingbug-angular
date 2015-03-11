@@ -1,12 +1,11 @@
-<div id="map" bb-map class="store-search">
+<div id="map" bb-map class="bb-store-search" ng-init="checkStepTitle('Select a company')">
 
   <div class="page-summary">
     <p>Search for a store to begin your booking.</p>
   </div>
 
   <div class="panel panel-default">
-    <div class="panel-body">
-
+    <div class="panel-body" >
       <div class="row search-form-wrapper">
         <div class="col-xs-10 col-sm-6 col-sm-offset-3">
           <form role="form" ng-submit="searchAddress({region: 'GB', componentRestrictions: {'country': 'GB'}, bounds: {sw:{x:'50.064192',y:'-9.711914'}, ne:{x:'61.015725',y:'3.691406'}}});">
@@ -60,7 +59,7 @@
         <div accordion close-others="true">
           <div accordion-group is-open="is_open" ng-class="{'expanded': is_open, 'selected': is_selected}" ng-repeat="marker in shownMarkers" class="store-body" ng-init="is_open = $first">
 
-            <div accordion-heading>
+            <div accordion-heading class="store-header">
               <span><strong>{{$index+1}}.</strong> {{marker.company.name}}</span>
               <span class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': is_open, 'glyphicon-chevron-right': !is_open}"></span>
             </div>
@@ -79,5 +78,7 @@
       </div>
  
     </div>
+  </div>
+  <div ng-if="loc"class="bb-step-navigation">
   </div>
 </div>

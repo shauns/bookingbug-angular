@@ -1,85 +1,76 @@
-<div bb-total ng-init="checkStepTitle('Confirmed')">
-  <div class="bb-checkout">
+<div bb-total ng-init="checkStepTitle('Confirmed')" class="bb-checkout">
+  <div class="row">
+    <div class="col-sm-offset-2 col-sm-8 col-md-offset-2 col-md-8">
 
-    <div class="row">
-      <div class="col-sm-offset-2 col-sm-8 col-md-offset-2 col-md-8">
-        <div class="bb-subcontent">
+      <div class="bb-subcontent">
+        <div class="confirmation-header bb-confirmation-border-margin">
+          <h2>Payment Confirmation</h2>
+          <p class="bb-confirmation-p-alignment">Thanks {{ total.client.first_name }}. Your payment was successful. We have you emailed you the details below.</p>
+          <div class="row hidden-print text-right">
+            <button type="button" class="btn btn-link" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</button>
+            <div bb-booking-export class="bb-booking-export"></div>
+          </div>
+        </div>
 
-
-            <div ng-show="total">  
-              <div class="confirmation-header bb-confrimation-border-margin">
-                <h2>Payment Confirmation</h2>
-                <p class="bb-confirmation-p-alignment">Thanks. Your payment was successful. We have you emailed you the details below.</p>
-                <div class="row hidden-print text-right">
-                  <button type="button" class="btn btn-link" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</button>
-                  <button type="button" class="btn btn-link" onclick="" popover="<a class='image img_outlook' title='Add this booking to an Outlook Calendar' href='http://blinkbrowbar.bookingbug.com/ical/total/UkICc5s-2yzH09PqNzE%3D'><img alt='' src='https://www.bookingbug.com/assets/outlook.png'></a> <a class='image img_ical' title='Add this booking to an iCal Calendar' href='http://blinkbrowbar.bookingbug.com/ical/total/UkICc5s-2yzH09PqNzE%3D'><img alt='' src='https://www.bookingbug.com/assets/ical.png'></a> <a class='image img_gcal' title='Add this booking to Google Calendar' href='http://www.google.com/calendar/event?dates=20150120T120000Z%2F20150120T123000Z&details=&location=Chair&sprop=www.bookingbug.com&text=Booking%3A+Ayurvedic+Eye+Soother+with+Romana+-+Chair+at+Bristol&trp=false&action=TEMPLATE' target='_blank'><img src='https://www.bookingbug.com/assets/gcal.png' border='0'></a>" popover-placement="bottom"><span class="glyphicon glyphicon-calendar"></span> Export to calendar</button>
+        <div>
+          <ul class="confirmation-summary" ng-repeat="i in total.items">
+            <li ng-if="i.id" class="row confirmation-summary-item">
+              <div class="col-sm-3">Booking Reference:</div>
+              <div class="col-sm-9">{{i.id}}</div>
+            </li>
+            <li ng-if="i.full_describe" class="row confirmation-summary-item">
+              <div class="col-sm-3">Service:</div>
+              <div class="col-sm-9">{{i.full_describe}}</div>
+            </li>
+            <li ng-if="i.describe" class="row confirmation-summary-item">
+              <div class="col-sm-3">Date/Time:</div>
+              <div class="col-sm-9">{{i.describe}}</div>
+            </li>
+            <li ng-if="i.price" class="row confirmation-summary-item">
+              <div class="col-sm-3">Price:</div>
+              <div class="col-sm-9">{{i.price}}</div>
+            </li>
+          </ul>
+          <ul ng-show="total.items[0].address.lat" class="confirmation-summary">
+            <li class="row confirmation-summary-item">
+              <div class="col-sm-12"> 
+                Location:
+              </div> 
+            </li>
+            <li class="row confirmation-summary-item">
+              <div class="col-sm-12">
+                <div bb-address-map="total.items[0].address">
+                  <ui-gmap-google-map center='map.center' zoom='map.zoom' options="options">
+                    <ui-gmap-marker coords="marker.coords" idkey="marker.id">
+                    </ui-gmap-marker>
+                  </ui-gmap-google-map>
                 </div>
               </div>
-              <div>
-                <h3>Your details</h3>
-                  <ul class="confirmation-summary">
-                    <li ng-if="client.getName()" class="row confirmation-summary-item">
-                      <div class="col-xs-12 col-sm-3">Name:</div>
-                      <div class="col-xs-12 col-sm-9">{{client.getName()}}</div>
-                    </li>
-                    <li ng-if="client.email" class="row confirmation-summary-item">
-                      <div class="col-xs-12 col-sm-3">Email:</div>
-                      <div class="col-xs-12 col-sm-9">{{client.email}}</div>
-                    </li>
-                    <li ng-if="client.addressSingleLine()" class="row confirmation-summary-item">
-                      <div class="col-xs-12 col-sm-3">Address:</div>
-                      <div class="col-xs-12 col-sm-9">{{client.addressSingleLine()}}</div>
-                    </li>
-                  </ul>
+            </li>
+            <li class="row confirmation-summary-item">
+              <div class="col-sm-12">
+                <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>{{total.items[0].address | address_single_line }}
               </div>
+            </li>
+          </ul>
 
-              <div>
-                <h3>Your booking</h3>
-                <ul class="confirmation-summary" ng-repeat="i in total.items">
-                  <li ng-if="i.full_describe" class="row confirmation-summary-item">
-                    <div class="col-xs-12 col-sm-3">Service:</div>
-                    <div class="col-xs-12 col-sm-9">{{i.full_describe}}</div>
-                  </li>
-                  <li ng-if="i.describe" class="row confirmation-summary-item">
-                    <div class="col-xs-12 col-sm-3">Date/Time:</div>
-                    <div class="col-xs-12 col-sm-9">{{i.describe}}</div>
-                  </li>
-                </ul>
-              </div>
+          <div bb-custom-confirmation-text class="bb-message">
+            <div ng-repeat="msg in messages" ng-bind-html="msg"></div>
+          </div>
 
-
-<!--               <div class="bb-node calendar-node">
-                <h3>Export to calendar</h3>
-                <ul class="show_list" ng-repeat="i in total.items">
-                  <li>
-                    <label>&nbsp;</label>
-                    <span>
-                      <a class="image" title="Add this booking to an Outlook Calendar" href="{{total.icalLink()}}"><img alt="" src="http://uk.bookingbug.com/assets/outlook.png"></a>
-                      <a class="image" title="Add this booking to an iCal Calendar" href="{{total.webcalLink()}}"><img alt="" src="http://uk.bookingbug.com/assets/ical.png"></a>
-                      <a class="image" title="Add this booking to a Google Calendar" href="{{total.gcalLink()}}" target="_blank"><img src="http://uk.bookingbug.com/assets/gcal.png" border="0"></a>
-                    </span>
-                  </li>
-                </ul>
-              </div> -->
-
-              <div bb-custom-confirmation-text>
-                <div ng-repeat="msg in messages" ng-bind-html="msg" class="bb-message">{{msg}}</div>
-              </div>
-
-
-            </div>
 
         </div>
+
       </div>
-    </div>
 
-    <div class="row bb-step-navigation">
     </div>
-
-    <div ng-show="isLoaded" class="powered-by visible-print">
-      <p>Bookings powered by <span style="color:#087f94">booking</span><span style="color:#88c66f">bug</p>
-      <a href="http://www.bookingbug.com" style="text-decoration:none" target="_blank"></a>
-    </div>
-
   </div>
+</div>
+
+<div class="bb-step-navigation">
+</div>
+
+<div ng-show="isLoaded" class="powered-by visible-print">
+  <p>Bookings powered by <span style="color:#087f94">booking</span><span style="color:#88c66f">bug</p>
+  <a href="//www.bookingbug.com" style="text-decoration:none" target="_blank"></a>
 </div>

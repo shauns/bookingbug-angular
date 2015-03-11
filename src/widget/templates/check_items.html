@@ -103,37 +103,11 @@
       </form><!--booking_form-->
 
 
-  <!--     <form name="client_form" ng-submit="validator.validateForm(client_form)" class="form-horizontal" role="form" bb-form-resettable bb-form novalidate>
-        <div bb-custom-booking-text class="bb-message-node">
-          <div ng-repeat="msg in messages" ng-bind-html="msg">
-          </div>
-        </div>
-        <div ng-show="item_details.hasQuestions">
-          <h2 class="booking-form-header">Questions</h2>
-          <div ng-repeat="question in item_details.questions" bb-question-line ng-show="question.currentlyShown">
-            <div class="form-group" ng-class="{'has-error': client_form['q' + question.id].$invalid && (!client_form['q' + question.id].$pristine || client_form.submitted), 'bb-check-space': (question.detail_type == 'check')}">
-              <label bb-question-label="question" class="control-label col-sm-offset-1 col-sm-3" ng-show="question.name" for="{{question.id}}">{{question.name}}:</label>
-              <div class="col-sm-5">
-                <input bb-question="question"/>
-                <div class="bb-help-text">
-                  <small ng-show="question.help_text">{{question.help_text}}<hr/></small>
-                </div>
-              </div>
-              <div class="col-sm-offset-4 messages">
-                <div class="error-message" ng-show="client_form['q' + question.id].$invalid && client_form.submitted">
-                  This field is required
-                </div>
-              </div> 
-            </div>
-          </div>
-
-      </form> -->
-
     </div>
 
     <div class="row bb-step-navigation">
       <div class="col-sm-9 col-sm-push-3 text-right">
-        <button href="" class="btn btn-primary pull-right" ng-click="confirm(booking_form) && validator.validateForm(booking_form) && checkReady() && routeReady()">Confirm</button>
+        <button type="button"  class="btn btn-primary pull-right" ng-click="confirm(booking_form) && validator.validateForm(booking_form) && checkReady() && routeReady()">Confirm</button>
       </div>
       <div class="col-sm-3 col-sm-pull-9">
         <button type="button" class="btn btn-default pull-left" bb-debounce ng-click="loadPreviousStep()" ng-show="bb.current_step > 1">Back</button>

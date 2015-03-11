@@ -31,7 +31,7 @@
 			 					<p></p>
 							</td>
 							<td class="text-right">
-								{{item.price | currency}}
+								{{item.price | pretty_price }}
 							</td>
 							<td class="text-center">
 			 					<span class="glyphicon glyphicon-trash" aria-hidden="true" ng-click="deleteBasketItem(item)"></span>
@@ -39,12 +39,12 @@
 			  		</tr>
 						<tr data-ng-if="basket.total_price > 0">
 							<th class="text-right">Total</th>
-							<th class="text-right">{{basket.total_price | currency}}</th>
+							<th class="text-right">{{basket.total_price | pretty_price }}</th>
 							<th>&nbsp;</th>
 						</tr>
 						<tr data-ng-if="basket.total_due_price > 0">
 							<th class="text-right">Total Due Now</th>
-							<th class="text-right">{{basket.total_due_price | currency}}</th>
+							<th class="text-right">{{basket.total_due_price | pretty_price }}</th>
 							<th>&nbsp;</th>
 						</tr>
 					</tbody>

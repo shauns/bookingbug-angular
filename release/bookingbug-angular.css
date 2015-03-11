@@ -3221,6 +3221,7 @@ be a descendant of the grid when it is being dragged.
 [schedule-weekdays] .fc-today {
   background: none; }
 
+/* font-size-base changed from 14px to 16px to match bookinbug styling. */
 #bb {
   /*! normalize.css v3.0.2 | MIT License | git.io/normalize */ }
   #bb html {
@@ -3802,7 +3803,7 @@ be a descendant of the grid when it is being dragged.
   -webkit-tap-highlight-color: transparent; }
 #bb body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.42857;
   color: #333333;
   background-color: #fff; }
@@ -3845,8 +3846,8 @@ be a descendant of the grid when it is being dragged.
 #bb .img-circle {
   border-radius: 50%; }
 #bb hr {
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin-top: 22px;
+  margin-bottom: 22px;
   border: 0;
   border-top: 1px solid #eeeeee; }
 #bb .sr-only {
@@ -3876,39 +3877,39 @@ be a descendant of the grid when it is being dragged.
     line-height: 1;
     color: #777777; }
 #bb h1, #bb .h1, #bb h2, #bb .h2, #bb h3, #bb .h3 {
-  margin-top: 20px;
-  margin-bottom: 10px; }
+  margin-top: 22px;
+  margin-bottom: 11px; }
   #bb h1 small, #bb h1 .small, #bb .h1 small, #bb .h1 .small, #bb h2 small, #bb h2 .small, #bb .h2 small, #bb .h2 .small, #bb h3 small, #bb h3 .small, #bb .h3 small, #bb .h3 .small {
     font-size: 65%; }
 #bb h4, #bb .h4, #bb h5, #bb .h5, #bb h6, #bb .h6 {
-  margin-top: 10px;
-  margin-bottom: 10px; }
+  margin-top: 11px;
+  margin-bottom: 11px; }
   #bb h4 small, #bb h4 .small, #bb .h4 small, #bb .h4 .small, #bb h5 small, #bb h5 .small, #bb .h5 small, #bb .h5 .small, #bb h6 small, #bb h6 .small, #bb .h6 small, #bb .h6 .small {
     font-size: 75%; }
 #bb h1, #bb .h1 {
-  font-size: 36px; }
+  font-size: 41px; }
 #bb h2, #bb .h2 {
-  font-size: 30px; }
+  font-size: 34px; }
 #bb h3, #bb .h3 {
-  font-size: 24px; }
+  font-size: 28px; }
 #bb h4, #bb .h4 {
-  font-size: 18px; }
+  font-size: 20px; }
 #bb h5, #bb .h5 {
-  font-size: 14px; }
+  font-size: 16px; }
 #bb h6, #bb .h6 {
-  font-size: 12px; }
+  font-size: 14px; }
 #bb p {
-  margin: 0 0 10px; }
+  margin: 0 0 11px; }
 #bb .lead {
-  margin-bottom: 20px;
-  font-size: 16px;
+  margin-bottom: 22px;
+  font-size: 18px;
   font-weight: 300;
   line-height: 1.4; }
   @media (min-width: 768px) {
     #bb .lead {
-      font-size: 21px; } }
+      font-size: 24px; } }
 #bb small, #bb .small {
-  font-size: 85%; }
+  font-size: 87%; }
 #bb mark, #bb .mark {
   background-color: #fcf8e3;
   padding: .2em; }
@@ -3973,12 +3974,12 @@ be a descendant of the grid when it is being dragged.
 #bb a.bg-danger:hover {
   background-color: #e4b9b9; }
 #bb .page-header {
-  padding-bottom: 9px;
-  margin: 40px 0 20px;
+  padding-bottom: 10px;
+  margin: 44px 0 22px;
   border-bottom: 1px solid #eeeeee; }
 #bb ul, #bb ol {
   margin-top: 0;
-  margin-bottom: 10px; }
+  margin-bottom: 11px; }
   #bb ul ul, #bb ul ol, #bb ol ul, #bb ol ol {
     margin-bottom: 0; }
 #bb .list-unstyled {
@@ -3994,7 +3995,7 @@ be a descendant of the grid when it is being dragged.
     padding-right: 5px; }
 #bb dl {
   margin-top: 0;
-  margin-bottom: 20px; }
+  margin-bottom: 22px; }
 #bb dt, #bb dd {
   line-height: 1.42857; }
 #bb dt {
@@ -4024,9 +4025,9 @@ be a descendant of the grid when it is being dragged.
   font-size: 90%;
   text-transform: uppercase; }
 #bb blockquote {
-  padding: 10px 20px;
-  margin: 0 0 20px;
-  font-size: 17.5px;
+  padding: 11px 22px;
+  margin: 0 0 22px;
+  font-size: 20px;
   border-left: 5px solid #eeeeee; }
   #bb blockquote p:last-child, #bb blockquote ul:last-child, #bb blockquote ol:last-child {
     margin-bottom: 0; }
@@ -4048,7 +4049,7 @@ be a descendant of the grid when it is being dragged.
   #bb .blockquote-reverse footer:after, #bb .blockquote-reverse small:after, #bb .blockquote-reverse .small:after, #bb blockquote.pull-right footer:after, #bb blockquote.pull-right small:after, #bb blockquote.pull-right .small:after {
     content: '\00A0 \2014'; }
 #bb address {
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   font-style: normal;
   line-height: 1.42857; }
 
@@ -4074,9 +4075,9 @@ be a descendant of the grid when it is being dragged.
     box-shadow: none; }
 #bb pre {
   display: block;
-  padding: 9.5px;
-  margin: 0 0 10px;
-  font-size: 13px;
+  padding: 10.5px;
+  margin: 0 0 11px;
+  font-size: 15px;
   line-height: 1.42857;
   word-break: break-all;
   word-wrap: break-word;
@@ -4569,7 +4570,7 @@ be a descendant of the grid when it is being dragged.
 #bb .table {
   width: 100%;
   max-width: 100%;
-  margin-bottom: 20px; }
+  margin-bottom: 22px; }
   #bb .table > thead > tr > th, #bb .table > thead > tr > td, #bb .table > tbody > tr > th, #bb .table > tbody > tr > td, #bb .table > tfoot > tr > th, #bb .table > tfoot > tr > td {
     padding: 8px;
     line-height: 1.42857;
@@ -4630,7 +4631,7 @@ be a descendant of the grid when it is being dragged.
   @media screen and (max-width: 767px) {
     #bb .table-responsive {
       width: 100%;
-      margin-bottom: 15px;
+      margin-bottom: 16.5px;
       overflow-y: hidden;
       -ms-overflow-style: -ms-autohiding-scrollbar;
       border: 1px solid #ddd; }
@@ -4656,8 +4657,8 @@ be a descendant of the grid when it is being dragged.
   display: block;
   width: 100%;
   padding: 0;
-  margin-bottom: 20px;
-  font-size: 21px;
+  margin-bottom: 22px;
+  font-size: 24px;
   line-height: inherit;
   color: #333333;
   border: 0;
@@ -4689,15 +4690,15 @@ be a descendant of the grid when it is being dragged.
 #bb output {
   display: block;
   padding-top: 7px;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.42857;
   color: #555555; }
 #bb .form-control {
   display: block;
   width: 100%;
-  height: 34px;
+  height: 36px;
   padding: 6px 12px;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.42857;
   color: #555555;
   background-color: #fff;
@@ -4731,11 +4732,11 @@ be a descendant of the grid when it is being dragged.
   -webkit-appearance: none; }
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
   #bb input[type="date"], #bb input[type="time"], #bb input[type="datetime-local"], #bb input[type="month"] {
-    line-height: 34px; }
+    line-height: 36px; }
   #bb input[type="date"].input-sm, #bb .input-group-sm > input[type="date"].form-control, #bb .input-group-sm > input[type="date"].input-group-addon, #bb .input-group-sm > .input-group-btn > input[type="date"].btn, #bb input[type="time"].input-sm, #bb .input-group-sm > input[type="time"].form-control, #bb .input-group-sm > input[type="time"].input-group-addon, #bb .input-group-sm > .input-group-btn > input[type="time"].btn, #bb input[type="datetime-local"].input-sm, #bb .input-group-sm > input[type="datetime-local"].form-control, #bb .input-group-sm > input[type="datetime-local"].input-group-addon, #bb .input-group-sm > .input-group-btn > input[type="datetime-local"].btn, #bb input[type="month"].input-sm, #bb .input-group-sm > input[type="month"].form-control, #bb .input-group-sm > input[type="month"].input-group-addon, #bb .input-group-sm > .input-group-btn > input[type="month"].btn {
-    line-height: 30px; }
+    line-height: 33px; }
   #bb input[type="date"].input-lg, #bb .input-group-lg > input[type="date"].form-control, #bb .input-group-lg > input[type="date"].input-group-addon, #bb .input-group-lg > .input-group-btn > input[type="date"].btn, #bb input[type="time"].input-lg, #bb .input-group-lg > input[type="time"].form-control, #bb .input-group-lg > input[type="time"].input-group-addon, #bb .input-group-lg > .input-group-btn > input[type="time"].btn, #bb input[type="datetime-local"].input-lg, #bb .input-group-lg > input[type="datetime-local"].form-control, #bb .input-group-lg > input[type="datetime-local"].input-group-addon, #bb .input-group-lg > .input-group-btn > input[type="datetime-local"].btn, #bb input[type="month"].input-lg, #bb .input-group-lg > input[type="month"].form-control, #bb .input-group-lg > input[type="month"].input-group-addon, #bb .input-group-lg > .input-group-btn > input[type="month"].btn {
-    line-height: 46px; } }
+    line-height: 49px; } }
 #bb .form-group {
   margin-bottom: 15px; }
 #bb .radio, #bb .checkbox {
@@ -4744,7 +4745,7 @@ be a descendant of the grid when it is being dragged.
   margin-top: 10px;
   margin-bottom: 10px; }
   #bb .radio label, #bb .checkbox label {
-    min-height: 20px;
+    min-height: 22px;
     padding-left: 20px;
     margin-bottom: 0;
     font-weight: normal;
@@ -4779,50 +4780,50 @@ be a descendant of the grid when it is being dragged.
     padding-left: 0;
     padding-right: 0; }
 #bb .input-sm, #bb .input-group-sm > .form-control, #bb .input-group-sm > .input-group-addon, #bb .input-group-sm > .input-group-btn > .btn, #bb .form-group-sm .form-control {
-  height: 30px;
+  height: 33px;
   padding: 5px 10px;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.5;
   border-radius: 3px; }
 #bb select.input-sm, #bb .input-group-sm > select.form-control, #bb .input-group-sm > select.input-group-addon, #bb .input-group-sm > .input-group-btn > select.btn, #bb .form-group-sm .form-control {
-  height: 30px;
-  line-height: 30px; }
+  height: 33px;
+  line-height: 33px; }
 #bb textarea.input-sm, #bb .input-group-sm > textarea.form-control, #bb .input-group-sm > textarea.input-group-addon, #bb .input-group-sm > .input-group-btn > textarea.btn, #bb .form-group-sm .form-control, #bb select[multiple].input-sm, #bb .input-group-sm > select[multiple].form-control, #bb .input-group-sm > select[multiple].input-group-addon, #bb .input-group-sm > .input-group-btn > select[multiple].btn, #bb .form-group-sm .form-control {
   height: auto; }
 #bb .input-lg, #bb .input-group-lg > .form-control, #bb .input-group-lg > .input-group-addon, #bb .input-group-lg > .input-group-btn > .btn, #bb .form-group-lg .form-control {
-  height: 46px;
+  height: 49px;
   padding: 10px 16px;
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1.33;
   border-radius: 6px; }
 #bb select.input-lg, #bb .input-group-lg > select.form-control, #bb .input-group-lg > select.input-group-addon, #bb .input-group-lg > .input-group-btn > select.btn, #bb .form-group-lg .form-control {
-  height: 46px;
-  line-height: 46px; }
+  height: 49px;
+  line-height: 49px; }
 #bb textarea.input-lg, #bb .input-group-lg > textarea.form-control, #bb .input-group-lg > textarea.input-group-addon, #bb .input-group-lg > .input-group-btn > textarea.btn, #bb .form-group-lg .form-control, #bb select[multiple].input-lg, #bb .input-group-lg > select[multiple].form-control, #bb .input-group-lg > select[multiple].input-group-addon, #bb .input-group-lg > .input-group-btn > select[multiple].btn, #bb .form-group-lg .form-control {
   height: auto; }
 #bb .has-feedback {
   position: relative; }
   #bb .has-feedback .form-control {
-    padding-right: 42.5px; }
+    padding-right: 45px; }
 #bb .form-control-feedback {
   position: absolute;
   top: 0;
   right: 0;
   z-index: 2;
   display: block;
-  width: 34px;
-  height: 34px;
-  line-height: 34px;
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
   text-align: center;
   pointer-events: none; }
 #bb .input-lg + .form-control-feedback, #bb .input-group-lg > .form-control + .form-control-feedback, #bb .input-group-lg > .input-group-addon + .form-control-feedback, #bb .input-group-lg > .input-group-btn > .btn + .form-control-feedback {
-  width: 46px;
-  height: 46px;
-  line-height: 46px; }
+  width: 49px;
+  height: 49px;
+  line-height: 49px; }
 #bb .input-sm + .form-control-feedback, #bb .input-group-sm > .form-control + .form-control-feedback, #bb .input-group-sm > .input-group-addon + .form-control-feedback, #bb .input-group-sm > .input-group-btn > .btn + .form-control-feedback {
-  width: 30px;
-  height: 30px;
-  line-height: 30px; }
+  width: 33px;
+  height: 33px;
+  line-height: 33px; }
 #bb .has-success .help-block, #bb .has-success .control-label, #bb .has-success .radio, #bb .has-success .checkbox, #bb .has-success .radio-inline, #bb .has-success .checkbox-inline, #bb .has-success.radio label, #bb .has-success.checkbox label, #bb .has-success.radio-inline label, #bb .has-success.checkbox-inline label {
   color: #3c763d; }
 #bb .has-success .form-control {
@@ -4872,7 +4873,7 @@ be a descendant of the grid when it is being dragged.
 #bb .has-error .form-control-feedback {
   color: #a94442; }
 #bb .has-feedback label ~ .form-control-feedback {
-  top: 25px; }
+  top: 27px; }
 #bb .has-feedback label.sr-only ~ .form-control-feedback {
   top: 0; }
 #bb .help-block {
@@ -4885,7 +4886,7 @@ be a descendant of the grid when it is being dragged.
   margin-bottom: 0;
   padding-top: 7px; }
 #bb .form-horizontal .radio, #bb .form-horizontal .checkbox {
-  min-height: 27px; }
+  min-height: 29px; }
 #bb .form-horizontal .form-group {
   margin-left: -15px;
   margin-right: -15px; }
@@ -4954,7 +4955,7 @@ be a descendant of the grid when it is being dragged.
   border: 1px solid transparent;
   white-space: nowrap;
   padding: 6px 12px;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.42857;
   border-radius: 4px;
   -webkit-user-select: none;
@@ -5095,17 +5096,17 @@ be a descendant of the grid when it is being dragged.
     text-decoration: none; }
 #bb .btn-lg, #bb .btn-group-lg > .btn {
   padding: 10px 16px;
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1.33;
   border-radius: 6px; }
 #bb .btn-sm, #bb .btn-group-sm > .btn {
   padding: 5px 10px;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.5;
   border-radius: 3px; }
 #bb .btn-xs, #bb .btn-group-xs > .btn {
   padding: 1px 5px;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.5;
   border-radius: 3px; }
 #bb .btn-block {
@@ -5168,7 +5169,7 @@ be a descendant of the grid when it is being dragged.
   padding: 5px 0;
   margin: 2px 0 0;
   list-style: none;
-  font-size: 14px;
+  font-size: 16px;
   text-align: left;
   background-color: #fff;
   border: 1px solid #ccc;
@@ -5182,7 +5183,7 @@ be a descendant of the grid when it is being dragged.
     left: auto; }
   #bb .dropdown-menu .divider {
     height: 1px;
-    margin: 9px 0;
+    margin: 10px 0;
     overflow: hidden;
     background-color: #e5e5e5; }
   #bb .dropdown-menu > li > a {
@@ -5223,7 +5224,7 @@ be a descendant of the grid when it is being dragged.
 #bb .dropdown-header {
   display: block;
   padding: 3px 20px;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.42857;
   color: #777777;
   white-space: nowrap; }
@@ -5391,7 +5392,7 @@ be a descendant of the grid when it is being dragged.
   vertical-align: middle; }
 #bb .input-group-addon {
   padding: 6px 12px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: normal;
   line-height: 1;
   color: #555555;
@@ -5401,11 +5402,11 @@ be a descendant of the grid when it is being dragged.
   border-radius: 4px; }
   #bb .input-group-addon.input-sm, #bb .input-group-sm > .input-group-addon, #bb .input-group-sm > .input-group-btn > .input-group-addon.btn {
     padding: 5px 10px;
-    font-size: 12px;
+    font-size: 14px;
     border-radius: 3px; }
   #bb .input-group-addon.input-lg, #bb .input-group-lg > .input-group-addon, #bb .input-group-lg > .input-group-btn > .input-group-addon.btn {
     padding: 10px 16px;
-    font-size: 18px;
+    font-size: 20px;
     border-radius: 6px; }
   #bb .input-group-addon input[type="radio"], #bb .input-group-addon input[type="checkbox"] {
     margin-top: 0; }
@@ -5465,7 +5466,7 @@ be a descendant of the grid when it is being dragged.
     border-color: #337ab7; }
   #bb .nav .nav-divider {
     height: 1px;
-    margin: 9px 0;
+    margin: 10px 0;
     overflow: hidden;
     background-color: #e5e5e5; }
   #bb .nav > li > a > img {
@@ -5545,7 +5546,7 @@ be a descendant of the grid when it is being dragged.
 #bb .navbar {
   position: relative;
   min-height: 50px;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   border: 1px solid transparent; }
   #bb .navbar:before, #bb .navbar:after {
     content: " ";
@@ -5628,9 +5629,9 @@ be a descendant of the grid when it is being dragged.
   border-width: 1px 0 0; }
 #bb .navbar-brand {
   float: left;
-  padding: 15px 15px;
-  font-size: 18px;
-  line-height: 20px;
+  padding: 14px 15px;
+  font-size: 20px;
+  line-height: 22px;
   height: 50px; }
   #bb .navbar-brand:hover, #bb .navbar-brand:focus {
     text-decoration: none; }
@@ -5663,11 +5664,11 @@ be a descendant of the grid when it is being dragged.
     #bb .navbar-toggle {
       display: none; } }
 #bb .navbar-nav {
-  margin: 7.5px -15px; }
+  margin: 7px -15px; }
   #bb .navbar-nav > li > a {
     padding-top: 10px;
     padding-bottom: 10px;
-    line-height: 20px; }
+    line-height: 22px; }
   @media (max-width: 767px) {
     #bb .navbar-nav .open .dropdown-menu {
       position: static;
@@ -5680,7 +5681,7 @@ be a descendant of the grid when it is being dragged.
       #bb .navbar-nav .open .dropdown-menu > li > a, #bb .navbar-nav .open .dropdown-menu .dropdown-header {
         padding: 5px 15px 5px 25px; }
       #bb .navbar-nav .open .dropdown-menu > li > a {
-        line-height: 20px; }
+        line-height: 22px; }
         #bb .navbar-nav .open .dropdown-menu > li > a:hover, #bb .navbar-nav .open .dropdown-menu > li > a:focus {
           background-image: none; } }
   @media (min-width: 768px) {
@@ -5690,8 +5691,8 @@ be a descendant of the grid when it is being dragged.
       #bb .navbar-nav > li {
         float: left; }
         #bb .navbar-nav > li > a {
-          padding-top: 15px;
-          padding-bottom: 15px; } }
+          padding-top: 14px;
+          padding-bottom: 14px; } }
 #bb .navbar-form {
   margin-left: -15px;
   margin-right: -15px;
@@ -5700,8 +5701,8 @@ be a descendant of the grid when it is being dragged.
   border-bottom: 1px solid transparent;
   -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
-  margin-top: 8px;
-  margin-bottom: 8px; }
+  margin-top: 7px;
+  margin-bottom: 7px; }
   @media (min-width: 768px) {
     #bb .navbar-form .form-group {
       display: inline-block;
@@ -5760,17 +5761,17 @@ be a descendant of the grid when it is being dragged.
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0; }
 #bb .navbar-btn {
-  margin-top: 8px;
-  margin-bottom: 8px; }
+  margin-top: 7px;
+  margin-bottom: 7px; }
   #bb .navbar-btn.btn-sm, #bb .btn-group-sm > .navbar-btn.btn {
-    margin-top: 10px;
-    margin-bottom: 10px; }
+    margin-top: 8.5px;
+    margin-bottom: 8.5px; }
   #bb .navbar-btn.btn-xs, #bb .btn-group-xs > .navbar-btn.btn {
     margin-top: 14px;
     margin-bottom: 14px; }
 #bb .navbar-text {
-  margin-top: 15px;
-  margin-bottom: 15px; }
+  margin-top: 14px;
+  margin-bottom: 14px; }
   @media (min-width: 768px) {
     #bb .navbar-text {
       float: left;
@@ -5899,7 +5900,7 @@ be a descendant of the grid when it is being dragged.
 
 #bb .breadcrumb {
   padding: 8px 15px;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   list-style: none;
   background-color: #f5f5f5;
   border-radius: 4px; }
@@ -5915,7 +5916,7 @@ be a descendant of the grid when it is being dragged.
 #bb .pagination {
   display: inline-block;
   padding-left: 0;
-  margin: 20px 0;
+  margin: 22px 0;
   border-radius: 4px; }
   #bb .pagination > li {
     display: inline; }
@@ -5953,7 +5954,7 @@ be a descendant of the grid when it is being dragged.
     cursor: false; }
 #bb .pagination-lg > li > a, #bb .pagination-lg > li > span {
   padding: 10px 16px;
-  font-size: 18px; }
+  font-size: 20px; }
 #bb .pagination-lg > li:first-child > a, #bb .pagination-lg > li:first-child > span {
   border-bottom-left-radius: 6px;
   border-top-left-radius: 6px; }
@@ -5962,7 +5963,7 @@ be a descendant of the grid when it is being dragged.
   border-top-right-radius: 6px; }
 #bb .pagination-sm > li > a, #bb .pagination-sm > li > span {
   padding: 5px 10px;
-  font-size: 12px; }
+  font-size: 14px; }
 #bb .pagination-sm > li:first-child > a, #bb .pagination-sm > li:first-child > span {
   border-bottom-left-radius: 3px;
   border-top-left-radius: 3px; }
@@ -5972,7 +5973,7 @@ be a descendant of the grid when it is being dragged.
 
 #bb .pager {
   padding-left: 0;
-  margin: 20px 0;
+  margin: 22px 0;
   list-style: none;
   text-align: center; }
   #bb .pager:before, #bb .pager:after {
@@ -6049,7 +6050,7 @@ be a descendant of the grid when it is being dragged.
   display: inline-block;
   min-width: 10px;
   padding: 3px 7px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
   color: #fff;
   line-height: 1;
@@ -6089,7 +6090,7 @@ be a descendant of the grid when it is being dragged.
     color: inherit; }
   #bb .jumbotron p {
     margin-bottom: 15px;
-    font-size: 21px;
+    font-size: 24px;
     font-weight: 200; }
   #bb .jumbotron > hr {
     border-top-color: #d5d5d5; }
@@ -6104,12 +6105,12 @@ be a descendant of the grid when it is being dragged.
         padding-left: 60px;
         padding-right: 60px; }
       #bb .jumbotron h1, #bb .jumbotron .h1 {
-        font-size: 63px; } }
+        font-size: 72px; } }
 
 #bb .thumbnail {
   display: block;
   padding: 4px;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   line-height: 1.42857;
   background-color: #fff;
   border: 1px solid #ddd;
@@ -6131,7 +6132,7 @@ be a descendant of the grid when it is being dragged.
 
 #bb .alert {
   padding: 15px;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   border: 1px solid transparent;
   border-radius: 4px; }
   #bb .alert h4 {
@@ -6200,8 +6201,8 @@ be a descendant of the grid when it is being dragged.
  }
   #bb .progress {
     overflow: hidden;
-    height: 20px;
-    margin-bottom: 20px;
+    height: 22px;
+    margin-bottom: 22px;
     background-color: #f5f5f5;
     border-radius: 4px;
     -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -6210,8 +6211,8 @@ be a descendant of the grid when it is being dragged.
     float: left;
     width: 0%;
     height: 100%;
-    font-size: 12px;
-    line-height: 20px;
+    font-size: 14px;
+    line-height: 22px;
     color: #fff;
     text-align: center;
     background-color: #337ab7;
@@ -6382,7 +6383,7 @@ be a descendant of the grid when it is being dragged.
   line-height: 1.3; }
 
 #bb .panel {
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   background-color: #fff;
   border: 1px solid transparent;
   border-radius: 4px;
@@ -6405,7 +6406,7 @@ be a descendant of the grid when it is being dragged.
 #bb .panel-title {
   margin-top: 0;
   margin-bottom: 0;
-  font-size: 16px;
+  font-size: 18px;
   color: inherit; }
   #bb .panel-title > a {
     color: inherit; }
@@ -6475,7 +6476,7 @@ be a descendant of the grid when it is being dragged.
   border: 0;
   margin-bottom: 0; }
 #bb .panel-group {
-  margin-bottom: 20px; }
+  margin-bottom: 22px; }
   #bb .panel-group .panel {
     margin-bottom: 0;
     border-radius: 4px; }
@@ -6608,7 +6609,7 @@ be a descendant of the grid when it is being dragged.
 
 #bb .close {
   float: right;
-  font-size: 21px;
+  font-size: 24px;
   font-weight: bold;
   line-height: 1;
   color: #000;
@@ -6737,7 +6738,7 @@ be a descendant of the grid when it is being dragged.
   display: block;
   visibility: visible;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: normal;
   line-height: 1.4;
   opacity: 0;
@@ -6829,7 +6830,7 @@ be a descendant of the grid when it is being dragged.
   max-width: 276px;
   padding: 1px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: normal;
   line-height: 1.42857;
   text-align: left;
@@ -6852,7 +6853,7 @@ be a descendant of the grid when it is being dragged.
 #bb .popover-title {
   margin: 0;
   padding: 8px 14px;
-  font-size: 14px;
+  font-size: 16px;
   background-color: #f7f7f7;
   border-bottom: 1px solid #ebebeb;
   border-radius: 5px 5px 0 0; }
@@ -9813,16 +9814,98 @@ Copyright (c) 2014 Daniel Eden
   .icon-price:before {
     content: "\e149"; }
 
-html {
-  font-size: 10px; }
-
 #bb {
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 1.6px;
-  font-size: 1.6rem;
+  font-size: 16px;
   color: #000000;
   background-color: #FFFFFF;
   margin: 0;
+  /**
+ * 	Angular RangeSlider SCSS
+ * 
+ *	Version: 0.0.12
+ *
+ * 	Author: Daniel Crisp, danielcrisp.com
+ *
+ * 	The rangeSlider has been styled to match the default styling
+ * 	of form elements styled using Twitter's Bootstrap
+ * 
+ * 	Originally forked from https://github.com/leongersen/noUiSlider
+ *
+
+	This code is released under the MIT Licence - http://opensource.org/licenses/MIT
+
+	Copyright (c) 2013 Daniel Crisp
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in
+	all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	THE SOFTWARE.
+
+ */
+  /*------------------------------------*\
+    COMPASS IMPORTS
+\*------------------------------------*/
+  /*------------------------------------*\
+    SETTINGS
+\*------------------------------------*/
+  /*------------------------------------*\
+    THE CSS
+\*------------------------------------*/
+  /* line 25, scss/_rangeSlider.scss */
+  /* line 28, scss/_rangeSlider.scss */
+  /* line 53, scss/_rangeSlider.scss */
+  /* line 63, scss/_rangeSlider.scss */
+  /* line 81, scss/_rangeSlider.scss */
+  /* line 95, scss/_rangeSlider.scss */
+  /* line 104, scss/_rangeSlider.scss */
+  /* line 109, scss/_rangeSlider.scss */
+  /* line 120, scss/_rangeSlider.scss */
+  /* line 127, scss/_rangeSlider.scss */
+  /* line 137, scss/_rangeSlider.scss */
+  /* line 145, scss/_rangeSlider.scss */
+  /* line 153, scss/_rangeSlider.scss */
+  /* line 160, scss/_rangeSlider.scss */
+  /* line 167, scss/_rangeSlider.scss */
+  /* line 170, scss/_rangeSlider.scss */
+  /* line 179, scss/_rangeSlider.scss */
+  /* line 187, scss/_rangeSlider.scss */
+  /* line 197, scss/_rangeSlider.scss */
+  /* line 211, scss/_rangeSlider.scss */
+  /* line 225, scss/_rangeSlider.scss */
+  /* line 236, scss/_rangeSlider.scss */
+  /* line 243, scss/_rangeSlider.scss */
+  /* line 253, scss/_rangeSlider.scss */
+  /* line 258, scss/_rangeSlider.scss */
+  /* line 267, scss/_rangeSlider.scss */
+  /* line 276, scss/_rangeSlider.scss */
+  /* line 284, scss/_rangeSlider.scss */
+  /* line 290, scss/_rangeSlider.scss */
+  /* line 298, scss/_rangeSlider.scss */
+  /* line 304, scss/_rangeSlider.scss */
+  /* line 316, scss/_rangeSlider.scss */
+  /* line 327, scss/_rangeSlider.scss */
+  /* line 333, scss/_rangeSlider.scss */
+  /* line 337, scss/_rangeSlider.scss */
+  /* line 343, scss/_rangeSlider.scss */
+  /* line 347, scss/_rangeSlider.scss */
+  /*------------------------------------*\
+    TOUCH STATE
+\*------------------------------------*/
+  /* line 359, scss/_rangeSlider.scss */
   /* GMAP START */
   /* GMAP END */ }
   #bb .btn-icon {
@@ -9877,18 +9960,16 @@ html {
     border-bottom: 1px solid #DDD;
     padding-bottom: 10px;
     margin-bottom: 20px;
-    font-size: 26px;
-    font-size: 2.6rem; }
+    font-size: 28px; }
   #bb .control-label {
     font-size: 16px;
-    font-size: 1.6rem;
-    padding-right: 0; }
+    padding-right: 0;
+    font-weight: normal; }
     @media (max-width: 767px) {
       #bb .control-label {
         padding-bottom: 5px; } }
   #bb .form-control-static {
-    font-size: 16px;
-    font-size: 1.6rem; }
+    font-size: 16px; }
   #bb .booking-summary-item {
     margin-bottom: 5px; }
     #bb .booking-summary-item label {
@@ -9896,8 +9977,6 @@ html {
       text-align: right; }
   #bb .booking-summary-wrapper {
     margin-bottom: 30px; }
-  #bb label {
-    font-weight: 400; }
   #bb .input-group-btn:last-child > .btn.btn-lg, #bb .btn-group-lg.input-group-btn:last-child > .btn {
     padding: 10px 16px; }
   #bb .error-message {
@@ -9918,8 +9997,7 @@ html {
       content: "\e107"; }
   #bb .bb-message-node {
     margin: 30px 0 20px;
-    font-size: 18px;
-    font-size: 1.8rem; }
+    font-size: 20px; }
   #bb .feedback {
     margin-bottom: 75px; }
   #bb .bb-slash {
@@ -9968,7 +10046,6 @@ html {
     margin-bottom: 20px;
     line-height: 1.4; }
   #bb .bb-summary-list {
-    margin-top: 20px;
     margin-bottom: 20px;
     line-height: 1.4; }
     #bb .bb-summary-list .bb-confirmation-summary-item {
@@ -10032,7 +10109,9 @@ html {
       @media (max-width: 767px) {
         #bb .bb-summary-list .bb-confirmation-summary-item {
           margin-bottom: 10px;
-          margin-top: 10px; } }
+          margin-top: 10px; }
+          #bb .bb-summary-list .bb-confirmation-summary-item .bb-summary-value {
+            font-weight: bold; } }
   #bb .event-summary-list {
     margin-bottom: 5px; }
     #bb .event-summary-list li {
@@ -10076,13 +10155,12 @@ html {
   #bb .page-heading-wrapper {
     margin: 0 0 10px 0; }
   #bb .page-heading {
-    font-size: 24.5px;
-    font-size: 2.45rem;
+    font-size: 28px;
     padding: 0;
-    display: inline; }
+    display: inline;
+    border-bottom: none; }
   #bb .page-sub-heading {
-    font-size: 15px;
-    font-size: 1.5rem; }
+    font-size: 16px; }
   #bb .page-intro, #bb .page-summary {
     margin-bottom: 30px; }
   #bb .seperator {
@@ -10109,7 +10187,6 @@ html {
     height: 118px; }
   #bb .powered-by {
     font-size: 16px;
-    font-size: 1.6rem;
     margin-bottom: 20px;
     text-align: right; }
     @media print {
@@ -10118,14 +10195,12 @@ html {
   #bb .text-block {
     margin-bottom: 20px; }
   #bb .bb-member {
-    font-size: 16px;
-    font-size: 1.6rem; }
+    font-size: 16px; }
   #bb .bb-section-title {
     border-bottom: 1px solid #666;
     padding-bottom: 10px;
     margin-bottom: 20px;
-    font-size: 26px;
-    font-size: 2.6rem; }
+    font-size: 28px; }
   #bb .bb-step-navigation {
     margin-top: 75px;
     margin-bottom: 20px;
@@ -10152,6 +10227,246 @@ html {
     #bb .bb-thankyou-focus h2 {
       text-align: center;
       margin: 10% 3% 10%; }
+  #bb .ngrs-range-slider {
+    position: relative;
+    margin: 0 0 8px 0;
+    padding: 4px;
+    border: 1px solid #ccc;
+    background: #fff;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border linear, box-shadow linear;
+    -webkit-transition-delay: 0.2s, 0.2s;
+    -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -o-transition: border linear 0.2s, box-shadow linear 0.2s;
+    transition: border linear 0.2s, box-shadow linear 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    /*------------------------------------*\
+      RUNNER
+  \*------------------------------------*/
+    /*------------------------------------*\
+      JOIN (connects the two handles)
+  \*------------------------------------*/
+    /*------------------------------------*\
+      HANDLE
+  \*------------------------------------*/
+    /*------------------------------------*\
+      HANDLE SPECIFICS
+  \*------------------------------------*/
+    /*------------------------------------*\
+      VALUE LABELS
+  \*------------------------------------*/
+    /*------------------------------------*\
+      ATTACHED VALUE RUNNER
+  \*------------------------------------*/
+    /*------------------------------------*\
+      VERTICAL SLIDER
+  \*------------------------------------*/
+    /*------------------------------------*\
+      FOCUS STATE
+  \*------------------------------------*/
+    /*------------------------------------*\
+      DISABLED STATE
+  \*------------------------------------*/ }
+  #bb .ngrs-range-slider, #bb .ngrs-range-slider * {
+    display: block;
+    cursor: default;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none; }
+  #bb .ngrs-range-slider .ngrs-runner {
+    position: relative;
+    margin: 0 9px;
+    height: 18px; }
+  #bb .ngrs-range-slider .ngrs-join {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    left: 0;
+    right: 100%;
+    height: 8px;
+    margin: -4px 0 0 0;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+    border-radius: 4px;
+    background-color: #2f96b4;
+    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #5bc0de), color-stop(100%, #2f96b4));
+    background-image: -webkit-linear-gradient(#5bc0de, #2f96b4);
+    background-image: -moz-linear-gradient(#5bc0de, #2f96b4);
+    background-image: -o-linear-gradient(#5bc0de, #2f96b4);
+    background-image: linear-gradient(#5bc0de, #2f96b4); }
+  #bb .ngrs-range-slider .ngrs-handle {
+    position: absolute;
+    z-index: 2;
+    height: 100%;
+    width: 18px;
+    margin: 0 0 0 -9px;
+    background: #efefef;
+    border: 1px solid #ccc;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ms-border-radius: 3px;
+    -o-border-radius: 3px;
+    border-radius: 3px;
+    /*------------------------------------*\
+      HANDLE ICON
+  \*------------------------------------*/ }
+  #bb .ngrs-range-slider .ngrs-handle i {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: no-repeat -9999px -9999px;
+    cursor: pointer; }
+  #bb .ngrs-range-slider .ngrs-handle.ngrs-over i {
+    background-position: 50% 50%; }
+  #bb .ngrs-range-slider .ngrs-handle.ngrs-down {
+    -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.2); }
+  #bb .ngrs-range-slider .ngrs-handle-min i {
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAFNJREFUeNpiYMAEXEDsA+OwoEnKALETEHOgK2AEYhMgNkQ3DqSAB6pLAot1DExIJmAFzED8C4hvQdnIppyFKYCBp0D8CohloVafxWUqN7I3AQIMAKw6B24pOi8lAAAAAElFTkSuQmCC"); }
+  #bb .ngrs-range-slider .ngrs-handle-max i {
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAFdJREFUeNpiYEAAHyDmYkADzEhsByBWA+K3QPwJmwJjIGYBYlUgZgLi59gUwIAkEEsD8VMmBtyAkQFqJDZwAYjPAPE/dAU/gHg/ED/GpgvkTW50QYAAAwADfwrM5sqplgAAAABJRU5ErkJggg=="); }
+  #bb .ngrs-range-slider .ngrs-value {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    padding: 5px 0 0 0;
+    font-size: 12px;
+    color: #999; }
+  #bb .ngrs-range-slider .ngrs-value.ngrs-value-max {
+    left: auto;
+    right: 0;
+    text-align: right; }
+  #bb .ngrs-range-slider.ngrs-handle-min-down .ngrs-value-min, #bb .ngrs-range-slider.ngrs-handle-max-down .ngrs-value-max {
+    color: #333; }
+  #bb .ngrs-range-slider .ngrs-attached-handles {
+    margin: 0 9px;
+    position: relative;
+    /*------------------------------------*\
+      ATTACHED VALUE RUNNER LABELS
+  \*------------------------------------*/ }
+  #bb .ngrs-range-slider .ngrs-attached-handles .ngrs-value-max {
+    text-align: left; }
+  #bb .ngrs-range-slider .ngrs-attached-handles .ngrs-value > div {
+    margin: 0 0 0 -50%; }
+  #bb .ngrs-range-slider.ngrs-vertical {
+    width: 28px;
+    margin: 10px auto;
+    /*------------------------------------*\
+      RUNNER
+  \*------------------------------------*/
+    /*------------------------------------*\
+      ATTACHED VALUE RUNNER
+  \*------------------------------------*/
+    /*------------------------------------*\
+      JOIN
+  \*------------------------------------*/
+    /*------------------------------------*\
+      HANDLE
+  \*------------------------------------*/
+    /*------------------------------------*\
+      HANDLE SPECIFICS
+  \*------------------------------------*/
+    /*------------------------------------*\
+      VALUE LABELS
+  \*------------------------------------*/
+    /*------------------------------------*\
+      VERTICAL LEFT SLIDER
+  \*------------------------------------*/
+    /*------------------------------------*\
+      VERTICAL RIGHT SLIDER
+  \*------------------------------------*/ }
+  #bb .ngrs-range-slider.ngrs-vertical .ngrs-runner {
+    margin: 9px 0;
+    height: 300px;
+    width: 18px; }
+  #bb .ngrs-range-slider.ngrs-vertical .ngrs-value-runner.ngrs-attached-handles {
+    padding: 4px;
+    position: absolute;
+    top: 0;
+    margin: 9px 0;
+    height: 300px;
+    left: 100%; }
+  #bb .ngrs-range-slider.ngrs-vertical .ngrs-join {
+    width: 8px;
+    height: auto;
+    top: 0;
+    bottom: 100%;
+    left: 50%;
+    right: auto;
+    margin: 0 0 0 -4px; }
+  #bb .ngrs-range-slider.ngrs-vertical .ngrs-handle {
+    width: 100%;
+    height: 18px;
+    margin: -9px 0 0 0; }
+  #bb .ngrs-range-slider.ngrs-vertical .ngrs-handle-min i {
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAFFJREFUeNpiYEAFPFAMB0xIbEYgdoJiRpggM5ICUyBWhZoA0vgMWYEsENsg6ZQE4ldA/AmkkguIHZGNhQKQGBfIBHcgFmTABCxALMJAMQAIMAAcNgVQJ7t7JQAAAABJRU5ErkJggg=="); }
+  #bb .ngrs-range-slider.ngrs-vertical .ngrs-handle-max i {
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAFZJREFUeNpiYKAUMAKxDxBL4ZB/xgQk9gHxDyySILF9zEDiNxC/A2JVNAW7gfgtM5TzCYhZgFgCyr8IxNdADGZk+4BYGoi/APEBIP6PzVE8UAwHAAEGAArIDvzRFIA6AAAAAElFTkSuQmCC"); }
+  #bb .ngrs-range-slider.ngrs-vertical .ngrs-value {
+    top: 0;
+    left: 100%;
+    padding: 0 0 0 5px; }
+  #bb .ngrs-range-slider.ngrs-vertical .ngrs-value.ngrs-value-max {
+    top: auto;
+    bottom: 0;
+    right: auto;
+    text-align: left; }
+  #bb .ngrs-range-slider.ngrs-vertical .ngrs-attached-handles .ngrs-value-max, #bb .ngrs-range-slider.ngrs-vertical .ngrs-attached-handles .ngrs-value-min {
+    margin: -50% 0 0; }
+  #bb .ngrs-range-slider.ngrs-vertical.ngrs-left {
+    margin: 10px 0; }
+  #bb .ngrs-range-slider.ngrs-vertical.ngrs-right {
+    margin: 10px 0 10px auto;
+    /*------------------------------------*\
+      ATTACHED VALUE RUNNER
+  \*------------------------------------*/
+    /*------------------------------------*\
+      VALUE LABELS
+  \*------------------------------------*/ }
+  #bb .ngrs-range-slider.ngrs-vertical.ngrs-right .ngrs-attached-handles {
+    left: 0%; }
+  #bb .ngrs-range-slider.ngrs-vertical.ngrs-right .ngrs-value {
+    left: auto;
+    right: 100%;
+    padding: 0 5px 0 0;
+    text-align: right; }
+  #bb .ngrs-range-slider.ngrs-vertical.ngrs-right .ngrs-value.ngrs-value-max {
+    text-align: right; }
+  #bb .ngrs-range-slider.ngrs-focus {
+    border-color: rgba(82, 168, 236, 0.8);
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6); }
+  #bb .ngrs-range-slider.ngrs-disabled, #bb .ngrs-range-slider.ngrs-disabled.ngrs-focus {
+    border-color: #ddd;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none; }
+  #bb .ngrs-range-slider.ngrs-disabled .ngrs-handle {
+    background: #fff;
+    border-color: #ddd; }
+  #bb .ngrs-range-slider.ngrs-disabled .ngrs-handle i {
+    background: none !important;
+    cursor: default; }
+  #bb .ngrs-range-slider.ngrs-disabled .ngrs-join {
+    background: #ddd; }
+  #bb .ngrs-range-slider.ngrs-disabled .ngrs-value {
+    color: #ddd; }
+  #bb body.ngrs-touching {
+    -ms-touch-action: none; }
   #bb .bb-basket table.table, #bb div[bb-basket-list] table.table {
     color: #000000; }
   #bb .bb-basket .bb-coupon-box, #bb div[bb-basket-list] .bb-coupon-box {
@@ -10166,8 +10481,7 @@ html {
   #bb .bb-basket-mini a, #bb div[bb-basket][mini] a {
     text-decoration: none; }
   #bb .bb-basket-mini .glyphicon, #bb div[bb-basket][mini] .glyphicon {
-    font-size: 30px;
-    font-size: 3rem; }
+    font-size: 34px; }
   #bb .bb-basket-mini .badge-notify, #bb div[bb-basket][mini] .badge-notify {
     background-color: #FF0000;
     position: relative;
@@ -10176,133 +10490,124 @@ html {
     float: right; }
   #bb .bb-basket-mini table.table, #bb div[bb-basket][mini] table.table {
     color: #000000;
-    font-size: 14px;
-    font-size: 1.4rem; }
+    font-size: 16px; }
     #bb .bb-basket-mini table.table .glyphicon, #bb div[bb-basket][mini] table.table .glyphicon {
-      font-size: 14px;
-      font-size: 1.4rem; }
+      font-size: 16px; }
   #bb .bb-basket-mini span.glyphicon-shopping-cart, #bb div[bb-basket][mini] span.glyphicon-shopping-cart {
     padding-left: 60px; }
   #bb .bb-basket-mini span.disabled-cart, #bb div[bb-basket][mini] span.disabled-cart {
     opacity: 0.4; }
     #bb .bb-basket-mini span.disabled-cart:hover, #bb div[bb-basket][mini] span.disabled-cart:hover {
       cursor: default; }
-  #bb .calendar {
+  #bb .calendar, #bb div[bb-time-ranges] {
     padding-bottom: 50px; }
-    #bb .calendar .week {
+    #bb .calendar .week, #bb div[bb-time-ranges] .week {
       padding: 0 15px;
       list-style: none; }
-    #bb .calendar .day {
+    #bb .calendar .day, #bb div[bb-time-ranges] .day {
       width: 12.85%;
       float: left;
       padding-right: 10px; }
       @media (max-width: 767px) {
-        #bb .calendar .day {
+        #bb .calendar .day, #bb div[bb-time-ranges] .day {
           padding: 0 20px;
           width: 100%; } }
-    #bb .calendar .day.navigation {
+    #bb .calendar .day.navigation, #bb div[bb-time-ranges] .day.navigation {
       width: 5%;
       float: left; }
-      #bb .calendar .day.navigation .btn-icon {
-        font-size: 30px;
-        font-size: 3rem;
+      #bb .calendar .day.navigation .btn-icon, #bb div[bb-time-ranges] .day.navigation .btn-icon {
+        font-size: 34px;
         color: inherit;
         float: left;
         margin-top: 118px; }
-      #bb .calendar .day.navigation:last-of-type {
+      #bb .calendar .day.navigation:last-of-type, #bb div[bb-time-ranges] .day.navigation:last-of-type {
         padding-right: 0; }
-    #bb .calendar .month-header {
+    #bb .calendar .month-header, #bb div[bb-time-ranges] .month-header {
       margin-bottom: 30px; }
-      #bb .calendar .month-header .month-heading {
+      #bb .calendar .month-header .month-heading, #bb div[bb-time-ranges] .month-header .month-heading {
         margin: 0;
         text-align: center;
-        font-size: 29px;
-        font-size: 2.9rem; }
-    #bb .calendar .day-header .previous {
+        font-size: 34px; }
+    #bb .calendar .day-header .previous, #bb div[bb-time-ranges] .day-header .previous {
       text-align: left; }
-    #bb .calendar .day-header .next {
+    #bb .calendar .day-header .next, #bb div[bb-time-ranges] .day-header .next {
       text-align: right; }
-    #bb .calendar .day-header .icon {
-      font-size: 25px;
-      font-size: 2.5rem; }
-    #bb .calendar .day-header .day-heading {
+    #bb .calendar .day-header .icon, #bb div[bb-time-ranges] .day-header .icon {
+      font-size: 28px; }
+    #bb .calendar .day-header .day-heading, #bb div[bb-time-ranges] .day-header .day-heading {
       text-align: center;
-      font-size: 14px;
-      font-size: 1.4rem; }
+      font-size: 16px; }
       @media (min-width: 768px) {
-        #bb .calendar .day-header .day-heading {
+        #bb .calendar .day-header .day-heading, #bb div[bb-time-ranges] .day-header .day-heading {
           text-align: left;
           padding-left: 30px; } }
-    #bb .calendar .panel-group .panel {
+    #bb .calendar .panel-group .panel, #bb div[bb-time-ranges] .panel-group .panel {
       border-radius: 0;
       margin: 0;
       border: none;
       border-bottom: 1px #dddddd solid;
       box-shadow: none; }
-    #bb .calendar .panel-group .accordian-group:first-child .panel {
+    #bb .calendar .panel-group .accordian-group:first-child .panel, #bb div[bb-time-ranges] .panel-group .accordian-group:first-child .panel {
       border-top: 1px #dddddd solid; }
-    #bb .calendar .panel-default > .panel-heading {
+    #bb .calendar .panel-default > .panel-heading, #bb div[bb-time-ranges] .panel-default > .panel-heading {
       background: none;
       padding: 15px;
       position: relative;
       cursor: pointer;
       color: inherit; }
-    #bb .calendar .collapse-control {
+    #bb .calendar .collapse-control, #bb div[bb-time-ranges] .collapse-control {
       position: absolute;
       top: 10px;
       right: 10px;
       cursor: position; }
-    #bb .calendar .panel-default > .panel-heading + .panel-collapse .panel-body {
+    #bb .calendar .panel-default > .panel-heading + .panel-collapse .panel-body, #bb div[bb-time-ranges] .panel-default > .panel-heading + .panel-collapse .panel-body {
       border: none; }
-    #bb .calendar .panel-body {
+    #bb .calendar .panel-body, #bb div[bb-time-ranges] .panel-body {
       padding: 0; }
-    #bb .calendar .panel-title {
+    #bb .calendar .panel-title, #bb div[bb-time-ranges] .panel-title {
       font-size: inherit; }
-    #bb .calendar .period-label {
+    #bb .calendar .period-label, #bb div[bb-time-ranges] .period-label {
       display: block;
       text-transform: uppercase;
       margin-bottom: 10px;
-      font-size: 9px;
-      font-size: 0.9rem; }
-    #bb .calendar .time-slot {
+      font-size: 14px; }
+    #bb .calendar .time-slot, #bb div[bb-time-ranges] .time-slot {
       padding: 15px 25px;
       cursor: pointer;
       text-align: center; }
-      #bb .calendar .time-slot:hover, #bb .calendar .time-slot.selected {
+      #bb .calendar .time-slot:hover, #bb .calendar .time-slot.selected, #bb div[bb-time-ranges] .time-slot:hover, #bb div[bb-time-ranges] .time-slot.selected {
         background-color: #333;
         color: #FFF; }
-    #bb .calendar .panel-group .panel.expanded {
+    #bb .calendar .panel-group .panel.expanded, #bb div[bb-time-ranges] .panel-group .panel.expanded {
       background-color: #EEE; }
-    #bb .calendar .panel-group .panel.selected {
+    #bb .calendar .panel-group .panel.selected, #bb div[bb-time-ranges] .panel-group .panel.selected {
       background-color: #777;
       color: #FFF; }
-    #bb .calendar .panel-default.expanded > .panel-heading {
+    #bb .calendar .panel-default.expanded > .panel-heading, #bb div[bb-time-ranges] .panel-default.expanded > .panel-heading {
       padding-bottom: 5px; }
-    #bb .calendar .panel-default[disabled], #bb .calendar .panel[disabled].expanded {
+    #bb .calendar .panel-default[disabled], #bb .calendar .panel[disabled].expanded, #bb div[bb-time-ranges] .panel-default[disabled], #bb div[bb-time-ranges] .panel[disabled].expanded {
       background: none; }
-      #bb .calendar .panel-default[disabled] .panel-heading, #bb .calendar .panel[disabled].expanded .panel-heading {
+      #bb .calendar .panel-default[disabled] .panel-heading, #bb .calendar .panel[disabled].expanded .panel-heading, #bb div[bb-time-ranges] .panel-default[disabled] .panel-heading, #bb div[bb-time-ranges] .panel[disabled].expanded .panel-heading {
         cursor: default;
         padding-bottom: 15px; }
-      #bb .calendar .panel-default[disabled] .panel-collapse, #bb .calendar .panel[disabled].expanded .panel-collapse {
+      #bb .calendar .panel-default[disabled] .panel-collapse, #bb .calendar .panel[disabled].expanded .panel-collapse, #bb div[bb-time-ranges] .panel-default[disabled] .panel-collapse, #bb div[bb-time-ranges] .panel[disabled].expanded .panel-collapse {
         display: none; }
-      #bb .calendar .panel-default[disabled] .panel-title, #bb .calendar .panel[disabled].expanded .panel-title {
+      #bb .calendar .panel-default[disabled] .panel-title, #bb .calendar .panel[disabled].expanded .panel-title, #bb div[bb-time-ranges] .panel-default[disabled] .panel-title, #bb div[bb-time-ranges] .panel[disabled].expanded .panel-title {
         color: #CCC; }
-    #bb .calendar .actions {
+    #bb .calendar .actions, #bb div[bb-time-ranges] .actions {
       text-align: right; }
       @media (max-width: 767px) {
-        #bb .calendar .actions {
+        #bb .calendar .actions, #bb div[bb-time-ranges] .actions {
           padding-right: 20px; } }
   #bb .confirmation-summary-container {
     margin-bottom: 60px; }
   #bb .confirmation-header, #bb .confirmation-change-options {
     font-size: 16px;
-    font-size: 1.6rem;
     text-align: center; }
   #bb .confirmation-heading {
     margin-bottom: 15px; }
   #bb .confirmation-summary {
     font-size: 16px;
-    font-size: 1.6rem;
     border-bottom: 1px solid #dddddd;
     margin: 6px 0 0px 0;
     padding: 20px 10px 10px 10px; }
@@ -10321,7 +10626,6 @@ html {
     text-align: right; }
   #bb .calendar-export {
     font-size: 16px;
-    font-size: 1.6rem;
     line-height: 42px; }
   #bb .calendar-export-label {
     padding-right: 10px; }
@@ -10350,9 +10654,13 @@ html {
     border-bottom: 1px solid #dddddd;
     margin-bottom: 15px; }
   #bb .bb-checkout .bb-message, #bb div[bb-checkout] .bb-message {
-    margin-top: 25px; }
+    padding: 20px 10px 10px 10px; }
     #bb .bb-checkout .bb-message p, #bb div[bb-checkout] .bb-message p {
       margin: 10px 0 5px; }
+  #bb .bb-confirmation-no-border-below {
+    border-bottom: none; }
+  #bb .angular-google-map-container {
+    height: 200px; }
   #bb .bb-booking-export {
     display: inline; }
   #bb .bb-day .btn-link, #bb div[bb-month-availability] .btn-link {
@@ -10375,8 +10683,7 @@ html {
   #bb .bb-day td.bb-no-go:hover, #bb div[bb-month-availability] td.bb-no-go:hover {
     cursor: initial; }
   #bb .bb-duration-list .bb-duration-price, #bb div[bb-durations] .bb-duration-price {
-    font-size: 24px;
-    font-size: 2.4rem;
+    font-size: 28px;
     text-align: right; }
   #bb .event-group .panel-default {
     position: relative;
@@ -10551,12 +10858,12 @@ html {
       #bb #bb-event-list .bb-filters .date-picker, #bb div[bb-events] .bb-filters .date-picker {
         width: 100%; } }
   #bb .search-form-wrapper {
-    margin: 10px 0; }
+    margin: 10px 0 15px 0; }
     #bb .search-form-wrapper .form-group {
       margin-bottom: 0; }
   #bb .company-map-header {
-    font-size: 1.3em;
-    margin-bottom: 15px; }
+    margin: 15px 0 25px;
+    font-size: 20px; }
   #bb .bb-company-block .panel-heading {
     cursor: pointer; }
   #bb .bb-company-block .panel-title {
@@ -10570,10 +10877,11 @@ html {
     #bb .bb-map-block {
       padding-bottom: 15px; } }
   #bb .map-canvas {
-    height: 800px; }
+    height: 400px;
+    margin-bottom: 15px; }
     @media (max-width: 767px) {
       #bb .map-canvas {
-        height: 400px; } }
+        height: 200px; } }
   #bb .gmnoprint img {
     max-width: none;
     max-height: none; }
@@ -10582,9 +10890,16 @@ html {
   #bb .gm-style label {
     width: auto;
     display: inline; }
+  #bb .bb-store-search .panel {
+    border-top: 1px solid #DDD; }
+  #bb .bb-store-search .panel-title {
+    font-size: 16px; }
+  #bb .bb-store-search input {
+    font-size: 16px; }
+  #bb .bb-store-search .bb-map-block {
+    height: 800px; }
   #bb .bb-service-list .bb-service-name, #bb div[bb-services] .bb-service-name {
-    font-size: 24px;
-    font-size: 2.4rem;
+    font-size: 28px;
     font-weight: 200; }
   #bb .bb-service-list .bb-service-image, #bb div[bb-services] .bb-service-image {
     margin-bottom: 20px; }
@@ -10598,32 +10913,8 @@ html {
   #bb .bb-service-list .bb-service-description, #bb div[bb-services] .bb-service-description {
     margin-bottom: 20px; }
   #bb .bb-service-list .bb-service-price, #bb div[bb-services] .bb-service-price {
-    font-size: 24px;
-    font-size: 2.4rem;
+    font-size: 28px;
     text-align: right; }
-  #bb .bb-service-list .bb-filters .panel:last-child, #bb div[bb-services] .bb-filters .panel:last-child {
-    margin-bottom: 0; }
-  #bb .bb-service-list .bb-filters .panel-group:last-child, #bb div[bb-services] .bb-filters .panel-group:last-child {
-    margin-bottom: 0; }
-  #bb .bb-service-list .bb-filters .panel-heading, #bb div[bb-services] .bb-filters .panel-heading {
-    cursor: pointer;
-    text-align: center;
-    padding: 15px; }
-  #bb .bb-service-list .bb-filters .panel-title, #bb div[bb-services] .bb-filters .panel-title {
-    font-size: 16px;
-    font-size: 1.6rem;
-    padding-bottom: 0px; }
-  #bb .bb-service-list .bb-filters .panel-body, #bb div[bb-services] .bb-filters .panel-body {
-    padding-bottom: 0; }
-  #bb .bb-service-list .bb-filters .form-group, #bb div[bb-services] .bb-filters .form-group {
-    padding-right: 15px; }
-  #bb .bb-service-list .bb-filters .date-picker, #bb div[bb-services] .bb-filters .date-picker {
-    width: 240px; }
-    #bb .bb-service-list .bb-filters .date-picker table, #bb div[bb-services] .bb-filters .date-picker table {
-      outline: none; }
-    @media (max-width: 767px) {
-      #bb .bb-service-list .bb-filters .date-picker, #bb div[bb-services] .bb-filters .date-picker {
-        width: 100%; } }
   #bb #bb-event .event-long-description ul, #bb div[bb-event] .event-long-description ul, #bb .event .event-long-description ul {
     margin: 20px;
     padding: 0 20px;
@@ -10728,8 +11019,7 @@ html {
     margin-bottom: 15px; }
   #bb .bb-time .bb-service-unavailable, #bb [bb-times] .bb-service-unavailable {
     color: #ccc;
-    font-size: 18px;
-    font-size: 1.8rem;
+    font-size: 20px;
     text-align: center;
     border: 1px solid #ccc;
     padding: 10px;
@@ -10751,6 +11041,8 @@ html {
     margin-right: 5px; }
   #bb .bb-time .glyphicon-chevron-right, #bb [bb-times] .glyphicon-chevron-right {
     margin-left: 5px; }
+  #bb .bb-time .panel-heading, #bb [bb-times] .panel-heading {
+    cursor: pointer; }
   #bb .bb-time .panel-default[disabled], #bb .bb-time .panel[disabled].expanded, #bb [bb-times] .panel-default[disabled], #bb [bb-times] .panel[disabled].expanded {
     background: none; }
     #bb .bb-time .panel-default[disabled] .panel-heading, #bb .bb-time .panel[disabled].expanded .panel-heading, #bb [bb-times] .panel-default[disabled] .panel-heading, #bb [bb-times] .panel[disabled].expanded .panel-heading {
@@ -10763,3 +11055,34 @@ html {
     #bb .bb-time .panel-default[disabled] small, #bb .bb-time .panel[disabled].expanded small, #bb [bb-times] .panel-default[disabled] small, #bb [bb-times] .panel[disabled].expanded small {
       font-weight: inherit;
       color: inherit; }
+  #bb .bb-filters .panel:last-child {
+    margin-bottom: 0; }
+  #bb .bb-filters .panel-group:last-child {
+    margin-bottom: 0; }
+  #bb .bb-filters .panel-heading {
+    cursor: pointer;
+    text-align: center;
+    padding: 15px; }
+  #bb .bb-filters .panel-title {
+    font-size: 16px;
+    padding-bottom: 0px; }
+  #bb .bb-filters .panel-body {
+    padding-bottom: 0; }
+  #bb .bb-filters .form-group {
+    padding-bottom: 15px;
+    padding-right: 15px; }
+    @media (max-width: 767px) {
+      #bb .bb-filters .form-group {
+        padding-right: 0; } }
+  #bb .bb-filters .date-picker {
+    width: 240px; }
+    #bb .bb-filters .date-picker table {
+      outline: none; }
+    @media (max-width: 767px) {
+      #bb .bb-filters .date-picker {
+        width: 100%; } }
+  #bb .bb-filters [bb-price-filter] {
+    width: 240px; }
+    @media (max-width: 767px) {
+      #bb .bb-filters [bb-price-filter] {
+        width: 100%; } }
