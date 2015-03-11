@@ -33,11 +33,6 @@
           </ul>
           <ul ng-show="total.items[0].address.lat" class="confirmation-summary">
             <li class="row confirmation-summary-item">
-              <div class="col-sm-12"> 
-                Location:
-              </div> 
-            </li>
-            <li class="row confirmation-summary-item">
               <div class="col-sm-12">
                 <div bb-address-map="total.items[0].address" ng-if="total.items[0].address.lat" >
                   <ui-gmap-google-map center='map.center' zoom='map.zoom' options="options">
