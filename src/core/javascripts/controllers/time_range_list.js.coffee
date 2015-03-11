@@ -361,9 +361,16 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
     if !$scope.bb.current_item.time
       AlertService.add("danger", { msg: "You need to select a time slot" })
       return false
-    else if $scope.bb.moving_booking && $scope.bb.current_item.datetime.isSame($scope.bb.current_item.original_datetime)
+    else if $scope.bb.moving_booking && $scope.bb.current_item.start_datetime().isSame($scope.bb.current_item.original_datetime)
       AlertService.add("danger", { msg: "Your appointment is already booked for this time." })
       return false
+    else if $scope.bb.moving_booking
+      # set a 'default' person and resource if we need them, but haven't picked any in moving
+      if $scope.bb.company.$has('resources') && !$scope.bb.current_item.resource
+        $scope.bb.current_item.resource = true
+      if $scope.bb.company.$has('people') && !$scope.bb.current_item.person
+        $scope.bb.current_item.person = true
+      return true
     else
       if $scope.bb.current_item.reserve_ready
         return $scope.addItemToBasket()

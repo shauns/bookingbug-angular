@@ -18,11 +18,11 @@ angular.module('BB.Directives').directive 'bbPayment', ($window, $location, $sce
     referrer = $location.protocol() + "://" + $location.host()
     if $location.port()
       referrer += ":" + $location.port()
-    payload = {
+    payload = JSON.stringify({
       'type': 'load',
       'message': referrer,
       'custom_partial_url': scope.bb.custom_partial_url
-    }
+    })
     element.find('iframe')[0].contentWindow.postMessage(payload, origin)
 
   linker = (scope, element, attributes) ->
@@ -33,8 +33,12 @@ angular.module('BB.Directives').directive 'bbPayment', ($window, $location, $sce
       sendLoadEvent(element, origin, scope)
 
     $window.addEventListener 'message', (event) =>
+      if angular.isObject(event.data)
+        data = event.data
+      else
+        data = JSON.parse event.data
       scope.$apply =>
-        switch event.data.type
+        switch data.type
           when "submitting"
             scope.callNotLoaded()
           when "error"

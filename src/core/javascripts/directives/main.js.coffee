@@ -28,6 +28,21 @@ app.directive 'bbLoading', ($compile) ->
     $compile(element)(scope)
     return
 
+app.directive 'bbWaitFor', ($compile) ->
+  transclude: false,
+  restrict: 'A',
+  priority: 800,
+  link: (scope, element, attrs) ->
+    name = attrs.bbWaitVar
+    name ||= "allDone"
+    scope[name] = false
+    prom = scope.$eval(attrs.bbWaitFor)
+    prom.then () ->
+      scope[name] = true
+#    element.attr('bb-wait-for',null)
+#    $compile(element)(scope)
+    return
+
 
 app.directive 'bbScrollTo', ($rootScope, AppConfig, BreadcrumbService, $bbug) ->
   transclude: false,
@@ -103,11 +118,12 @@ app.directive 'bbForm', ($bbug) ->
         return false
       return true
 
-
 # bbAddressMap
 # Adds behaviour to select first invalid input 
 app.directive 'bbAddressMap', ($document) ->
-
+  restrict: 'A'
+  scope: true
+  replace: true
   controller: ($scope, $element, $attrs) ->
 
     $scope.isDraggable = $document.width() > 480
@@ -138,5 +154,3 @@ app.directive 'bbAddressMap', ($document) ->
           longitude: map_item.long
         }
       }
-
-
