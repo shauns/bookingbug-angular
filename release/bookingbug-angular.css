@@ -10155,12 +10155,13 @@ Copyright (c) 2014 Daniel Eden
   #bb .page-heading-wrapper {
     margin: 0 0 10px 0; }
   #bb .page-heading {
-    font-size: 28px;
+    font-size: 24.5px;
+    font-size: 2.45rem;
     padding: 0;
-    display: inline;
-    border-bottom: none; }
+    display: inline; }
   #bb .page-sub-heading {
-    font-size: 16px; }
+    font-size: 15px;
+    font-size: 1.5rem; }
   #bb .page-intro, #bb .page-summary {
     margin-bottom: 30px; }
   #bb .seperator {
@@ -10187,6 +10188,7 @@ Copyright (c) 2014 Daniel Eden
     height: 118px; }
   #bb .powered-by {
     font-size: 16px;
+    font-size: 1.6rem;
     margin-bottom: 20px;
     text-align: right; }
     @media print {
@@ -10195,12 +10197,14 @@ Copyright (c) 2014 Daniel Eden
   #bb .text-block {
     margin-bottom: 20px; }
   #bb .bb-member {
-    font-size: 16px; }
+    font-size: 16px;
+    font-size: 1.6rem; }
   #bb .bb-section-title {
     border-bottom: 1px solid #666;
     padding-bottom: 10px;
     margin-bottom: 20px;
-    font-size: 28px; }
+    font-size: 26px;
+    font-size: 2.6rem; }
   #bb .bb-step-navigation {
     margin-top: 75px;
     margin-bottom: 20px;
@@ -10227,6 +10231,8 @@ Copyright (c) 2014 Daniel Eden
     #bb .bb-thankyou-focus h2 {
       text-align: center;
       margin: 10% 3% 10%; }
+  #bb .angular-google-map-container {
+    height: 200px; }
   #bb .ngrs-range-slider {
     position: relative;
     margin: 0 0 8px 0;

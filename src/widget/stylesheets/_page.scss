@@ -53,14 +53,15 @@ p {
 }
 
 .page-heading {
-  font-size: $font-size-h3;
+  font-size: 24.5px;
+  font-size: 2.45rem;
   padding: 0;
   display: inline;
-  border-bottom: none;
 }
 
 .page-sub-heading {
-  font-size: $font-size-base;
+  font-size: 15px;
+  font-size: 1.5rem;
 }
 
 .page-intro, .page-summary {
@@ -96,7 +97,8 @@ p {
 }
 
 .powered-by {
-  font-size: $font-size-base;
+  font-size: 16px;
+  font-size: 1.6rem;
   // margin-top: 20px;
   // padding-top: 20px;
   margin-bottom: 20px;
@@ -113,14 +115,16 @@ p {
 }
 
 .bb-member {
-  font-size: $font-size-base;
+  font-size: 16px;
+  font-size: 1.6rem;
 }
 
 .bb-section-title {
   border-bottom: 1px solid #666;
   padding-bottom: 10px;
   margin-bottom: 20px;
-  font-size: $font-size-h3;
+  font-size: 26px; 
+  font-size: 2.6rem;
 }
 
 .bb-step-navigation {
@@ -165,4 +169,8 @@ p {
     text-align:center; 
     margin:10% 3% 10%;
   }
+}
+
+.angular-google-map-container { 
+  height: 200px; 
 }
