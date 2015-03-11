@@ -42,6 +42,8 @@ app.directive 'bbQuestion', ($compile, $timeout) ->
             scope.recalc = () =>
               if angular.isDefined(scope.recalc_price)
                 scope.recalc_price() if !question.outcome
+              if angular.isDefined(scope.recalc_question)
+                scope.recalc_question()
 
             # are we using a completely custom question
             if scope.idmaps and (scope.idmaps[question.detail_type] or scope.idmaps[question.id])
@@ -338,20 +340,45 @@ app.directive "bbInputGroup", () ->
       scope.input_manger.validateInputGroup(attrs.bbInputGroup) if newval is not oldval
 
 
+
+
+app.directive 'bbQuestionLabel', ($compile) ->
+  transclude: false,
+  restrict: 'A',
+  scope: false,
+  link: (scope, element, attrs) ->
+    scope.$watch attrs.bbQuestionLabel, (question) ->
+      if question
+        if question.detail_type == "check" || question.detail_type == "check-price"
+          element.html("")
+
+
+
+
+
+app.directive 'bbQuestionLabel', ($compile) ->
+  transclude: false,
+  restrict: 'A',
+  scope: false,
+  link: (scope, element, attrs) ->
+    scope.$watch attrs.bbQuestionLabel, (question) ->
+      if question
+        if question.detail_type == "check" || question.detail_type == "check-price"
+          element.html("")
+
+
+
+
 app.directive 'bbQuestionLink', ($compile) ->
   transclude: false,
   restrict: 'A',
   scope: true,
   link: (scope, element, attrs) ->
     id = parseInt(attrs.bbQuestionLink)
-    console.log id
     scope.$watch "question_set", (newval, oldval) ->
       if newval
-        console.log "setting", newval
         for q in scope.question_set
-          console.log "checking", q, q.id, id
           if q.id == id
-            console.log "found", q
             scope.question = q
             element.attr('ng-model',"question.answer")
             element.attr('bb-question-link',null)
@@ -369,4 +396,3 @@ app.directive 'bbQuestionSet', ($compile) ->
       if newval
         scope.question_set = newval
         element.removeClass 'ng-hide'
-        console.log newval, scope.question_set

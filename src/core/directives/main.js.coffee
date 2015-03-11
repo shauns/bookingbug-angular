@@ -28,6 +28,22 @@ app.directive 'bbLoading', ($compile) ->
     $compile(element)(scope)
     return
 
+app.directive 'bbWaitFor', ($compile) ->
+  transclude: false,
+  restrict: 'A',
+  priority: 800,
+  link: (scope, element, attrs) ->
+    name = attrs.bbWaitVar
+    name ||= "allDone"
+    scope[name] = false
+    prom = scope.$eval(attrs.bbWaitFor)
+    prom.then () ->
+      scope[name] = true
+#    element.attr('bb-wait-for',null)
+#    $compile(element)(scope)
+    return
+
+
 
 app.directive 'bbScrollTo', ($rootScope, AppConfig, BreadcrumbService) ->
   transclude: false,
@@ -38,10 +54,16 @@ app.directive 'bbScrollTo', ($rootScope, AppConfig, BreadcrumbService) ->
     always_scroll = attrs.bbAlwaysScroll? or false
 
     if angular.isArray(evnts)
-      for evnt in evnts
+      angular.forEach evnts, (evnt) ->
+        
+        # remove listener for event otherwise duplicate listenr will be added if this 
+        # directive is invoked more than once on the same element
+        $rootScope.$$listeners[evnt] = null
+
         $rootScope.$on evnt, (e) ->
           scrollToCallback(evnt)
     else
+      $rootScope.$$listeners[evnts] = null
       $rootScope.$on evnts, (e) ->
         scrollToCallback(evnts)
 
@@ -73,7 +95,7 @@ app.directive  'bbSlotGrouper', () ->
     scope.grouped_slots = []
     for slot in slots
       scope.grouped_slots.push(slot) if slot.time >= scope.$eval(attrs.startTime) && slot.time < scope.$eval(attrs.endTime)
-      scope.has_slots = scope.grouped_slots.length > 0
+    scope.has_slots = scope.grouped_slots.length > 0
 
 
 # bbForm
@@ -97,3 +119,39 @@ app.directive 'bbForm', () ->
         return false
       return true
 
+# bbAddressMap
+# Adds behaviour to select first invalid input 
+app.directive 'bbAddressMap', ($document) ->
+  restrict: 'A'
+  scope: true
+  replace: true
+  controller: ($scope, $element, $attrs) ->
+
+    $scope.isDraggable = $document.width() > 480
+
+    $scope.$watch $attrs.bbAddressMap, (new_val, old_val) ->
+      
+      return if !new_val
+
+      map_item = new_val
+
+      $scope.map = { 
+        center: { 
+          latitude: map_item.lat, 
+          longitude: map_item.long 
+        }, 
+        zoom: 15
+      }
+
+      $scope.options = {
+        scrollwheel: false,
+        draggable: $scope.isDraggable
+      }
+
+      $scope.marker = {
+        id: 0,
+        coords: {
+          latitude: map_item.lat,
+          longitude: map_item.long
+        }
+      }

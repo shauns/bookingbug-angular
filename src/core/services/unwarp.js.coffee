@@ -198,3 +198,8 @@ angular.module('BB.Services').factory "BB.Service.event_chains", ($q, BBModel) -
   promise: true
   unwrap: (resource) ->
     return new BBModel.EventChain(resource)
+
+
+angular.module('BB.Services').factory "BB.Service.parent", ($q, BBModel) ->
+  unwrap: (resource) ->
+    return new BBModel.Company(resource)

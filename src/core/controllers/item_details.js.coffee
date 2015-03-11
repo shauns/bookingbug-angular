@@ -13,8 +13,7 @@ angular.module('BB.Directives').directive 'bbItemDetails', () ->
 
 
 angular.module('BB.Controllers').controller 'ItemDetails',
-($scope, $rootScope, ItemDetailsService, PurchaseBookingService, AlertService,
- BBModel, FormDataStoreService, ValidatorService, QuestionService, $modal, $location, $upload) ->
+($scope, $rootScope, ItemDetailsService, PurchaseBookingService, AlertService, BBModel, FormDataStoreService, ValidatorService, QuestionService, $modal, $location, $upload) ->
 
   $scope.controller = "public.controllers.ItemDetails"
   # stores data when navigating back/forward through the form
@@ -101,7 +100,6 @@ angular.module('BB.Controllers').controller 'ItemDetails',
     # we need to validate the question information has been correctly entered here
     if $scope.bb.moving_booking
       return $scope.confirm_move(form, route)
-
 
     $scope.item.setAskedQuestions()
     if $scope.item.ready

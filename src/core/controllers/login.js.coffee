@@ -3,7 +3,7 @@ angular.module('BB.Directives').directive 'bbLogin', () ->
   restrict: 'AE'
   replace: true
   scope : true
-  controller : 'ServiceList'
+  controller : 'Login'
 
 
 angular.module('BB.Controllers').controller 'Login', ($scope,  $rootScope, LoginService, $q, ValidatorService, BBModel, $location) ->

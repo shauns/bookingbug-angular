@@ -32,7 +32,7 @@ angular.module('BB.Models').factory "BasketItemModel",
         @time = new BBModel.TimeSlot({time: t, event_id: @event_id, selected: true, avail: 1, price: @price })
 
       if @id 
-        @ready = true
+        @reserve_ready = true # if it has an id - it must be held - so therefore it must already be 'reservable'
         # keep a note of a possibly held item - we might change this item - but we should know waht was possibly already selected
         @held = {time: @time, date: @date, event_id: @event_id }
 
@@ -64,8 +64,8 @@ angular.module('BB.Models').factory "BasketItemModel",
               @promises.push(prom)
               prom.then (cat) =>
                 @setCategory(new BBModel.Category(cat))
-
             @setService(new BBModel.Service(serv), data.questions)
+            @checkReady()
             if @time
               @time.service = @service # the time slot sometimes wants to know thing about the service
 
@@ -211,6 +211,11 @@ angular.module('BB.Models').factory "BasketItemModel",
         @item_details = null
         @clearExistingItem()
 
+      if @service && serv && @service.self && serv.self
+        if (@service.self != serv.self) && serv.durations && serv.durations.length > 1
+          @duration = null
+          @listed_duration = null
+
       @service = serv
       if serv && (serv instanceof BookableItemModel)
         @service = serv.item
@@ -252,11 +257,14 @@ angular.module('BB.Models').factory "BasketItemModel",
       if @service && @service.listed_durations && @service.listed_durations.length == 1
         @listed_duration = @service.listed_durations[0]
 
+
+
       if @service.$has('category')
         # we have a category?
         prom = @service.getCategoryPromise()
         if prom
           @promises.push(prom)
+
 
     setEventGroup: (event_group) ->
       if @event_group
@@ -475,7 +483,7 @@ angular.module('BB.Models').factory "BasketItemModel",
       data.settings = @settings
       data.settings ||= {}
       data.settings.earliest_time = @earliest_time if @earliest_time
-      data.questions = @item_details.getPostData() if @item_details
+      data.questions = @item_details.getPostData() if @item_details && @asked_questions
       data.move_item_id = @move_item_id if @move_item_id
       data.move_item_id = @srcBooking.id if @srcBooking
       data.service_id = @service.id if @service

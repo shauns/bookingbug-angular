@@ -1,11 +1,11 @@
 'use strict';
 
+#
 # Basket Directive
-
 # Example usage;
 # <div bb-basket></div>
 # <div bb-basket mini></div>
-
+#
 angular.module('BB.Directives').directive 'bbBasket', (PathSvc) ->
   restrict: 'A'
   replace: true
@@ -16,7 +16,7 @@ angular.module('BB.Directives').directive 'bbBasket', (PathSvc) ->
     else PathSvc.directivePartial "basket"
   controllerAs : 'BasketCtrl'
 
-  controller : ($scope) ->
+  controller : ($scope, $modal, BasketService) ->
     $scope.setUsingBasket true
 
     this.empty = () ->
@@ -24,6 +24,25 @@ angular.module('BB.Directives').directive 'bbBasket', (PathSvc) ->
 
     this.view = ->
       $scope.$eval('viewBasket()')
+
+    $scope.showBasketDetails = () ->
+      if ($scope.bb.current_page == "basket") || ($scope.bb.current_page == "checkout")
+        return false
+      else            
+        modalInstance = $modal.open
+          templateUrl: $scope.getPartial "basket_details"
+          scope: $scope
+          controller: BasketInstanceCtrl
+          resolve: 
+            basket: ->
+              $scope.bb.basket
+
+    BasketInstanceCtrl = ($scope,  $rootScope, $modalInstance, basket) ->
+
+      $scope.basket = basket
+
+      $scope.cancel = () ->
+        $modalInstance.dismiss "cancel"
 
     $scope.$watch ->
       $scope.basketItemCount = len = if $scope.bb.basket then $scope.bb.basket.length() else 0
@@ -45,5 +64,27 @@ angular.module('BB.Directives').directive 'bbBasket', (PathSvc) ->
       e.preventDefault()
 
 
+angular.module('BB.Directives').directive 'bbMinSpend', () ->
+  restrict: 'A'
+  scope: true
+  controller: ($scope, $element, $attrs, AlertService) ->
 
+    options = $scope.$eval $attrs.bbMinSpend or {}
+    $scope.min_spend = options.min_spend or 0
+    #$scope.items = options.items or {}
 
+    $scope.setReady = () ->
+      return checkMinSpend()
+
+    checkMinSpend = () ->
+      price = 0
+      for item in $scope.bb.stacked_items
+        price += (item.service.price * 100)
+
+      if price >= $scope.min_spend
+        AlertService.clear()
+        return true
+      else
+        AlertService.clear()
+        AlertService.add("warning", { msg: "You need to spend at least &pound;#{$scope.min_spend/100} to make a booking." })
+        return false

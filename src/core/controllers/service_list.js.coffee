@@ -19,8 +19,8 @@ angular.module('BB.Directives').directive 'bbServices', () ->
 
 
 angular.module('BB.Controllers').controller 'ServiceList',
-($scope,  $rootScope, $q, $attrs, ItemService, FormDataStoreService, ValidatorService,
-  PageControllerService, halClient, AlertService) ->
+($scope,  $rootScope, $q, $attrs, $modal, ItemService, FormDataStoreService, ValidatorService,
+  PageControllerService, halClient, AlertService, ErrorService, $filter, CategoryService) ->
 
   $scope.controller = "public.controllers.ServiceList"
   FormDataStoreService.init 'ServiceList', $scope, [
@@ -31,6 +31,8 @@ angular.module('BB.Controllers').controller 'ServiceList',
 
   $scope.validator = ValidatorService
 
+  $scope.filters = {price: {}, name: null}
+
   $rootScope.connection_started.then () =>
     if $scope.bb.company
       $scope.init($scope.bb.company)
@@ -39,6 +41,13 @@ angular.module('BB.Controllers').controller 'ServiceList',
 
   $scope.init = (comp) ->
     $scope.booking_item ||= $scope.bb.current_item
+
+    if $scope.bb.company.$has('named_categories')
+      CategoryService.query($scope.bb.company).then (items) =>
+        $scope.all_categories = items
+      , (err) ->  $scope.all_categories = []
+    else
+      $scope.all_categories = []
 
     # check any curretn service is valid for the current company
     if $scope.service && $scope.service.company_id != $scope.bb.company.id
@@ -115,16 +124,16 @@ angular.module('BB.Controllers').controller 'ServiceList',
         $scope.setLoaded($scope)
       , (err) ->  
         $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
-
+  
   # set the service item so the correct item is displayed in the dropdown menu.
   # without doing this the menu will default to 'please select'
   setServiceItem = (items) ->
     $scope.items = items
+    $scope.filtered_items = $scope.items
     if $scope.service
         _.each items, (item) ->
           if item.id is $scope.service.id
             $scope.service = item
-
 
   $scope.selectItem = (item, route) =>
     if $scope.routed
@@ -144,7 +153,7 @@ angular.module('BB.Controllers').controller 'ServiceList',
       return true
 
   $scope.$watch 'service', (newval, oldval) =>
-    if $scope.service
+    if $scope.service && $scope.booking_item
       if !$scope.booking_item.service or $scope.booking_item.service.self isnt $scope.service.self
         # only set and broadcast if it's changed
         $scope.booking_item.setService($scope.service)
@@ -155,6 +164,32 @@ angular.module('BB.Controllers').controller 'ServiceList',
     if $scope.service
       $scope.booking_item.setService($scope.service)
       return true
+    else if $scope.bb.stacked_items and $scope.bb.stacked_items.length > 0
+      return true
     else
       return false
+
+  $scope.errorModal = () ->
+    error_modal = $modal.open
+      templateUrl: $scope.getPartial('error_modal')
+      controller: ($scope, $modalInstance) ->
+        $scope.message = ErrorService.getError('GENERIC').msg
+        $scope.ok = () ->
+          $modalInstance.close()
+
+  $scope.filterFunction = (service) ->
+    if !service
+      return false
+    else
+      return (!$scope.filters.name or service.category_id is $scope.filters.name.id) and
+        (service.price >= $scope.filters.price.min and service.price <= $scope.filters.price.max )     
+
+  $scope.resetFilters = () ->
+    $scope.filters.name = null
+    $scope.filters.price.min = null
+    $scope.filters.price.max = null
+    $scope.filterChanged()
+
+  $scope.filterChanged = () ->
+    $scope.filtered_items = $filter('filter')($scope.items, $scope.filterFunction);
 

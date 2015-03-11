@@ -1,5 +1,5 @@
+'use strict';
 
-#
 angular.module('BB.Services').factory 'QuestionService', ($window, QueryStringService) ->
   defaults = QueryStringService() or {}
 
@@ -95,14 +95,44 @@ angular.module('BB.Services').factory 'QuestionService', ($window, QueryStringSe
     angular.extend(defaults, obj.bb_setup or {})
 
 
+  checkConditionalQuestions = (questions) ->
+    for q in questions
+      if q.settings && q.settings.conditional_question
+        cond = findByQuestionId(questions, parseInt(q.settings.conditional_question)) 
+        if cond
+          # check if the question has an answer which means "show"
+          ans = cond.getAnswerId()
+          found = false
+          if $bbug.isEmptyObject(q.settings.conditional_answers) && cond.detail_type == "check" && !cond.answer
+            # this is messy - we're showing the question when we ahve a checkbox conditional, based on it being unticked
+            found = true
+
+          for a,v of q.settings.conditional_answers
+            if a[0] == 'c' && parseInt(v) == 1 && cond.answer
+              found = true
+            else if parseInt(a) == ans && parseInt(v) == 1
+              found = true
+          if found
+            q.showElement()
+          else
+            q.hideElement()
+
+
+  findByQuestionId = (questions, qid) ->
+    for q in questions
+      return q if q.id == qid
+    return null
+
+
   return {
     getStoredData   : ->
       return defaults
 
-    storeDefaults           : storeDefaults
-    addAnswersById          : addAnswersById
-    addAnswersByName        : addAnswersByName
-    addDynamicAnswersByName : addDynamicAnswersByName
-    addAnswersByKey         : addAnswersByKey
-    convertToSnakeCase      : convertToSnakeCase
+    storeDefaults            : storeDefaults
+    addAnswersById           : addAnswersById
+    addAnswersByName         : addAnswersByName
+    addDynamicAnswersByName  : addDynamicAnswersByName
+    addAnswersByKey          : addAnswersByKey
+    convertToSnakeCase       : convertToSnakeCase
+    checkConditionalQuestions : checkConditionalQuestions
   }

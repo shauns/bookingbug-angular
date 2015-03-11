@@ -8,10 +8,10 @@ angular.module('BB.Directives').directive 'bbCheckout', () ->
   controller : 'Checkout'
 
 
-angular.module('BB.Controllers').controller 'Checkout',
-($scope,  $rootScope, BasketService, $q, $location, $window, FormDataStoreService) ->
+angular.module('BB.Controllers').controller 'Checkout', ($scope, $rootScope, BasketService, $q, $location, $window, FormDataStoreService, $timeout) ->
   $scope.controller = "public.controllers.Checkout"
   $scope.notLoaded $scope
+
   # clear the form data store as we no longer need the data
   FormDataStoreService.destroy($scope)
 
@@ -36,9 +36,34 @@ angular.module('BB.Controllers').controller 'Checkout',
 
   , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
-
+  # Deprecated - use window.print or $scope.printElement
+  # Print booking details using print_purchase.html template
   $scope.print = () =>
     $window.open($scope.bb.partial_url+'print_purchase.html?id='+$scope.total.long_id,'_blank',
                 'width=700,height=500,toolbar=0,menubar=0,location=0,status=1,scrollbars=1,resizable=1,left=0,top=0')
     return true
 
+
+  # Print by creating popup containing the contents of the specified element
+  $scope.printElement = (id, stylesheet) ->
+
+    data = document.getElementById(id).innerHTML
+    mywindow = $window.open('', 'Booking Confirmation', 'height=600,width=800')
+
+    $timeout () ->
+      mywindow.document.write '<html><head><title>Booking Confirmation</title>'
+
+      mywindow.document.write('<link rel="stylesheet" href="' + stylesheet + '" type="text/css" />') if stylesheet
+      mywindow.document.write '</head><body>'
+      mywindow.document.write data
+      mywindow.document.write '</body></html>'
+      mywindow.document.close()
+
+      $timeout () ->
+        # necessary for IE >= 10
+        mywindow.focus()
+        # necessary for IE >= 10
+        mywindow.print()
+        mywindow.close()
+      , 100
+    , 2000

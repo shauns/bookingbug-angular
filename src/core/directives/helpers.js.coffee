@@ -369,3 +369,61 @@ app.directive 'bbCapitaliseFirstLetter', () ->
         ngModel.$setViewValue(string)
         ngModel.$render()
         return
+
+app.directive 'bbPriceFilter', (PathSvc) ->
+  restrict: 'AE'
+  replace: true
+  scope: false
+  require: '^?bbServices'
+  templateUrl : (element, attrs) ->
+    PathSvc.directivePartial "price_filter"
+  controller : ($scope, $attrs) ->
+    $scope.$watch 'items', (new_val, old_val) ->
+      setPricefilter new_val if new_val
+
+    setPricefilter = (items) ->
+      $scope.price_array = _.uniq _.map items, (item) ->
+        return item.price
+      $scope.price_array.sort()
+      suitable_max()
+      
+    suitable_max = () ->
+      top_number = _.last($scope.price_array)
+      max_number = switch 
+        when top_number < 1 then 0
+        when top_number < 11 then 10
+        when top_number < 51 then 50
+        when top_number < 101 then 100
+        when top_number < 1000 then ( Math.ceil( top_number / 100 ) ) * 100
+      min_number = _.first($scope.price_array)
+      $scope.price_options = {
+        min: min_number
+        max: max_number
+      }
+      $scope.filters.price = {min: min_number, max: max_number}
+
+    $scope.$watch 'filters.price.min', (new_val, old_val) ->
+      $scope.filterChanged() if new_val != old_val
+
+    $scope.$watch 'filters.price.max', (new_val, old_val) ->
+      $scope.filterChanged() if new_val != old_val
+
+
+app.directive 'bbBookingExport', ($compile) ->
+  restrict: 'AE'
+  scope: true
+  template: '<div bb-include="popout_export_booking" style="display: inline;"></div>'
+  link: (scope, element, attrs) ->
+
+    scope.$watch 'total', (newval, old) ->
+      setHTML(newval) if newval
+
+    scope.$watch 'purchase', (newval, old) ->
+      setHTML(newval) if newval
+
+    setHTML = (purchase_total) ->
+      scope.html = "
+        <a class='image img_outlook' title='Add this booking to an Outlook Calendar' href='#{purchase_total.icalLink()}'><img alt='' src='//images.bookingbug.com/widget/outlook.png'></a>
+        <a class='image img_ical' title='Add this booking to an iCal Calendar' href='#{purchase_total.webcalLink()}'><img alt='' src='//images.bookingbug.com/widget/ical.png'></a>
+        <a class='image img_gcal' title='Add this booking to Google Calendar' href='#{purchase_total.gcalLink()}' target='_blank'><img src='//images.bookingbug.com/widget/gcal.png' border='0'></a>
+      "

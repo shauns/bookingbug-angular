@@ -1,5 +1,6 @@
-'use strict'
+'use strict';
 
+# Declare app level module which depends on filters, and services
 app = angular.module('BB', [
   'BB.Controllers',
   'BB.Filters',
@@ -7,26 +8,23 @@ app = angular.module('BB', [
   'BB.Services',
   'BB.Directives',
 
+  'ngStorage',
   'angular-hal',
   'ui.bootstrap',
   'ngSanitize',
   'ui.map',
-  'ui.utils',
+  'ui.router.util', 
   'ngLocalData',
-  'ui.router',
   'ngAnimate',
-  'angular-data.DSCacheFactory', # newer version of jmdobry angular cache
-  'schemaForm'
-])
+  'jmdobry.angular-cache',
+  'angularFileUpload',
+  'schemaForm',
+  'ui-rangeSlider',
+  'uiGmapgoogle-maps'
+]);
 
 # use this to inject application wide settings around the app
-app.value('AppConfig', {})
-
-if (window.use_no_conflict)
-  window.bbjq = $.noConflict()
-  app.value '$bbug', jQuery.noConflict(true)
-else
-  app.value '$bbug', jQuery
+app.value('AppConfig', {});
 
 app.config ($locationProvider, $httpProvider) ->
   $httpProvider.defaults.headers.common =
@@ -36,54 +34,48 @@ app.config ($locationProvider, $httpProvider) ->
   $locationProvider.html5Mode(false).hashPrefix('!')
 
 
-app.run ($rootScope, $log, DebugUtilsService, FormDataStoreService, $bbug, $document) ->
+app.run ($rootScope, $log, DebugUtilsService, FormDataStoreService) ->
   # add methods to the rootscope if they are applicable to whole app
-  $rootScope.$log = $log
+  $rootScope.$log = $log;
   $rootScope.$setIfUndefined = FormDataStoreService.setIfUndefined
 
-  # add bits of IE8 support
-  if ($bbug.support.opacity == false)
-    $document.createElement('header')
-    $document.createElement('nav')
-    $document.createElement('section')
-    $document.createElement('footer')
 
 angular.module('BB.Services', [
   'ngResource',
   'ngSanitize',
   'ngLocalData'
-])
+  ])
 
 angular.module('BB.Controllers', [
   'ngLocalData',
   'ngSanitize'
-])
+  ]);
 
-angular.module('BB.Directives', [])
-angular.module('BB.Filters', [])
-angular.module('BB.Models', [])
+angular.module('BB.Directives', []);
+angular.module('BB.Filters', []);
+angular.module('BB.Models', []);
 
 
-window.angular.ieCreateHttpBackend = ($browser, XHR, $browserDefer, callbacks, rawDocument, locationProtocol, msie, xhr, $bbug) ->
+window.angular.ieCreateHttpBackend = ($browser, XHR, $browserDefer, callbacks, rawDocument, locationProtocol, msie, xhr) ->
   loc = window.location
 
   if !msie || msie > 9
-    return null
+    return null;
 
   # ie doesn't have an origin property.
-  loc.origin = loc.protocol + "//" + loc.host
+  loc.origin = "//" + loc.host
 
   getHostName = (path) ->
-    a = document.createElement('a')
-    a.href = path
-    return a.hostname
+    a = document.createElement('a');
+    a.href = path;
+    return a.hostname;
 
   # test to see if the resource is being requested from a differnt domain
   isLocalCall = (reqUrl) ->
     if (/^http(s)?/.test(reqUrl))
       if (reqUrl.indexOf(loc.origin) < 0)
-        return false
-    return true
+        return false;
+    return true;
 
   completeRequest = (callback, status, response, headersString) ->
     url = url || $browser.url()
@@ -95,11 +87,11 @@ window.angular.ieCreateHttpBackend = ($browser, XHR, $browserDefer, callbacks, r
     #status = protocol == 'file' ? (response ? 200 : 404) : status
     # normalize IE bug (http:#bugs.jquery.com/ticket/1450)
     status = 204 if status == 1223
-    callback(status, response, headersString)
-    $browser.$$completeOutstandingRequest(angular.noop)
+    callback(status, response, headersString);
+    $browser.$$completeOutstandingRequest(angular.noop);
 
   pmHandler = (method, url, post, callback, headers, timeout, withCredentials) ->
-    win = $bbug('[name="' + getHostName(url) + '"]')[0].id
+    win = $bbug('[name="' + getHostName(url) + '"]')[0].id;
     window.pm({
       target: window.frames[win],
       type: 'xhrRequest',
@@ -113,21 +105,21 @@ window.angular.ieCreateHttpBackend = ($browser, XHR, $browserDefer, callbacks, r
         resp = 'Content-Type: ' + respObj.contentType
         if (respObj.authToken)
           resp += "\nAuth-Token: " + respObj.authToken
-
-        completeRequest(callback, 200, respObj.responseText, resp)
+        status_code = if respObj.statusCode and respObj.statusCode.status then respObj.statusCode.status else 200
+        completeRequest(callback, status_code, respObj.responseText, resp);
       ,
       error: (data) ->
         completeRequest(callback, 500, 'Error', 'Content-Type: text/plain')
     })
 
   res = (method, url, post, callback, headers, timeout, withCredentials) ->
-    $browser.$$incOutstandingRequestCount()
-    url = url || $browser.url()
+    $browser.$$incOutstandingRequestCount();
+    url = url || $browser.url();
 
     if (isLocalCall(url) )
-      xhr(method, url, post, callback, headers, timeout, withCredentials)
+      xhr(method, url, post, callback, headers, timeout, withCredentials);
     else
-      pmHandler(method, url, post, callback, headers, timeout, withCredentials)
+      pmHandler(method, url, post, callback, headers, timeout, withCredentials);
 
     if (timeout > 0)
       $browserDefer () ->
@@ -138,6 +130,12 @@ window.angular.ieCreateHttpBackend = ($browser, XHR, $browserDefer, callbacks, r
   res
 
 
+# add bits of IE8 support
+if ($bbug.support.opacity == false)
+  document.createElement('header')
+  document.createElement('nav')
+  document.createElement('section')
+  document.createElement('footer')
 
 
 window.bookingbug =

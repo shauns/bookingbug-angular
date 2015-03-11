@@ -59,6 +59,8 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
       selected_day        = if $attrs.bbSelectedDay? then moment($scope.$eval($attrs.bbSelectedDay)) else moment($scope.options.selected_day)
       $scope.selected_day = selected_day if moment.isMoment(selected_day)
 
+    $scope.options.ignore_min_advance_datetime = if $scope.options.ignore_min_advance_datetime then true else false
+
     # initialise the time range
     # last selected day is set (i.e, a user has already selected a date)
     if !$scope.start_date && $scope.last_selected_date
@@ -236,7 +238,7 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
     curItem = $scope.bb.current_item
 
     # has a service been selected?
-    if curItem.service
+    if curItem.service and !$scope.options.ignore_min_advance_datetime
       $scope.min_date = curItem.service.min_advance_datetime
       $scope.max_date = curItem.service.max_advance_datetime
       # if the selected day is before the services min_advance_datetime, adjust the time range
@@ -347,7 +349,7 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
               curItem.requestedTimeUnavailable()
               AlertService.add("danger", { msg: "Sorry, your requested time slot is not available. Please choose a different time." })
         $scope.updateHideStatus()
-      , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
+      , (err) -> $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
     else
       $scope.setLoaded $scope
 
@@ -360,9 +362,16 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
     if !$scope.bb.current_item.time
       AlertService.add("danger", { msg: "You need to select a time slot" })
       return false
-    else if $scope.bb.moving_booking && $scope.bb.current_item.datetime.isSame($scope.bb.current_item.original_datetime)
+    else if $scope.bb.moving_booking && $scope.bb.current_item.start_datetime().isSame($scope.bb.current_item.original_datetime)
       AlertService.add("danger", { msg: "Your appointment is already booked for this time." })
       return false
+    else if $scope.bb.moving_booking
+      # set a 'default' person and resource if we need them, but haven't picked any in moving
+      if $scope.bb.company.$has('resources') && !$scope.bb.current_item.resource
+        $scope.bb.current_item.resource = true
+      if $scope.bb.company.$has('people') && !$scope.bb.current_item.person
+        $scope.bb.current_item.person = true
+      return true
     else
       if $scope.bb.current_item.reserve_ready
         return $scope.addItemToBasket()

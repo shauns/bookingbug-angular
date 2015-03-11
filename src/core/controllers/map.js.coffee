@@ -26,6 +26,7 @@ angular.module('BB.Controllers').controller 'MapCtrl',
   $scope.mapReady             = map_ready_def.promise
   $scope.map_init             = $scope.mapLoaded.promise
   $scope.numSearchResults     = options.num_search_results or 6
+  $scope.range_limit          = options.range_limit or Infinity
   $scope.showAllMarkers       = false
   $scope.mapMarkers           = []
   $scope.shownMarkers         = $scope.shownMarkers or []
@@ -33,6 +34,7 @@ angular.module('BB.Controllers').controller 'MapCtrl',
   $scope.defaultPin           ||= null
   $scope.hide_not_live_stores = false
   $scope.address              = $scope.$eval $attrs.bbAddress or null
+  $scope.error_msg            = options.error_msg or "You need to select a store"
   $scope.notLoaded $scope
   
   webshim.setOptions({'basePath': $scope.bb.api_url + '/assets/webshims/shims/', 'waitReady': false})
@@ -128,6 +130,7 @@ angular.module('BB.Controllers').controller 'MapCtrl',
 
     delete $scope.geocoder_result
     prms = {} if !prms
+    $scope.search_prms = prms
     $scope.map_init.then () ->
       address = $scope.address
       address = prms.address if prms.address
@@ -234,7 +237,7 @@ angular.module('BB.Controllers').controller 'MapCtrl',
         marker.setVisible(false)
 
       marker.distance = d
-      distances.push marker
+      distances.push marker if d < $scope.range_limit
 
     distances.sort (a,b)->
       a.distance - b.distance
@@ -264,6 +267,11 @@ angular.module('BB.Controllers').controller 'MapCtrl',
 
   $scope.selectItem = (item, route) ->
     return if !$scope.$debounce(1000)
+
+    if !item
+      AlertService.warning({msg:$scope.error_msg})
+      return
+
     $scope.notLoaded $scope
 
     # if the selected store changes, emit an event. the form data store uses
@@ -311,6 +319,9 @@ angular.module('BB.Controllers').controller 'MapCtrl',
           $scope.address = $scope.reverse_geocode_address
         searchSuccess($scope.geocoder_result)
 
+  $scope.increaseRange = () ->
+    $scope.range_limit = Infinity
+    $scope.searchAddress($scope.search_prms)
 
   # look for change in display size to determine if the map needs to be refreshed
   $scope.$watch 'display.xs', (new_value, old_value) =>

@@ -33,6 +33,8 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope,
       AlertService.danger({msg:"Sorry, something went wrong"})
 
   $scope.init = (options) ->
+    options = {} if !options
+    
     if options.move_route
       $scope.move_route = options.move_route
 
@@ -176,7 +178,7 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope,
       , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
 
-  # potentiall move all of the items in booking - move the whole lot to a basket
+  # potentially move all of the items in booking - move the whole lot to a basket
   $scope.moveAll = ( route, options = {}) ->
     route ||= $scope.move_route
     $scope.notLoaded $scope

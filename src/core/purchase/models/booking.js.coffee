@@ -75,6 +75,7 @@ angular.module('BB.Models').factory "Purchase.BookingModel", ($q, $window, BBMod
       data.duration = @duration
       data.end_datetime = @end_datetime
       data.event_id = @event.id if @event
+      data.event_id = @time.event_id if @time && @time.event_id
       data.full_describe = @full_describe
       data.id = @id
       data.min_cancellation_time =  @min_cancellation_time
@@ -94,6 +95,7 @@ angular.module('BB.Models').factory "Purchase.BookingModel", ($q, $window, BBMod
       data.questions = @item_details.getPostData() if @item_details
       data.service_name = @service_name
       data.settings = @settings
+      data.status = @status if @status
       if @email?
         data.email = @email
       if @email_admin?
@@ -133,4 +135,10 @@ angular.module('BB.Models').factory "Purchase.BookingModel", ($q, $window, BBMod
         @_data.$get('attachments').then (atts) =>
           @attachments = atts.attachments
           @attachments
+
+    canCancel: () ->
+      return moment(@min_cancellation_time).isAfter(moment())
+
+    canMove: () ->
+      return @canCancel()    
 
