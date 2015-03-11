@@ -15,7 +15,7 @@ app = angular.module('BB', [
   'ui.router.util', 
   'ngLocalData',
   'ngAnimate',
-  'jmdobry.angular-cache',
+  'angular-data.DSCacheFactory', # newer version of jmdobry angular cache'
   'angularFileUpload',
   'schemaForm',
   'ngStorage',
@@ -25,7 +25,13 @@ app = angular.module('BB', [
 
 
 # use this to inject application wide settings around the app
-app.value('AppConfig', {});
+app.value('AppConfig', {})
+
+if (window.use_no_conflict)
+  window.bbjq = $.noConflict()
+  app.value '$bbug', jQuery.noConflict(true)
+else
+  app.value '$bbug', jQuery
 
 app.config ($locationProvider, $httpProvider, $provide) ->
   $httpProvider.defaults.headers.common =
