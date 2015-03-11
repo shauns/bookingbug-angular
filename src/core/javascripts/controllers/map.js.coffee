@@ -334,3 +334,68 @@ angular.module('BB.Controllers').controller 'MapCtrl',
       $scope.myMap.setCenter $scope.loc
       $scope.myMap.setZoom 15
       $scope.showClosestMarkers $scope.loc
+
+
+
+
+
+
+
+
+
+
+
+
+angular.module('BB.Directives').directive 'bbMapTheSecond', () ->
+  restrict: 'AE'
+  replace: true
+  scope : true
+  controller : 'MapCtrl'
+
+angular.module('BB.Controllers').controller 'MapCtrl',
+($scope, $element, $attrs, $rootScope, AlertService, ErrorService, FormDataStoreService, $q, $window, $timeout, $document) ->
+  alert "Firing bbMapTheSecond"
+  $scope.controller = "public.controllers.MapCtrl"
+
+  $rootScope.connection_started.then ->
+
+    $scope.setLoaded $scope
+    if $scope.bb.company.companies
+      $rootScope.parent_id = $scope.bb.company.id
+    else if $rootScope.parent_id
+      $scope.initWidget({company_id:$rootScope.parent_id, first_page: $scope.bb.current_page, keep_basket:true})
+      return
+    else
+      $scope.initWidget({company_id:$scope.bb.company.id, first_page: null})
+      return
+
+    $scope.companies = $scope.bb.company.companies
+    if !$scope.companies or $scope.companies.length is 0
+      $scope.companies = [$scope.bb.company]
+
+    $scope.mapBounds = new google.maps.LatLngBounds()
+    for comp in $scope.companies
+      if comp.address.lat && comp.address.long
+        latlong = new google.maps.LatLng(comp.address.lat,comp.address.long)
+        $scope.mapBounds.extend(latlong)
+
+    console.log $scope.companies
+    console.log $scope.mapBounds
+
+    # Refine code from here
+    $scope.map = {
+      center: {
+        latitude: 51.508530,
+        longitude: -0.076132
+      },
+      zoom: 6,
+      bounds: {}
+    }
+   
+    $scope.isDraggable = $document.width() > 480
+
+    $scope.options = {
+      scrollwheel: false
+      draggable: $scope.isDraggable
+    }
+

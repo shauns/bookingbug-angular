@@ -10584,6 +10584,8 @@ html {
   #bb .gm-style label {
     width: auto;
     display: inline; }
+  #bb .bb-map .angular-google-map-container {
+    height: 800px; }
   #bb .bb-service-list .bb-service-name, #bb div[bb-services] .bb-service-name {
     font-size: 24px;
     font-size: 2.4rem;
