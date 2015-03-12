@@ -49,11 +49,15 @@ angular.module('BB.Directives').directive 'bbWidget', (PathSvc, $http,
   scope:
     client: '=?'
     apiUrl: '@?'
+    useParent:'='
   transclude: true
   controller: 'BBCtrl'
   link: (scope, element, attrs) ->
     scope.client = attrs.member if attrs.member?
-    init_params = scope.$eval( attrs.bbWidget )
+    evaluator = scope
+    if scope.useParent && scope.$parent?
+      evaluator = scope.$parent
+    init_params = evaluator.$eval( attrs.bbWidget )
     scope.initWidget(init_params)
     prms = scope.bb
     if prms.custom_partial_url
