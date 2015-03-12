@@ -142,6 +142,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     Basket: 10
     Checkout: 11
     Slot: 12
+  $scope.Route = $rootScope.Route 
 
 
   $compile("<span bb-display-mode></span>") $scope, (cloned, scope) =>
@@ -590,7 +591,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
           return $scope.showPage(route)
 
     # do we have a pre-set route...
-    if $scope.bb.nextSteps && $scope.bb.current_page && $scope.bb.nextSteps[$scope.bb.current_page]
+    if $scope.bb.nextSteps && $scope.bb.current_page && $scope.bb.nextSteps[$scope.bb.current_page] && !$scope.bb.routeSteps
       # if  $scope.bb.current_page == "client_admin"
       #   asfasfsf
       return $scope.showPage($scope.bb.nextSteps[$scope.bb.current_page])
