@@ -93,7 +93,7 @@ angular.module('BB.Controllers').controller 'ServiceList',
 
       $scope.setLoaded $scope
 
-      if $scope.booking_item.service || ((!$scope.booking_item.person || $scope.booking_item.person == true) && (!$scope.booking_item.resource || $scope.booking_item.resource == true))
+      if $scope.booking_item.service || !(($scope.booking_item.person && !$scope.booking_item.anyPerson()) || ($scope.booking_item.resource && !$scope.booking_item.anyResource()))
         # the "bookable services" are the service unless we've pre-selected something!
         $scope.bookable_services = $scope.items
     , (err) -> $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')

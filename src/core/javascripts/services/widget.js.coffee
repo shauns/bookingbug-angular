@@ -164,7 +164,6 @@ angular.module('BB.Models').factory "BBWidget", ($q, BBModel, BasketService, $ur
     setRoute: (rdata) =>
       @allSteps.length = 0
       @nextSteps = {}
-      @routeSteps = {}
       @firstStep = rdata[0].page unless rdata is undefined || rdata is null || rdata[0] is undefined
       for step, i in rdata
         @disableGoingBackAtStep = i+1 if step.disable_breadcrumbs
@@ -172,6 +171,7 @@ angular.module('BB.Models').factory "BBWidget", ($q, BBModel, BasketService, $ur
           @nextSteps[step.page] = rdata[i+1].page
         @allSteps.push({number: i+1, title: step.title, page: step.page})
         if step.when
+          @routeSteps ||= {}
           for route in step.when
             @routeSteps[route] = step.page
       if @$wait_for_routing
