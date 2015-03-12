@@ -20,9 +20,9 @@ class window.Collection.Base
       @deleteItem(item)  #delete if it is in the collection at the moment
       return true    
     else
-      for i in @items
-        if item.self == i.self
-          @items[_i] = item
+      for existingItem, index in @items
+        if item.self == existingItem.self
+          @items[index] = item
           for call in @callbacks
             call[1](item, "update")
           return true
