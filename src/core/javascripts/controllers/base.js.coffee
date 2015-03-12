@@ -49,13 +49,17 @@ angular.module('BB.Directives').directive 'bbWidget', (PathSvc, $http,
   controller: 'BBCtrl'
   link: (scope, element, attrs) ->
     scope.client = attrs.member if attrs.member?
-    scope.initWidget(scope.$eval( attrs.bbWidget ))
+    init_params = scope.$eval( attrs.bbWidget )
+    scope.initWidget(init_params)
     prms = scope.bb
     if prms.custom_partial_url
       prms.design_id = prms.custom_partial_url.match(/^.*\/(.*?)$/)[1]
       $bbug("[ng-app='BB']").append("<div id='widget_#{prms.design_id}'></div>")
     if scope.bb.partial_url
-      AppConfig['partial_url'] = scope.bb.partial_url
+      if init_params.partial_url
+        AppConfig['partial_url'] = init_params.partial_url
+      else
+        AppConfig['partial_url'] = scope.bb.partial_url
     unless scope.has_content
       if prms.custom_partial_url
         appendCustomPartials(scope, element, prms).then (style) ->
@@ -247,8 +251,13 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     if prms.app_key
       $scope.bb.app_key = prms.app_key
 
+
     if prms.item_defaults
-      $scope.bb.item_defaults = prms.item_defaults
+      $scope.bb.original_item_defaults = prms.item_defaults
+      $scope.bb.item_defaults =  angular.copy($scope.bb.original_item_defaults)
+    else if $scope.bb.original_item_defaults
+      # possibly reset the defails
+      $scope.bb.item_defaults =  angular.copy($scope.bb.original_item_defaults)
 
     if prms.route_format
       $scope.bb.setRouteFormat(prms.route_format)  
@@ -322,24 +331,21 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
             comp_p.reject(err)
 
     # load the company
+
     if company_id
       embed_params = prms.embed if prms.embed
-      embed_params ||= {}
-      if $scope.bb.item_defaults.category?
-        if $scope.bb.item_defaults.category.id?
-          embed_params.category_id = $scope.bb.item_defaults.category.id
-        else
-          embed_params.category_id = $scope.bb.item_defaults.category
-      comp_promise = halClient.$get(new UriTemplate.parse($scope.bb.api_url + '/api/v1/company/{company_id}{?embed}').expand({company_id: company_id, embed: embed_params}))
-      embed_params = prms.embed if prms.embed
+      embed_params ||= null
+      comp_category_id = null
 
       if $scope.bb.item_defaults.category?
         if $scope.bb.item_defaults.category.id?
-          comp_promise = halClient.$get(new UriTemplate.parse($scope.bb.api_url + '/api/v1/company/{company_id}{?category_id}{&embed}').expand({company_id: company_id, category_id: $scope.bb.item_defaults.category.id, embed: embed_params}))
+          comp_category_id = $scope.bb.item_defaults.category.id
         else
-          comp_promise = halClient.$get(new UriTemplate.parse($scope.bb.api_url + '/api/v1/company/{company_id}{?category_id}{&embed}').expand({company_id: company_id, category_id: $scope.bb.item_defaults.category, embed: embed_params}))
-      else
-        comp_promise = halClient.$get(new UriTemplate.parse($scope.bb.api_url + '/api/v1/company/{company_id}{?embed}').expand({company_id: company_id, embed: embed_params}))
+          comp_category_id = $scope.bb.item_defaults.category
+
+      comp_url = new UriTemplate.parse($scope.bb.api_url + '/api/v1/company/{company_id}{?embed,category_id}').expand({company_id: company_id, category_id: comp_category_id, embed: embed_params})
+      comp_promise = halClient.$get(comp_url)
+
       setup_promises.push(comp_promise)
       comp_promise.then (company) =>
         if $scope.bb.$wait_for_routing
@@ -446,7 +452,9 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
   setupDefaults = (company_id) =>
     def = $q.defer()
 
-    if first_call
+    if first_call || ($scope.bb.orginal_company_id && $scope.bb.orginal_company_id != company_id)
+      # if this is the first call - or we've switch companies
+      $scope.bb.orginal_company_id = company_id
       $scope.bb.default_setup_promises = []
       # deal with query versions - load any query vals frm the url
       if $scope.bb.item_defaults.query
@@ -589,13 +597,12 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
           $scope.showPage('payment_complete')
         else
           return $scope.showPage(route)
-
+          
     # do we have a pre-set route...
     if $scope.bb.nextSteps && $scope.bb.current_page && $scope.bb.nextSteps[$scope.bb.current_page] && !$scope.bb.routeSteps
       # if  $scope.bb.current_page == "client_admin"
       #   asfasfsf
       return $scope.showPage($scope.bb.nextSteps[$scope.bb.current_page])
-
     if !$scope.client.valid() && LoginService.isLoggedIn()
       # make sure we set the client to the currently logged in member
       # we should also jsut check the logged in member is  a member of the company they are currently booking with
@@ -605,6 +612,10 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
       return $scope.showPage('company_list')
     else if $scope.bb.total && $scope.bb.payment_status == "complete"
       return $scope.showPage('payment_complete')
+
+    else if ($scope.bb.total && $scope.bb.payment_status == "pending")
+      return $scope.showPage('payment')
+
     else if ($scope.bb.company.$has('event_groups') && !$scope.bb.current_item.event_group && !$scope.bb.current_item.service && !$scope.bb.current_item.product) or
             ($scope.bb.company.$has('events') && $scope.bb.current_item.event_group && !$scope.bb.current_item.event? && !$scope.bb.current_item.product)
       return $scope.showPage('event_list')
@@ -640,7 +651,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
         return $scope.showPage('client_admin')
       else
         return $scope.showPage('client')
-    else if (!$scope.bb.basket.readyToCheckout() || !$scope.bb.current_item.ready )
+    else if ( !$scope.bb.basket.readyToCheckout() || !$scope.bb.current_item.ready ) && $scope.bb.current_item.item_details.hasQuestions
       return if $scope.setPageRoute($rootScope.Route.Summary)
       if $scope.bb.isAdmin
         return $scope.showPage('check_items_admin')
@@ -654,8 +665,8 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     else if ($scope.bb.basket.readyToCheckout() && $scope.bb.payment_status == null)
       return if $scope.setPageRoute($rootScope.Route.Checkout)
       return $scope.showPage('checkout')
-    else if ($scope.bb.total && $scope.bb.payment_status == "pending")
-      return $scope.showPage('payment')
+    # else if ($scope.bb.total && $scope.bb.payment_status == "pending")
+    #   return $scope.showPage('payment')
     else if $scope.bb.payment_status == "complete"
       return $scope.showPage('payment_complete')
 

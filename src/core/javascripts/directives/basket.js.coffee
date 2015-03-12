@@ -26,7 +26,7 @@ angular.module('BB.Directives').directive 'bbBasket', (PathSvc) ->
       $scope.$eval('viewBasket()')
 
     $scope.showBasketDetails = () ->
-      if $scope.bb.current_page == "basket"
+      if ($scope.bb.current_page == "basket") || ($scope.bb.current_page == "checkout")
         return false
       else            
         modalInstance = $modal.open

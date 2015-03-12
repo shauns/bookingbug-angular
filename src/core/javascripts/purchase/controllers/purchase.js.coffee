@@ -30,6 +30,8 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope, Co
 
 
   $scope.init = (options) ->
+    options = {} if !options
+    
     $scope.notLoaded $scope
     $scope.move_route = options.move_route if options.move_route
     $scope.move_all = options.move_all if options.move_all
