@@ -1,5 +1,5 @@
 angular.module('BBMember').directive 'memberBookingsTable', ($modal, $log, $rootScope,
-    MemberLoginService, MemberBookingService, $compile, $templateCache) ->
+    MemberLoginService, MemberBookingService, $compile, $templateCache, ModalForm) ->
 
   controller = ($scope, $modal) ->
 
@@ -12,11 +12,13 @@ angular.module('BBMember').directive 'memberBookingsTable', ($modal, $log, $root
 
     $scope.edit = (id) ->
       booking = _.find $scope.booking_models, (b) -> b.id == id
-      $modal.open
-        templateUrl: 'edit_booking_modal_form.html'
-        controller: 'editBookingModalForm'
-        resolve:
-          booking: () -> booking
+      booking.getAnswersPromise().then (answers) ->
+        for answer in answers.answers
+          booking["question#{answer.question_id}"] = answer.value
+        ModalForm.edit
+          model: booking
+          title: 'Booking Details'
+          templateUrl: 'edit_booking_modal_form.html'
 
     getBookings = ($scope, member) ->
       params =
