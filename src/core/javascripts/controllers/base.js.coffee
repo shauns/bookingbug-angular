@@ -752,6 +752,12 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     BasketService.deleteItem(item, $scope.bb.company, {bb: $scope.bb}).then (basket) ->
       $scope.setBasket(basket)
 
+  $scope.deleteBasketItems = (items) ->
+    for item in items
+      BasketService.deleteItem(item, $scope.bb.company, {bb: $scope.bb}).then (basket) ->
+        $scope.setBasket(basket)
+
+
   $scope.clearBasketItem = ->
     def = $q.defer()
     $scope.setBasketItem(new BBModel.BasketItem(null, $scope.bb))

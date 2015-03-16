@@ -16,7 +16,6 @@ angular.module('BB.Models').factory "BasketModel", ($q, BBModel, BaseModel) ->
 
     addItem: (item) ->
       # check if then item is already in the basket
-
       for i in @items
         if i == item
           return

@@ -20,7 +20,8 @@ app = angular.module('BB', [
   'schemaForm',
   'ngStorage',
   'ui-rangeSlider',
-  'uiGmapgoogle-maps'
+  'uiGmapgoogle-maps',
+  'angular.filter'
 ]);
 
 
