@@ -21,12 +21,17 @@ angular.module('BB.Directives').directive 'bbPayForm', ($window, $timeout,
 
   linker = (scope, element, attributes) ->
     $window.addEventListener 'message', (event) =>
-      switch event.data.type
-        when "load"
-          scope.$apply =>
-            scope.referrer = event.data.message
-            if event.data.custom_partial_url
-              applyCustomPartials(event.data.custom_partial_url, scope, element)
+      if angular.isObject(event.data)
+        data = event.data
+      else if angular.isString(event.data) and not event.data.match(/iFrameSizer/)
+        data = JSON.parse event.data
+      if data
+        switch data.type
+          when "load"
+            scope.$apply =>
+              scope.referrer = data.message
+              if data.custom_partial_url
+                applyCustomPartials(event.data.custom_partial_url, scope, element)
     , false
 
   return {
@@ -53,10 +58,10 @@ angular.module('BB.Controllers').controller 'PayForm', ($scope, $location) ->
     referrer = $location.protocol() + "://" + $location.host()
     if $location.port()
       referrer += ":" + $location.port()
-    payload = {
+    payload = JSON.stringify({
       'type': 'submitting',
       'message': referrer
-    }
+    })
     parent.postMessage(payload, origin)
  
   submitPaymentForm = () =>
@@ -66,5 +71,13 @@ angular.module('BB.Controllers').controller 'PayForm', ($scope, $location) ->
   $scope.submitAndSendMessage = (event) =>
     event.preventDefault()
     event.stopPropagation()
-    sendSubmittingEvent()
-    submitPaymentForm()
+    payment_form = $scope.$eval('payment_form')
+    if payment_form.$invalid
+      payment_form.submitted = true
+      return false
+    else
+      sendSubmittingEvent()
+      submitPaymentForm()
+
+
+

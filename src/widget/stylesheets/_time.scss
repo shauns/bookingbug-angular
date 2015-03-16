@@ -20,8 +20,7 @@
 
   .bb-service-unavailable {
     color: #ccc;
-    font-size: 18px;
-    font-size: 1.8rem;
+    font-size: $font-size-large;
     text-align: center;
     border: 1px solid #ccc;
     padding: 10px;
@@ -55,6 +54,10 @@
 
   .glyphicon-chevron-right {
     margin-left: 5px;
+  }
+
+  .panel-heading {
+    cursor: pointer;
   }
 
   // disabled panel

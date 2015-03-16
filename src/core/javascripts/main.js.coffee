@@ -7,20 +7,21 @@ app = angular.module('BB', [
   'BB.Services',
   'BB.Directives',
 
+  'ngStorage',
   'angular-hal',
   'ui.bootstrap',
   'ngSanitize',
   'ui.map',
-  'ui.utils',
+  'ui.router.util', 
   'ngLocalData',
-  'ui.router',
   'ngAnimate',
-  'angular-data.DSCacheFactory', # newer version of jmdobry angular cache
+  'angular-data.DSCacheFactory', # newer version of jmdobry angular cache'
+  'angularFileUpload',
   'schemaForm',
   'ngStorage',
-  'angularFileUpload',
+  'ui-rangeSlider',
   'uiGmapgoogle-maps'
-])
+]);
 
 
 # use this to inject application wide settings around the app
@@ -120,8 +121,8 @@ window.angular.ieCreateHttpBackend = ($browser, XHR, $browserDefer, callbacks, r
         resp = 'Content-Type: ' + respObj.contentType
         if (respObj.authToken)
           resp += "\nAuth-Token: " + respObj.authToken
-
-        completeRequest(callback, 200, respObj.responseText, resp)
+        status_code = if respObj.statusCode and respObj.statusCode.status then respObj.statusCode.status else 200
+        completeRequest(callback, status_code, respObj.responseText, resp);
       ,
       error: (data) ->
         completeRequest(callback, 500, 'Error', 'Content-Type: text/plain')

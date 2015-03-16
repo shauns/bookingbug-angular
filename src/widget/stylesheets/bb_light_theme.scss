@@ -1,23 +1,39 @@
-@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400&subset=latin);
+// @import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400&subset=latin);
+
+/* font-size-base changed from 14px to 16px to match bookinbug styling. */
+$font-size-base:          16px !default;
+$font-size-large:         ceil(($font-size-base * 1.25)) !default; // ~18px
+$font-size-small:         ceil(($font-size-base * 0.85)) !default; // ~12px
+
+$font-size-h1:            floor(($font-size-base * 2.6)) !default; // ~36px
+$font-size-h2:            floor(($font-size-base * 2.15)) !default; // ~30px
+$font-size-h3:            ceil(($font-size-base * 1.7)) !default; // ~24px
+$font-size-h4:            ceil(($font-size-base * 1.25)) !default; // ~18px
+$font-size-h5:            $font-size-base !default;
+$font-size-h6:            ceil(($font-size-base * 0.85)) !default; // ~12px
 
 #bb {
-  font-family: 'Source Sans Pro', sans-serif;
+  // font-family: 'Source Sans Pro', sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-weight: 400;
 
   h1, h2, h3, h4, h5, h6 {
     padding: 0;
     margin: 0;
-    margin-bottom: 15px; margin-bottom: 1.5rem;
+    margin-bottom: 15px;
     font-weight: 300;
   }
 
   // Alerts
 
   .alert {
-    font-size: 16px;
-    font-size: 1.6rem;
+    font-size: $font-size-base;
   }
 
+  // Page
+  .page-header {
+    border-bottom: none;
+  }
 
   // Breadcrumb
 
@@ -29,8 +45,7 @@
     li {
       button {
         color: #fff;
-        font-size: 12px;
-        font-size: 1.2rem;
+        font-size: $font-size-small;
         width: 100%;
       }
       button.active {
@@ -57,8 +72,7 @@
   // Modals
 
   .modal-title {
-    font-size: 22px; 
-    font-size: 2.2rem;
+    font-size: $font-size-h3;
   }
 
   .modal-header {
@@ -67,8 +81,7 @@
 
   .modal-body {
     padding-bottom: 0;
-    font-size: 16px;
-    font-size: 1.6rem;
+    font-size: $font-size-base;
   }
 
   .modal-footer {
@@ -107,16 +120,15 @@
   }
 
   .panel-title {
-    font-size: 24px;
-    font-size: 2.4rem;
-    font-weight: 200;
+    font-size: $font-size-h3;
+    font-weight: 300;
     padding-bottom: 15px;
   }
 
   // Check boxes.
 
   .radio label, .checkbox label {
-    font-weight: 300;
+    font-weight: 400;
   }
 
   .glyphicon-trash:hover {

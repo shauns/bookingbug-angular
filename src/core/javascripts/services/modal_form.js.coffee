@@ -49,8 +49,10 @@ angular.module('BB.Services').factory 'ModalForm', ($modal, $log) ->
       $modalInstance.dismiss('cancel')
 
   new: (config) ->
+    templateUrl = config.templateUrl if config.templateUrl
+    templateUrl ||= 'modal_form.html'
     $modal.open
-      templateUrl: 'modal_form.html'
+      templateUrl: templateUrl
       controller: newForm
       size: config.size
       resolve:
@@ -62,8 +64,10 @@ angular.module('BB.Services').factory 'ModalForm', ($modal, $log) ->
         fail: () -> config.fail
 
   edit: (config) ->
+    templateUrl = config.templateUrl if config.templateUrl
+    templateUrl ||= 'modal_form.html'
     $modal.open
-      templateUrl: 'modal_form.html'
+      templateUrl: templateUrl
       controller: editForm
       size: config.size
       resolve:

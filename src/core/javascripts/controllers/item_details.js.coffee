@@ -101,7 +101,6 @@ angular.module('BB.Controllers').controller 'ItemDetails',
     if $scope.bb.moving_booking
       return $scope.confirm_move(form, route)
 
-
     $scope.item.setAskedQuestions()
     if $scope.item.ready
       $scope.notLoaded $scope
