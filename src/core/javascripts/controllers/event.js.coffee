@@ -45,7 +45,7 @@ angular.module('BB.Controllers').controller 'Event', ($scope,  $rootScope, Event
     # process the selected tickets - this may mean adding multiple basket items - add them all to the basket
     $scope.notLoaded $scope
     $scope.bb.emptyStackedItems()
-    $scope.setBasket(new BBModel.Basket(null, $scope.bb))
+    #$scope.setBasket(new BBModel.Basket(null, $scope.bb)) # we might already have a basket!!
     base_item = $scope.current_item
     for ticket in $scope.event.tickets
       if ticket.qty
@@ -96,5 +96,6 @@ angular.module('BB.Controllers').controller 'Event', ($scope,  $rootScope, Event
       datetime : $scope.event.date,
       tickets  : $scope.event.tickets
     }
-    return $scope.selected_tickets
+
+    return $scope.updateBasket()
 

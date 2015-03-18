@@ -112,6 +112,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
       delete $scope.current_item.event
       delete $scope.current_item.event_chain
       delete $scope.current_item.event_group # TODO only delete if the event group wasn't selected explicity
+      delete $scope.current_item.tickets
 
     $scope.notLoaded $scope
     comp ||= $scope.bb.company 

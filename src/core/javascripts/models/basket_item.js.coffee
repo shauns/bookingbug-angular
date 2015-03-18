@@ -447,7 +447,7 @@ angular.module('BB.Models').factory "BasketItemModel",
 
     # check if an item is ready for checking out
     # @ready - means it's fully ready for checkout
-    # @checkready - means the question still need asking - but it can be reserved
+    # @reserve_ready - means the question still need asking - but it can be reserved
     checkReady: ->
       if ((@date && @time && @service) || @event || @product || (@date && @service && @service.duration_unit == 'day')) && (@asked_questions || !@has_questions)
         @ready = true

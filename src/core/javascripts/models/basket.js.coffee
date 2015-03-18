@@ -23,8 +23,10 @@ angular.module('BB.Models').factory "BasketModel", ($q, BBModel, BaseModel) ->
           return
       @items.push(item)
 
+
     clear: () ->
       @items = []
+
 
     # should we try to checkout ?
     readyToCheckout: ->
@@ -37,16 +39,19 @@ angular.module('BB.Models').factory "BasketModel", ($q, BBModel, BaseModel) ->
     timeItems: ->
       titems = []
       for i in @items
-        titems.push(i) if !i.is_coupon
+        titems.push(i) if !i.is_coupon and !i.ready
       titems
+
 
     setSettings: (set) ->
       return if !set
       @settings ||= {}
       $.extend(@settings, set)
 
+
     setClient: (client) ->
       @client = client
+
 
     setClientDetails: (client_details) ->
       @client_details = new BBModel.PurchaseItem(client_details)
@@ -73,20 +78,23 @@ angular.module('BB.Models').factory "BasketModel", ($q, BBModel, BaseModel) ->
       total = 0 if total < 0
       total
 
+
     length: ->
       @items.length
 
 
-    questionPrice: ->
+    questionPrice: (options) ->
+      unready = options and options.unready
       price = 0
       for item in @items
-        price += item.questionPrice()
+        price += item.questionPrice() if (!item.ready and unready) or !unready
       return price
 
-    totalPrice: ->
+    totalPrice: (options) ->
+      unready = options and options.unready
       price = 0
       for item in @items
-        price += item.totalPrice()
+        price += item.totalPrice() if (!item.ready and unready) or !unready
       return price
 
 

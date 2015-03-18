@@ -34,18 +34,23 @@ angular.module('BB.Directives').directive 'bbBasketList', () ->
   controller : 'BasketList'
 
 
-angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, BasketService, $q, AlertService, ErrorService) ->
+angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, BasketService, $q, AlertService, ErrorService, FormDataStoreService) ->
   $scope.controller = "public.controllers.BasketList"
   $scope.setUsingBasket(true)
   $scope.items = $scope.bb.basket.items
 
   $scope.$watch 'basket', (newVal, oldVal) =>
-    $scope.items = $scope.bb.basket.items
+    $scope.items = _.filter $scope.bb.basket.items, (item) -> !item.is_coupon
+
 
   $scope.addAnother = (route) =>
     $scope.clearBasketItem()
+    $scope.bb.emptyStackedItems()
     $scope.bb.current_item.setCompany($scope.bb.company)
-    $scope.decideNextPage(route)
+    FormDataStoreService.destroy($scope)
+    $scope.restart()
+    $rootScope.$emit 'widget:restart'
+
 
   $scope.checkout = (route) =>
     # Reset the basket to the last item whereas the curren_item is not complete and should not be in the basket and that way, we can proceed to checkout instead of hard-coding it on the html page.
@@ -59,16 +64,17 @@ angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, 
 
 
   $scope.applyCoupon = (coupon) =>
+    $scope.notLoaded $scope
     params = {bb: $scope.bb, coupon: coupon }
     BasketService.applyCoupon($scope.bb.company, params).then (basket) ->
-
       for item in basket.items
         item.storeDefaults($scope.bb.item_defaults)
         item.reserve_without_questions = $scope.bb.reserve_without_questions
       basket.setSettings($scope.bb.basket.settings)
       $scope.setBasket(basket)
+      $scope.setLoaded $scope
     , (err) ->
       if err && err.data && err.data.error
         AlertService.clear()
         AlertService.add("danger", { msg: err.data.error })
-      console.log(err)
+      $scope.setLoaded $scope

@@ -57,8 +57,7 @@ angular.module('BB.Directives').directive 'bbPayment', ($window, $location, $sce
     link: linker
   }
 
-angular.module('BB.Controllers').controller 'Payment', ($scope,  $rootScope,
-    $q, $location, $window, $sce, $log, $timeout) ->
+angular.module('BB.Controllers').controller 'Payment', ($scope,  $rootScope, $q, $location, $window, $sce, $log, $timeout) ->
 
   $scope.controller = "public.controllers.Payment"
 
@@ -70,7 +69,6 @@ angular.module('BB.Controllers').controller 'Payment', ($scope,  $rootScope,
       $scope.decideNextPage()
       return
 
-    
     $scope.url = $sce.trustAsResourceUrl($scope.bb.total.$href('new_payment'))
 
   
