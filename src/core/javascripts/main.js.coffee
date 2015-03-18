@@ -34,12 +34,25 @@ if (window.use_no_conflict)
 else
   app.value '$bbug', jQuery
 
-app.config ($locationProvider, $httpProvider, $provide) ->
+
+app.config ($locationProvider, $httpProvider, $provide, ie8HttpBackendProvider) ->
   $httpProvider.defaults.headers.common =
     'App-Id': 'f6b16c23',
     'App-Key': 'f0bc4f65f4fbfe7b4b3b7264b655f5eb'
 
   $locationProvider.html5Mode(false).hashPrefix('!')
+
+  int = (str) ->
+    parseInt(str, 10)
+
+  lowercase = (string) ->
+    if angular.isString(string) then string.toLowerCase() else string
+
+  msie = int((/msie (\d+)/.exec(lowercase(navigator.userAgent)) || [])[1])
+  if (isNaN(msie))
+    msie = int((/trident\/.*; rv:(\d+)/.exec(lowercase(navigator.userAgent)) || [])[1])
+  if msie && msie < 10
+    $provide.provider({$httpBackend: ie8HttpBackendProvider})
 
 
 app.run ($rootScope, $log, DebugUtilsService, FormDataStoreService, $bbug, $document, $sessionStorage, AppConfig) ->
@@ -52,10 +65,12 @@ app.run ($rootScope, $log, DebugUtilsService, FormDataStoreService, $bbug, $docu
 
   # add bits of IE8 support
   if ($bbug.support.opacity == false)
-    $document.createElement('header')
-    $document.createElement('nav')
-    $document.createElement('section')
-    $document.createElement('footer')
+    document.createElement('header')
+    document.createElement('nav')
+    document.createElement('section')
+    document.createElement('footer')
+
+
 
 angular.module('BB.Services', [
   'ngResource',
@@ -71,83 +86,6 @@ angular.module('BB.Controllers', [
 angular.module('BB.Directives', [])
 angular.module('BB.Filters', [])
 angular.module('BB.Models', [])
-
-
-window.angular.ieCreateHttpBackend = ($browser, XHR, $browserDefer, callbacks, rawDocument, locationProtocol, msie, xhr, $bbug) ->
-  loc = window.location
-
-  if !msie || msie > 9
-    return null
-
-  # ie doesn't have an origin property.
-  loc.origin = loc.protocol + "//" + loc.host
-
-  getHostName = (path) ->
-    a = document.createElement('a')
-    a.href = path
-    return a.hostname
-
-  # test to see if the resource is being requested from a differnt domain
-  isLocalCall = (reqUrl) ->
-    if (/^http(s)?/.test(reqUrl))
-      if (reqUrl.indexOf(loc.origin) < 0)
-        return false
-    return true
-
-  completeRequest = (callback, status, response, headersString) ->
-    url = url || $browser.url()
-    URL_MATCH = /^([^:]+):\/\/(\w+:{0,1}\w*@)?(\{?[\w\.-]*\}?)(:([0-9]+))?(\/[^\?#]*)?(\?([^#]*))?(#(.*))?$/
-    # URL_MATCH is defined in src/service/location.js
-    protocol = (url.match(URL_MATCH) || ['', locationProtocol])[1]
-
-    # fix status code for file protocol (it's always 0)
-    #status = protocol == 'file' ? (response ? 200 : 404) : status
-    # normalize IE bug (http:#bugs.jquery.com/ticket/1450)
-    status = 204 if status == 1223
-    callback(status, response, headersString)
-    $browser.$$completeOutstandingRequest(angular.noop)
-
-  pmHandler = (method, url, post, callback, headers, timeout, withCredentials) ->
-    win = $bbug('[name="' + getHostName(url) + '"]')[0].id
-    window.pm({
-      target: window.frames[win],
-      type: 'xhrRequest',
-      data: {
-        headers: headers,
-        method: method,
-        data: post,
-        url: url
-      },
-      success: (respObj) ->
-        resp = 'Content-Type: ' + respObj.contentType
-        if (respObj.authToken)
-          resp += "\nAuth-Token: " + respObj.authToken
-        status_code = if respObj.statusCode and respObj.statusCode.status then respObj.statusCode.status else 200
-        completeRequest(callback, status_code, respObj.responseText, resp);
-      ,
-      error: (data) ->
-        completeRequest(callback, 500, 'Error', 'Content-Type: text/plain')
-    })
-
-  res = (method, url, post, callback, headers, timeout, withCredentials) ->
-    $browser.$$incOutstandingRequestCount()
-    url = url || $browser.url()
-
-    if (isLocalCall(url) )
-      xhr(method, url, post, callback, headers, timeout, withCredentials)
-    else
-      pmHandler(method, url, post, callback, headers, timeout, withCredentials)
-
-    if (timeout > 0)
-      $browserDefer () ->
-        window.status = -1
-        xhr.abort()
-      , timeout
-
-  res
-
-
-
 
 window.bookingbug =
   logout: (options) ->

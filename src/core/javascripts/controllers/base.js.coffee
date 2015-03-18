@@ -170,26 +170,6 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
 
       # ie 8 hacks
       setTimeout $scope.initWidget2, 2000
-      $timeout ->
-        if prms.api_url
-          url = document.createElement('a');
-          url.href = prms.api_url;
-          if url.protocol[url.protocol.length - 1] == ':'
-            src = "#{url.protocol}//#{url.host}/ClientProxy.html"
-          else
-            src = "#{url.protocol}://#{url.host}/ClientProxy.html"
-          $compile("<iframe id='ieapiframefix' name='" + url.hostname + "' src='#{src}' style='visibility:false;display:none;'></iframe>") $scope, (cloned, scope) =>
-            $bbug($element).append(cloned)
-        if prms.partial_url && prms.partial_url.indexOf("http") >= 0
-          url = document.createElement('a');
-          url.href = prms.partial_url or prms.bb.partial_url
-          if url.protocol[url.protocol.length - 1] == ':'
-            src = "#{url.protocol}//#{url.host}/ClientProxy.html"
-          else
-            src = "#{url.protocol}://#{url.host}/ClientProxy.html"
-          $compile("<iframe id='iepartialframefix' name='" + url.hostname + "' src='#{src}' style='visibility:false;display:none;'></iframe>") $scope, (cloned, scope) =>
-            $bbug($element).append(cloned)
-      , 10
       return
 
 

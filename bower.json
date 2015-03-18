@@ -46,7 +46,8 @@
     "angular-bootstrap": "https://github.com/BookingBug/bootstrap-bower.git#e5ca6146f33117ec2280e7c11dafdec1de300b0c",
     "angular-google-maps": "~2.0.15",
     "angular-rangeslider": "~0.0.13",
-    "angular-filter": "~0.5.4"
+    "angular-filter": "~0.5.4",
+    "es5-shim": "~4.1.0"
   },
   "resolutions": {
     "angular": "~1.2.25",
