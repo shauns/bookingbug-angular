@@ -252,7 +252,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
 
   filterEventsWithDynamicFilters = (item) ->
 
-    return true if !$scope.has_company_questions or ($scope.dynamic_filters and !$scope.dynamic_filters.question_types)
+    return true if !$scope.has_company_questions or !$scope.dynamic_filters
 
     result = true
 
