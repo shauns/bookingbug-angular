@@ -9,6 +9,7 @@ angular.module('BB.Directives').directive 'bbItemDetails', () ->
     if attrs.bbItemDetails
       item = scope.$eval( attrs.bbItemDetails )
       scope.loadItem(item)
+    scope.suppress_basket_update = attrs.bbSuppressBasketUpdate?
     return
 
 
@@ -16,6 +17,7 @@ angular.module('BB.Controllers').controller 'ItemDetails',
 ($scope, $rootScope, ItemDetailsService, PurchaseBookingService, AlertService, BBModel, FormDataStoreService, ValidatorService, QuestionService, $modal, $location, $upload) ->
 
   $scope.controller = "public.controllers.ItemDetails"
+
   # stores data when navigating back/forward through the form
   FormDataStoreService.init 'ItemDetails', $scope, [
     'item_details'
@@ -115,7 +117,7 @@ angular.module('BB.Controllers').controller 'ItemDetails',
 
   $scope.setReady = () =>
     $scope.item.setAskedQuestions()
-    if $scope.item.ready
+    if $scope.item.ready and !$scope.suppress_basket_update
       return $scope.addItemToBasket()
     else
       return true

@@ -38,7 +38,6 @@ angular.module('BB.Directives').directive 'bbBasket', (PathSvc) ->
               $scope.bb.basket
 
     BasketInstanceCtrl = ($scope,  $rootScope, $modalInstance, basket) ->
-
       $scope.basket = basket
 
       $scope.cancel = () ->

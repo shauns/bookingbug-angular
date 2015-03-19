@@ -371,11 +371,20 @@ app.directive 'bbCapitaliseFirstLetter', () ->
         return
 
 
-app.directive 'apiUrl', ($rootScope) ->
+app.directive 'apiUrl', ($rootScope, $compile, $sniffer) ->
   restrict: 'A'
   link: (scope, element, attrs) ->
     $rootScope.bb ||= {}
     $rootScope.bb.api_url = attrs.apiUrl
+    if ($sniffer.msie && $sniffer.msie < 10)
+      url = document.createElement('a')
+      url.href = attrs.apiUrl
+      if url.protocol[url.protocol.length - 1] == ':'
+        src = "#{url.protocol}//#{url.host}/ClientProxy.html"
+      else
+        src = "#{url.protocol}://#{url.host}/ClientProxy.html"
+      $compile("<iframe id='ieapiframefix' name='" + url.hostname + "' src='#{src}' style='visibility:false;display:none;'></iframe>") scope, (cloned, scope) =>
+        element.append(cloned)
 
 
 app.directive 'bbPriceFilter', (PathSvc) ->
