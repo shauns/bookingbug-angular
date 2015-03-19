@@ -121,12 +121,13 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
 
       $scope.items = items
 
-      # check if the current item already has the same event selected
+      # get more event event details
       for item in $scope.items
         item.prepEvent()
-        if current_event and current_event.self == item.self and false # TODO only restore the event if an event group was explicity selected
-          item.select() 
-          $scope.event = item
+        # check if the current item already has the same event selected
+        # if current_event and current_event.self == item.self and false # TODO only restore the event if an event group was explicity selected
+        #   item.select() 
+        #   $scope.event = item
 
       # if we're not in summary mode
       if !$scope.summary
@@ -162,6 +163,8 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
       isFullyBooked()
 
       $scope.filtered_items = $scope.items
+      # run the filters to ensure any default filters get applied
+      $scope.filterChanged()
       PaginationService.pageChanged($scope.pagination, $scope.filtered_items.length)
 
 
@@ -236,7 +239,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
   loadEventGroups = () ->
     $scope.bb.company.getEventGroupsPromise().then (items) ->
       $scope.event_groups = _.indexBy(items, 'id')
-     
+      
 
   $scope.filterEvents = (item) ->
     result = (item.date.isSame(moment($scope.filters.date), 'day') or !$scope.filters.date?) and
