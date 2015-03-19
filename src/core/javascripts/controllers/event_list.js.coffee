@@ -165,7 +165,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
       $scope.filtered_items = $scope.items
       # run the filters to ensure any default filters get applied
       $scope.filterChanged()
-      PaginationService.pageChanged($scope.pagination, $scope.filtered_items.length)
+      PaginationService.update($scope.pagination, $scope.filtered_items.length)
 
 
       $scope.setLoaded $scope
@@ -252,7 +252,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
 
   filterEventsWithDynamicFilters = (item) ->
 
-    return true if !$scope.has_company_questions
+    return true if !$scope.has_company_questions or ($scope.dynamic_filters and !$scope.dynamic_filters.question_types)
 
     result = true
 
@@ -307,9 +307,10 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
       $scope.filtered_items = $filter('filter')($scope.items, $scope.filterEvents)
       $scope.pagination.num_items = $scope.filtered_items.length
       $scope.filter_active = $scope.filtered_items.length != $scope.items.length
+      PaginationService.update($scope.pagination, $scope.filtered_items.length)
 
 
   $scope.pageChanged = () ->
-    PaginationService.pageChanged($scope.pagination, $scope.filtered_items.length)
+    PaginationService.update($scope.pagination, $scope.filtered_items.length)
     $rootScope.$emit "page:changed"
 
