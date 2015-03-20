@@ -51,15 +51,14 @@ app.directive 'bbScrollTo', ($rootScope, AppConfig, BreadcrumbService, $bbug) ->
 
     evnts = attrs.bbScrollTo.split(',')
     always_scroll = attrs.bbAlwaysScroll? or false
-    bb_transition_time = attrs.bbNoTransitionTime? or 500
-
+    transition_time = parseInt(attrs.bbNoTransitionTime, 10)
+    bb_transition_time = transition_time or 500
+    
     if angular.isArray(evnts)
       angular.forEach evnts, (evnt) ->
         # remove listener for event otherwise duplicate listenr will be added if this 
         # directive is invoked more than once on the same element
         $rootScope.$$listeners[evnt] = null
-        if evnt == "bbNoTransitionTime"
-          bb_transition_time = 0
         $rootScope.$on evnt, (e) ->
           scrollToCallback(evnt)
     else
