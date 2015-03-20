@@ -47,7 +47,6 @@ angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, 
     $scope.clearBasketItem()
     $scope.bb.emptyStackedItems()
     $scope.bb.current_item.setCompany($scope.bb.company)
-    FormDataStoreService.destroy($scope)
     $scope.restart()
     $rootScope.$emit 'widget:restart'
 
