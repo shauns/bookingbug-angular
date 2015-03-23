@@ -12,10 +12,11 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
     'selected_category_name'
   ]
 
-  $scope.options                    = $scope.$eval($attrs.bbMultiServiceSelect) or {}
-  $scope.options.max_services       = $scope.options.max_services or 3
-  $scope.options.ordered_categories = $scope.options.ordered_categories or false
-  $scope.options.services           = $scope.options.services or 'items'
+  $scope.options                      = $scope.$eval($attrs.bbMultiServiceSelect) or {}
+  $scope.options.max_services         = $scope.options.max_services or 3
+  $scope.options.ordered_categories   = $scope.options.ordered_categories or false
+  $scope.options.services             = $scope.options.services or 'items'
+  $scope.options.allow_multi_purchase = $scope.options.services or false
 
   # Get the categories
   CategoryService.query($scope.bb.company).then (items) =>
@@ -130,7 +131,8 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
 
   $scope.addItem = (item) ->
     if $scope.bb.stacked_items.length < $scope.options.max_services
-      item.selected = true
+      $scope.bb.clearStackedItemsDateTime() # clear any selected date/time as the selection has changed
+      item.selected = true if !$scope.options.allow_multi_purchase
       iitem = new BBModel.BasketItem(null, $scope.bb)
       iitem.setDefaults($scope.bb.item_defaults)
       iitem.setService(item)
@@ -144,11 +146,15 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
 
 
   $scope.removeItem = (item) ->
-    item.selected = false
-    $scope.bb.deleteStackedItemByService(item)
+    item.selected = false if !$scope.options.allow_multi_purchase
+    $scope.bb.deleteStackedItem(item)
+    $scope.bb.clearStackedItemsDateTime() # clear any selected date/time as the selection has changed
     $rootScope.$broadcast "multi_service_select:item_removed"
-    for i in $scope.items
-      i.selected = false if i.self is item.self 
+    if !$scope.options.allow_multi_purchase
+      for i in $scope.items
+        if i.self is item.self
+          i.selected = false
+          break
 
 
   $scope.nextStep = () ->

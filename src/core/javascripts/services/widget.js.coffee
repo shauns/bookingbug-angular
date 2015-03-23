@@ -249,6 +249,9 @@ angular.module('BB.Models').factory "BBWidget", ($q, BBModel, BasketService, $ur
         duration += item.service.listed_duration if item.service and item.service.listed_duration
       return duration
 
+    clearStackedItemsDateTime: ->
+      for item in @stacked_items
+        item.clearDateTime()
 
     # Address methods
     clearAddress: () =>
