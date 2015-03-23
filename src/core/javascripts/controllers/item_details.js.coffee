@@ -139,7 +139,7 @@ angular.module('BB.Controllers').controller 'ItemDetails', ($scope, $attrs, $roo
 	    
         $scope.setLoaded $scope
         $scope.item.move_done = true
-        $rootScope.$emit "booking:moved"
+        $rootScope.$broadcast "booking:moved"
         $scope.decideNextPage(route)
         AlertService.add("info", { msg: "Your booking has been moved to #{b.datetime.format('dddd Do MMMM [at] h.mma')}" })
        , (err) =>

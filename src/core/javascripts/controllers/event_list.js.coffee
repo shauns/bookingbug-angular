@@ -312,5 +312,5 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
 
   $scope.pageChanged = () ->
     PaginationService.update($scope.pagination, $scope.filtered_items.length)
-    $rootScope.$emit "page:changed"
+    $rootScope.$broadcast "page:changed"
 

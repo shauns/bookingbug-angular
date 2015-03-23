@@ -541,7 +541,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
       $scope.notLoaded $scope
       $scope.bb_main = $sce.trustAsResourceUrl($scope.bb.pageURL(route))
 
-    $rootScope.$emit "page:loaded"
+    $rootScope.$broadcast "page:loaded"
 
   $scope.jumpToPage = (route) =>
     $scope.current_page = route
@@ -1028,7 +1028,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
       cscope = cscope.$parent
 
     if loadingFinished
-      $rootScope.$emit 'loading:finished'
+      $rootScope.$broadcast 'loading:finished'
     return
 
 

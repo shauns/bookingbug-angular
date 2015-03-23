@@ -178,7 +178,7 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope, Co
 
         $q.all(proms).then () ->
           $scope.setLoaded $scope
-          $rootScope.$emit "booking:move"
+          $rootScope.$broadcast "booking:move"
           $scope.decideNextPage(route)
         , (err) ->
           $scope.setLoaded $scope
@@ -230,7 +230,7 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope, Co
     modalInstance.result.then (booking) ->
       booking.$del('self').then (service) =>
         $scope.bookings = _.without($scope.bookings, booking)
-        $rootScope.$emit "booking:cancelled"
+        $rootScope.$broadcast "booking:cancelled"
 
 
   # delete all bookings assoicated to the purchase
@@ -245,7 +245,7 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope, Co
       PurchaseService.delete_all(purchase).then (purchase) ->
         $scope.purchase = purchase
         $scope.bookings = []
-        $rootScope.$emit "booking:cancelled"
+        $rootScope.$broadcast "booking:cancelled"
 
 
   $scope.isMovable = (booking) ->

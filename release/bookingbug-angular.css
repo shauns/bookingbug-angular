@@ -3566,15 +3566,6 @@ body.ngrs-touching {
   -ms-touch-action: none;
 }
 
-[pricepicker] {
-  position: relative; }
-  [pricepicker] input {
-    padding-left: 22px; }
-  [pricepicker] span {
-    position: absolute;
-    padding: 7px 12px;
-    pointer-events: none; }
-
 .modal-dialog div {
   padding: 15px; }
 
@@ -3593,6 +3584,15 @@ body.ngrs-touching {
     width: 40px;
     height: 40px;
     border-radius: 20px; }
+
+[pricepicker] {
+  position: relative; }
+  [pricepicker] input {
+    padding-left: 22px; }
+  [pricepicker] span {
+    position: absolute;
+    padding: 7px 12px;
+    pointer-events: none; }
 
 [schedule-weekdays] .fc-today {
   background: none; }

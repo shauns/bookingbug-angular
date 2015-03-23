@@ -120,12 +120,12 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
         sub_categories: services
       }
       $scope.selected_category_name = $scope.selected_category.name
-      $rootScope.$emit "multi_service_select:category_changed"
+      $rootScope.$broadcast "multi_service_select:category_changed"
 
 
   $scope.changeCategoryName = () ->
       $scope.selected_category_name = $scope.selected_category.name
-      $rootScope.$emit "multi_service_select:category_changed"
+      $rootScope.$broadcast "multi_service_select:category_changed"
 
 
   $scope.addItem = (item) ->
@@ -136,7 +136,7 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
       iitem.setService(item)
       iitem.setGroup(item.group)
       $scope.bb.stackItem(iitem)
-      $rootScope.$emit "multi_service_select:item_added"
+      $rootScope.$broadcast "multi_service_select:item_added"
     else
       for i in $scope.items
         i.popover = "Sorry, you can only book a maximum of #{$scope.options.max_services} treatments"
@@ -146,7 +146,7 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
   $scope.removeItem = (item) ->
     item.selected = false
     $scope.bb.deleteStackedItemByService(item)
-    $rootScope.$emit "multi_service_select:item_removed"
+    $rootScope.$broadcast "multi_service_select:item_removed"
     for i in $scope.items
       i.selected = false if i.self is item.self 
 
@@ -165,7 +165,7 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
 
 
   $scope.addService = () ->
-    $rootScope.$emit "multi_service_select:add_item"
+    $rootScope.$broadcast "multi_service_select:add_item"
 
 
   $scope.setReady = () ->

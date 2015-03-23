@@ -246,7 +246,7 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
         $scope.bb.current_item.earliest_time_slot.selected = false
 
       $scope.updateHideStatus()
-      $rootScope.$emit "time:selected"
+      $rootScope.$broadcast "time:selected"
       # broadcast message to the accordian range groups
       $scope.$broadcast 'slotChanged', day, slot
 

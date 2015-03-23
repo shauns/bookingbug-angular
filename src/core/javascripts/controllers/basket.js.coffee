@@ -48,7 +48,7 @@ angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, 
     $scope.bb.emptyStackedItems()
     $scope.bb.current_item.setCompany($scope.bb.company)
     $scope.restart()
-    $rootScope.$emit 'widget:restart'
+    $rootScope.$broadcast 'widget:restart'
 
 
   $scope.checkout = (route) =>

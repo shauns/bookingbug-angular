@@ -186,7 +186,7 @@ angular.module('BB.Controllers').controller 'MapCtrl',
     $scope.myMap.setCenter $scope.loc
     $scope.myMap.setZoom 15
     $scope.showClosestMarkers $scope.loc
-    $rootScope.$emit "map:search_success"
+    $rootScope.$broadcast "map:search_success"
 
 
   searchFailed = () ->
