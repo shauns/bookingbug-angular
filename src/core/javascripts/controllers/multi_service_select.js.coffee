@@ -12,11 +12,10 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
     'selected_category_name'
   ]
 
-  $scope.options                      = $scope.$eval($attrs.bbMultiServiceSelect) or {}
-  $scope.options.max_services         = $scope.options.max_services or 3
-  $scope.options.ordered_categories   = $scope.options.ordered_categories or false
-  $scope.options.services             = $scope.options.services or 'items'
-  $scope.options.allow_multi_purchase = $scope.options.services or false
+  $scope.options                    = $scope.$eval($attrs.bbMultiServiceSelect) or {}
+  $scope.options.max_services       = $scope.options.max_services or 3
+  $scope.options.ordered_categories = $scope.options.ordered_categories or false
+  $scope.options.services           = $scope.options.services or 'items'
 
   # Get the categories
   CategoryService.query($scope.bb.company).then (items) =>
@@ -25,7 +24,7 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
         item.order = parseInt(item.name.slice(0,2))
         item.name  = item.name.slice(3)
     $scope.all_categories = _.indexBy(items, 'id')
-  , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
+  , (err) -> $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
 
   # wait for items and all_categories before for we begin initialisation
@@ -72,13 +71,10 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
 
   checkItemDefaults = () ->
     return if !$scope.bb.item_defaults.service
-    for category in $scope.categories
-      for sub_category of category.sub_categories
-        services = category.sub_categories[sub_category]
-        for service in services
-          if service.self is $scope.bb.item_defaults.service.self
-            $scope.addItem(service)
-            return
+    for service in $scope.items
+      if service.self is $scope.bb.item_defaults.service.self
+        $scope.addItem(service)
+        return
 
 
   collectCategories = () ->
@@ -132,7 +128,7 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
   $scope.addItem = (item) ->
     if $scope.bb.stacked_items.length < $scope.options.max_services
       $scope.bb.clearStackedItemsDateTime() # clear any selected date/time as the selection has changed
-      item.selected = true if !$scope.options.allow_multi_purchase
+      item.selected = true
       iitem = new BBModel.BasketItem(null, $scope.bb)
       iitem.setDefaults($scope.bb.item_defaults)
       iitem.setService(item)
@@ -146,15 +142,14 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
 
 
   $scope.removeItem = (item) ->
-    item.selected = false if !$scope.options.allow_multi_purchase
+    item.selected = false
     $scope.bb.deleteStackedItem(item)
     $scope.bb.clearStackedItemsDateTime() # clear any selected date/time as the selection has changed
     $rootScope.$broadcast "multi_service_select:item_removed"
-    if !$scope.options.allow_multi_purchase
-      for i in $scope.items
-        if i.self is item.self
-          i.selected = false
-          break
+    for i in $scope.items
+      if i.self is item.self
+        i.selected = false
+        break
 
 
   $scope.nextStep = () ->
