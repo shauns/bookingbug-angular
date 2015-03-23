@@ -16,7 +16,6 @@
   ],
   "dependencies": {
     "jquery": "~1.11.2",
-    "jquery-visible": "~1.1.0",
     "jquery-ui": "~1.11.2",
     "moment": "https://github.com/BookingBug/moment.git#master",
     "moment-timezone": "~0.2.5",
