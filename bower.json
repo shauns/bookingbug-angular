@@ -46,7 +46,8 @@
     "angular-google-maps": "~2.0.15",
     "angular-rangeslider": "~0.0.13",
     "angular-filter": "~0.5.4",
-    "es5-shim": "~4.1.0"
+    "es5-shim": "~4.1.0",
+    "webshim": "~1.15.7"
   },
   "resolutions": {
     "angular": "~1.2.25",
