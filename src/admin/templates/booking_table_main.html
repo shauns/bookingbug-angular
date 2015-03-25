@@ -1,0 +1,10 @@
+<button class="btn btn-default" ng-click="newBooking()">New Booking</button>
+<table tr-ng-grid="" items="bookings" fields="fields" ng-if="bookings">
+	<tbody>
+		<tr>
+			<td>
+				<button class="btn btn-default btn-sm" ng-click="edit(gridItem)">Edit</button>
+			</td>
+		</tr>
+	</tbody>
+</table>

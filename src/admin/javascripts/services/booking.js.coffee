@@ -15,6 +15,15 @@ angular.module('BBAdmin.Services').factory 'AdminBookingService',
     existing = BookingCollections.find(prms)
     if existing
       deferred.resolve(existing)
+    else if prms.company
+      prms.company.$get('bookings').then (collection) ->
+        collection.$get('bookings').then (bookings) ->
+          models = (new BBModel.Admin.Booking(b) for b in bookings)
+          deferred.resolve(models)
+        , (err) ->
+          deferred.reject(err)
+      , (err) ->
+        deferred.reject(err)
     else      
       url = ""
       url = prms.url if prms.url

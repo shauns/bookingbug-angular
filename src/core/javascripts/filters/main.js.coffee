@@ -379,3 +379,10 @@ app.filter 'add', ->
     if item and value
       item = parseInt(item)
       return item + value
+
+app.filter 'spaces_remaining', () ->
+  (spaces) ->
+    if spaces < 1
+      return 0
+    else 
+      return spaces

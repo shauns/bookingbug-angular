@@ -437,6 +437,12 @@ angular.module('BB.Models').factory "BasketItemModel",
       @checkReady()
 
 
+    clearDateTime: () ->
+      delete @date
+      delete @time
+      delete @datetime
+
+
     setGroup: (group) ->
       @group = group
 

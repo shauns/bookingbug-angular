@@ -51,19 +51,14 @@ app.directive 'bbScrollTo', ($rootScope, AppConfig, BreadcrumbService, $bbug) ->
 
     evnts = attrs.bbScrollTo.split(',')
     always_scroll = attrs.bbAlwaysScroll? or false
+    bb_transition_time = if attrs.bbTransitionTime? then parseInt(attrs.bbTransitionTime, 10) else 500
 
     if angular.isArray(evnts)
       angular.forEach evnts, (evnt) ->
-        
-        # remove listener for event otherwise duplicate listenr will be added if this 
-        # directive is invoked more than once on the same element
-        $rootScope.$$listeners[evnt] = null
-
-        $rootScope.$on evnt, (e) ->
+        scope.$on evnt, (e) ->
           scrollToCallback(evnt)
     else
-      $rootScope.$$listeners[evnts] = null
-      $rootScope.$on evnts, (e) ->
+      scope.$on evnts, (e) ->
         scrollToCallback(evnts)
 
     scrollToCallback = (evnt) ->
@@ -79,7 +74,7 @@ app.directive 'bbScrollTo', ($rootScope, AppConfig, BreadcrumbService, $bbug) ->
           (not scroll_to_element.is(':visible') and scroll_to_element.offset().top != 0)
             $bbug("html, body").animate
               scrollTop: scroll_to_element.offset().top
-              , 500
+              , bb_transition_time
 
 
 # bbSlotGrouper

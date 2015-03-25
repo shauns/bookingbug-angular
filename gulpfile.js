@@ -29,10 +29,10 @@ gulp.task('list', function() {
 
 gulp.task('javascripts', function() {
   javascripts = gulp.src(mainBowerFiles({filter: new RegExp('.js$')}).concat([
-        './bower_components/jquery-visible/jquery.visible.js',
         './bower_components/moment/locale/en-gb.js',
         './bower_components/lodash/dist/lodash.js',
         './bower_components/angular-google-maps/dist/angular-google-maps.js',
+        './bower_components/webshim/js-webshim/dev/polyfiller.js',
         './src/javascripts/core/main.js.coffee', 
         './src/*/javascripts/main.js.coffee', 
         './src/*/main.js.coffee', 
@@ -64,6 +64,11 @@ gulp.task('images', function() {
     .pipe(imagemin())
     .pipe(flatten())
     .pipe(gulp.dest('release'));
+});
+
+gulp.task('shims', function() {
+  return gulp.src('bower_components/webshim/js-webshim/minified/shims/*')
+    .pipe(gulp.dest('release/shims'));
 });
 
 gulp.task('stylesheets', function() {
@@ -102,6 +107,6 @@ gulp.task('webserver', function() {
   });
 });
 
-gulp.task('assets', ['clean', 'javascripts', 'images', 'stylesheets','fonts', 'theme']);
+gulp.task('assets', ['clean', 'javascripts', 'images', 'stylesheets','fonts', 'theme', 'shims']);
 
 gulp.task('default', ['assets', 'watch', 'webserver']);

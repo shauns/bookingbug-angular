@@ -24,7 +24,7 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
         item.order = parseInt(item.name.slice(0,2))
         item.name  = item.name.slice(3)
     $scope.all_categories = _.indexBy(items, 'id')
-  , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
+  , (err) -> $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
 
   # wait for items and all_categories before for we begin initialisation
@@ -71,13 +71,10 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
 
   checkItemDefaults = () ->
     return if !$scope.bb.item_defaults.service
-    for category in $scope.categories
-      for sub_category of category.sub_categories
-        services = category.sub_categories[sub_category]
-        for service in services
-          if service.self is $scope.bb.item_defaults.service.self
-            $scope.addItem(service)
-            return
+    for service in $scope.items
+      if service.self is $scope.bb.item_defaults.service.self
+        $scope.addItem(service)
+        return
 
 
   collectCategories = () ->
@@ -120,23 +117,24 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
         sub_categories: services
       }
       $scope.selected_category_name = $scope.selected_category.name
-      $rootScope.$emit "multi_service_select:category_changed"
+      $rootScope.$broadcast "multi_service_select:category_changed"
 
 
   $scope.changeCategoryName = () ->
       $scope.selected_category_name = $scope.selected_category.name
-      $rootScope.$emit "multi_service_select:category_changed"
+      $rootScope.$broadcast "multi_service_select:category_changed"
 
 
   $scope.addItem = (item) ->
     if $scope.bb.stacked_items.length < $scope.options.max_services
+      $scope.bb.clearStackedItemsDateTime() # clear any selected date/time as the selection has changed
       item.selected = true
       iitem = new BBModel.BasketItem(null, $scope.bb)
       iitem.setDefaults($scope.bb.item_defaults)
       iitem.setService(item)
       iitem.setGroup(item.group)
       $scope.bb.stackItem(iitem)
-      $rootScope.$emit "multi_service_select:item_added"
+      $rootScope.$broadcast "multi_service_select:item_added"
     else
       for i in $scope.items
         i.popover = "Sorry, you can only book a maximum of #{$scope.options.max_services} treatments"
@@ -145,10 +143,13 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
 
   $scope.removeItem = (item) ->
     item.selected = false
-    $scope.bb.deleteStackedItemByService(item)
-    $rootScope.$emit "multi_service_select:item_removed"
+    $scope.bb.deleteStackedItem(item)
+    $scope.bb.clearStackedItemsDateTime() # clear any selected date/time as the selection has changed
+    $rootScope.$broadcast "multi_service_select:item_removed"
     for i in $scope.items
-      i.selected = false if i.self is item.self 
+      if i.self is item.self
+        i.selected = false
+        break
 
 
   $scope.nextStep = () ->
@@ -165,7 +166,7 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
 
 
   $scope.addService = () ->
-    $rootScope.$emit "multi_service_select:add_item"
+    $rootScope.$broadcast "multi_service_select:add_item"
 
 
   $scope.setReady = () ->
