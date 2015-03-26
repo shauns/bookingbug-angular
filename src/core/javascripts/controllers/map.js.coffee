@@ -335,24 +335,16 @@ angular.module('BB.Controllers').controller 'MapCtrl',
 
 
 
-
-
-
-
-
-
-
-
 angular.module('BB.Directives').directive 'bbMapTheSecond', () ->
   restrict: 'AE'
   replace: true
   scope : true
-  controller : 'MapCtrl'
+  controller : 'MapCtrl2'
 
-angular.module('BB.Controllers').controller 'MapCtrl',
+angular.module('BB.Controllers').controller 'MapCtrl2',
 ($scope, $element, $attrs, $rootScope, AlertService, ErrorService, FormDataStoreService, $q, $window, $timeout, $document) ->
 
-  $scope.controller = "public.controllers.MapCtrl"
+  $scope.controller = "public.controllers.MapCtrl2"
 
   $rootScope.connection_started.then ->
 
@@ -399,11 +391,34 @@ angular.module('BB.Controllers').controller 'MapCtrl',
       if comp.address.lat && comp.address.long
         marker = {
           id: index,
-          latitude: comp.address.lat
-          longitude: comp.address.long
-          title: comp.name
-          show: true
+          latitude: comp.address.lat,
+          longitude: comp.address.long,
+          show: false,
+          templateUrl: 'templateURL.html',
+          templateParameter: {
+            id: index + 1,
+            title: comp.title,
+            address: comp.address,
+            phone: comp.address.homephone
+          },
          }
         $scope.markers.push(marker)
 
     console.log $scope.markers
+
+    # $scope.selectItem = (item, route) ->
+    #   return if !$scope.$debounce(1000)
+
+    #   if !item
+    #     AlertService.warning({msg:$scope.error_msg})
+    #     return
+
+    #   $scope.notLoaded $scope
+
+    #   # if the selected store changes, emit an event. the form data store uses
+    #   # this to clear data, but it can be used to action anything.
+    #   if $scope.selectedStore and $scope.selectedStore.id isnt item.id
+    #     $scope.$emit 'change:storeLocation'
+
+    #   $scope.selectedStore = item;
+    #   $scope.initWidget({company_id:item.id, first_page: route})

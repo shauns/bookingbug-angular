@@ -81,8 +81,8 @@
     </div>
   </div>
 </div> -->
-<div bb-map-the-second class="bb-map">
 
+<div bb-map-the-second class="bb-map">
 <!--   <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds">
       <ui-gmap-markers models="randomMarkers" coords="'self'" icon="'icon'" click="'onClick'">
           <ui-gmap-windows show="show">
@@ -90,11 +90,10 @@
           </ui-gmap-windows>
       </ui-gmap-markers>
   </ui-gmap-google-map> -->
-
   <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="options.draggable" options="options">
-    <ui-gmap-markers models="markers" coords="'self'" icon="'icon'" click="'onClick'">
-        <ui-gmap-windows show="show">
-            <div ng-non-bindable>{{title}}</div>
+
+    <ui-gmap-markers models="markers" coords="'self'" icon="'icon'" closeClick="'closeClick'">
+        <ui-gmap-windows show="'show'" templateUrl="'templateUrl'" templateParameter="'templateParameter'">
         </ui-gmap-windows>
     </ui-gmap-markers>
   </ui-gmap-google-map>
