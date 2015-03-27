@@ -1,7 +1,7 @@
-<div bb-map-the-second>
+<div bb-map-info-window>
   <p>Hello from examples.</p>
   <p><strong>{{ parameter.title }}</strong></p>
   <p>{{ parameter.address | address_single_line }}</p>
   <p>{{ parameter.phone | uk_local_number }}</p>
-  <button type="button" ng-click="selectItem(marker)" class="btn btn-primary">select</button>
+  <button type="button" ng-click="selectItem(parameter.item, 'service_list')" class="btn btn-primary">select</button>
 </div>

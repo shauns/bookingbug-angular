@@ -333,8 +333,6 @@ angular.module('BB.Controllers').controller 'MapCtrl',
       $scope.showClosestMarkers $scope.loc
 
 
-
-
 angular.module('BB.Directives').directive 'bbMapTheSecond', () ->
   restrict: 'AE'
   replace: true
@@ -346,9 +344,20 @@ angular.module('BB.Controllers').controller 'MapCtrl2',
 
   $scope.controller = "public.controllers.MapCtrl2"
 
+  map_ready_def               = $q.defer()
+
   $rootScope.connection_started.then ->
 
     $scope.setLoaded $scope
+    if $scope.bb.company.companies
+      $rootScope.parent_id = $scope.bb.company.id
+    else if $rootScope.parent_id
+      $scope.initWidget({company_id:$rootScope.parent_id, first_page: $scope.bb.current_page, keep_basket:true})
+      return
+    else
+      $scope.initWidget({company_id:$scope.bb.company.id, first_page: null})
+      return
+
     if $scope.bb.company.companies
       $rootScope.parent_id = $scope.bb.company.id
     else if $rootScope.parent_id
@@ -363,8 +372,13 @@ angular.module('BB.Controllers').controller 'MapCtrl2',
       $scope.companies = [$scope.bb.company]
 
     $scope.mapBounds = new google.maps.LatLngBounds()
-    for comp in $scope.companies
-      if comp.address.lat && comp.address.long
+    # I really need to get rid of this error message somehow. Option to take it out of the array but not don't know if that would be good in the bigger soce of things.
+    for comp, index in $scope.companies
+      if comp and (comp['address'] is undefined)
+        console.log "Missing address for object ", index + 1, "."
+        $scope.companies.splice(index, 1)
+        console.log $scope.companies
+      else if comp and comp.address.lat and comp.address.long
         latlong = new google.maps.LatLng(comp.address.lat,comp.address.long)
         $scope.mapBounds.extend(latlong)
 
@@ -400,25 +414,40 @@ angular.module('BB.Controllers').controller 'MapCtrl2',
             title: comp.title,
             address: comp.address,
             phone: comp.address.homephone
+            item: comp
           },
          }
         $scope.markers.push(marker)
 
-    console.log $scope.markers
+    map_ready_def.resolve(true)
 
-    # $scope.selectItem = (item, route) ->
-    #   return if !$scope.$debounce(1000)
+  , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
-    #   if !item
-    #     AlertService.warning({msg:$scope.error_msg})
-    #     return
+angular.module('BB.Directives').directive 'bbMapInfoWindow', () ->
+  restrict: 'AE'
+  replace: true
+  scope : true
+  require: '^?bbWidget'
+  controller : 'MapCtrl3'
 
-    #   $scope.notLoaded $scope
+angular.module('BB.Controllers').controller 'MapCtrl3',
+($scope, $element, $attrs, $rootScope, AlertService, ErrorService, FormDataStoreService, $q, $window, $timeout, $document) ->
 
-    #   # if the selected store changes, emit an event. the form data store uses
-    #   # this to clear data, but it can be used to action anything.
-    #   if $scope.selectedStore and $scope.selectedStore.id isnt item.id
-    #     $scope.$emit 'change:storeLocation'
+  $scope.selectItem = (item, route) ->
+    debugger
+    # return if !$scope.$debounce(1000)
 
-    #   $scope.selectedStore = item;
-    #   $scope.initWidget({company_id:item.id, first_page: route})
+    if !item
+      AlertService.warning({msg:$scope.error_msg})
+      return
+
+    # $scope.notLoaded $scope
+    $scope.selectedStore = item
+    # if the selected store changes, emit an event. the form data store uses
+    # this to clear data, but it can be used to action anything.
+    if $scope.selectedStore and $scope.selectedStore.id isnt item.id
+      $scope.$emit 'change:storeLocation'
+
+    console.log "Ok until here."
+    # $scope.initWidget({company_id:item.id, first_page: route})
+    return
