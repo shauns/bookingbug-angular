@@ -228,6 +228,9 @@ angular.module('BB.Models').factory "BBWidget", ($q, BBModel, BasketService, $ur
 
       @stacked_items = @stacked_items.filter (i) -> i isnt item
 
+    removeItemFromStack: (item) =>
+      @stacked_items = @stacked_items.filter (i) -> i isnt item
+
     deleteStackedItemByService: (item) =>
       for i in @stacked_items
         if i && i.service && i.service.self == item.self && i.id
@@ -249,9 +252,6 @@ angular.module('BB.Models').factory "BBWidget", ($q, BBModel, BasketService, $ur
         duration += item.service.listed_duration if item.service and item.service.listed_duration
       return duration
 
-    clearStackedItemsDateTime: ->
-      for item in @stacked_items
-        item.clearDateTime()
 
     # Address methods
     clearAddress: () =>

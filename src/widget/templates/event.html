@@ -91,8 +91,9 @@
             </div>
           </div> 
 
+<!-- Moved Coupon and Deal Stuff to Review Basket -->
 
-          <div ng-if="selected_tickets" bb-basket-list class="button-group row">
+<!--           <div ng-if="selected_tickets" bb-basket-list class="button-group row">
             <div class="col-sm-4 col-sm-offset-8">
               <form class="form-inline">
                 <div class="form-group">
@@ -106,7 +107,27 @@
                 </div>
               </form>
             </div>
-          </div>
+
+            <div class="button-group row" ng-if="company.$has('deals')">
+              <div class="col-sm-4 col-sm-offset-8">
+                <form class="form-inline">
+                  <div ng-show="!show_voucher_box">
+                    <a ng-click="show_voucher_box = true">Have a gift certificate?</a>
+                  </div>
+                  <div ng-show="show_voucher_box" class="form-group">
+                    <label for="deal">Apply a gift certificate:</label>
+                    <div class=" input-group">
+                      <input type="text" class="form-control input-sm" id="deal_code" name="deal_code" ng-model="deal_code" placeholder="Enter a voucher code">
+                      <span class="input-group-btn">
+                        <button type="button" class="btn btn-primary btn-sm" ng-click="applyDeal(deal_code)">Apply</button>
+                      </span>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div> -->
+
         </div>
       </div>
     </div>

@@ -45,7 +45,6 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
 
   $rootScope.connection_started.then ->
     if $scope.bb.company
-
       if $scope.summary then $scope.getSummary() else $scope.init()
 
       if !$scope.current_item.event_group
@@ -112,7 +111,6 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
       delete $scope.current_item.event
       delete $scope.current_item.event_chain
       delete $scope.current_item.event_group # TODO only delete if the event group wasn't selected explicity
-      delete $scope.current_item.tickets
 
     $scope.notLoaded $scope
     comp ||= $scope.bb.company 
@@ -121,13 +119,12 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
 
       $scope.items = items
 
-      # get more event event details
+      # check if the current item already has the same event selected
       for item in $scope.items
         item.prepEvent()
-        # check if the current item already has the same event selected
-        # if current_event and current_event.self == item.self and false # TODO only restore the event if an event group was explicity selected
-        #   item.select() 
-        #   $scope.event = item
+        if current_event and current_event.self == item.self and false # TODO only restore the event if an event group was explicity selected
+          item.select() 
+          $scope.event = item
 
       # if we're not in summary mode
       if !$scope.summary
@@ -163,9 +160,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
       isFullyBooked()
 
       $scope.filtered_items = $scope.items
-      # run the filters to ensure any default filters get applied
-      $scope.filterChanged()
-      PaginationService.update($scope.pagination, $scope.filtered_items.length)
+      PaginationService.pageChanged($scope.pagination, $scope.filtered_items.length)
 
 
       $scope.setLoaded $scope
@@ -239,7 +234,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
   loadEventGroups = () ->
     $scope.bb.company.getEventGroupsPromise().then (items) ->
       $scope.event_groups = _.indexBy(items, 'id')
-      
+     
 
   $scope.filterEvents = (item) ->
     result = (item.date.isSame(moment($scope.filters.date), 'day') or !$scope.filters.date?) and
@@ -252,7 +247,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
 
   filterEventsWithDynamicFilters = (item) ->
 
-    return true if !$scope.has_company_questions or !$scope.dynamic_filters
+    return true if !$scope.has_company_questions
 
     result = true
 
@@ -307,10 +302,9 @@ angular.module('BB.Controllers').controller 'EventList', ($scope,  $rootScope, E
       $scope.filtered_items = $filter('filter')($scope.items, $scope.filterEvents)
       $scope.pagination.num_items = $scope.filtered_items.length
       $scope.filter_active = $scope.filtered_items.length != $scope.items.length
-      PaginationService.update($scope.pagination, $scope.filtered_items.length)
 
 
   $scope.pageChanged = () ->
-    PaginationService.update($scope.pagination, $scope.filtered_items.length)
-    $rootScope.$broadcast "page:changed"
+    PaginationService.pageChanged($scope.pagination, $scope.filtered_items.length)
+    $rootScope.$emit "page:changed"
 

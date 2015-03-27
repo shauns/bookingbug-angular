@@ -22,7 +22,7 @@ angular.module('BB.Controllers').controller 'Event', ($scope,  $rootScope, Event
 
   $scope.init = (comp) ->
     $scope.event = $scope.bb.current_item.event
-    promises = [$scope.current_item.event_group.getImagesPromise(), $scope.event.prepEvent()]
+    promises = [$scope.bb.current_item.event_group.getImagesPromise(), $scope.event.prepEvent()]
 
     $q.all(promises).then (result) ->
       if result[0] and result[0].length > 0
@@ -45,7 +45,7 @@ angular.module('BB.Controllers').controller 'Event', ($scope,  $rootScope, Event
     # process the selected tickets - this may mean adding multiple basket items - add them all to the basket
     $scope.notLoaded $scope
     $scope.bb.emptyStackedItems()
-    #$scope.setBasket(new BBModel.Basket(null, $scope.bb)) # we might already have a basket!!
+    $scope.setBasket(new BBModel.Basket(null, $scope.bb))
     base_item = $scope.current_item
     for ticket in $scope.event.tickets
       if ticket.qty
@@ -70,6 +70,7 @@ angular.module('BB.Controllers').controller 'Event', ($scope,  $rootScope, Event
       return
 
     $scope.bb.pushStackToBasket()
+    console.log($scope.bb.basket)
     $scope.updateBasket().then () =>
       # basket has been saved
       $scope.setLoaded $scope
@@ -96,6 +97,5 @@ angular.module('BB.Controllers').controller 'Event', ($scope,  $rootScope, Event
       datetime : $scope.event.date,
       tickets  : $scope.event.tickets
     }
-
-    return $scope.updateBasket()
+    return $scope.selected_tickets
 

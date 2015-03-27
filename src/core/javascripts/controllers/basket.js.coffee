@@ -34,22 +34,19 @@ angular.module('BB.Directives').directive 'bbBasketList', () ->
   controller : 'BasketList'
 
 
-angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, BasketService, $q, AlertService, ErrorService, FormDataStoreService) ->
+angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, BasketService, $q, AlertService, ErrorService, BBModel) ->
   $scope.controller = "public.controllers.BasketList"
   $scope.setUsingBasket(true)
   $scope.items = $scope.bb.basket.items
 
-  $scope.$watch 'basket', (newVal, oldVal) =>
-    $scope.items = _.filter $scope.bb.basket.items, (item) -> !item.is_coupon
 
+  $scope.$watch 'basket', (newVal, oldVal) =>
+    $scope.items = $scope.bb.basket.items
 
   $scope.addAnother = (route) =>
     $scope.clearBasketItem()
-    $scope.bb.emptyStackedItems()
     $scope.bb.current_item.setCompany($scope.bb.company)
-    $scope.restart()
-    $rootScope.$broadcast 'widget:restart'
-
+    $scope.decideNextPage(route)
 
   $scope.checkout = (route) =>
     # Reset the basket to the last item whereas the curren_item is not complete and should not be in the basket and that way, we can proceed to checkout instead of hard-coding it on the html page.
@@ -63,17 +60,54 @@ angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, 
 
 
   $scope.applyCoupon = (coupon) =>
-    $scope.notLoaded $scope
     params = {bb: $scope.bb, coupon: coupon }
     BasketService.applyCoupon($scope.bb.company, params).then (basket) ->
+
       for item in basket.items
         item.storeDefaults($scope.bb.item_defaults)
         item.reserve_without_questions = $scope.bb.reserve_without_questions
       basket.setSettings($scope.bb.basket.settings)
       $scope.setBasket(basket)
-      $scope.setLoaded $scope
     , (err) ->
       if err && err.data && err.data.error
         AlertService.clear()
         AlertService.add("danger", { msg: err.data.error })
-      $scope.setLoaded $scope
+      console.log(err)
+  
+  $scope.applyDeal = (deal_code) =>
+    params = {bb: $scope.bb, deal_code: deal_code }
+    BasketService.applyDeal($scope.bb.company, params).then (basket) ->
+
+      for item in basket.items
+        item.storeDefaults($scope.bb.item_defaults)
+        item.reserve_without_questions = $scope.bb.reserve_without_questions
+      basket.setSettings($scope.bb.basket.settings)
+      $scope.setBasket(basket)
+      $scope.items = $scope.bb.basket.items
+      console.log($scope.items)
+    , (err) ->
+      if err && err.data && err.data.error
+        AlertService.clear()
+        AlertService.add("danger", { msg: err.data.error })
+      console.log(err)
+
+  $scope.removeDeal = (deal_code) =>
+    params = {bb: $scope.bb, deal_code_id: deal_code.id }
+    BasketService.removeDeal($scope.bb.company, params).then (basket) ->
+
+      for item in basket.items
+        item.storeDefaults($scope.bb.item_defaults)
+        item.reserve_without_questions = $scope.bb.reserve_without_questions
+      basket.setSettings($scope.bb.basket.settings)
+      $scope.setBasket(basket)
+      $scope.items = $scope.bb.basket.items
+      console.log($scope.items)
+    , (err) ->
+      if err && err.data && err.data.error
+        AlertService.clear()
+        AlertService.add("danger", { msg: err.data.error })
+      console.log(err)
+
+
+
+

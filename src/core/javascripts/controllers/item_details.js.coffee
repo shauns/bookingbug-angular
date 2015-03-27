@@ -7,24 +7,19 @@ angular.module('BB.Directives').directive 'bbItemDetails', () ->
   controller : 'ItemDetails'
   link : (scope, element, attrs) ->
     if attrs.bbItemDetails
-      item = scope.$eval(attrs.bbItemDetails)
+      item = scope.$eval( attrs.bbItemDetails )
       scope.loadItem(item)
     return
 
 
-angular.module('BB.Controllers').controller 'ItemDetails', ($scope, $attrs, $rootScope, ItemDetailsService, PurchaseBookingService, AlertService, BBModel, FormDataStoreService, ValidatorService, QuestionService, $modal, $location, $upload) ->
+angular.module('BB.Controllers').controller 'ItemDetails',
+($scope, $rootScope, ItemDetailsService, PurchaseBookingService, AlertService, BBModel, FormDataStoreService, ValidatorService, QuestionService, $modal, $location, $upload) ->
 
   $scope.controller = "public.controllers.ItemDetails"
-
-  $scope.suppress_basket_update = $attrs.bbSuppressBasketUpdate?
-  $scope.item_details_id = $scope.$eval $attrs.bbSuppressBasketUpdate
- 
-  # if instructed to suppress basket updates (i.e. when the directive is invoked multiple times
-  # on the same page), create a form store for each instance of the directive
-  if $scope.suppress_basket_update
-    FormDataStoreService.init ('ItemDetails'+$scope.item_details_id), $scope, ['item_details']
-  else
-    FormDataStoreService.init 'ItemDetails', $scope, ['item_details']
+  # stores data when navigating back/forward through the form
+  FormDataStoreService.init 'ItemDetails', $scope, [
+    'item_details'
+  ]
 
   # populate object with values stored in the question store. addAnswersByName()
   # is good for populating a single object. for dynamic question/answers see
@@ -36,14 +31,17 @@ angular.module('BB.Controllers').controller 'ItemDetails', ($scope, $attrs, $roo
     'mobile'
   ])
 
+  # '$scope.item_details' would only be on the scope if it's comes from the form
+  # data store, which means the user has used the back/continue buttons
   $scope.notLoaded $scope
   $scope.validator = ValidatorService
   confirming = false
 
-
   $rootScope.connection_started.then ->
     $scope.product = $scope.bb.current_item.product
-    $scope.loadItem($scope.bb.current_item) if !confirming
+    if !confirming
+      $scope.loadItem($scope.bb.current_item)
+
   , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
 
@@ -65,7 +63,8 @@ angular.module('BB.Controllers').controller 'ItemDetails', ($scope, $attrs, $roo
         QuestionService.addAnswersByKey($scope.item_details.questions, $scope.bb.item_defaults.answers) if $scope.bb.item_defaults.answers
         $scope.recalc_price()
         $scope.setLoaded $scope
-      , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
+      , (err) ->  
+        $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
     
 
   # compare the questions stored in the data store to the new questions and if
@@ -88,6 +87,7 @@ angular.module('BB.Controllers').controller 'ItemDetails', ($scope, $attrs, $roo
           item.answer = search.answer
 
     $scope.item_details = details
+
 
 
   $scope.recalc_price = ->
@@ -116,7 +116,7 @@ angular.module('BB.Controllers').controller 'ItemDetails', ($scope, $attrs, $roo
 
   $scope.setReady = () =>
     $scope.item.setAskedQuestions()
-    if $scope.item.ready and !$scope.suppress_basket_update
+    if $scope.item.ready
       return $scope.addItemToBasket()
     else
       return true
@@ -139,7 +139,7 @@ angular.module('BB.Controllers').controller 'ItemDetails', ($scope, $attrs, $roo
 	    
         $scope.setLoaded $scope
         $scope.item.move_done = true
-        $rootScope.$broadcast "booking:moved"
+        $rootScope.$emit "booking:moved"
         $scope.decideNextPage(route)
         AlertService.add("info", { msg: "Your booking has been moved to #{b.datetime.format('dddd Do MMMM [at] h.mma')}" })
        , (err) =>

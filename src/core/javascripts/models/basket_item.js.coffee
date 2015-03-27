@@ -114,6 +114,10 @@ angular.module('BB.Models').factory "BasketItemModel",
           data.$get('product').then (product) =>
             @setProduct(product)
 
+        if data.$has('deal')
+          data.$get('deal').then (deal) =>
+            @setDeal(new BBModel.Deal(deal))
+
 
     # bookable slot based functions
     setDefaults: (defaults) ->
@@ -283,7 +287,11 @@ angular.module('BB.Models').factory "BasketItemModel",
           return
       @event_chain = event_chain
       @base_price = parseFloat(event_chain.price)
-      @setPrice(@base_price)
+      if @price != @base_price
+        @setPrice(@price)
+      else
+        @setPrice(@base_price)
+
       if @event_chain.isSingleBooking()
         # if you can only book one ticket - just use that
         @tickets = {name: "Admittance", max: 1, type: "normal", price: @base_price}
@@ -385,8 +393,11 @@ angular.module('BB.Models').factory "BasketItemModel",
       @duration = dur
       if @service
         @base_price = @service.getPriceByDuration(dur)
-      @base_price = @time.price if @time && @time.price
-      if @base_price
+      if @time && @time.price
+        @base_price = @time.price
+      if @price && (@price != @base_price) 
+        @setPrice(@price)
+      else 
         @setPrice(@base_price)
 
 
@@ -416,8 +427,11 @@ angular.module('BB.Models').factory "BasketItemModel",
           mins = val % 60
           @datetime.hour(hours)
           @datetime.minutes(mins)
-
-        if @time.price
+        if @price && @time.price && (@price != @time.price) 
+          @setPrice(@price)
+        else if @price && !@time.price
+          @setPrice(@price)
+        else if @time.price && !@price
           @setPrice(@time.price)
         else
           @setPrice(null)
@@ -437,12 +451,6 @@ angular.module('BB.Models').factory "BasketItemModel",
       @checkReady()
 
 
-    clearDateTime: () ->
-      delete @date
-      delete @time
-      delete @datetime
-
-
     setGroup: (group) ->
       @group = group
 
@@ -453,11 +461,11 @@ angular.module('BB.Models').factory "BasketItemModel",
 
     # check if an item is ready for checking out
     # @ready - means it's fully ready for checkout
-    # @reserve_ready - means the question still need asking - but it can be reserved
+    # @checkready - means the question still need asking - but it can be reserved
     checkReady: ->
-      if ((@date && @time && @service) || @event || @product || (@date && @service && @service.duration_unit == 'day')) && (@asked_questions || !@has_questions)
+      if ((@date && @time && @service) || @event || @product || @deal || (@date && @service && @service.duration_unit == 'day')) && (@asked_questions || !@has_questions)
         @ready = true
-      if ((@date && @time && @service) || @event || @product || (@date && @service && @service.duration_unit == 'day'))  && (@asked_questions || !@has_questions || @reserve_without_questions)
+      if ((@date && @time && @service) || @event || @product || @deal || (@date && @service && @service.duration_unit == 'day'))  && (@asked_questions || !@has_questions || @reserve_without_questions)
         @reserve_ready = true
 
     getPostData: ->
@@ -503,6 +511,9 @@ angular.module('BB.Models').factory "BasketItemModel",
       data.qty = @qty   
       data.num_resources = parseInt(@num_resources) if @num_resources?
       data.product = @product
+      data.deal = @deal if @deal
+      data.recipient = @recipient if @deal && @recipient
+      data.recipient_mail = @recipient_mail if @deal && @recipient && @recipient_mail
       data.coupon_id = @coupon_id
       data.is_coupon = @is_coupon
       data.attachment_id = @attachment_id if @attachment_id
@@ -572,6 +583,7 @@ angular.module('BB.Models').factory "BasketItemModel",
       if @event_group && @event && title == "-"
         title = @event_group.name + " - " + @event.description
       title = @product.name if @product
+      title = @deal.name if @deal
       return title
 
     booking_date: (format) ->
@@ -646,7 +658,8 @@ angular.module('BB.Models').factory "BasketItemModel",
 
     # price not including discounts
     fullPrice: =>
-      pr = @total_price
+      pr = @base_price
+      pr ||= @total_price
       pr ||= @price
       pr ||= 0
       return pr + @questionPrice()
@@ -654,6 +667,11 @@ angular.module('BB.Models').factory "BasketItemModel",
     setProduct: (product) ->
       @product = product
       @book_link = @product if @product.$has('book')
+
+    setDeal: (deal) ->
+      @deal = deal
+      @book_link = @deal if @deal.$has('book')
+
 
     ####################
     # various status tests

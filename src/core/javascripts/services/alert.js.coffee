@@ -19,7 +19,7 @@ angular.module('BB.Services').factory 'AlertService', ($rootScope, ErrorService)
         title: titleLookup(type, title)
         msg: msg
         close: -> alertService.closeAlert(this)
-      $rootScope.$broadcast "alert:raised"
+      $rootScope.$emit "alert:raised"
 
 
     closeAlert: (alert) ->

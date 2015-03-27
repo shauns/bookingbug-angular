@@ -39,7 +39,7 @@ BBBasicPageCtrl = ($scope, $q, ValidatorService) ->
     ready_list = isScopeReady($scope)
     checkread = $q.defer()
     $scope.$checkingReady = checkread.promise;
-
+    
 
     ready_list = ready_list.filter (v) -> !((typeof v == 'boolean') && v)
 

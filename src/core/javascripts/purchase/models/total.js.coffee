@@ -30,7 +30,8 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window, BBModel
         @getBookingsPromise(),
         @getCourseBookingsPromise(),
         @getPackages(),
-        @getProducts()
+        @getProducts(),
+        @getDeals()
       ]).then (result) ->
         items = _.flatten(result)
         defer.resolve(items)
@@ -55,7 +56,6 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window, BBModel
         @_data.$get('course_bookings').then (bookings) =>
           @course_bookings = (new BBModel.Purchase.CourseBooking(b) for b in bookings)
           $q.all(_.map(@course_bookings, (b) -> b.getBookings())).then () =>
-            console.log @course_bookings
             defer.resolve(@course_bookings)
       else
         defer.resolve([])
@@ -79,6 +79,17 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window, BBModel
         @_data.$get('products').then (products) =>
           @products = products
           defer.resolve(@products)
+      else
+        defer.resolve([])
+      defer.promise
+
+    getDeals: =>
+      defer = $q.defer()
+      defer.resolve(@deals) if @deals
+      if @_data.$has('deals')
+        @_data.$get('deals').then (deals) =>
+          @deals = deals
+          defer.resolve(@deals)
       else
         defer.resolve([])
       defer.promise

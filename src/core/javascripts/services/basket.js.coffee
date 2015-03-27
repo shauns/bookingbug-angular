@@ -59,6 +59,57 @@ angular.module('BB.Services').factory "BasketService", ($q, $rootScope, BBModel,
         deferred.reject(err)
     deferred.promise
 
+  applyDeal: (company, params) ->
+    deferred = $q.defer()
+
+    MutexService.getLock().then (mutex) ->
+      console.log params
+      company.$post('apply_deal', {}, {deal_code: params.deal_code}).then (basket) ->
+        MutexService.unlock(mutex)
+        company.$flush('basket')
+        mbasket = new BBModel.Basket(basket, params.bb)
+        basket.$get('items').then (items) ->
+          promises = []
+          for i in items
+            item = new BBModel.BasketItem(i, params.bb)
+            mbasket.addItem(item)
+            # keep an eye on if this item needs any promises resolved to be valid
+            promises = promises.concat item.promises
+          if promises.length > 0
+            $q.all(promises).then () ->
+              deferred.resolve(mbasket)
+          else
+            deferred.resolve(mbasket)
+        , (err) ->
+          deferred.reject(err)
+      , (err) ->
+        MutexService.unlock(mutex)
+        deferred.reject(err)
+    deferred.promise
+
+  removeDeal: (company, params) ->
+    params = {} if !params
+    deferred = $q.defer()
+    if !company.$has('remove_deal')
+      deferred.reject("No Remove Deal link found")
+    else
+      console.log params
+      MutexService.getLock().then (mutex) ->
+        company.$put('remove_deal', {}, {deal_code_id: params.deal_code_id.toString()}).then (basket) ->
+          MutexService.unlock(mutex)
+          company.$flush('basket')
+          basket = new BBModel.Basket(basket, params.bb)
+          if basket.$has('items')
+            basket.$get('items').then (items) ->
+              basket.addItem(new BBModel.BasketItem(item, params.bb)) for item in items
+              deferred.resolve(basket)
+            , (err) ->
+              deferred.reject(err)
+        , (err) ->
+          MutexService.unlock(mutex)
+          deferred.reject(err)
+      deferred.promise
+
 
   
 
@@ -82,7 +133,8 @@ angular.module('BB.Services').factory "BasketService", ($q, $rootScope, BBModel,
       deferred.reject("rel book not found for event")
       return deferred.promise
 
-   
+    console.log(params)
+    console.log(data)
     MutexService.getLock().then (mutex) ->
       lnk.$post('book', params, data).then (basket) ->
         MutexService.unlock(mutex)
@@ -156,6 +208,7 @@ angular.module('BB.Services').factory "BasketService", ($q, $rootScope, BBModel,
       data = basket.getPostData()
       data.affiliate_id = $rootScope.affiliate_id
       basket.$post('checkout', params, data).then (total) ->
+        console.log(total)
         $rootScope.$broadcast('updateBookings')
         tot = new BBModel.Purchase.Total(total)
         $rootScope.$broadcast('newCheckout', tot)

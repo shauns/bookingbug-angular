@@ -11,12 +11,20 @@
             <div bb-booking-export class="bb-booking-export"></div>
           </div>
         </div>
-
+        
         <div ng-show="total">
-          <ul class="confirmation-summary" ng-repeat="i in total.items">
-            <li ng-if="i.id" class="row confirmation-summary-item">
-              <div class="col-sm-3">Booking Reference:</div>
-              <div class="col-sm-9">{{i.id}}</div>
+          <div ng-if="total.id" class="row confirmation-summary-item">
+            <div class="col-sm-3">Booking Reference:</div>
+            <div class="col-sm-9">{{total.id}}</div>
+          </div>
+          <ul class="confirmation-summary" ng-repeat="i in total.items track by $index">
+            <li ng-if="i.name" class="row confirmation-summary-item">
+              <div class="col-sm-3">Name:</div>
+              <div class="col-sm-9">{{i.name}}</div>
+            </li>
+             <li ng-if="i.description" class="row confirmation-summary-item">
+              <div class="col-sm-3">Description:</div>
+              <div class="col-sm-9">{{i.description}}</div>
             </li>
             <li ng-if="i.full_describe" class="row confirmation-summary-item">
               <div class="col-sm-3">Service:</div>

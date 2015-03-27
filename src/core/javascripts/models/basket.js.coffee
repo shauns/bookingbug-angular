@@ -23,10 +23,11 @@ angular.module('BB.Models').factory "BasketModel", ($q, BBModel, BaseModel) ->
           return
       @items.push(item)
 
-
     clear: () ->
       @items = []
 
+    clearItem: (item) ->
+      @items = @items.filter (i) -> i isnt item
 
     # should we try to checkout ?
     readyToCheckout: ->
@@ -39,19 +40,16 @@ angular.module('BB.Models').factory "BasketModel", ($q, BBModel, BaseModel) ->
     timeItems: ->
       titems = []
       for i in @items
-        titems.push(i) if !i.is_coupon and !i.ready
+        titems.push(i) if !i.is_coupon
       titems
-
 
     setSettings: (set) ->
       return if !set
       @settings ||= {}
       $.extend(@settings, set)
 
-
     setClient: (client) ->
       @client = client
-
 
     setClientDetails: (client_details) ->
       @client_details = new BBModel.PurchaseItem(client_details)
@@ -78,23 +76,20 @@ angular.module('BB.Models').factory "BasketModel", ($q, BBModel, BaseModel) ->
       total = 0 if total < 0
       total
 
-
     length: ->
       @items.length
 
 
-    questionPrice: (options) ->
-      unready = options and options.unready
+    questionPrice: ->
       price = 0
       for item in @items
-        price += item.questionPrice() if (!item.ready and unready) or !unready
+        price += item.questionPrice()
       return price
 
-    totalPrice: (options) ->
-      unready = options and options.unready
+    totalPrice: ->
       price = 0
       for item in @items
-        price += item.totalPrice() if (!item.ready and unready) or !unready
+        price += item.totalPrice()
       return price
 
 
@@ -108,10 +103,36 @@ angular.module('BB.Models').factory "BasketModel", ($q, BBModel, BaseModel) ->
       for item in @items
         return true if item.is_coupon
       return false
-    
 
+    containsDeal: ->
+      for item in @items
+        return true if item.deal_id
+      return false
+
+    hasDeal: ->
+      for item in @items
+        return true if item.deal_codes && item.deal_codes.length > 0
+      return false
+
+    getDealCodes: ->
+      @deals = @items[0].deal_codes if @items[0] && @items[0].deal_codes
+      @deals
+
+    totalDeals: ->
+      value = 0
+      for deal in @getDealCodes()
+        value += deal.value
+      return value
+
+    totalCertificatePaid: ->
+      total_cert_paid = 0
+      for item  in @items
+        if item.certificate_paid
+          total_cert_paid += item.certificate_paid
+      return @totalDeals() - total_cert_paid
+ 
     totalDuration: ->
       duration = 0
       for item in @items
-        duration += item.service.listed_duration if item.service and item.service.listed_duration
+        duration =+ item.service.listed_duration if item.service and item.service.listed_duration
       return duration

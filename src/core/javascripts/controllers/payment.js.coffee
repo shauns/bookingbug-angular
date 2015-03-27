@@ -57,18 +57,20 @@ angular.module('BB.Directives').directive 'bbPayment', ($window, $location, $sce
     link: linker
   }
 
-angular.module('BB.Controllers').controller 'Payment', ($scope,  $rootScope, $q, $location, $window, $sce, $log, $timeout) ->
+angular.module('BB.Controllers').controller 'Payment', ($scope,  $rootScope,
+    $q, $location, $window, $sce, $log, $timeout) ->
 
   $scope.controller = "public.controllers.Payment"
 
   $rootScope.connection_started.then =>
-
+    
     $scope.bb.total = $scope.total if $scope.total
 
     if !$scope.bb.total.total_price or parseFloat($scope.bb.total.total_price) is 0.0
       $scope.decideNextPage()
       return
 
+    
     $scope.url = $sce.trustAsResourceUrl($scope.bb.total.$href('new_payment'))
 
   
