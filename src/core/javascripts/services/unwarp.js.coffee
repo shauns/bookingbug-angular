@@ -241,3 +241,18 @@ angular.module('BB.Services').factory "BB.Service.images", ($q, BBModel) ->
       deferred.reject(err)
 
     deferred.promise
+
+
+angular.module('BB.Services').factory "BB.Service.bookings", ($q, BBModel) ->
+  promise: true
+  unwrap: (resource) ->
+    deferred = $q.defer()
+    resource.$get('bookings').then (items) =>
+      models = []
+      for i in items
+        models.push(new BBModel.Member.Booking(i))
+      deferred.resolve(models)
+    , (err) =>
+      deferred.reject(err)
+
+    deferred.promise
