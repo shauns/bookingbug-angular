@@ -400,7 +400,7 @@ angular.module('BB.Controllers').controller 'MapCtrl2',
 
     $scope.markers = []
 
-    # Need to get the template URL in here.
+    template_url = 'info_window.html'
     for comp, index in $scope.companies
       if comp.address.lat && comp.address.long
         marker = {
@@ -408,12 +408,13 @@ angular.module('BB.Controllers').controller 'MapCtrl2',
           latitude: comp.address.lat,
           longitude: comp.address.long,
           show: false,
-          templateUrl: 'templateURL.html',
+          templateUrl: template_url,
           templateParameter: {
-            id: index + 1,
+            company_id: comp.id
+            marker_id: index + 1,
             title: comp.title,
             address: comp.address,
-            phone: comp.address.homephone
+            phone: comp.address.homephone,
             item: comp
           },
          }
@@ -423,18 +424,18 @@ angular.module('BB.Controllers').controller 'MapCtrl2',
 
   , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
+
 angular.module('BB.Directives').directive 'bbMapInfoWindow', () ->
   restrict: 'AE'
   replace: true
   scope : true
-  require: '^?bbWidget'
+  require: '^?bbMapTheSecond'
   controller : 'MapCtrl3'
 
 angular.module('BB.Controllers').controller 'MapCtrl3',
 ($scope, $element, $attrs, $rootScope, AlertService, ErrorService, FormDataStoreService, $q, $window, $timeout, $document) ->
 
   $scope.selectItem = (item, route) ->
-    debugger
     # return if !$scope.$debounce(1000)
 
     if !item
@@ -447,7 +448,9 @@ angular.module('BB.Controllers').controller 'MapCtrl3',
     # this to clear data, but it can be used to action anything.
     if $scope.selectedStore and $scope.selectedStore.id isnt item.id
       $scope.$emit 'change:storeLocation'
-
-    console.log "Ok until here."
     # $scope.initWidget({company_id:item.id, first_page: route})
+    console.log '$scope', $scope
+    console.log '$rootScope', $rootScope
     return
+
+  # $scope.initWidget({company_id:item.id, first_page: route})
