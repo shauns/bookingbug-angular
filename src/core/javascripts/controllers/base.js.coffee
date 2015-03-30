@@ -596,31 +596,31 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     else if ($scope.bb.total && $scope.bb.payment_status == "pending")
       return $scope.showPage('payment')
 
-    else if ($scope.bb.company.$has('event_groups') && !$scope.bb.current_item.event_group && !$scope.bb.current_item.service && !$scope.bb.current_item.product) or
-            ($scope.bb.company.$has('events') && $scope.bb.current_item.event_group && !$scope.bb.current_item.event? && !$scope.bb.current_item.product)
+    else if ($scope.bb.company.$has('event_groups') && !$scope.bb.current_item.event_group && !$scope.bb.current_item.service && !$scope.bb.current_item.product && !$scope.bb.current_item.deal) or
+            ($scope.bb.company.$has('events') && $scope.bb.current_item.event_group && !$scope.bb.current_item.event? && !$scope.bb.current_item.product && !$scope.bb.current_item.deal)
       return $scope.showPage('event_list')
-    else if ($scope.bb.company.$has('events') && $scope.bb.current_item.event && !$scope.bb.current_item.num_book && !$scope.bb.current_item.tickets && !$scope.bb.current_item.product)
+    else if ($scope.bb.company.$has('events') && $scope.bb.current_item.event && !$scope.bb.current_item.num_book && !$scope.bb.current_item.tickets && !$scope.bb.current_item.product && !$scope.bb.current_item.deal)
       return $scope.showPage('event')
-    else if ($scope.bb.company.$has('services') && !$scope.bb.current_item.service && !$scope.bb.current_item.event? && !$scope.bb.current_item.product)
+    else if ($scope.bb.company.$has('services') && !$scope.bb.current_item.service && !$scope.bb.current_item.event? && !$scope.bb.current_item.product && !$scope.bb.current_item.deal)
       return if $scope.setPageRoute($rootScope.Route.Service)
       return $scope.showPage('service_list')
-    else if ($scope.bb.company.$has('resources') && !$scope.bb.current_item.resource && !$scope.bb.current_item.event? && !$scope.bb.current_item.product)
+    else if ($scope.bb.company.$has('resources') && !$scope.bb.current_item.resource && !$scope.bb.current_item.event? && !$scope.bb.current_item.product && !$scope.bb.current_item.deal)
       return if $scope.setPageRoute($rootScope.Route.Resource)
       return $scope.showPage('resource_list')
-    else if ($scope.bb.company.$has('people') && !$scope.bb.current_item.person && !$scope.bb.current_item.event? && !$scope.bb.current_item.product)
+    else if ($scope.bb.company.$has('people') && !$scope.bb.current_item.person && !$scope.bb.current_item.event? && !$scope.bb.current_item.product && !$scope.bb.current_item.deal)
       return if $scope.setPageRoute($rootScope.Route.Person)
       return $scope.showPage('person_list')
-    else if (!$scope.bb.current_item.duration && !$scope.bb.current_item.event? && !$scope.bb.current_item.product)
+    else if (!$scope.bb.current_item.duration && !$scope.bb.current_item.event? && !$scope.bb.current_item.product && !$scope.bb.current_item.deal)
       return if $scope.setPageRoute($rootScope.Route.Duration)
       return $scope.showPage('duration_list')
-    else if ($scope.bb.current_item.days_link && !$scope.bb.current_item.date && !$scope.bb.current_item.event?)
+    else if ($scope.bb.current_item.days_link && !$scope.bb.current_item.date && !$scope.bb.current_item.event? && !$scope.bb.current_item.deal)
       if $scope.bb.company.$has('slots')
         return if $scope.setPageRoute($rootScope.Route.Slot)
         return $scope.showPage('slot_list')
       else
         return if $scope.setPageRoute($rootScope.Route.Date)
         return $scope.showPage('day')
-    else if ($scope.bb.current_item.days_link && !$scope.bb.current_item.time && !$scope.bb.current_item.event? && (!$scope.bb.current_item.service || $scope.bb.current_item.service.duration_unit != 'day'))
+    else if ($scope.bb.current_item.days_link && !$scope.bb.current_item.time && !$scope.bb.current_item.event? && (!$scope.bb.current_item.service || $scope.bb.current_item.service.duration_unit != 'day') && !$scope.bb.current_item.deal)
       return if $scope.setPageRoute($rootScope.Route.Time)
       return $scope.showPage('time')
     else if ($scope.bb.moving_booking && (!$scope.bb.current_item.ready || !$scope.bb.current_item.move_done))
@@ -637,7 +637,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
         return $scope.showPage('check_items_admin')
       else
         return $scope.showPage('check_items')
-    else if ($scope.bb.usingBasket && !$scope.bb.confirmCheckout)
+    else if ($scope.bb.usingBasket && (!$scope.bb.confirmCheckout || $scope.bb.company.$has('deals') || $scope.bb.company.$has('coupon')))
       return if $scope.setPageRoute($rootScope.Route.Basket)
       return $scope.showPage('basket')
     else if $scope.bb.moving_booking && $scope.bb.basket.readyToCheckout()
@@ -693,6 +693,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
       basket.setSettings($scope.bb.basket.settings)
 
       $scope.setBasket(basket)
+      $scope.setUsingBasket(true)
       $scope.setBasketItem(basket.items[0])
       # check if item has been added to the basket
       if !$scope.bb.current_item

@@ -34,7 +34,7 @@ angular.module('BB.Directives').directive 'bbBasketList', () ->
   controller : 'BasketList'
 
 
-angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, BasketService, $q, AlertService, ErrorService, FormDataStoreService) ->
+angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, BasketService, $q, AlertService, ErrorService, FormDataStoreService, BBModel) ->
   $scope.controller = "public.controllers.BasketList"
   $scope.setUsingBasket(true)
   $scope.items = $scope.bb.basket.items
@@ -77,3 +77,33 @@ angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, 
         AlertService.clear()
         AlertService.add("danger", { msg: err.data.error })
       $scope.setLoaded $scope
+
+  $scope.applyDeal = (deal_code) =>
+    params = {bb: $scope.bb, deal_code: deal_code }
+    BasketService.applyDeal($scope.bb.company, params).then (basket) ->
+
+      for item in basket.items
+        item.storeDefaults($scope.bb.item_defaults)
+        item.reserve_without_questions = $scope.bb.reserve_without_questions
+      basket.setSettings($scope.bb.basket.settings)
+      $scope.setBasket(basket)
+      $scope.items = $scope.bb.basket.items
+    , (err) ->
+      if err && err.data && err.data.error
+        AlertService.clear()
+        AlertService.add("danger", { msg: err.data.error })
+
+  $scope.removeDeal = (deal_code) =>
+    params = {bb: $scope.bb, deal_code_id: deal_code.id }
+    BasketService.removeDeal($scope.bb.company, params).then (basket) ->
+
+      for item in basket.items
+        item.storeDefaults($scope.bb.item_defaults)
+        item.reserve_without_questions = $scope.bb.reserve_without_questions
+      basket.setSettings($scope.bb.basket.settings)
+      $scope.setBasket(basket)
+      $scope.items = $scope.bb.basket.items
+    , (err) ->
+      if err && err.data && err.data.error
+        AlertService.clear()
+        AlertService.add("danger", { msg: err.data.error })
