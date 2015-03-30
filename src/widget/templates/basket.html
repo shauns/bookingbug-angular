@@ -103,7 +103,7 @@
 
 						<tr data-ng-if="basket.hasDeal()">
 							<th class="text-right">Remaining Value on Gift Certificates</th>
-							<th class="text-right">{{ basket.totalCertificatePaid() | pretty_price }}</th>
+							<th class="text-right">{{ basket.totalCertificatePaid() | currency }}</th>
 							<th>&nbsp;</th>
 						</tr>
 
@@ -114,7 +114,7 @@
 						</tr>
 						<tr data-ng-if="basket.total_due_price > 0">
 							<th class="text-right">Total Due Now</th>
-							<th class="text-right">{{basket.total_due_price | pretty_price }}</th>
+							<th class="text-right"> {{basket.total_due_price | pretty_price }}</th>
 							<th>&nbsp;</th>
 						</tr>
 					</tbody>
@@ -126,7 +126,7 @@
 					<button type="button" class="btn btn-primary btn-xs" ng-click="applyCoupon(coupon_code)">Apply</button>
 				</div>
 
-          <div class="bb-coupon-box" ng-if="company.$has('deals')">
+          <div class="bb-coupon-box" ng-if="bb.company_settings.has_vouchers">
             <form class="form-inline">
               <div ng-show="!show_voucher_box">
                 <a ng-click="show_voucher_box = true">Have a gift certificate?</a>

@@ -142,7 +142,7 @@
     </div>
 
    <!--  Gift Cert Button (Needs Styling) -->
-   <div ng-if="bb.company.$has('deals')">
+   <div ng-if="bb.company_settings.has_vouchers">
       <button type="button" ng-click="showPage('deal_list')" class="btn btn-primary btn-block">
         <span>Buy Gift Certificates </span>
       </button>

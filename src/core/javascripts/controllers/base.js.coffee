@@ -637,7 +637,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
         return $scope.showPage('check_items_admin')
       else
         return $scope.showPage('check_items')
-    else if ($scope.bb.usingBasket && (!$scope.bb.confirmCheckout || $scope.bb.company.$has('deals') || $scope.bb.company.$has('coupon')))
+    else if ($scope.bb.usingBasket && (!$scope.bb.confirmCheckout || $scope.bb.company_settings.has_vouchers || $scope.bb.company.$has('coupon')))
       return if $scope.setPageRoute($rootScope.Route.Basket)
       return $scope.showPage('basket')
     else if $scope.bb.moving_booking && $scope.bb.basket.readyToCheckout()

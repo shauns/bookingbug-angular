@@ -145,4 +145,3 @@ angular.module('BB.Models').factory "BasketModel", ($q, BBModel, BaseModel) ->
         if item.certificate_paid
           total_cert_paid += item.certificate_paid
       return @totalDeals() - total_cert_paid
-      
