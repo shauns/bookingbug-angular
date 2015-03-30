@@ -3,13 +3,13 @@ angular.module('BBAdminServices').directive 'resourceTable', (AdminCompanyServic
 
   controller = ($scope) ->
 
+    $scope.fields = ['id','name']
+
     $scope.getResources = () ->
       params =
         company: $scope.company
       AdminResourceService.query(params).then (resources) ->
-        $scope.resources_models = resources
-        $scope.resources = _.map resources, (resource) ->
-          _.pick resource, 'id', 'name', 'mobile'
+        $scope.resources = resources
 
     $scope.newResource = () ->
       ModalForm.new
@@ -17,18 +17,17 @@ angular.module('BBAdminServices').directive 'resourceTable', (AdminCompanyServic
         title: 'New Resource'
         new_rel: 'new_resource'
         post_rel: 'resources'
+        size: 'lg'
         success: (resource) ->
           $scope.resources.push(resource)
 
-    $scope.delete = (id) ->
-      resource = _.find $scope.resources_models, (p) -> p.id == id
+    $scope.delete = (resource) ->
       resource.$del('self').then () ->
         $scope.resources = _.reject $scope.resources, (p) -> p.id == id
       , (err) ->
         $log.error "Failed to delete resource"
 
-    $scope.edit = (id) ->
-      resource = _.find $scope.resources_models, (p) -> p.id == id
+    $scope.edit = (resource) ->
       ModalForm.edit
         model: resource
         title: 'Edit Resource'
