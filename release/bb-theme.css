@@ -1,0 +1,69 @@
+/* font-size-base changed from 14px to 16px to match bookinbug styling. */
+#bb {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 400; }
+  #bb h1, #bb h2, #bb h3, #bb h4, #bb h5, #bb h6 {
+    padding: 0;
+    margin: 0;
+    margin-bottom: 15px;
+    font-weight: 300; }
+  #bb .alert {
+    font-size: 16px; }
+  #bb .page-header {
+    border-bottom: none; }
+  #bb .breadcrumb {
+    padding: 0px;
+    list-style: none;
+    background-color: transparent;
+    margin-bottom: 30px; }
+    #bb .breadcrumb li button {
+      color: #fff;
+      font-size: 14px;
+      width: 100%; }
+    #bb .breadcrumb li button.active {
+      color: #000000; }
+      @media (max-width: 768px) {
+        #bb .breadcrumb li button.active {
+          padding-left: 0px; } }
+    #bb .breadcrumb li button.passed {
+      color: #CCC; }
+    #bb .breadcrumb > li + li:before {
+      content: none; }
+    #bb .breadcrumb .glyphicon-chevron-right {
+      padding-left: 24px; }
+  #bb .modal-title {
+    font-size: 28px; }
+  #bb .modal-header {
+    border-bottom: none; }
+  #bb .modal-body {
+    padding-bottom: 0;
+    font-size: 16px; }
+  #bb .modal-footer {
+    border-top: none; }
+  #bb .move-booking-container {
+    min-height: 800px; }
+  #bb .panel {
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+    background-color: #fff;
+    box-shadow: none;
+    margin-bottom: 15px; }
+    #bb .panel:first-child {
+      border-top: 1px solid #dddddd; }
+    #bb .panel:last-child {
+      margin-bottom: 20px; }
+  #bb .panel-group .panel + .panel {
+    margin-top: 0;
+    border-top: none; }
+  #bb .panel-title {
+    font-size: 28px;
+    font-weight: 300;
+    padding-bottom: 15px; }
+  #bb .radio label, #bb .checkbox label {
+    font-weight: 400; }
+  #bb .glyphicon-trash:hover {
+    cursor: pointer; }
+  #bb .glyphicon-shopping-cart:hover {
+    cursor: pointer; }
