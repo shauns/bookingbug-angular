@@ -3,3 +3,9 @@
     background: none;
   }
 }
+
+.modal-dialog {
+  [schedule-edit] div {
+    padding: 0;
+  }
+}

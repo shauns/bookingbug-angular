@@ -81,6 +81,14 @@ gulp.task('stylesheets', function() {
     .pipe(gulp.dest('release'));
 });
 
+gulp.task('widget', function() {
+  gulp.src('src/widget/stylesheets/widget.scss')
+    .pipe(sass({errLogToConsole: true}))
+    .pipe(flatten())
+    .pipe(concat('bookingbug-widget.css'))
+    .pipe(gulp.dest('release'));
+});
+
 gulp.task('theme', function() {
   gulp.src('src/*/stylesheets/bb_light_theme.scss')
     .pipe(sass({errLogToConsole: true}))
