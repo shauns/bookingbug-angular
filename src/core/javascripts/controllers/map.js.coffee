@@ -347,7 +347,6 @@ angular.module('BB.Controllers').controller 'MapCtrl2',
   map_ready_def               = $q.defer()
 
   $rootScope.connection_started.then ->
-
     $scope.setLoaded $scope
     if $scope.bb.company.companies
       $rootScope.parent_id = $scope.bb.company.id
@@ -390,7 +389,7 @@ angular.module('BB.Controllers').controller 'MapCtrl2',
       zoom: 10,
       bounds: {}
     }
-   
+
     $scope.isDraggable = $document.width() > 480
 
     $scope.options = {
@@ -425,32 +424,39 @@ angular.module('BB.Controllers').controller 'MapCtrl2',
   , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
 
-angular.module('BB.Directives').directive 'bbMapInfoWindow', () ->
-  restrict: 'AE'
-  replace: true
-  scope : true
-  require: '^?bbMapTheSecond'
-  controller : 'MapCtrl3'
+# angular.module('BB.Directives').directive 'bbMapInfoWindow', () ->
+#   restrict: 'AE'
+#   replace: true
+#   scope : true
+#   require: '^?bbMapTheSecond'
+#   controller : 'MapCtrl3'
 
-angular.module('BB.Controllers').controller 'MapCtrl3',
-($scope, $element, $attrs, $rootScope, AlertService, ErrorService, FormDataStoreService, $q, $window, $timeout, $document) ->
+# angular.module('BB.Controllers').controller 'MapCtrl3',
+# ($scope, $element, $attrs, $rootScope, AlertService, ErrorService, FormDataStoreService, $q, $window, $timeout, $document) ->
 
-  $scope.selectItem = (item, route) ->
-    # return if !$scope.$debounce(1000)
+#   $scope.selectItem = (item, route) ->
+#     # return if !$scope.$debounce(1000)
+    
+#     if !item
+#       AlertService.warning({msg:$scope.error_msg})
+#       return
 
-    if !item
-      AlertService.warning({msg:$scope.error_msg})
-      return
+#     # $scope.notLoaded $scope
+#     $scope.selectedStore = item
+#     # if the selected store changes, emit an event. the form data store uses
+#     # this to clear data, but it can be used to action anything.
+#     if $scope.selectedStore and $scope.selectedStore.id isnt item.id
+#       $scope.$emit 'change:storeLocation'
 
-    # $scope.notLoaded $scope
-    $scope.selectedStore = item
-    # if the selected store changes, emit an event. the form data store uses
-    # this to clear data, but it can be used to action anything.
-    if $scope.selectedStore and $scope.selectedStore.id isnt item.id
-      $scope.$emit 'change:storeLocation'
-    # $scope.initWidget({company_id:item.id, first_page: route})
-    console.log '$scope', $scope
-    console.log '$rootScope', $rootScope
-    return
+#     $scope.initWidget({company_id:item.id, first_page: route})
+#     # console.log $scope.selectedStore, route
+#     # console.log '$scope', $scope
+#     # console.log '$rootScope', $rootScope
+#     # $scope.initWidget()
+#     console.log "Fired"
 
-  # $scope.initWidget({company_id:item.id, first_page: route})
+    # $rootScope.connection_started.then ->
+    #   debugger
+    #   # $scope.initWidget({company_id:$scope.selectedStore.id, first_page: route, keep_basket:true})
+    #   console.log $scope
+    # return
