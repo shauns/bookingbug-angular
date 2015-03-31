@@ -1,11 +1,13 @@
 angular.module('BBAdminServices').directive 'scheduleWeekdays', (uiCalendarConfig, ScheduleRules) ->
 
-  controller = ($scope) ->
+  controller = ($scope, $attrs) ->
 
     $scope.eventSources = [
       events: (start, end, timezone, callback) ->
         callback($scope.getEvents())
     ]
+
+    options = $scope.$eval $attrs.scheduleWeekdays or {}
 
     $scope.options =
       calendar:
@@ -17,13 +19,18 @@ angular.module('BBAdminServices').directive 'scheduleWeekdays', (uiCalendarConfi
           center: 'title'
           right: ''
         selectHelper: true
+        eventOverlap: false
         views:
           agendaWeek:
-            titleFormat: '[Weekdays]'
+            titleFormat: '[]'
             allDaySlot: false
             columnFormat: 'ddd'
+            slotEventOverlap: false
         select: (start, end, jsEvent, view) ->
           $scope.addRange(start, end)
+
+    $scope.options.calendar.views.agendaWeek.minTime = options.min_time if options.min_time
+    $scope.options.calendar.views.agendaWeek.maxTime = options.max_time if options.max_time
 
     $scope.render = () ->
       $scope.$$childTail.scheduleCal.fullCalendar('render')

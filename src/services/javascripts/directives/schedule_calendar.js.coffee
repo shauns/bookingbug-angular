@@ -1,21 +1,29 @@
 angular.module('BBAdminServices').directive 'scheduleCalendar', (uiCalendarConfig, ScheduleRules) ->
 
-  controller = ($scope) ->
+  controller = ($scope, $attrs) ->
 
     $scope.eventSources = [
       events: (start, end, timezone, callback) ->
         callback($scope.getEvents())
     ]
 
+    options = $scope.$eval $attrs.scheduleCalendar or {}
+
     $scope.options =
       calendar:
         editable: true
         selectable: true
+        defaultView: 'agendaWeek'
         header:
           left: 'today,prev,next'
           center: 'title'
-          right: 'month,agendaWeek,agendaDay'
+          right: 'month,agendaWeek'
         selectHelper: true
+        eventOverlap: false
+        views:
+          agendaWeek:
+            allDaySlot: false
+            slotEventOverlap: false
         select: (start, end, jsEvent, view) ->
           $scope.addRange(start, end)
         eventResizeStop: (event, jsEvent, ui, view) ->
@@ -27,6 +35,9 @@ angular.module('BBAdminServices').directive 'scheduleCalendar', (uiCalendarConfi
               end: moment(event.end).subtract(delta)
             $scope.removeRange(orig.start, orig.end)
             $scope.addRange(event.start, event.end)
+
+    $scope.options.calendar.views.agendaWeek.minTime = options.min_time if options.min_time
+    $scope.options.calendar.views.agendaWeek.maxTime = options.max_time if options.max_time
 
     $scope.render = () ->
       $scope.$$childTail.scheduleCal.fullCalendar('render')
