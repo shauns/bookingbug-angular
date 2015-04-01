@@ -19,32 +19,6 @@
 						</tr>
 					</thead>
 					<tbody>
-<!-- 
-						<li ng-if="selected_tickets && bb.basket.questionPrice()">
-              <div class="row">
-                <div class="col-sm-6 col-xs-6 total-label">Booking Fee</div>
-                <div class="col-sm-3">{{bb.basket.questionPrice() | currency}}</div>
-              </div>
-            </li>
-            <li ng-if="selected_tickets && bb.basket.hasCoupon()">
-              <div class="row">
-                <div class="col-sm-6 col-xs-6 total-label">Original Cost</div>
-                <div class="col-sm-3 col-xs-6">{{bb.basket.fullPrice() | currency}}</div>
-              </div>
-            </li>
-            <li ng-if="selected_tickets && bb.basket.hasCoupon()">
-              <div class="row">
-                <div class="col-sm-6 col-xs-6 total-label">Coupon Discount</div>
-                <div class="col-sm-3 col-xs-6">{{(bb.basket.fullPrice() - bb.basket.totalPrice()) | currency}}</div>
-              </div>
-            </li>
-            <li ng-if="selected_tickets && (bb.basket.hasCoupon() || bb.basket.totalPrice())">
-              <div class="row">
-                <div class="col-sm-6 col-xs-6 total-label">Total</div>
-                <div class="col-sm-3 col-xs-6"><strong>{{bb.basket.totalPrice() | currency}}</strong>
-                </div>
-              </div>
-            </li> -->
 						<tr ng-repeat="item in items" ng-class="{'last-item': $last}">
 							<td>
 			 					<p>
@@ -89,21 +63,34 @@
 							</td>
 			  		</tr>
 
-			  		<tr data-ng-if="basket.hasDeal()">
+			  		<tr data-ng-if="basket.hasDeal() || basket.hasCoupon()">
 							<th class="text-right">Original Price</th>
 							<th class="text-right">{{basket.fullPrice() | ipretty_price }}</th>
 							<th>&nbsp;</th>
 						</tr>
-
+            
+            <tr data-ng-if="basket.questionPrice()">
+							<th class="text-right">Booking Fee</th>
+							<th class="text-right">{{bb.basket.questionPrice() | currency}}</th>
+							<th>&nbsp;</th>
+						</tr>
+						
+					
 			  	  <tr data-ng-if="basket.hasDeal()">
 							<th class="text-right">Total Gift Certificates</th>
 							<th class="text-right">{{basket.totalDeals() | pretty_price }}</th>
 							<th>&nbsp;</th>
 						</tr>
 
-						<tr data-ng-if="basket.hasDeal()">
+					  <tr data-ng-if="basket.hasDeal()">
 							<th class="text-right">Remaining Value on Gift Certificates</th>
 							<th class="text-right">{{ basket.totalCertificatePaid() | currency }}</th>
+							<th>&nbsp;</th>
+						</tr>
+
+						<tr data-ng-if="basket.hasCoupon()">
+							<th class="text-right">Coupon Discount</th>
+							<th class="text-right">{{(bb.basket.fullPrice() - bb.basket.totalPrice()) | currency}}</th>
 							<th>&nbsp;</th>
 						</tr>
 

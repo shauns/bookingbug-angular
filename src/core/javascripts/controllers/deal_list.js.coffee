@@ -7,7 +7,7 @@ angular.module('BB.Directives').directive 'bbDeals', () ->
   controller : 'DealList'
 
 angular.module('BB.Controllers').controller 'DealList',
-($scope,  $rootScope, DealService, $q, BBModel, DealModel, FormDataStoreService, ValidatorService) ->
+($scope,  $rootScope, DealService, $q, BBModel, DealModel, FormDataStoreService, ValidatorService, AlertService) ->
 
   $scope.controller = "public.controllers.DealList"
   $scope.validator = ValidatorService
@@ -52,6 +52,7 @@ angular.module('BB.Controllers').controller 'DealList',
 
 
   $scope.purchaseDeals = () ->
+    AlertService.clear()
     if $scope.bb.stacked_items
       $scope.bb.pushStackToBasket()
       $scope.updateBasket().then () ->
