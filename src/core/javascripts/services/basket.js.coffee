@@ -225,7 +225,6 @@ angular.module('BB.Services').factory "BasketService", ($q, $rootScope, BBModel,
     if !company.$has('remove_deal')
       deferred.reject("No Remove Deal link found")
     else
-      console.log params
       MutexService.getLock().then (mutex) ->
         company.$put('remove_deal', {}, {deal_code_id: params.deal_code_id.toString()}).then (basket) ->
           MutexService.unlock(mutex)

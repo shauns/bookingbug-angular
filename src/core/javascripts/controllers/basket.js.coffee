@@ -34,7 +34,7 @@ angular.module('BB.Directives').directive 'bbBasketList', () ->
   controller : 'BasketList'
 
 
-angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, BasketService, $q, AlertService, ErrorService, FormDataStoreService, BBModel) ->
+angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, BasketService, $q, AlertService, ErrorService, FormDataStoreService) ->
   $scope.controller = "public.controllers.BasketList"
   $scope.setUsingBasket(true)
   $scope.items = $scope.bb.basket.items
@@ -81,10 +81,10 @@ angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, 
 
   $scope.applyDeal = (deal_code) =>
     AlertService.clear()
-    # if $scope.client
-    #   params = {bb: $scope.bb, deal_code: deal_code, member_id: $scope.client.id}
-    # else
-    params = {bb: $scope.bb, deal_code: deal_code, member_id: null}
+    if $scope.client
+      params = {bb: $scope.bb, deal_code: deal_code, member_id: $scope.client.id}
+    else
+      params = {bb: $scope.bb, deal_code: deal_code, member_id: null}
     BasketService.applyDeal($scope.bb.company, params).then (basket) ->
 
       for item in basket.items
