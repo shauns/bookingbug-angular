@@ -631,7 +631,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
         return $scope.showPage('client_admin')
       else
         return $scope.showPage('client')
-    else if ( !$scope.bb.basket.readyToCheckout() || !$scope.bb.current_item.ready ) && $scope.bb.current_item.item_details.hasQuestions
+    else if ( !$scope.bb.basket.readyToCheckout() || !$scope.bb.current_item.ready ) && ($scope.bb.current_item.item_details && $scope.bb.current_item.item_details.hasQuestions)
       return if $scope.setPageRoute($rootScope.Route.Summary)
       if $scope.bb.isAdmin
         return $scope.showPage('check_items_admin')

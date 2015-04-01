@@ -82,7 +82,6 @@ angular.module('BB.Services').factory "BasketService", ($q, $rootScope, BBModel,
       deferred.reject("rel book not found for event")
       return deferred.promise
 
-   
     MutexService.getLock().then (mutex) ->
       lnk.$post('book', params, data).then (basket) ->
         MutexService.unlock(mutex)
@@ -197,8 +196,7 @@ angular.module('BB.Services').factory "BasketService", ($q, $rootScope, BBModel,
     deferred = $q.defer()
 
     MutexService.getLock().then (mutex) ->
-      console.log params
-      company.$post('apply_deal', {}, {deal_code: params.deal_code}).then (basket) ->
+      company.$post('apply_deal', {}, {deal_code: params.deal_code, member_id: params.member_id}).then (basket) ->
         MutexService.unlock(mutex)
         company.$flush('basket')
         mbasket = new BBModel.Basket(basket, params.bb)

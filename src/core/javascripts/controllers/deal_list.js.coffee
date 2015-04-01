@@ -19,28 +19,20 @@ angular.module('BB.Controllers').controller 'DealList',
 
   init = () ->
     $scope.notLoaded $scope
-    if !$scope.deals or !$scope.bb.basket.containsDeal()
+    if !$scope.deals
       deal_promise = DealService.query($scope.bb.company)
       deal_promise.then (deals) ->
         $scope.deals = deals
         $scope.setLoaded $scope
 
 
+
   $scope.selectDeal = (deal) ->
-    $scope.recipient_error = false
-    if !$scope.bb.current_item.submitted
-      $scope.bb.current_item.setDefaults($scope.bb.item_defaults)
-      $scope.bb.current_item.setDeal(deal)
-      $scope.bb.current_item.submitted = true
-      $scope.bb.stackItem($scope.bb.current_item)
-      # $scope.bb.basket.items = $scope.bb.stacked_items
-    else
-      iitem = new BBModel.BasketItem(null, $scope.bb)
-      iitem.setDefaults($scope.bb.item_defaults)
-      iitem.setDeal(deal)
-      iitem.submitted = true
-      $scope.bb.stackItem(iitem)
-      # $scope.bb.basket.items = $scope.bb.stacked_items
+    iitem = new BBModel.BasketItem(null, $scope.bb)
+    iitem.setDefaults($scope.bb.item_defaults)
+    iitem.setDeal(deal)
+    iitem.submitted = true
+    $scope.bb.stackItem(iitem)
   
 
   $scope.removeDeal = (deal) ->
@@ -54,19 +46,9 @@ angular.module('BB.Controllers').controller 'DealList',
 
 
   $scope.addRecipient = (item, recipient) -> 
-    console.log(recipient.mail)
-    console.log(recipient.name)
     if recipient.mail && recipient.name
       item.recipient = recipient.name
       item.recipient_mail = recipient.mail
-      console.log(item)
-    else
-      console.log("noooooo")
-    # if item.recipient and item.recipient_mail
-    #   item.recipient_submitted = true
-    #   $scope.recipient_error = false
-    # else
-    #   $scope.recipient_error = true
 
 
   $scope.purchaseDeals = () ->

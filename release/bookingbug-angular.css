@@ -11307,7 +11307,7 @@ Copyright (c) 2014 Daniel Eden
     padding-top: 15px;
     border-bottom: 1px solid #DDD; }
     #bb #bb-event .ticket-list li.header, #bb div[bb-event] .ticket-list li.header, #bb .event .ticket-list li.header {
-      padding-top: 00;
+      padding-top: 0;
       font-weight: bold; }
   #bb #bb-event .ticket-list .price, #bb div[bb-event] .ticket-list .price, #bb .event .ticket-list .price {
     color: #000; }

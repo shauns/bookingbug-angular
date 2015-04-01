@@ -2,7 +2,7 @@ angular.module('BB.Services').factory "DealService", ($q, BBModel) ->
   query: (company) ->
     deferred = $q.defer()
     
-    if !company.company_settings.has_vouchers
+    if !company.$has('deals')
       deferred.reject("No Deals found")
     else
       company.$get('deals').then (resource) =>

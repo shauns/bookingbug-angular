@@ -39,6 +39,7 @@ angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, 
   $scope.setUsingBasket(true)
   $scope.items = $scope.bb.basket.items
 
+
   $scope.$watch 'basket', (newVal, oldVal) =>
     $scope.items = _.filter $scope.bb.basket.items, (item) -> !item.is_coupon
 
@@ -79,7 +80,11 @@ angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, 
       $scope.setLoaded $scope
 
   $scope.applyDeal = (deal_code) =>
-    params = {bb: $scope.bb, deal_code: deal_code }
+    AlertService.clear()
+    # if $scope.client
+    #   params = {bb: $scope.bb, deal_code: deal_code, member_id: $scope.client.id}
+    # else
+    params = {bb: $scope.bb, deal_code: deal_code, member_id: null}
     BasketService.applyDeal($scope.bb.company, params).then (basket) ->
 
       for item in basket.items
