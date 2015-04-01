@@ -1,4 +1,4 @@
-<div class="ng-cloak bb-info-window">
+<div bb-map-info-window class="ng-cloak bb-info-window">
   <p><strong>{{ parameter.title }}</strong></p>
   <p ng-if="parameter.address.address1">{{ parameter.address.address1 }}</p>
   <p ng-if="parameter.address.address2">{{ parameter.address.address2 }}</p>
@@ -8,5 +8,5 @@
   <p ng-if="parameter.address.postcode">{{ parameter.postcode }}</p>
   <p>{{ parameter.phone | uk_local_number }}</p>
  <!--  <button type="button" ng-click="selectItem(parameter.item, 'service_list')" class="btn btn-primary">select</button> -->
-<!--   <button type="button" ng-click="select(parameter.item, 'service_list')" class="btn btn-primary">select</button> -->
+  <button type="button" ng-click="selectItem(parameter.item, 'service_list')" class="btn btn-primary">select</button>
 </div>

@@ -281,7 +281,7 @@ angular.module('BB.Controllers').controller 'MapCtrl',
       $scope.$emit 'change:storeLocation'
 
     $scope.selectedStore = item;
-    $scope.initWidget({company_id:item.id, first_page: route})
+    $scope.initWidget({company_id:item.company_id, first_page: route})
 
 
   $scope.roundNumberUp = (num, places) ->
@@ -335,8 +335,8 @@ angular.module('BB.Controllers').controller 'MapCtrl',
 
 angular.module('BB.Directives').directive 'bbMapTheSecond', () ->
   restrict: 'AE'
-  replace: true
-  scope : true
+  replace: false
+  scope : false
   controller : 'MapCtrl2'
 
 angular.module('BB.Controllers').controller 'MapCtrl2',
@@ -424,39 +424,28 @@ angular.module('BB.Controllers').controller 'MapCtrl2',
   , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
 
-# angular.module('BB.Directives').directive 'bbMapInfoWindow', () ->
-#   restrict: 'AE'
-#   replace: true
-#   scope : true
-#   require: '^?bbMapTheSecond'
-#   controller : 'MapCtrl3'
+angular.module('BB.Directives').directive 'bbMapInfoWindow', () ->
+  restrict: 'AE'
+  replace: false
+  scope : false
+  require: '^?bbMapTheSecond'
+  controller : 'MapCtrl3'
 
-# angular.module('BB.Controllers').controller 'MapCtrl3',
-# ($scope, $element, $attrs, $rootScope, AlertService, ErrorService, FormDataStoreService, $q, $window, $timeout, $document) ->
+angular.module('BB.Controllers').controller 'MapCtrl3',
+($scope, $element, $attrs, $rootScope, AlertService, ErrorService, FormDataStoreService, $q, $window, $timeout, $document) ->
 
-#   $scope.selectItem = (item, route) ->
-#     # return if !$scope.$debounce(1000)
+  $scope.selectItem = (item, route) ->
+    # return if !$scope.$debounce(1000)
     
-#     if !item
-#       AlertService.warning({msg:$scope.error_msg})
-#       return
+    if !item
+      AlertService.warning({msg:$scope.error_msg})
+      return
 
-#     # $scope.notLoaded $scope
-#     $scope.selectedStore = item
-#     # if the selected store changes, emit an event. the form data store uses
-#     # this to clear data, but it can be used to action anything.
-#     if $scope.selectedStore and $scope.selectedStore.id isnt item.id
-#       $scope.$emit 'change:storeLocation'
+    # $scope.notLoaded $scope
+    $scope.selectedStore = item
 
-#     $scope.initWidget({company_id:item.id, first_page: route})
-#     # console.log $scope.selectedStore, route
-#     # console.log '$scope', $scope
-#     # console.log '$rootScope', $rootScope
-#     # $scope.initWidget()
-#     console.log "Fired"
+    if $scope.selectedStore and $scope.selectedStore.id isnt item.id
+      $scope.$emit 'change:storeLocation'
 
-    # $rootScope.connection_started.then ->
-    #   debugger
-    #   # $scope.initWidget({company_id:$scope.selectedStore.id, first_page: route, keep_basket:true})
-    #   console.log $scope
-    # return
+    # Although this method works. It would be better to find a way to bind the scopes instead.
+    $rootScope.$$childHead.initWidget({company_id:item.company_id, first_page: route})
