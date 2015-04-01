@@ -1,5 +1,5 @@
 .search-form-wrapper {
-  margin: 10px 0 15px 0;
+  margin: 10px 0;
 
   .form-group {
     margin-bottom: 0;
@@ -8,9 +8,10 @@
 }
 
 .company-map-header{
-  margin: 15px 0 25px;
-  font-size: $font-size-large;
+  font-size: 1.3em;
+  margin-bottom: 15px;
 }
+
 
 .bb-company-block {
 
@@ -36,13 +37,14 @@
     padding-bottom: 15px;
   }
 }
+
+
 /* GMAP START */
 
 .map-canvas {
-  height: 400px;
-  margin-bottom: 15px;
+  height: 800px;
   @media (max-width: 767px) {
-    height: 200px;
+    height: 400px;
   }
 }
 
@@ -60,23 +62,20 @@
 }
 
 /* GMAP END */
+.bb-map {
 
-.bb-store-search {
-
-  .panel {
-    border-top: 1px solid #DDD;
+  .angular-google-map-container { 
+    height: 800px; 
   }
 
-  .panel-title {
-    font-size: $font-size-base;
-  }
+}
 
-  input {
-    font-size: $font-size-base;
-  }
+.test {
+  color: blue;
+}
 
-  .bb-map-block {
-    height: 800px;
+.bb-info-window {
+  p { 
+    margin: 0px;
   }
-
 }

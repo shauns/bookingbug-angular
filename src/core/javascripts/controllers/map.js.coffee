@@ -331,3 +331,132 @@ angular.module('BB.Controllers').controller 'MapCtrl',
       $scope.myMap.setCenter $scope.loc
       $scope.myMap.setZoom 15
       $scope.showClosestMarkers $scope.loc
+
+
+angular.module('BB.Directives').directive 'bbMapTheSecond', () ->
+  restrict: 'AE'
+  replace: true
+  scope : true
+  controller : 'MapCtrl2'
+
+angular.module('BB.Controllers').controller 'MapCtrl2',
+($scope, $element, $attrs, $rootScope, AlertService, ErrorService, FormDataStoreService, $q, $window, $timeout, $document) ->
+
+  $scope.controller = "public.controllers.MapCtrl2"
+
+  map_ready_def               = $q.defer()
+
+  $rootScope.connection_started.then ->
+    $scope.setLoaded $scope
+    if $scope.bb.company.companies
+      $rootScope.parent_id = $scope.bb.company.id
+    else if $rootScope.parent_id
+      $scope.initWidget({company_id:$rootScope.parent_id, first_page: $scope.bb.current_page, keep_basket:true})
+      return
+    else
+      $scope.initWidget({company_id:$scope.bb.company.id, first_page: null})
+      return
+
+    if $scope.bb.company.companies
+      $rootScope.parent_id = $scope.bb.company.id
+    else if $rootScope.parent_id
+      $scope.initWidget({company_id:$rootScope.parent_id, first_page: $scope.bb.current_page, keep_basket:true})
+      return
+    else
+      $scope.initWidget({company_id:$scope.bb.company.id, first_page: null})
+      return
+
+    $scope.companies = $scope.bb.company.companies
+    if !$scope.companies or $scope.companies.length is 0
+      $scope.companies = [$scope.bb.company]
+
+    $scope.mapBounds = new google.maps.LatLngBounds()
+    # I really need to get rid of this error message somehow. Option to take it out of the array but not don't know if that would be good in the bigger soce of things.
+    for comp, index in $scope.companies
+      if comp and (comp['address'] is undefined)
+        console.log "Missing address for object ", index + 1, "."
+        $scope.companies.splice(index, 1)
+        console.log $scope.companies
+      else if comp and comp.address.lat and comp.address.long
+        latlong = new google.maps.LatLng(comp.address.lat,comp.address.long)
+        $scope.mapBounds.extend(latlong)
+
+    $scope.map = {
+      center: {
+        latitude: $scope.mapBounds.getCenter().k,
+        longitude: $scope.mapBounds.getCenter().D
+      },
+      zoom: 10,
+      bounds: {}
+    }
+
+    $scope.isDraggable = $document.width() > 480
+
+    $scope.options = {
+      scrollwheel: false
+      draggable: $scope.isDraggable
+    }
+
+    $scope.markers = []
+
+    template_url = 'info_window.html'
+    for comp, index in $scope.companies
+      if comp.address.lat && comp.address.long
+        marker = {
+          id: index,
+          latitude: comp.address.lat,
+          longitude: comp.address.long,
+          show: false,
+          templateUrl: template_url,
+          templateParameter: {
+            company_id: comp.id
+            marker_id: index + 1,
+            title: comp.title,
+            address: comp.address,
+            phone: comp.address.homephone,
+            item: comp
+          },
+         }
+        $scope.markers.push(marker)
+
+    map_ready_def.resolve(true)
+
+  , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
+
+
+# angular.module('BB.Directives').directive 'bbMapInfoWindow', () ->
+#   restrict: 'AE'
+#   replace: true
+#   scope : true
+#   require: '^?bbMapTheSecond'
+#   controller : 'MapCtrl3'
+
+# angular.module('BB.Controllers').controller 'MapCtrl3',
+# ($scope, $element, $attrs, $rootScope, AlertService, ErrorService, FormDataStoreService, $q, $window, $timeout, $document) ->
+
+#   $scope.selectItem = (item, route) ->
+#     # return if !$scope.$debounce(1000)
+    
+#     if !item
+#       AlertService.warning({msg:$scope.error_msg})
+#       return
+
+#     # $scope.notLoaded $scope
+#     $scope.selectedStore = item
+#     # if the selected store changes, emit an event. the form data store uses
+#     # this to clear data, but it can be used to action anything.
+#     if $scope.selectedStore and $scope.selectedStore.id isnt item.id
+#       $scope.$emit 'change:storeLocation'
+
+#     $scope.initWidget({company_id:item.id, first_page: route})
+#     # console.log $scope.selectedStore, route
+#     # console.log '$scope', $scope
+#     # console.log '$rootScope', $rootScope
+#     # $scope.initWidget()
+#     console.log "Fired"
+
+    # $rootScope.connection_started.then ->
+    #   debugger
+    #   # $scope.initWidget({company_id:$scope.selectedStore.id, first_page: route, keep_basket:true})
+    #   console.log $scope
+    # return
