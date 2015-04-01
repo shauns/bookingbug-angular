@@ -38,7 +38,6 @@ angular.module('BB.Controllers').controller 'DealList',
   $scope.removeDeal = (deal) ->
     $scope.bb.removeItemFromStack(deal)
     $scope.bb.basket.clearItem(deal)
-    $scope.recipient_error = false
     if $scope.bb.current_item is deal
       $scope.bb.current_item = new BBModel.BasketItem(null, $scope.bb)
       $scope.current_item = $scope.bb.current_item
