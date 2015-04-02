@@ -7,11 +7,17 @@ angular.module('BBAdminServices').directive 'scheduleCalendar', (uiCalendarConfi
         callback($scope.getEvents())
     ]
 
-    options = $scope.$eval $attrs.scheduleCalendar or {}
+    $scope.getCalendarEvents = (start, end) ->
+      events = $scope.$$childTail.scheduleCal.fullCalendar('clientEvents',
+        (e) ->
+          (start.isAfter(e.start) || start.isSame(e.start)) &&
+            (end.isBefore(e.end) || end.isSame(e.end)))
+
+    options = $scope.$eval($attrs.scheduleCalendar) or {}
 
     $scope.options =
       calendar:
-        editable: true
+        editable: false
         selectable: true
         defaultView: 'agendaWeek'
         header:
@@ -24,8 +30,14 @@ angular.module('BBAdminServices').directive 'scheduleCalendar', (uiCalendarConfi
           agendaWeek:
             allDaySlot: false
             slotEventOverlap: false
+            minTime: options.min_time || '00:00:00'
+            maxTime: options.max_time || '24:00:00'
         select: (start, end, jsEvent, view) ->
-          $scope.addRange(start, end)
+          events = $scope.getCalendarEvents(start, end)
+          if events.length > 0
+            $scope.removeRange(start, end)
+          else
+            $scope.addRange(start, end)
         eventResizeStop: (event, jsEvent, ui, view) ->
           $scope.addRange(event.start, event.end)
         eventDrop: (event, delta, revertFunc, jsEvent, ui, view) ->
@@ -35,9 +47,6 @@ angular.module('BBAdminServices').directive 'scheduleCalendar', (uiCalendarConfi
               end: moment(event.end).subtract(delta)
             $scope.removeRange(orig.start, orig.end)
             $scope.addRange(event.start, event.end)
-
-    $scope.options.calendar.views.agendaWeek.minTime = options.min_time if options.min_time
-    $scope.options.calendar.views.agendaWeek.maxTime = options.max_time if options.max_time
 
     $scope.render = () ->
       $scope.$$childTail.scheduleCal.fullCalendar('render')
@@ -59,10 +68,17 @@ angular.module('BBAdminServices').directive 'scheduleCalendar', (uiCalendarConfi
       ngModel.$setViewValue(scheduleRules().removeRange(start, end))
       ngModel.$render()
 
+    scope.toggleRange = (start, end) ->
+      ngModel.$setViewValue(scheduleRules().toggleRange(start, end))
+      ngModel.$render()
+
     ngModel.$render = () ->
       if scope.$$childTail
         scope.$$childTail.scheduleCal.fullCalendar('refetchEvents')
         scope.$$childTail.scheduleCal.fullCalendar('unselect')
+
+    scope.calendar = () ->
+      if scope.$$childTail then scope.$$childTail.scheduleCal
 
   {
     controller: controller
