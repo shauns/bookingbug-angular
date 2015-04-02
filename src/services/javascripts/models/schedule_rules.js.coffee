@@ -74,13 +74,15 @@ angular.module('BB.Models').factory "ScheduleRules", () ->
             r
         ))
 
-
     joinRanges: (ranges) ->
       _.reduce(ranges, (m, range) ->
         if m == ''
           range
         else if range.slice(0, 4) <= m.slice(m.length - 4, m.length)
-          m.slice(0, m.length - 4) + range.slice(5, 9)
+          if range.slice(5, 9) >= m.slice(m.length - 4, m.length)
+            m.slice(0, m.length - 4) + range.slice(5, 9)
+          else
+            m
         else
           [m,range].join()
       , "")
