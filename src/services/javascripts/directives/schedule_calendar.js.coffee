@@ -32,6 +32,7 @@ angular.module('BBAdminServices').directive 'scheduleCalendar', (uiCalendarConfi
             slotEventOverlap: false
             minTime: options.min_time || '00:00:00'
             maxTime: options.max_time || '24:00:00'
+            noEventClick: true
         select: (start, end, jsEvent, view) ->
           events = $scope.getCalendarEvents(start, end)
           if events.length > 0
