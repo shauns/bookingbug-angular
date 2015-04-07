@@ -19,15 +19,17 @@ angular.module('BBAdminServices').directive 'scheduleWeekdays', (uiCalendarConfi
       calendar:
         editable: false
         selectable: true
-        defaultView: 'agendaWeek'
+        defaultView: 'agendaSelectAcrossWeek'
         header:
           left: ''
           center: 'title'
           right: ''
-        selectHelper: true
+        selectHelper: false
         eventOverlap: false
         views:
-          agendaWeek:
+          agendaSelectAcrossWeek:
+            duration:
+              weeks: 1
             titleFormat: '[]'
             allDaySlot: false
             columnFormat: 'ddd'

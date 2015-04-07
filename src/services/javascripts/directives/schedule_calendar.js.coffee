@@ -19,15 +19,17 @@ angular.module('BBAdminServices').directive 'scheduleCalendar', (uiCalendarConfi
       calendar:
         editable: false
         selectable: true
-        defaultView: 'agendaWeek'
+        defaultView: 'agendaSelectAcrossWeek'
         header:
           left: 'today,prev,next'
           center: 'title'
           right: 'month,agendaWeek'
-        selectHelper: true
+        selectHelper: false
         eventOverlap: false
         views:
-          agendaWeek:
+          agendaSelectAcrossWeek:
+            duration:
+              weeks: 1
             allDaySlot: false
             slotEventOverlap: false
             minTime: options.min_time || '00:00:00'
