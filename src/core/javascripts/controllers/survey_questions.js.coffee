@@ -3,9 +3,9 @@ angular.module('BB.Directives').directive 'bbSurveyQuestions', () ->
   replace: true
   scope : true
   controller : 'SurveyQuestions'
-  link : (scope, element, attrs) ->
+  # link : (scope, element, attrs) ->
     #scope.init(scope.$eval( attrs.bbSurveyQuestions ))
-    return
+    # return
 
 angular.module('BB.Controllers').controller 'SurveyQuestions', ($scope,  $rootScope,
     CompanyService, PurchaseService, ClientService, $modal, $location, $timeout,
@@ -19,6 +19,10 @@ angular.module('BB.Controllers').controller 'SurveyQuestions', ($scope,  $rootSc
   $scope.login_error = false
   $scope.booking_ref = ""
 
+  $rootScope.connection_started.then ->
+    init()
+  , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
+
 
   showLoginError = () =>
     $scope.login_error = true
@@ -29,12 +33,13 @@ angular.module('BB.Controllers').controller 'SurveyQuestions', ($scope,  $rootSc
     LoginService.memberQuery(params).then (member) =>
       $scope.member = member
 
+  init = () =>
+    if $scope.company 
+      if $scope.company.settings.requires_login
+        $scope.checkIfLoggedIn()
+      else
+        $scope.loadSurveyFromBookingRef()
 
-  $scope.checkIfLoggedIn = () =>
-    LoginService.checkLogin()
-
-
-  $scope.checkIfLoggedIn()
 
 
   setPurchaseCompany = (company) ->
@@ -45,6 +50,10 @@ angular.module('BB.Controllers').controller 'SurveyQuestions', ($scope,  $rootSc
     if company.settings
       $scope.bb.item_defaults.merge_resources = true if company.settings.merge_resources
       $scope.bb.item_defaults.merge_people    = true if company.settings.merge_people
+
+
+  $scope.checkIfLoggedIn = () =>
+    LoginService.checkLogin()
 
 
   $scope.loadSurvey = (purchase) =>
@@ -105,6 +114,23 @@ angular.module('BB.Controllers').controller 'SurveyQuestions', ($scope,  $rootSc
     , (err) ->
       $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
+
+  $scope.loadSurveyFromBookingRef = () =>
+    purchase_id = window.location.search
+    split = purchase_id.split("=")
+    id = split.pop()
+    params = {booking_ref: id, url_root: $scope.bb.api_url, raw: true}
+    auth_token = $sessionStorage.getItem('auth_token')
+    params.auth_token = auth_token if auth_token
+    PurchaseService.bookingRefQuery(params).then (purchase) =>
+      $scope.purchase = purchase
+      $scope.total = $scope.purchase
+      $scope.loadSurvey($scope.purchase)
+      $scope.setLoaded $scope
+    , (err) ->
+      showLoginError()
+      $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
+
   $scope.loadCompany = () =>
     company_id = window.location.pathname
     split = company_id.split("/")
@@ -144,7 +170,7 @@ angular.module('BB.Controllers').controller 'SurveyQuestions', ($scope,  $rootSc
         $scope.decideNextPage(route)
   
 
-   $scope.submitBookingRef = (form) =>
+  $scope.submitBookingRef = (form) =>
     return if !ValidatorService.validateForm(form)
     params = {booking_ref: $scope.booking_ref, url_root: $scope.bb.api_url, raw: true}
     auth_token = $sessionStorage.getItem('auth_token')
