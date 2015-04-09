@@ -115,3 +115,12 @@ angular.module('BB.Models').factory "BasketModel", ($q, BBModel, BaseModel) ->
       for item in @items
         duration += item.service.listed_duration if item.service and item.service.listed_duration
       return duration
+
+    containsWaitlistItem: ->
+      waitlist = []
+      for item in @items
+        if item.status == 8
+          waitlist.push(item)
+      return if waitlist.length > 0 then true else false
+
+

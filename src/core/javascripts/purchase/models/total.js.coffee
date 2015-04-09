@@ -134,3 +134,10 @@ angular.module('BB.Models').factory "Purchase.TotalModel", ($q, $window, BBModel
         duration += item.duration if item.duration
       duration /= 60
       return duration
+
+    waitlist: () ->
+      if @items
+        for item in @items
+          if item.on_waitlist
+            return true
+

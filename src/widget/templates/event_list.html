@@ -168,9 +168,14 @@
               </ul>
             </div>
             <div class="col-sm-2 event-select">
-              <button type="button" ng-click="selectItem(item)" class="btn btn-primary btn-block" ng-disabled="item.getSpacesLeft() == 0">
+              <button type="button" ng-click="selectItem(item)" class="btn btn-primary btn-block" ng-disabled="item.getSpacesLeft() == 0 && !bb.company.settings.has_waitlists">
                 <span ng-show="item.getSpacesLeft() > 0">Select</span>
-                <span ng-show="item.getSpacesLeft() <= 0" class="status-sold-out">Sold out</span>
+                <div ng-show="item.getSpacesLeft() <= 0 && !bb.company.settings.has_waitlists">
+                  <span class="status-sold-out">Sold out</span>
+                </div>
+                <div ng-show="item.getSpacesLeft() <= 0 && bb.company.settings.has_waitlists">
+                  <span>Join Waitlist</span>
+                </div>
               </button>
             </div>
           </div>
