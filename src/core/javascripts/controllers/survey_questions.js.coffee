@@ -126,7 +126,6 @@ angular.module('BB.Controllers').controller 'SurveyQuestions', ($scope,  $rootSc
       $scope.purchase = purchase
       $scope.total = $scope.purchase
       $scope.loadSurvey($scope.purchase)
-      $scope.setLoaded $scope
     , (err) ->
       showLoginError()
       $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
