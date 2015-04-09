@@ -66,14 +66,14 @@ angular.module('BBAdmin.Controllers').controller 'BBAdminCtrl', ($controller,
 
   $scope.$on '$stateChangeStart', (event, toState, toStateParams) ->
     unless toState.name == "login"
-      AdminLoginService.checkLogin()
-      unless AdminLoginService.isLoggedIn()
-        $timeout () ->
-          $state.go 'login'
-      else
-        company_id = AdminLoginService.user().company_id
-        unless $scope.init_widget_started
-          $scope.initWidget({company_id: company_id})
+      AdminLoginService.checkLogin().then () ->
+        unless AdminLoginService.isLoggedIn()
+          $timeout () ->
+            $state.go 'login'
+        else
+          company_id = AdminLoginService.user().company_id
+          unless $scope.init_widget_started
+            $scope.initWidget({company_id: company_id})
           
   $scope.pusherSubscribe = () =>
     if $scope.bb.company? && Pusher?

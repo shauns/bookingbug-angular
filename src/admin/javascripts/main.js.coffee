@@ -32,7 +32,7 @@ angular.module('BBAdmin.Controllers', [
 
 adminapp.run ($rootScope, $log, DebugUtilsService, FormDataStoreService, $bbug, $document, $sessionStorage, AppConfig, AdminLoginService) ->
   # add methods to the rootscope if they are applicable to whole app
-  AdminLoginService.checkLogin()
-  if $rootScope.user && $rootScope.user.company_id
-    $rootScope.bb ||= {}
-    $rootScope.bb.company_id = $rootScope.user.company_id
+  AdminLoginService.checkLogin().then () ->
+    if $rootScope.user && $rootScope.user.company_id
+      $rootScope.bb ||= {}
+      $rootScope.bb.company_id = $rootScope.user.company_id
