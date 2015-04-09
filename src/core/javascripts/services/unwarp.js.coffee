@@ -122,13 +122,10 @@ angular.module('BB.Services').factory "BB.Service.child_clients", ($q, BBModel) 
   promise: true
   unwrap: (resource) ->
     deferred = $q.defer()
-    console.log 'resource.$links', resource.$links
     resource.$get('clients').then (items) =>
-      console.log 'items', items
       models = []
       for i in items
         models.push(new BBModel.Client(i))
-        console.log 'models', models
       deferred.resolve(models)
     , (err) =>
       deferred.reject(err)
@@ -215,7 +212,6 @@ angular.module('BB.Services').factory "BB.Service.company_questions", ($q, BBMod
       models = []
       for i in items
         models.push(new BBModel.BusinessQuestion(i))
-      console.log 'models', models
       deferred.resolve(models)
     , (err) =>
       deferred.reject(err)

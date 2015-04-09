@@ -256,8 +256,6 @@ angular.module('BB.Controllers').controller 'Purchase', ($scope,  $rootScope, Co
 
   $scope.onFileSelect = (booking, $file, existing) ->
     $scope.upload_progress = 0
-    console.log $file, booking, existing
-    console.log 
     file = $file
     att_id = null
     att_id = existing.id if existing

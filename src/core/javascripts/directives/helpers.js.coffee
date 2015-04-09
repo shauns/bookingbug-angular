@@ -55,7 +55,6 @@ app.directive 'bbPrintPage', ($window, $timeout) ->
   link:(scope, element, attr) ->
     if attr.bbPrintPage
       scope.$watch attr.bbPrintPage, (newVal, oldVal) =>
-        console.log attr.bbPrintPage
         $timeout(->
           $window.print()
         3000)
