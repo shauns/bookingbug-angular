@@ -62,6 +62,8 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
          href: 'http://www.bookingbug.com/api/v1/admin/123/schedules'
        new_schedule:
          href: 'http://www.bookingbug.com/api/v1/admin/123/schedules/new'
+       queuers:
+         href: 'http://www.bookingbug.com/api/v1/admin/123/queuers'
    $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/company').respond(company)
 
    people =
@@ -647,21 +649,21 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
    queuers = 
      total_entries: 3
      _embedded:
-       queuers: [
-         {
-           ticket_number: 1
-           name: "Joe"
-           position: 1
-           status: "queueing"
-           _links:
-             self:
-               href: "http://www.bookingbug.com/api/v1/123/queuers/1"
-             service:
-               href: "http://www.bookingbug.com/api/v1/123/services/30063"
-               templated: true
-             member:
-               href: "http://www.bookingbug.com/api/v1/123/members/123456{?embed}"
-               templated: true
+      queuers: [
+        {
+         ticket_number: 1
+         name: "Joe"
+         position: 1
+         status: "queueing"
+         _links:
+           self:
+             href: "http://www.bookingbug.com/api/v1/123/queuers/1"
+           service:
+             href: "http://www.bookingbug.com/api/v1/123/services/30063"
+             templated: true
+           member:
+             href: "http://www.bookingbug.com/api/v1/123/members/123456{?embed}"
+             templated: true
          }
          {
            ticket_number: 240
@@ -694,4 +696,6 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
                templated: true
          }
        ]
+   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/queuers').respond(queuers)
+
 
