@@ -3,6 +3,8 @@
 queueapp = angular.module('BBQueue', [
   'BB',
   'BBAdmin.Services',
+  'BBQueue.Directives',
+  'BBQueue.Controllers'
 ])
 
 angular.module('BBQueue.Directives', [])
@@ -18,4 +20,4 @@ queueapp.run ($rootScope, $log, DebugUtilsService, FormDataStoreService, $bbug, 
   #   $rootScope.bb ||= {}
   #   $rootScope.bb.company_id = $rootScope.user.company_id
 
-  angular.module('BBQueueMockE2E', ['BBQueue'])
+angular.module('BBQueueMockE2E', ['BBQueue', 'BBAdminMockE2E'])

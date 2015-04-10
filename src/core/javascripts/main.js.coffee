@@ -19,9 +19,9 @@ app = angular.module('BB', [
   'angularFileUpload',
   'schemaForm',
   'ngStorage',
-  'ui-rangeSlider',
   'uiGmapgoogle-maps',
-  'angular.filter'
+  'angular.filter',
+  'ui-rangeSlider'
 ]);
 
 
