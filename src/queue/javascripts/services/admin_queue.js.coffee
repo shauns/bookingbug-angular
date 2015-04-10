@@ -1,6 +1,6 @@
 angular.module('BBQueue.Services').factory 'AdminQueueService', ($q, $window, halClient, QueuerCollections, BBModel) ->
 
-	query: (prms) ->
+  query: (prms) ->
     if prms.date
       prms.start_date = prms.date
       prms.end_date = prms.date 
