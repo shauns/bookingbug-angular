@@ -644,3 +644,54 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
    $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/schedules/edit').respond () ->
      [200, schedule_schema, {}]
 
+   queuers = 
+     total_entries: 3
+     _embedded:
+       queuers: [
+         {
+           ticket_number: 1
+           name: "Joe"
+           position: 1
+           status: "queueing"
+           _links:
+             self:
+               href: "http://www.bookingbug.com/api/v1/123/queuers/1"
+             service:
+               href: "http://www.bookingbug.com/api/v1/123/services/30063"
+               templated: true
+             member:
+               href: "http://www.bookingbug.com/api/v1/123/members/123456{?embed}"
+               templated: true
+         }
+         {
+           ticket_number: 240
+           name: "Jane"
+           position: 2
+           status: "queueing"
+           _links:
+             self:
+               href: "http://www.bookingbug.com/api/v1/123/queuers/240"
+             service:
+               href: "http://www.bookingbug.com/api/v1/123/services/30063"
+               templated: true
+             member:
+               href: "http://www.bookingbug.com/api/v1/123/members/223456{?embed}"
+               templated: true
+         }
+         {
+           ticket_number: 176
+           name: "Shanikwa"
+           position: 3
+           status: "queueing"
+           _links:
+             self:
+               href: "http://www.bookingbug.com/api/v1/123/queuers/176"
+             service:
+               href: "http://www.bookingbug.com/api/v1/123/services/30063"
+               templated: true
+             member:
+               href: "http://www.bookingbug.com/api/v1/123/members/323456{?embed}"
+               templated: true
+         }
+       ]
+
