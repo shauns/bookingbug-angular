@@ -95,7 +95,6 @@ angular.module('BB.Controllers').controller 'AddressList',
           id : $scope.bb.address.moniker
         )
         .then (response) ->
-          console.log response, 'logging response'
           address = response
           house_number = ''
           if typeof address.buildingNumber is 'string'
