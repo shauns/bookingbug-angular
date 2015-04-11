@@ -36,3 +36,4 @@ angular.module('BBQueue.Services').factory 'AdminQueueService', ($q, $window, ha
         deferred.reject(err)
 
     deferred.promise
+    
