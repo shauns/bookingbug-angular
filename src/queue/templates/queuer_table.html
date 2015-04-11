@@ -2,12 +2,6 @@
 <div ng-hide="loading">
   <button class="btn btn-default" ng-click="newQueuerModal()">New Queuer</button>
   <table tr-ng-grid="" items="queuers" fields="fields" ng-if="queuers">
-     <thead>
-      <tr>
-        <th field-name="ticket_number" display-name="Ticket"></th>
-        <th field-name="name" display-name="Name"></th>
-      </tr>
-    </thead>
     <tbody>
       <tr>
         <td>
