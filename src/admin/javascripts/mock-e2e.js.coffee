@@ -651,21 +651,28 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
      _embedded:
       queuers: [
         {
-         ticket_number: 1
-         name: "Joe"
-         position: 1
-         status: "queueing"
-         _links:
-           self:
-             href: "http://www.bookingbug.com/api/v1/123/queuers/1"
-           service:
-             href: "http://www.bookingbug.com/api/v1/123/services/30063"
-             templated: true
-           member:
-             href: "http://www.bookingbug.com/api/v1/123/members/123456{?embed}"
-             templated: true
+           service_name: "Pro wrestling consultation"
+           member_name: "Joe Danger" 
+           ticket_number: 1
+           name: "Joe"
+           position: 1
+           status: "queueing"
+           _links:
+             self:
+               href: "http://www.bookingbug.com/api/v1/123/queuers/1"
+             service:
+               href: "http://www.bookingbug.com/api/v1/123/services/30063"
+               templated: true
+             member:
+               href: "http://www.bookingbug.com/api/v1/123/members/123456{?embed}"
+               templated: true
+             space:
+              href: "http://www.bookingbug.com/api/v1/123/spaces/300"
+              templated: true
          }
          {
+           service_name: "Extreme yoga consultation"
+           member_name: "Jane Youwary" 
            ticket_number: 240
            name: "Jane"
            position: 2
@@ -679,8 +686,13 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
              member:
                href: "http://www.bookingbug.com/api/v1/123/members/223456{?embed}"
                templated: true
+             space:
+              href: "http://www.bookingbug.com/api/v1/123/spaces/301"
+              templated: true
          }
          {
+           service_name: "Chess gymnastics consultation"
+           member_name: "Shanikwa Jones" 
            ticket_number: 176
            name: "Shanikwa"
            position: 3
@@ -694,6 +706,9 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
              member:
                href: "http://www.bookingbug.com/api/v1/123/members/323456{?embed}"
                templated: true
+             space:
+              href: "http://www.bookingbug.com/api/v1/123/spaces/302"
+              templated: true
          }
        ]
    $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/queuers').respond(queuers)
