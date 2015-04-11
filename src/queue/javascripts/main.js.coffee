@@ -6,8 +6,7 @@ queueapp = angular.module('BBQueue', [
   'BBAdmin.Directives',
   'BBQueue.Services',
   'BBQueue.Directives',
-  'BBQueue.Controllers',
-  'BBQueue.Services'
+  'BBQueue.Controllers'
 ])
 
 angular.module('BBQueue.Directives', [

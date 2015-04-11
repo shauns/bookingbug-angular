@@ -6,7 +6,7 @@ angular.module('BBQueue.Controllers').controller 'QueuePosition', (QueuerService
   	company_id: 123
 
   QueuerService.query(params).then (queuer) ->
-  	$scope.name = queuer.name
+  	$scope.name = queuer.first_name
   	$scope.position = queuer.position
   	
   $scope.time_remaining = 1451628000000
