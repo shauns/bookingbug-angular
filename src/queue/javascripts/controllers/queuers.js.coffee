@@ -1,15 +1,12 @@
 angular.module('BBQueue').controller 'bbQueuers', ($scope, $log,
-    AdminQueueService, ModalForm) ->
+    AdminQueuerService, ModalForm) ->
 
   $scope.loading = true
-
-  console.log('queuers controller')
 
   $scope.getQueuers = () ->
     params =
       company: $scope.company
-      start_date: moment().format('YYYY-MM-DD')
-    AdminQueueService.query(params).then (queuers) ->
+    AdminQueuerService.query(params).then (queuers) ->
       $scope.queuers = queuers
       $scope.loading = false
     , (err) ->

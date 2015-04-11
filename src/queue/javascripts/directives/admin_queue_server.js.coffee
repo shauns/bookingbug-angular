@@ -1,17 +1,52 @@
+angular.module('BBQueue').directive 'bbIfLogin', ($modal, $log, $q,
+  $rootScope, AdminQueueService, AdminCompanyService, $compile, $templateCache,
+  ModalForm, BBModel) ->
+
+  compile = () ->
+    {
+      pre: ( scope, element, attributes ) ->
+        @whenready = $q.defer()
+        scope.loggedin = @whenready.promise
+        AdminCompanyService.query(attributes).then (company) ->
+          scope.company = company
+          @whenready.resolve()
+      ,
+      post: ( scope, element, attributes ) ->
+    }
+
+  link = (scope, element, attrs) ->
+  {
+    compile: compile
+#    controller: 'bbQueuers'
+    # templateUrl: 'queuer_table.html'
+  }
+
+
 angular.module('BBQueue').directive 'bbQueueServer', ($modal, $log,
   $rootScope, AdminQueueService, AdminCompanyService, $compile, $templateCache,
   ModalForm, BBModel) ->
 
   link = (scope, element, attrs) ->
-    if scope.company
+    scope.loggedin.then () ->
       scope.getQueuers()
-    else
-      AdminCompanyService.query(attrs).then (company) ->
-        scope.company = company
-        scope.getQueuers()
 
   {
     link: link
     controller: 'bbQueuers'
+    # templateUrl: 'queuer_table.html'
+  }
+
+
+angular.module('BBQueue').directive 'bbQueues', ($modal, $log,
+  $rootScope, AdminQueueService, AdminCompanyService, $compile, $templateCache,
+  ModalForm, BBModel) ->
+
+  link = (scope, element, attrs) ->
+    scope.loggedin.then () ->
+      scope.getQueues()
+
+  {
+    link: link
+    controller: 'bbQueues'
     # templateUrl: 'queuer_table.html'
   }
