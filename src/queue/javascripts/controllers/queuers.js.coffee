@@ -3,8 +3,6 @@ angular.module('BBQueue').controller 'bbQueuers', ($scope, $log,
 
   $scope.loading = true
 
-  console.log('queuers controller')
-
   $scope.getQueuers = () ->
     params =
       company: $scope.company
