@@ -33,7 +33,6 @@ angular.module('BBQueue').directive 'bbQueueServer', ($modal, $log,
   {
     link: link
     controller: 'bbQueuers'
-    # templateUrl: 'queuer_table.html'
   }
 
 

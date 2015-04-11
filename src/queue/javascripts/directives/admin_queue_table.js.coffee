@@ -3,7 +3,7 @@ angular.module('BBQueue').directive 'bbAdminQueueTable', ($modal, $log,
   ModalForm, BBModel) ->
 
   link = (scope, element, attrs) ->
-    scope.fields ||= ['ticket_number', 'first_name']
+    scope.fields ||= ['ticket_number', 'first_name', 'last_name', 'email']
     if scope.company
       scope.getQueuers()
     else

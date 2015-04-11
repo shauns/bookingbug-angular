@@ -6,10 +6,13 @@ queueapp = angular.module('BBQueue', [
   'BBAdmin.Directives',
   'BBQueue.Services',
   'BBQueue.Directives',
-  'BBQueue.Controllers'
+  'BBQueue.Controllers',
+  'trNgGrid'
 ])
 
-angular.module('BBQueue.Directives', [])
+angular.module('BBQueue.Directives', [
+	'timer'
+])
 
 angular.module('BBQueue.Controllers', [])
 
@@ -29,5 +32,3 @@ queueapp.run ($rootScope, $log, DebugUtilsService, FormDataStoreService, $bbug, 
   # if $rootScope.user && $rootScope.user.company_id
   #   $rootScope.bb ||= {}
   #   $rootScope.bb.company_id = $rootScope.user.company_id
-
-angular.module('BBQueueMockE2E', ['BBQueue', 'BBAdminMockE2E'])
