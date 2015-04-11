@@ -80,8 +80,7 @@ app.directive 'bbScrollTo', ($rootScope, AppConfig, BreadcrumbService, $bbug) ->
 # bbSlotGrouper
 # group time slots together based on a given start time and end time
 app.directive  'bbSlotGrouper', () ->
-  restrict: 'A',
-  require: ['^?bbTimeRanges?','^?bbTimes'],
+  restrict: 'A'
   scope: true
   link: (scope, element, attrs) ->
     slots = scope.$eval(attrs.slots)
