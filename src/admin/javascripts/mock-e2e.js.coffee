@@ -64,6 +64,8 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
          href: 'http://www.bookingbug.com/api/v1/admin/123/schedules/new'
        queuers:
          href: 'http://www.bookingbug.com/api/v1/admin/123/queuers'
+       new_queuer:
+         href: 'http://www.bookingbug.com/api/v1/admin/123/queuers/new'
    $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/company').respond(company)
 
    people =
@@ -646,13 +648,13 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
    $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/schedules/edit').respond () ->
      [200, schedule_schema, {}]
 
-   queuers = 
+   queuers =
      total_entries: 3
      _embedded:
       queuers: [
         {
          ticket_number: 1
-         name: "Joe"
+         first_name: "Joe"
          position: 1
          status: "queueing"
          _links:
@@ -667,7 +669,7 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
          }
          {
            ticket_number: 240
-           name: "Jane"
+           first_name: "Jane"
            position: 2
            status: "queueing"
            _links:
@@ -682,7 +684,7 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
          }
          {
            ticket_number: 176
-           name: "Shanikwa"
+           first_name: "Shanikwa"
            position: 3
            status: "queueing"
            _links:
@@ -698,4 +700,25 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
        ]
    $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/queuers').respond(queuers)
 
+   queuer_schema =
+     form: [
+       {key:'first_name', type:'text', feedback:false},
+       {key:'last_name', type:'text', feedback:false},
+       {type:'submit', title:'Save'}
+     ]
+     schema:
+       properties:
+         first_name:
+           title: 'First Name *'
+           type: 'string'
+         last_name:
+           title: 'Last Name *'
+           type: 'string'
+       required: ['name']
+       title: 'Customer'
+       type: 'object'
+   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/queuers/new').respond () ->
+     [200, queuer_schema, {}]
+   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/queuers/edit').respond () ->
+     [200, queuer_schema, {}]
 
