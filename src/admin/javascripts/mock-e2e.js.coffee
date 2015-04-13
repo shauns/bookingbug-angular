@@ -661,7 +661,7 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
            status: "queueing"
            _links:
              self:
-               href: "http://www.bookingbug.com/api/v1/123/queuers/1"
+               href: "http://www.bookingbug.com/api/v1/queuers/1"
              service:
                href: "http://www.bookingbug.com/api/v1/123/services/30063"
                templated: true
@@ -681,7 +681,7 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
              status: "queueing"
              _links:
                self:
-                 href: "http://www.bookingbug.com/api/v1/123/queuers/240"
+                 href: "http://www.bookingbug.com/api/v1/queuers/240"
                service:
                  href: "http://www.bookingbug.com/api/v1/123/services/30063"
                  templated: true
@@ -701,7 +701,7 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
              status: "queueing"
              _links:
                self:
-                 href: "http://www.bookingbug.com/api/v1/123/queuers/176"
+                 href: "http://www.bookingbug.com/api/v1/queuers/176"
                service:
                  href: "http://www.bookingbug.com/api/v1/123/services/30063"
                  templated: true
@@ -713,8 +713,8 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
                 templated: true
            }
          ]
-   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/queuers').respond(queuers)
-   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/123/queuers/1').respond(queuers._embedded.queuers[0])
+   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/queuers').respond(queuers)
+   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/queuers/1').respond(queuers._embedded.queuers[0])
 
    queuer_schema =
      form: [

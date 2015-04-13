@@ -4,3 +4,7 @@ angular.module('BBQueue.Directives').directive 'bbQueuePosition', () ->
   replace: true
   controller: 'QueuePosition'
   templateUrl: 'queue_position.html'
+  scope:
+  	queuerId: '='
+  	apiUrl: '@'
+  	
