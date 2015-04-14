@@ -7,4 +7,3 @@ angular.module('BBQueue.Directives').directive 'bbQueuePosition', () ->
   scope:
   	queuerId: '='
   	apiUrl: '@'
-  	

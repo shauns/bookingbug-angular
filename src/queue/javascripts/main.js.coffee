@@ -10,9 +10,7 @@ queueapp = angular.module('BBQueue', [
   'trNgGrid'
 ])
 
-angular.module('BBQueue.Directives', [
-	'timer'
-])
+angular.module('BBQueue.Directives', [])
 
 angular.module('BBQueue.Controllers', [])
 

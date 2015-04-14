@@ -659,6 +659,7 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
            first_name: "Joe"
            position: 1
            status: "queueing"
+           due_time: new Date('2015/04/15 10:00')
            _links:
              self:
                href: "http://www.bookingbug.com/api/v1/queuers/1"
@@ -679,6 +680,7 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
              first_name: "Jane"
              position: 2
              status: "queueing"
+             due_time: new Date('2015/04/15 10:00')
              _links:
                self:
                  href: "http://www.bookingbug.com/api/v1/queuers/240"
@@ -699,6 +701,7 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
              first_name: "Shanikwa"
              position: 3
              status: "queueing"
+             due_time: new Date('2015/04/15 10:00')
              _links:
                self:
                  href: "http://www.bookingbug.com/api/v1/queuers/176"

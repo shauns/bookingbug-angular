@@ -12,3 +12,4 @@ angular.module('BBQueue.Services').factory 'QueuerService', ($q, $window, halCli
 			deferred.resolve(found)
 
 		deferred.promise
+		

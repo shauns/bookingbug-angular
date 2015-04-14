@@ -8,7 +8,5 @@ angular.module('BBQueue.Controllers').controller 'QueuePosition', (QueuerService
   QueuerService.query(params).then (queuer) ->
   	$scope.name = queuer.first_name
   	$scope.position = queuer.position
+  	$scope.endTime = queuer.due_time.getTime()
   	
-  $scope.time_remaining = 1451628000000
-
-  
