@@ -651,17 +651,18 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
    queuers =
      total_entries: 3
      _embedded:
-      queuers: [
-        {
+       queuers: [
+         {
            service_name: "Pro wrestling consultation"
            member_name: "Joe Danger" 
            ticket_number: 1
-           name: "Joe"
+           first_name: "Joe"
            position: 1
            status: "queueing"
+           due_time: new Date('2015/04/15 10:00')
            _links:
              self:
-               href: "http://www.bookingbug.com/api/v1/123/queuers/1"
+               href: "http://www.bookingbug.com/api/v1/queuers/1"
              service:
                href: "http://www.bookingbug.com/api/v1/123/services/30063"
                templated: true
@@ -671,49 +672,52 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
              space:
               href: "http://www.bookingbug.com/api/v1/123/spaces/300"
               templated: true
-         }
-         {
-           service_name: "Extreme yoga consultation"
-           member_name: "Jane Youwary" 
-           ticket_number: 240
-           first_name: "Jane"
-           position: 2
-           status: "queueing"
-           _links:
-             self:
-               href: "http://www.bookingbug.com/api/v1/123/queuers/240"
-             service:
-               href: "http://www.bookingbug.com/api/v1/123/services/30063"
-               templated: true
-             member:
-               href: "http://www.bookingbug.com/api/v1/123/members/223456{?embed}"
-               templated: true
-             space:
-              href: "http://www.bookingbug.com/api/v1/123/spaces/301"
-              templated: true
-         }
-         {
-           service_name: "Chess gymnastics consultation"
-           member_name: "Shanikwa Jones" 
-           ticket_number: 176
-           first_name: "Shanikwa"
-           position: 3
-           status: "queueing"
-           _links:
-             self:
-               href: "http://www.bookingbug.com/api/v1/123/queuers/176"
-             service:
-               href: "http://www.bookingbug.com/api/v1/123/services/30063"
-               templated: true
-             member:
-               href: "http://www.bookingbug.com/api/v1/123/members/323456{?embed}"
-               templated: true
-             space:
-              href: "http://www.bookingbug.com/api/v1/123/spaces/302"
-              templated: true
-         }
-       ]
-   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/queuers').respond(queuers)
+           }
+           {
+             service_name: "Extreme yoga consultation"
+             member_name: "Jane Youwary" 
+             ticket_number: 240
+             first_name: "Jane"
+             position: 2
+             status: "queueing"
+             due_time: new Date('2015/04/15 10:00')
+             _links:
+               self:
+                 href: "http://www.bookingbug.com/api/v1/queuers/240"
+               service:
+                 href: "http://www.bookingbug.com/api/v1/123/services/30063"
+                 templated: true
+               member:
+                 href: "http://www.bookingbug.com/api/v1/123/members/223456{?embed}"
+                 templated: true
+               space:
+                href: "http://www.bookingbug.com/api/v1/123/spaces/301"
+                templated: true
+           }
+           {
+             service_name: "Chess gymnastics consultation"
+             member_name: "Shanikwa Jones" 
+             ticket_number: 176
+             first_name: "Shanikwa"
+             position: 3
+             status: "queueing"
+             due_time: new Date('2015/04/15 10:00')
+             _links:
+               self:
+                 href: "http://www.bookingbug.com/api/v1/queuers/176"
+               service:
+                 href: "http://www.bookingbug.com/api/v1/123/services/30063"
+                 templated: true
+               member:
+                 href: "http://www.bookingbug.com/api/v1/123/members/323456{?embed}"
+                 templated: true
+               space:
+                href: "http://www.bookingbug.com/api/v1/123/spaces/302"
+                templated: true
+           }
+         ]
+   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/queuers').respond(queuers)
+   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/queuers/1').respond(queuers._embedded.queuers[0])
 
    queuer_schema =
      form: [

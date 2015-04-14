@@ -4,7 +4,7 @@ angular.module('BBQueue').controller 'bbQueues', ($scope, $log,
   $scope.loading = true
 
   $scope.getQueues = () ->
-    console.log " get quyeues"
+    console.log " get queues"
     params =
       company: $scope.company
     AdminQueueService.query(params).then (queues) ->
