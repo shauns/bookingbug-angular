@@ -1,15 +1,15 @@
-<div class="position-wrapper">
-	<div class="company-header"></div>
-	<div class="main-text">
-		Hi {{name}}, thanks for waiting.<br /><br />
-		Keep an eye on your position, we will text you when we are almost ready to see you for your <br />{{serviceName}}:<br /><br />
-		<span class="position">{{position}}</span><br /><br />
-		~ {{timeRemaining}} minute(s) left.
+<div id="position-wrapper">
+	<div id="company-header"></div>
+	<div id="main-text">
+		Hi {{queuer.name}}, thanks for waiting.<br /><br />
+		Keep an eye on your position, we will text you when we are almost ready to see you for your <br />{{queuer.serviceName}}:<br /><br />
+		<span id="position">{{queuer.position}}</span><br /><br />
+		<timer ng-if="queuer.due_time" language="en" end-time="queuer.due_time">{{minutes}} minute{{minutesS}} {{seconds}}second{{secondsS}}</timer><br /><br />
 	</div>
-	<div class="visit-us">
+	<div id="visit-us">
 		<button>Visit our website</button>
 	</div>
-	<div class="leave-queue">
+	<div id="leave-queue">
 		<button ng-click="removeFromQueue(queuer)">Leave queue</button>
 	</div>
 </div>
