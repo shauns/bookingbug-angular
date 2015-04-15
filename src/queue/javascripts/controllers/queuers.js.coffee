@@ -13,6 +13,10 @@ angular.module('BBQueue').controller 'bbQueuers', ($scope, $log,
       $log.error err.data
       $scope.loading = false
 
+
+  $scope.selectQueuer = (queuer) ->
+    $scope.queuer = queuer    
+
   $scope.newQueuerModal = () ->
     ModalForm.new
       company: $scope.company

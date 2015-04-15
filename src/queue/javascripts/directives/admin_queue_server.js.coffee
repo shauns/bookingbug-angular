@@ -23,7 +23,7 @@ angular.module('BBQueue').directive 'bbIfLogin', ($modal, $log, $q,
 
 
 angular.module('BBQueue').directive 'bbQueueServer', ($modal, $log,
-  $rootScope, AdminQueueService, AdminCompanyService, $compile, $templateCache,
+  $rootScope, $compile, $templateCache,
   ModalForm, BBModel) ->
 
   link = (scope, element, attrs) ->
@@ -37,7 +37,7 @@ angular.module('BBQueue').directive 'bbQueueServer', ($modal, $log,
 
 
 angular.module('BBQueue').directive 'bbQueues', ($modal, $log,
-  $rootScope, AdminQueueService, AdminCompanyService, $compile, $templateCache,
+  $rootScope, $compile, $templateCache,
   ModalForm, BBModel) ->
 
   link = (scope, element, attrs) ->
@@ -47,5 +47,20 @@ angular.module('BBQueue').directive 'bbQueues', ($modal, $log,
   {
     link: link
     controller: 'bbQueues'
+    # templateUrl: 'queuer_table.html'
+  }
+
+
+angular.module('BBQueue').directive 'bbQueueServers', ($modal, $log,
+  $rootScope, $compile, $templateCache,
+  ModalForm, BBModel) ->
+
+  link = (scope, element, attrs) ->
+    scope.loggedin.then () ->
+      scope.getServers()
+
+  {
+    link: link
+    controller: 'bbQueueServers'
     # templateUrl: 'queuer_table.html'
   }
