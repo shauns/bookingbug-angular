@@ -4,13 +4,13 @@
 
       <div class="bb-subcontent">
         <div class="confirmation-header bb-confirmation-border-margin">
-          <div ng-if="total && !total.waitlist()">
+          <div ng-if="total && !total.containsWaitlistItems()">
             <h2>Booking Confirmation</h2>
             <p class="bb-confirmation-p-alignment">Thanks {{ total.client.first_name }}. Your booking is now confirmed. We have emailed you the details below.</p>
           </div>
-           <div ng-if="total && total.waitlist()">
-            <h2>Waitlist Confirmation</h2>
-            <p class="bb-confirmation-p-alignment">Thanks {{ total.client.first_name }}. Your have succesully joined the waiting list for the following items. We have you emailed you the details below.</p>
+           <div ng-if="total && total.containsWaitlistItems()">
+            <h2>Confirmation</h2>
+            <p class="bb-confirmation-p-alignment">Thanks {{ total.client.first_name }}. Your have successfully made the following bookings. We have you emailed you the details below.</p>
           </div>
           <div class="row hidden-print text-right">
             <button type="button" class="btn btn-link" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</button>
