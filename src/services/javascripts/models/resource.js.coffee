@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('BB.Models').factory "Admin.ResourceModel", ($q, BBModel, BaseModel) ->
+angular.module('BB.Models').factory "Admin.ResourceModel", ($q, BBModel, BaseModel, ResourceModel) ->
 
-  class Resource extends BBModel.Resource
+  class Admin_Resource extends ResourceModel
 
 
 

@@ -66,7 +66,9 @@ angular.module('BB.Models').service "BaseModel", ($q, $injector, $rootScope, $ti
 
     constructor: (data) ->
       @deleted = false
-    
+      @updateModel(data)
+
+    updateModel: (data) ->
       if data
         @_data = data
       if data
