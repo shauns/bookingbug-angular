@@ -9,8 +9,8 @@ angular.module('BBQueue.Controllers').controller 'QueuePosition', (QueuerService
 		$scope.name = queuer.first_name
 		$scope.position = queuer.position
 		$scope.serviceName = queuer.service_name
-		$scope.timeRemaining = $scope.queuer.due_time.diff(moment.utc(), 'seconds')
+		$scope.timeRemaining = $scope.queuer.due_time.diff(moment.utc(), 'minutes')
 	
 	$interval(->
-		$scope.timeRemaining = $scope.queuer.due_time.diff(moment.utc(), 'seconds')
-	, 1000)
+		$scope.timeRemaining = $scope.queuer.due_time.diff(moment.utc(), 'minutes')
+	, 60000)
