@@ -4,7 +4,7 @@ angular.module('BBQueue.Controllers').controller 'QueuePosition', (QueuerService
 		id: $scope.queuerId
 		url: $scope.apiUrl
 
-	$interval(now = moment.utc(), 1000)
+	now = moment.utc()
 
 	QueuerService.query(params).then (queuer) ->
 		$scope.queuer = queuer
@@ -16,4 +16,4 @@ angular.module('BBQueue.Controllers').controller 'QueuePosition', (QueuerService
 
 	$interval(->
 		$scope.timeRemaining--
-	, 1000)
+	, 60000)
