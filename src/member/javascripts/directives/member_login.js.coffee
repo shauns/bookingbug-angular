@@ -125,7 +125,6 @@ angular.module('BBMember').directive 'loginMember', ($modal, $log, $rootScope,
       member: '='
     transclude: true
     template: """
-<div ng-hide='member'><img src='/BB_wait.gif' class="loader"></div>
 <div ng-show='member' ng-transclude></div>
 """
   }

@@ -65,6 +65,7 @@ angular.module('BB.Models').factory "BasketItemModel",
               prom.then (cat) =>
                 @setCategory(new BBModel.Category(cat))
             @setService(new BBModel.Service(serv), data.questions)
+            @setDuration(@duration) if @duration
             @checkReady()
             if @time
               @time.service = @service # the time slot sometimes wants to know thing about the service
@@ -148,6 +149,7 @@ angular.module('BB.Models').factory "BasketItemModel",
       if defaults.event
         @setEvent(defaults.event)
       @defaults = defaults
+
 
     storeDefaults: (defaults) ->
       @defaults = defaults

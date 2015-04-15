@@ -26,6 +26,5 @@ angular.module('BBMember').directive 'memberSsoLogin', ($rootScope, LoginService
     member: '='
   transclude: true
   template: """
-<div ng-hide='member'><img src='/BB_wait.gif' class="loader"></div>
 <div ng-if='member' ng-transclude></div>
 """

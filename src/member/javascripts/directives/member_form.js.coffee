@@ -29,7 +29,6 @@ angular.module('BBMember').directive 'memberForm', ($modal, $log, $rootScope,
     link: link
     controller: controller
     template: """
-<div ng-show="loading"><img src='/BB_wait.gif' class="loader"></div>
 <form sf-schema="schema" sf-form="form" sf-model="member"
   ng-submit="submit(member)" ng-hide="loading"></form>
     """
