@@ -106,6 +106,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
   $scope.bb = new BBWidget()
   AppConfig.uid = $scope.bb.uid
   $scope.qs = QueryStringService
+  $scope.company_api_path = '/api/v1/company/{company_id}{?embed,category_id}'
 
   $scope.has_content = $element[0].children.length != 0
   if $scope.apiUrl
@@ -327,8 +328,8 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
         else
           comp_category_id = $scope.bb.item_defaults.category
 
-      comp_url = new UriTemplate.parse($scope.bb.api_url + '/api/v1/company/{company_id}{?embed,category_id}').expand({company_id: company_id, category_id: comp_category_id, embed: embed_params})
-      comp_promise = halClient.$get(comp_url)
+      comp_url = new UriTemplate.parse($scope.bb.api_url + $scope.company_api_path).expand({company_id: company_id, category_id: comp_category_id, embed: embed_params})
+      comp_promise = halClient.$get(comp_url, {"auth_token": $sessionStorage.getItem('auth_token')})
 
       setup_promises.push(comp_promise)
       comp_promise.then (company) =>
