@@ -196,7 +196,7 @@ angular.module('BB.Services').factory "BasketService", ($q, $rootScope, BBModel,
     deferred = $q.defer()
 
     MutexService.getLock().then (mutex) ->
-      company.$post('apply_deal', {}, {deal_code: params.deal_code, member_id: params.member_id}).then (basket) ->
+      params.bb.basket.$post('deal', {}, {deal_code: params.deal_code}).then (basket) ->
         MutexService.unlock(mutex)
         company.$flush('basket')
         mbasket = new BBModel.Basket(basket, params.bb)
@@ -222,11 +222,11 @@ angular.module('BB.Services').factory "BasketService", ($q, $rootScope, BBModel,
   removeDeal: (company, params) ->
     params = {} if !params
     deferred = $q.defer()
-    if !company.$has('remove_deal')
+    if !params.bb.basket.$has('deal')
       deferred.reject("No Remove Deal link found")
     else
       MutexService.getLock().then (mutex) ->
-        company.$put('remove_deal', {}, {deal_code_id: params.deal_code_id.toString()}).then (basket) ->
+        params.bb.basket.$put('deal', {}, {deal_code_id: params.deal_code_id.toString()}).then (basket) ->
           MutexService.unlock(mutex)
           company.$flush('basket')
           basket = new BBModel.Basket(basket, params.bb)
