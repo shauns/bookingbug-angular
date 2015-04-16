@@ -22,7 +22,6 @@ angular.module('BB.Controllers').controller 'Checkout', ($scope, $rootScope, Bas
     $scope.loadingTotal = BasketService.checkout($scope.bb.company, $scope.bb.basket, {bb: $scope.bb})
     $scope.loadingTotal.then (total) =>
       $scope.total = total
-      console.log($scope.total)
       if total.$has('new_payment')
         $scope.checkStepTitle('Review')
       else

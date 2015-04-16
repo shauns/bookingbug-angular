@@ -682,7 +682,6 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
   $scope.updateBasket = () ->
     add_defer = $q.defer()
     params = {member_id: $scope.client.id, member: $scope.client, items: $scope.bb.basket.items, bb: $scope.bb }
-    console.log(params)
     BasketService.updateBasket($scope.bb.company, params).then (basket) ->
       for item in basket.items
         item.storeDefaults($scope.bb.item_defaults)
@@ -693,7 +692,6 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
       basket.setSettings($scope.bb.basket.settings)
 
       $scope.setBasket(basket)
-      console.log($scope.basket)
       $scope.setUsingBasket(true)
       $scope.setBasketItem(basket.items[0])
       # check if item has been added to the basket

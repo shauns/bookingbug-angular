@@ -54,19 +54,11 @@ angular.module('BB.Controllers').controller 'DealList',
 
 
   $scope.addRecipient = (item, recipient) -> 
-    console.log(recipient.mail)
-    console.log(recipient.name)
     if recipient.mail && recipient.name
       item.recipient = recipient.name
       item.recipient_mail = recipient.mail
-      console.log(item)
     else
-      console.log("noooooo")
-    # if item.recipient and item.recipient_mail
-    #   item.recipient_submitted = true
-    #   $scope.recipient_error = false
-    # else
-    #   $scope.recipient_error = true
+      return
 
 
   $scope.purchaseDeals = () ->

@@ -72,7 +72,6 @@ angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, 
       if err && err.data && err.data.error
         AlertService.clear()
         AlertService.add("danger", { msg: err.data.error })
-      console.log(err)
   
   $scope.applyDeal = (deal_code) =>
     params = {bb: $scope.bb, deal_code: deal_code }
@@ -84,12 +83,10 @@ angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, 
       basket.setSettings($scope.bb.basket.settings)
       $scope.setBasket(basket)
       $scope.items = $scope.bb.basket.items
-      console.log($scope.items)
     , (err) ->
       if err && err.data && err.data.error
         AlertService.clear()
         AlertService.add("danger", { msg: err.data.error })
-      console.log(err)
 
   $scope.removeDeal = (deal_code) =>
     params = {bb: $scope.bb, deal_code_id: deal_code.id }
@@ -101,12 +98,10 @@ angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, 
       basket.setSettings($scope.bb.basket.settings)
       $scope.setBasket(basket)
       $scope.items = $scope.bb.basket.items
-      console.log($scope.items)
     , (err) ->
       if err && err.data && err.data.error
         AlertService.clear()
         AlertService.add("danger", { msg: err.data.error })
-      console.log(err)
 
 
 

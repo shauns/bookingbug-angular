@@ -70,7 +70,6 @@ angular.module('BB.Controllers').controller 'Event', ($scope,  $rootScope, Event
       return
 
     $scope.bb.pushStackToBasket()
-    console.log($scope.bb.basket)
     $scope.updateBasket().then () =>
       # basket has been saved
       $scope.setLoaded $scope
