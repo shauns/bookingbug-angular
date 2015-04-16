@@ -455,6 +455,8 @@ angular.module('BB.Models').factory "BasketItemModel",
       delete @date
       delete @time
       delete @datetime
+      @ready = false
+      @reserve_ready = false
 
 
     setGroup: (group) ->

@@ -16,6 +16,5 @@ angular.module('BB.Services').factory "MemberService", ($q, halClient, $rootScop
       deferred.resolve($rootScope.member)
     setTimeout callback, 200
     # member = () ->
-    #   console.log "resolve member promise"
       # deferred.resolve($rootScope.member)
     deferred.promise

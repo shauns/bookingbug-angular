@@ -113,6 +113,7 @@ app.directive 'bbForm', ($bbug) ->
         return false
       return true
 
+
 # bbAddressMap
 # Adds behaviour to select first invalid input 
 app.directive 'bbAddressMap', ($document) ->
