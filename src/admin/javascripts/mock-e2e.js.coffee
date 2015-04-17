@@ -659,7 +659,7 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
            first_name: "Joe"
            position: 1
            status: "queueing"
-           due_time: moment('2015-04-17 10:00')
+           due_time: moment('2015-04-30 10:00')
            _links:
              self:
                href: "http://www.bookingbug.com/api/v1/queuers/1"
@@ -670,8 +670,11 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
                href: "http://www.bookingbug.com/api/v1/123/members/123456{?embed}"
                templated: true
              space:
-              href: "http://www.bookingbug.com/api/v1/123/spaces/300"
-              templated: true
+               href: "http://www.bookingbug.com/api/v1/123/spaces/300"
+               templated: true
+               company:
+                 href: "http://www.bookingbug.com/api/v1/public/companies/123"
+                 templated: true
            }
            {
              service_name: "Extreme yoga consultation"
@@ -680,10 +683,10 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
              first_name: "Jane"
              position: 2
              status: "queueing"
-             due_time: moment('2015-04-17 10:30')
+             due_time: moment('2015-04-30 10:30')
              _links:
                self:
-                 href: "http://www.bookingbug.com/api/v1/queuers/240"
+                 href: "http://www.bookingbug.com/api/v1/public/queuers/240"
                service:
                  href: "http://www.bookingbug.com/api/v1/123/services/30063"
                  templated: true
@@ -691,8 +694,11 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
                  href: "http://www.bookingbug.com/api/v1/123/members/223456{?embed}"
                  templated: true
                space:
-                href: "http://www.bookingbug.com/api/v1/123/spaces/301"
-                templated: true
+                 href: "http://www.bookingbug.com/api/v1/123/spaces/301"
+                 templated: true
+               company:
+                 href: "http://www.bookingbug.com/api/v1/public/companies/123"
+                 templated: true
            }
            {
              service_name: "Chess gymnastics consultation"
@@ -701,10 +707,10 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
              first_name: "Shanikwa"
              position: 3
              status: "queueing"
-             due_time: moment('2015-04-17 11:00')
+             due_time: moment('2015-04-30 11:00')
              _links:
                self:
-                 href: "http://www.bookingbug.com/api/v1/queuers/176"
+                 href: "http://www.bookingbug.com/api/v1/public/queuers/176"
                service:
                  href: "http://www.bookingbug.com/api/v1/123/services/30063"
                  templated: true
@@ -712,12 +718,15 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
                  href: "http://www.bookingbug.com/api/v1/123/members/323456{?embed}"
                  templated: true
                space:
-                href: "http://www.bookingbug.com/api/v1/123/spaces/302"
-                templated: true
+                 href: "http://www.bookingbug.com/api/v1/123/spaces/302"
+                 templated: true
+               company:
+                 href: "http://www.bookingbug.com/api/v1/public/companies/123"
+                 templated: true
            }
          ]
    $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/queuers').respond(queuers)
-   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/queuers/1').respond(queuers._embedded.queuers[0])
+   $httpBackend.whenGET('http://www.bookingbug.com/api/v1/public/queuers/1').respond(queuers._embedded.queuers[0])
 
    queuer_schema =
      form: [
