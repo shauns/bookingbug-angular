@@ -1,13 +1,13 @@
-<div id="position-wrapper">
-	<div id="company-header"></div>
+<div id="queue-position-wrapper">
+	<div id="company-header">Company header goes here</div>
 	<div id="main-text">
 		Hi {{queuer.name}}, thanks for waiting.<br /><br />
 		Keep an eye on your position, we will text you when we are almost ready to see you for your <br />{{queuer.serviceName}}:<br /><br />
 		<span id="position">{{queuer.position}}</span><br /><br />
-		<timer ng-if="queuer.due_time" language="en" end-time="queuer.due_time">{{minutes}} minute{{minutesS}} {{seconds}}second{{secondsS}}</timer><br /><br />
+		<timer ng-if="queuer.due_time" language="en" end-time="queuer.due_time">{{minutes}} minute{{minutesS}} {{seconds}} second{{secondsS}}</timer><br /><br />
 	</div>
 	<div id="visit-us">
-		<button>Visit our website</button>
+		<button ng-if="queuer._links.company.website" href="queuer._links.company.website">Visit our website</button>
 	</div>
 	<div id="leave-queue">
 		<button ng-click="removeFromQueue(queuer)">Leave queue</button>
