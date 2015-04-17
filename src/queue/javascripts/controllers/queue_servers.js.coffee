@@ -37,9 +37,8 @@ angular.module('BBQueue').controller 'bbQueueServers', ($scope, $log,
           # currently being seen
           shash[queuer.$href('person')].serving = queuer
 
-
   $scope.startServingQueuer = (person, queuer) ->
-    queuer.startServing(person)
+    queuer.startServing(person).then () ->
 
   $scope.finishServingQueuer = (person) ->
     person.finishServing()

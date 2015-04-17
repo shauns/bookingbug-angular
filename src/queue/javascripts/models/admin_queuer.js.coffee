@@ -7,7 +7,9 @@ angular.module('BB.Models').factory "Admin.QueuerModel", ($q, BBModel, BaseModel
     startServing: (person) ->
       defer = $q.defer()
       if @$has('start_serving')
+        person.$flush('self')
         @$post('start_serving', {person_id: person.id}).then  (q) =>
+          person.$get('self').then (p) -> person.updateModel(p)
           @updateModel(q)
           defer.resolve(@)
         , (err) =>
