@@ -20,7 +20,9 @@ angular.module('BB.Models').factory "Admin.PersonModel", ($q, BBModel, BaseModel
     finishServing: () ->
       defer = $q.defer()
       if @$has('finish_serving')
+        @$flush('self')
         @$post('finish_serving').then (q) =>
+          @$get('self').then (p) => @updateModel(p)
           defer.resolve(q)
         , (err) =>
           defer.reject(err)
