@@ -1,5 +1,5 @@
 angular.module('BBQueue').controller 'bbQueuers', ($scope, $log,
-    AdminQueuerService, ModalForm) ->
+    AdminQueuerService, ModalForm, $interval) ->
 
   $scope.loading = true
 
@@ -8,14 +8,15 @@ angular.module('BBQueue').controller 'bbQueuers', ($scope, $log,
       company: $scope.company
     AdminQueuerService.query(params).then (queuers) ->
       $scope.queuers = queuers
+      $scope.waiting_queuers = []
+      for queuer in queuers
+        queuer.remaining()
+        $scope.waiting_queuers.push(queuer) if queuer.position > 0
+
       $scope.loading = false
     , (err) ->
       $log.error err.data
       $scope.loading = false
-
-
-  $scope.selectQueuer = (queuer) ->
-    $scope.queuer = queuer    
 
   $scope.newQueuerModal = () ->
     ModalForm.new
@@ -26,3 +27,9 @@ angular.module('BBQueue').controller 'bbQueuers', ($scope, $log,
       success: (queuer) ->
         $scope.queuers.push(queuer)
 
+  
+    # this is used to retrigger a scope check that will update service time
+  $interval(->
+    for queuer in $scope.queuers
+      queuer.remaining()
+  , 5000)

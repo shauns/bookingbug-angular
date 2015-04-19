@@ -22,6 +22,22 @@ angular.module('BBQueue').directive 'bbIfLogin', ($modal, $log, $q,
   }
 
 
+
+angular.module('BBQueue').directive 'bbQueueDashboard', ($modal, $log,
+  $rootScope, $compile, $templateCache,
+  ModalForm, BBModel) ->
+
+  link = (scope, element, attrs) ->
+    scope.loggedin.then () ->
+      scope.getSetup()
+
+  {
+    link: link
+    controller: 'bbQueueDashboardController'
+  }
+
+
+
 angular.module('BBQueue').directive 'bbQueueServer', ($modal, $log,
   $rootScope, $compile, $templateCache,
   ModalForm, BBModel) ->

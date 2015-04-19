@@ -29,7 +29,6 @@ angular.module('BBQueue').controller 'bbQueueServers', ($scope, $log,
     if $scope.queuers && $scope.servers
       shash = {}
       for server in $scope.servers
-        console.log server
         server.serving = null
         shash[server.self] = server
       for queuer in $scope.queuers
@@ -42,3 +41,21 @@ angular.module('BBQueue').controller 'bbQueueServers', ($scope, $log,
 
   $scope.finishServingQueuer = (person) ->
     person.finishServing()
+
+  $scope.dropCallback = (event, ui, queuer, $index) ->
+    console.log "dropcall"
+    $scope.$apply () ->
+      $scope.selectQueuer(null)
+    return false
+
+  $scope.dragStart = (event, ui, queuer) ->
+    $scope.$apply () ->
+      $scope.selectQueuer(queuer)
+    console.log "start", queuer  
+    return false
+
+  $scope.dragStop = (event, ui) ->
+    console.log "stop"
+    $scope.$apply () ->
+      $scope.selectQueuer(null)
+    return false
