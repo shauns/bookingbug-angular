@@ -4,6 +4,18 @@ angular.module('BB.Models').factory "Admin.QueuerModel", ($q, BBModel, BaseModel
 
   class Admin_Queuer extends BaseModel
 
+    constructor: (data) ->
+      super(data)
+
+      @due = moment.parseZone(@due)
+
+
+    remaining: () ->
+      d = @due.diff(moment.utc(), 'seconds')
+      @remaining_signed = Math.abs(d);
+      @remaining_unsigned = d
+
+
     startServing: (person) ->
       defer = $q.defer()
       if @$has('start_serving')
