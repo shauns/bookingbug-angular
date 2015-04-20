@@ -7,7 +7,7 @@
 		<timer ng-if="queuer.due_time" language="en" end-time="queuer.due_time">{{minutes}} minute{{minutesS}} {{seconds}} second{{secondsS}}</timer><br /><br />
 	</div>
 	<div id="visit-us">
-		<button ng-if="queuer._links.company.website" href="queuer._links.company.website">Visit our website</button>
+		<button href="http://www.example.com">Visit our website</button>
 	</div>
 	<div id="leave-queue">
 		<button ng-click="removeFromQueue(queuer)">Leave queue</button>

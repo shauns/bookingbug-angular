@@ -672,10 +672,10 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
              space:
                href: "http://www.bookingbug.com/api/v1/123/spaces/300"
                templated: true
-               company:
-                 href: "http://www.bookingbug.com/api/v1/public/companies/123"
-                 templated: true
-                 website: "http://www.google.com"
+             company:
+               href: "http://www.bookingbug.com/api/v1/public/companies/123"
+               templated: true
+               website: "http://www.google.com"
            }
            {
              service_name: "Extreme yoga consultation"
@@ -700,7 +700,6 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
                company:
                  href: "http://www.bookingbug.com/api/v1/public/companies/123"
                  templated: true
-                 website: "http://www.google.com"
            }
            {
              service_name: "Chess gymnastics consultation"
