@@ -61,7 +61,7 @@ angular.module('BB.Controllers').controller 'MapCtrl',
 
     $scope.mapBounds = new google.maps.LatLngBounds()
     for comp in $scope.companies
-      if comp.address.lat && comp.address.long
+      if comp.address and comp.address.lat and comp.address.long
         latlong = new google.maps.LatLng(comp.address.lat,comp.address.long)
         $scope.mapBounds.extend(latlong)
 
@@ -79,7 +79,7 @@ angular.module('BB.Controllers').controller 'MapCtrl',
   # load map and create the map markers. the map is hidden at this point
   $scope.map_init.then ->
     for comp in $scope.companies
-      if comp.address.lat && comp.address.long
+      if comp.address and comp.address.lat and comp.address.long
         latlong = new google.maps.LatLng(comp.address.lat,comp.address.long)
         marker = new google.maps.Marker({
           map: $scope.myMap,
