@@ -30,6 +30,7 @@ angular.module('BBQueue').controller 'bbQueuers', ($scope, $log,
   
     # this is used to retrigger a scope check that will update service time
   $interval(->
-    for queuer in $scope.queuers
-      queuer.remaining()
+    if $scope.queuers
+      for queuer in $scope.queuers
+        queuer.remaining()
   , 5000)

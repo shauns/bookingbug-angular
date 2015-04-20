@@ -10,6 +10,7 @@ angular.module('BBQueue').controller 'bbQueueServers', ($scope, $log,
       for person in $scope.all_people
         $scope.servers.push(person) if !person.queuing_disabled
       $scope.loading = false
+      $scope.updateQueuers()
     , (err) ->
       $log.error err.data
       $scope.loading = false
@@ -26,6 +27,9 @@ angular.module('BBQueue').controller 'bbQueueServers', ($scope, $log,
 
   # update all servers to make sure each one is shows as serving the right person
   $scope.$watch 'queuers', (newValue, oldValue) =>
+    $scope.updateQueuers()
+
+  $scope.updateQueuers = () ->
     if $scope.queuers && $scope.servers
       shash = {}
       for server in $scope.servers
@@ -38,9 +42,12 @@ angular.module('BBQueue').controller 'bbQueueServers', ($scope, $log,
 
   $scope.startServingQueuer = (person, queuer) ->
     queuer.startServing(person).then () ->
+      $scope.getQueuers()
 
   $scope.finishServingQueuer = (person) ->
     person.finishServing()
+    $scope.getQueuers()
+
 
   $scope.dropCallback = (event, ui, queuer, $index) ->
     console.log "dropcall"
@@ -50,12 +57,13 @@ angular.module('BBQueue').controller 'bbQueueServers', ($scope, $log,
 
   $scope.dragStart = (event, ui, queuer) ->
     $scope.$apply () ->
+      $scope.selectDragQueuer(queuer)
       $scope.selectQueuer(queuer)
     console.log "start", queuer  
     return false
 
   $scope.dragStop = (event, ui) ->
-    console.log "stop"
+    console.log "stop", event, ui
     $scope.$apply () ->
       $scope.selectQueuer(null)
     return false
