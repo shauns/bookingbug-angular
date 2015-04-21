@@ -5,7 +5,7 @@ angular.module('BBQueue.Services').factory('QueuerService', ["$q", "$window", "h
 
 		url = ""
 		url = params.url if params.url
-		href = url + "/api/v1/public/queuers/{id}"
+		href = url + "/api/v1/queuers/{id}"
 		uri = new $window.UriTemplate.parse(href).expand(params || {})
 
 		halClient.$get(uri, {}).then (found) =>
@@ -18,10 +18,10 @@ angular.module('BBQueue.Services').factory('QueuerService', ["$q", "$window", "h
 
 		url = ""
 		url = params.url if params.url
-		href = url + "/api/v1/public/queuers/{id}/delete"
+		href = url + "/api/v1/queuers/{id}"
 		uri = new $window.UriTemplate.parse(href).expand(params || {})
 
-		halClient.$get(uri, {}).then (found) =>
+		halClient.$del(uri).then (found) =>
 			deferred.resolve(found)
 
 		deferred.promise

@@ -8,7 +8,8 @@ queueapp = angular.module('BBQueue', [
   'BBQueue.Directives',
   'BBQueue.Controllers',
   'trNgGrid',
-  'ngDragDrop'
+  'ngDragDrop',
+  'pusher-angular'
 ])
 
 angular.module('BBQueue.Directives', [
