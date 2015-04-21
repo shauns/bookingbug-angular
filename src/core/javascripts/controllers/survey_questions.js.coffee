@@ -16,6 +16,8 @@ angular.module('BB.Controllers').controller 'SurveyQuestions', ($scope,  $rootSc
   $scope.login_error = false
   $scope.booking_ref = ""
 
+  $scope.notLoaded $scope
+
   $rootScope.connection_started.then ->
     init()
   , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
@@ -65,6 +67,7 @@ angular.module('BB.Controllers').controller 'SurveyQuestions', ($scope,  $rootSc
                 for answer in booking.survey_answers
                   if (answer.question_text) == question.name && answer.value
                     question.answer = answer.value
+            $scope.setLoaded $scope
     , (err) ->
       $scope.setLoaded $scope
       failMsg()
@@ -124,6 +127,7 @@ angular.module('BB.Controllers').controller 'SurveyQuestions', ($scope,  $rootSc
 
   $scope.submitBookingRef = (form) =>
     return if !ValidatorService.validateForm(form)
+    $scope.notLoaded $scope
     params = {booking_ref: $scope.booking_ref, url_root: $scope.bb.api_url, raw: true}
     auth_token = $sessionStorage.getItem('auth_token')
     params.auth_token = auth_token if auth_token
