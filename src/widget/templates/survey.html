@@ -1,0 +1,84 @@
+<div bb-survey-questions>
+
+<header class="bb-header" id="bb_head">
+    <div class="bb-title">
+      <div class="row">
+
+        <div class="bb-name">
+          <h3 class="bb-company"> {{ company.name }} Feedback </h3>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <div class="bb-booking">
+    <div class="bb-frame" ng-hide="completed">
+
+      <div class="bb-head">
+        <h2>Your details</h2>
+      </div>
+
+      <form name="survey_form" class="bb-form" role="form">
+
+        <h3 class="bb-page-title bb-page-title-underlined">Booking Details</h3>
+
+        <div class="summary-wrapper">
+          <div class="summary" ng-repeat="booking in bookings">
+
+            <ul class="summary-list">
+              <li class="summary-item" ng-show="booking">
+                <label>Service:</label><span> {{booking.full_describe}}</span>
+              </li>
+              <li class="summary-item" ng-show="booking">
+                <label>Date / Time:</label><span>{{ booking.pretty_date }}</span>
+              </li>
+              <li ng-if="booking.person_name" class="summary-item" ng-show="booking">
+                <label>With:</label><span> {{booking.person_name}}</span>
+              </li>
+              <li ng-if="booking.address" class="summary-item" ng-show="booking">
+                <label>At:</label><span> {{booking.pretty_address}}</span>
+              </li>
+              <li class="summary-item" ng-show="booking">
+                <label>Duration:</label><span> {{booking.duration | time_period_from_seconds }}</span>
+              </li>
+              <li class="summary-item" ng-show="booking">
+                <label>Price:</label><span> {{booking.price}}</span>
+              </li>
+            </ul>
+
+            <div class="question-node">
+              <h3>Survey Questions</h3>
+              <ul>
+                <li ng-repeat="question in booking.survey_questions" bb-question-line ng-show="question.currentlyShown">
+                  <label>{{question.name}}:</label> 
+                  <span>
+                    <input bb-question="question" class="form-control"/> <br/>
+
+                    <small>{{question.help_text}}</small>
+                  </span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="bb-actions">
+              <div class="bb-prev">
+              </div>
+              <div class="bb-current">
+              </div>
+              <div class="bb-next">
+                <button type="button" class="btn-next" ng-disabled="!survey_form.$valid" ng-click="submitSurvey(survey_form)">Confirm</button>
+              </div>
+            </div>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+
+    <div class="bb-frame" ng-if="completed" style="margin:10% 3% 10%;">
+      <h2 style="text-align:center; margin:10% 3% 10%;"> Thank you for filling in the survey!</h2>
+    </div>
+
+</div><!-- End Survey Controller -->
