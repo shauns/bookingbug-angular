@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('BBQueue.Directives').directive 'bbQueuerPosition', () ->
 
 	restrict: 'AE'
