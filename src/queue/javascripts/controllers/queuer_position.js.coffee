@@ -8,11 +8,15 @@ angular.module('BBQueue.Controllers').controller('QueuerPosition', ["QueuerServi
 		$scope.queuer =
 			name: queuer.first_name,
 			position: queuer.position,
-			due_time: queuer.due.valueOf(),
-			serviceName: queuer.service_name
+			dueTime: queuer.due.valueOf(),
+			serviceName: queuer.service.name
+			spaceId: queuer.space_id
 
 	# client = new Pusher("c8d8cea659cc46060608")
 	# pusher = $pusher(client)
-	# channel = pusher.subscribe('mobile-queue-#{$scope.queuer.space_id}')
+	# channel = pusher.subscribe('mobile-queue-#{$scope.spaceId}')
+	# channel.bind('notification', (data) ->
+	# 	update $scope.queuer info
+	# )
 ])
 

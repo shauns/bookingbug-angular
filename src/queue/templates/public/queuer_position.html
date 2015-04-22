@@ -7,7 +7,7 @@
 		<br /><br />
 		<div id="queuer-rank" style="text-align: center;">
 			<span id="position" style="font-size: 30px;">{{queuer.position}}</span><br /><br />
-			<timer ng-if="queuer.due_time" language="en" end-time="queuer.due_time">
+			<timer ng-if="queuer.dueTime" language="en" end-time="queuer.dueTime">
 				<span ng-show="years > 0">{{years}} year{{yearsS}}, </span><span ng-show="months > 0">{{months}} month{{monthsS}}, </span><span ng-show="days > 0">{{days}} day{{daysS}}, </span><span ng-show="hours > 0">{{hours}} hour{{hoursS}}, </span> {{minutes}} minute{{minutesS}}
 			</timer>
 		</div>
