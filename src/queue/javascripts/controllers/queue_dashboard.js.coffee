@@ -71,7 +71,7 @@ angular.module('BBQueue').controller 'bbQueueDashboardController', ($scope, $log
 
   $scope.addQueuer = (service) ->
     $scope.new_queuer.service_id = service.id
-    service.$post('add_queuer', {}, $scope.new_queuer).then (queuer) ->
+    service.$post('queuers', {}, $scope.new_queuer).then (queuer) ->
 
 
   $scope.pusherSubscribe = () =>

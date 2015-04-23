@@ -6,8 +6,9 @@ angular.module('BB.Models').factory "Admin.QueuerModel", ($q, BBModel, BaseModel
 
     constructor: (data) ->
       super(data)
-
+      @start = moment.parseZone(@start)
       @due = moment.parseZone(@due)
+      @end = moment(@start).add(@duration, 'minutes')
 
 
     remaining: () ->
@@ -40,5 +41,20 @@ angular.module('BB.Models').factory "Admin.QueuerModel", ($q, BBModel, BaseModel
           defer.reject(err)
       else
         defer.reject('finish_serving link not available')
+      defer.promise
+
+    extendAppointment: (minutes) ->
+      defer = $q.defer()
+      if @end.isBefore(moment())
+        d = moment.duration(moment().diff(@start))
+        new_duration = d.as('minutes') + minutes
+      else
+        new_duration = @duration + minutes
+      @$put('self', {}, {duration: new_duration}).then (q) =>
+        @updateModel(q)
+        @end = moment(@start).add(@duration, 'minutes')
+        defer.resolve(@)
+      , (err) ->
+        defer.reject(err)
       defer.promise
 
