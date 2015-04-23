@@ -291,7 +291,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     setup_promises= []
 
     if $scope.bb.affiliate_id
-      aff_promise = halClient.$get($scope.bb.api_url + '/api/v1/affiliates/' + $scope.affiliate_id)
+      aff_promise = halClient.$get($scope.bb.api_url + '/api/v1/affiliates/' + $scope.bb.affiliate_id)
       setup_promises.push(aff_promise)
       aff_promise.then (affiliate) =>
         if $scope.bb.$wait_for_routing
