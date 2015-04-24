@@ -6,9 +6,13 @@ angular.module('BB.Directives').directive 'bbWidget', (PathSvc, $http,
 
   getTemplate = (template) ->
     partial = if template then template else 'main'
-    src = PathSvc.directivePartial(partial).$$unwrapTrustedValue()
-    $http.get(src, {cache: $templateCache}).then (response) ->
-      response.data
+    fromTemplateCache = $templateCache.get(partial)
+    if fromTemplateCache
+      fromTemplateCache
+    else
+      src = PathSvc.directivePartial(partial).$$unwrapTrustedValue()
+      $http.get(src, {cache: $templateCache}).then (response) ->
+        response.data
 
   updatePartials = (scope, element, prms) ->
     $bbug(i).remove() for i in element.children() when $bbug(i).hasClass('custom_partial')
