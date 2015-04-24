@@ -210,7 +210,7 @@ angular.module('BB.Controllers').controller 'MapCtrl',
     pi = Math.PI;
     R = 6371  #equatorial radius
     distances = []
-    distances_kilometers = []
+    distances_kilometres = []
 
     lat1 = latlong.lat();
     lon1 = latlong.lng();
@@ -240,14 +240,14 @@ angular.module('BB.Controllers').controller 'MapCtrl',
         marker.setVisible(false)
 
       marker.distance = d
-      marker.distance_kilometers = k
+      marker.distance_kilometres = k
       distances.push marker if d < $scope.range_limit
-      distances_kilometers.push marker if k < $scope.range_limit
-      items = [distances, distances_kilometers]
+      distances_kilometres.push marker if k < $scope.range_limit
+      items = [distances, distances_kilometres]
       for item in items
         item.sort (a, b)->
           a.distance - b.distance
-          a.distance_kilometers - b.distance_kilometers
+          a.distance_kilometres - b.distance_kilometres
 
     $scope.shownMarkers = distances.slice(0,$scope.numSearchResults)
     localBounds = new google.maps.LatLngBounds()
