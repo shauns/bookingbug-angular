@@ -693,7 +693,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
       basket.setSettings($scope.bb.basket.settings)
 
       $scope.setBasket(basket)
-      $scope.setUsingBasket(true)
+      #$scope.setUsingBasket(true) Luke - removed Jack's change as we don't want to flag that we're using the basket unless bbMiniBasket has been invoked
       $scope.setBasketItem(basket.items[0])
       # check if item has been added to the basket
       if !$scope.bb.current_item
@@ -724,6 +724,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     add_defer.promise
 
   $scope.emptyBasket = ->
+    return if !$scope.bb.basket.items or ($scope.bb.basket.items and $scope.bb.basket.items.length is 0)
     BasketService.empty($scope.bb).then (basket) ->
       if $scope.bb.current_item.id
         delete $scope.bb.current_item.id 
@@ -953,8 +954,12 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     return $scope.loadStep(1)
 
   $scope.restart = () ->
+    $rootScope.$broadcast 'clear:formData'
+    $rootScope.$broadcast 'widget:restart'
+    $scope.setLastSelectedDate(null)
     $scope.bb.last_step_reached = false
     $scope.loadStep(1)
+
 
   # setup full route data
   $scope.setRoute = (rdata) ->
