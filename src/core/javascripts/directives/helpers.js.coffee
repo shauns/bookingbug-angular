@@ -312,36 +312,6 @@ app.directive 'bbCommPref', ($parse) ->
         scope.bb.current_item.settings.send_sms_followup   = newval
 
 
-
-# bbOwlCarousel
-app.directive "bbOwlCarousel", ->
-  restrict: "A"
-  link: (scope, element, attrs) ->
-
-    # check for presence of owlCarousel
-    return if not element.owlCarousel
-
-    options = scope.$eval(attrs.bbOwlCarousel)
-    
-    scope.initCarousel = ->
-      scope.destroyCarousel()
-      element.owlCarousel options
-
-      # bind prev/next actions
-      # TODO make accessible via ng-click and scope to instantiated carousel to allow multiple per page
-      $('.bb-owl-prev').click ->
-        element.trigger('owl.prev')
-      $('.bb-owl-next').click ->
-        element.trigger('owl.next')
-
-    scope.destroyCarousel = ->
-      element.data('owlCarousel').destroy() if element.data('owlCarousel')
-
-    scope.$watch options.data, (newval, oldval) ->
-      if newval and newval.length > 0
-        scope.initCarousel()
-
-
 # bbCountTicketTypes
 app.directive 'bbCountTicketTypes', () ->
   restrict: 'A'

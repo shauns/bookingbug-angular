@@ -1,4 +1,4 @@
-#bb-event-list, div[bb-events] {
+#bb-event-list, [bb-events] {
 
   .date-chooser-heading {
     margin-bottom: 30px;
@@ -46,20 +46,35 @@
   .bb-month-picker {
     @include make-row();
     margin-top: 10px;
-    margin-bottom: 30px;
-    // .bb-month-name {
-    //   @extend .panel-heading;
-    // }
+    overflow: hidden;
+
     .bb-month-nav {
-      //@include make-sm-column(2)
+      text-align: center;
+      padding-top: 100px;
+      @include make-xs-column(2);
+      @include make-md-column(1);
     }
+
+    .bb-months {
+      @include make-xs-column(8);
+      @include make-md-column(10);
+    }
+
     .bb-month {
-      @include make-sm-column(4);
       table {
-        //width:90%;
         margin: 0 auto;
       }
     }
+
+    .slick-disabled {
+      cursor: default;
+      opacity: 0.2;
+      cursor: false;
+      pointer-events: none;
+      filter: alpha(opacity=20);
+    }
+
+
     td {
       
       text-align: center;
@@ -191,6 +206,9 @@
       text-align: center;
       padding: 15px;
       cursor: pointer;
+      &:hover {
+        background-color: #EEE;
+      }
     }
 
     .panel-title {
