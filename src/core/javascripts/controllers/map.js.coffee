@@ -210,6 +210,7 @@ angular.module('BB.Controllers').controller 'MapCtrl',
     pi = Math.PI;
     R = 6371  #equatorial radius
     distances = []
+    distances_kilometers = []
 
     lat1 = latlong.lat();
     lon1 = latlong.lng();
@@ -231,6 +232,7 @@ angular.module('BB.Controllers').controller 'MapCtrl',
               Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(rLat1) * Math.cos(rLat2);
       c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
       d = R * c;
+      k = d
       # convert to miles
       d = d * 0.621371192
 
@@ -238,10 +240,14 @@ angular.module('BB.Controllers').controller 'MapCtrl',
         marker.setVisible(false)
 
       marker.distance = d
+      marker.distance_kilometers = k
       distances.push marker if d < $scope.range_limit
-
-    distances.sort (a,b)->
-      a.distance - b.distance
+      distances_kilometers.push marker if k < $scope.range_limit
+      items = [distances, distances_kilometers]
+      for item in items
+        item.sort (a, b)->
+          a.distance - b.distance
+          a.distance_kilometers - b.distance_kilometers
 
     $scope.shownMarkers = distances.slice(0,$scope.numSearchResults)
     localBounds = new google.maps.LatLngBounds()
