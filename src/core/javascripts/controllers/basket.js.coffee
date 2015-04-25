@@ -39,6 +39,7 @@ angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, 
   $scope.setUsingBasket(true)
   $scope.items = $scope.bb.basket.items
 
+
   $scope.$watch 'basket', (newVal, oldVal) =>
     $scope.items = _.filter $scope.bb.basket.items, (item) -> !item.is_coupon
 
@@ -48,7 +49,6 @@ angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, 
     $scope.bb.emptyStackedItems()
     $scope.bb.current_item.setCompany($scope.bb.company)
     $scope.restart()
-    $rootScope.$broadcast 'widget:restart'
 
 
   $scope.checkout = (route) =>
@@ -77,3 +77,37 @@ angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, 
         AlertService.clear()
         AlertService.add("danger", { msg: err.data.error })
       $scope.setLoaded $scope
+
+  $scope.applyDeal = (deal_code) =>
+    AlertService.clear()
+    if $scope.client
+      params = {bb: $scope.bb, deal_code: deal_code, member_id: $scope.client.id}
+    else
+      params = {bb: $scope.bb, deal_code: deal_code, member_id: null}
+    BasketService.applyDeal($scope.bb.company, params).then (basket) ->
+
+      for item in basket.items
+        item.storeDefaults($scope.bb.item_defaults)
+        item.reserve_without_questions = $scope.bb.reserve_without_questions
+      basket.setSettings($scope.bb.basket.settings)
+      $scope.setBasket(basket)
+      $scope.items = $scope.bb.basket.items
+    , (err) ->
+      if err && err.data && err.data.error
+        AlertService.clear()
+        AlertService.add("danger", { msg: err.data.error })
+
+  $scope.removeDeal = (deal_code) =>
+    params = {bb: $scope.bb, deal_code_id: deal_code.id }
+    BasketService.removeDeal($scope.bb.company, params).then (basket) ->
+
+      for item in basket.items
+        item.storeDefaults($scope.bb.item_defaults)
+        item.reserve_without_questions = $scope.bb.reserve_without_questions
+      basket.setSettings($scope.bb.basket.settings)
+      $scope.setBasket(basket)
+      $scope.items = $scope.bb.basket.items
+    , (err) ->
+      if err && err.data && err.data.error
+        AlertService.clear()
+        AlertService.add("danger", { msg: err.data.error })

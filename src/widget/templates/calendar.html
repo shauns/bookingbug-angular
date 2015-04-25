@@ -155,16 +155,17 @@
 
   </div>
 
-  <div class="row step-navigation">
-    <div class="col-sm-offset-8 col-sm-2 col-sm-push-2 forward">
-      <button type="button" class="btn btn-primary" ng-click="checkReady() && routeReady()" bb-debounce ng-disabled="!bb.current_item.time"> 
-        <span ng-if="!bb.moving_booking">Continue</span>
-        <span ng-if="bb.moving_booking">Move booking</span>
-      </button>
-    </div>
-    <div class="col-sm-2 col-sm-pull-10 back">
-      <button type="button" class="btn btn-default" bb-debounce ng-click="loadPreviousStep()" ng-if="!bb.moving_booking">Back</button>
+  <div class="bb-step-navigation">
+    <div class="row">
+      <div class="col-sm-offset-8 col-sm-2 col-sm-push-2 text-right">
+        <button type="button" class="btn btn-primary" ng-click="checkReady() && routeReady()" bb-debounce ng-disabled="!bb.current_item.time"> 
+          <span ng-if="!bb.moving_booking">Continue</span>
+          <span ng-if="bb.moving_booking">Move booking</span>
+        </button>
+      </div>
+      <div class="col-sm-2 col-sm-pull-10 text-left">
+        <button type="button" class="btn btn-default" bb-debounce ng-click="loadPreviousStep()" ng-if="!bb.moving_booking">Back</button>
+      </div>
     </div>
   </div>  
-
 </div>
