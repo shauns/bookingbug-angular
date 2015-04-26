@@ -41,7 +41,7 @@ angular.module('BB.Models').service "BBModel", ($q, $injector) ->
 
   # admin models
   admin_models = ['Booking', 'Slot', 'User', 'Administrator', 'Schedule',
-    'Resource', 'Person', 'Service', 'Login', 'EventChain', 'EventGroup', 'Event', 'Queuer', 'ClientQueue']
+    'Resource', 'Person', 'Service', 'Login', 'EventChain', 'EventGroup', 'Event', 'Queuer', 'ClientQueue', 'Clinic']
   afuncs = {}
   for model in admin_models
     do (model) =>  

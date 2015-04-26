@@ -40,8 +40,8 @@
     "fontawesome": "~4.2.0",
     "ng-idle": "~0.3.5",
     "underscore": "~1.7.0",
-    "angular-ui-calendar": "~0.8.1",
-    "fullcalendar": "~2.2.3",
+    "fullcalendar": "~2.3.1",
+    "angular-ui-calendar": "latest",
     "sprintf": "~1.0.2",
     "angular-bootstrap": "https://github.com/BookingBug/bootstrap-bower.git#774d6a295da0813aac23cd1cf6e9ca396a461232",
     "angular-google-maps": "~2.0.15",
@@ -59,8 +59,8 @@
     "angular": "~1.2.25",
     "jquery-ui": "~1.11.2",
     "jquery": "~1.11.2",
-    "fullcalendar": "~2.2.3",
     "moment": "master",
-    "momentjs": "~2.9.0"
+    "momentjs": "~2.9.0",
+    "fullcalendar": "~2.3.1"
   }
 }

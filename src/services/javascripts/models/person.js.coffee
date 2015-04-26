@@ -5,7 +5,6 @@ angular.module('BB.Models').factory "Admin.PersonModel", ($q, BBModel, BaseModel
   class Admin_Person extends PersonModel
 
     constructor: (data) ->
-      console.log "reating admin person", @
       super(data)
 
     setAttendance: (status) ->
@@ -29,3 +28,22 @@ angular.module('BB.Models').factory "Admin.PersonModel", ($q, BBModel, BaseModel
       else
         defer.reject('finish_serving link not available')
       defer.promise
+
+    # look up a schedule for a time range to see if this available
+    # currently just checks the date - but chould really check the time too
+    isAvailable: (start, end) ->
+      str = start.format("YYYY-MM-DD") + "-" + end.format("YYYY-MM-DD")
+      @availability ||= {}
+      
+      return @availability[str] if @availability[str]
+      @availability[str] = "-"
+
+      if @$has('schedule')
+        @$get('schedule', {start_date: start.format("YYYY-MM-DD"), end_date: end.format("YYYY-MM-DD")}).then (sched) =>
+          @availability[str] = "No"
+          if sched && sched.dates && sched.dates[start.format("YYYY-MM-DD")] && sched.dates[start.format("YYYY-MM-DD")] != "None"
+            @availability[str] = "Yes"
+      else
+        @availability[str] = "Yes"
+
+      return @availability[str]  
