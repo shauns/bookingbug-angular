@@ -27,7 +27,9 @@ app = angular.module('BB', [
 
 
 # use this to inject application wide settings around the app
-app.value('AppConfig', {})
+app.value 'AppConfig',
+  'App-Id': 'f6b16c23',
+  'App-Key': 'f0bc4f65f4fbfe7b4b3b7264b655f5eb'
 
 if (window.use_no_conflict)
   window.bbjq = $.noConflict()
@@ -37,6 +39,7 @@ else
 
 
 app.config ($locationProvider, $httpProvider, $provide, ie8HttpBackendProvider) ->
+
   $httpProvider.defaults.headers.common =
     'App-Id': 'f6b16c23',
     'App-Key': 'f0bc4f65f4fbfe7b4b3b7264b655f5eb'

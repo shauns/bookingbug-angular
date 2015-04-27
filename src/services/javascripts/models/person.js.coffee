@@ -6,6 +6,20 @@ angular.module('BB.Models').factory "Admin.PersonModel", ($q, BBModel, BaseModel
 
     constructor: (data) ->
       super(data)
+      unless @queuing_disabled
+        @setCurrentCustomer()
+
+    setCurrentCustomer: () ->
+      defer = $q.defer()
+      if @$has('queuer')
+        @$get('queuer').then (queuer) =>
+          @serving = new BBModel.Admin.Queuer(queuer)
+          defer.resolve(@serving)
+        , (err) ->
+          defer.reject(err)
+      else
+        defer.resolve()
+      defer.promise
 
     setAttendance: (status) ->
       defer = $q.defer()
@@ -22,6 +36,7 @@ angular.module('BB.Models').factory "Admin.PersonModel", ($q, BBModel, BaseModel
         @$flush('self')
         @$post('finish_serving').then (q) =>
           @$get('self').then (p) => @updateModel(p)
+          @serving = null
           defer.resolve(q)
         , (err) =>
           defer.reject(err)
@@ -47,3 +62,37 @@ angular.module('BB.Models').factory "Admin.PersonModel", ($q, BBModel, BaseModel
         @availability[str] = "Yes"
 
       return @availability[str]  
+
+    startServing: (queuer) ->
+      defer = $q.defer()
+      if @$has('start_serving')
+        @$flush('self')
+        params =
+          queuer_id: if queuer then queuer.id else null
+        @$post('start_serving', params).then (q) =>
+          @$get('self').then (p) => @updateModel(p)
+          @serving = q
+          defer.resolve(q)
+        , (err) =>
+          defer.reject(err)
+      else
+        defer.reject('start_serving link not available')
+      defer.promise
+
+    getQueuers: () ->
+      defer = $q.defer()
+      if @$has('queuers')
+        @$flush('queuers')
+        @$get('queuers').then (collection) =>
+          collection.$get('queuers').then (queuers) =>
+            models = (new BBModel.Admin.Queuer(q) for q in queuers)
+            @queuers = models
+            defer.resolve(models)
+          , (err) =>
+            defer.reject(err)
+        , (err) =>
+          defer.reject(err)
+      else
+        defer.reject('queuers link not available')
+      defer.promise
+

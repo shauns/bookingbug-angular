@@ -1,82 +1,81 @@
-angular.module('BBQueue').directive 'bbIfLogin', ($modal, $log, $q,
-  $rootScope, AdminQueueService, AdminCompanyService, $compile, $templateCache,
-  ModalForm, BBModel) ->
+angular.module('BBQueue').directive 'bbQueueServer', (BBModel,
+    AdminCompanyService, PusherQueue, ModalForm) ->
 
-  compile = () ->
-    {
-      pre: ( scope, element, attributes ) ->
-        @whenready = $q.defer()
-        scope.loggedin = @whenready.promise
-        AdminCompanyService.query(attributes).then (company) ->
-          scope.company = company
-          @whenready.resolve()
-      ,
-      post: ( scope, element, attributes ) ->
-    }
+  pusherListen = (scope) ->
+    PusherQueue.subscribe(scope.company)
+    PusherQueue.channel.bind 'notification', (data) =>
+      scope.getQueuers(scope.server)
 
-  link = (scope, element, attrs) ->
-  {
-    compile: compile
-#    controller: 'bbQueuers'
-    # templateUrl: 'queuer_table.html'
-  }
+  controller = ($scope) ->
+    $scope.getQueuers = () ->
+      $scope.server.getQueuers()
+    $scope.getQueuers = _.throttle($scope.getQueuers, 10000)
 
-
-
-angular.module('BBQueue').directive 'bbQueueDashboard', ($modal, $log,
-  $rootScope, $compile, $templateCache,
-  ModalForm, BBModel) ->
+    $scope.newQueuerModal = () ->
+      ModalForm.new
+        company: $scope.company
+        title: 'New Queuer'
+        new_rel: 'new_queuer'
+        post_rel: 'queuers'
+        success: (queuer) ->
+          $scope.server.queuers.push(queuer)
 
   link = (scope, element, attrs) ->
-    scope.loggedin.then () ->
-      scope.getSetup()
-
-  {
-    link: link
-    controller: 'bbQueueDashboardController'
-  }
-
-
-
-angular.module('BBQueue').directive 'bbQueueServer', ($modal, $log,
-  $rootScope, $compile, $templateCache,
-  ModalForm, BBModel) ->
-
-  link = (scope, element, attrs) ->
-    scope.loggedin.then () ->
-      scope.getQueuers()
+    if scope.company
+      pusherListen(scope)
+      scope.server.getQueuers()
+    else
+      AdminCompanyService.query(attrs).then (company) ->
+        scope.company = company
+        if scope.user.$has('person')
+          scope.user.$get('person').then (person) ->
+            scope.server = new BBModel.Admin.Person(person)
+            scope.server.getQueuers()
+            pusherListen(scope)
 
   {
     link: link
-    controller: 'bbQueuers'
+    controller: controller
   }
 
+angular.module('BBQueue').directive 'bbQueueServerCustomer', () ->
 
-angular.module('BBQueue').directive 'bbQueues', ($modal, $log,
-  $rootScope, $compile, $templateCache,
-  ModalForm, BBModel) ->
+  controller = ($scope) ->
 
-  link = (scope, element, attrs) ->
-    scope.loggedin.then () ->
-      scope.getQueues()
+    $scope.selected_queuers = []
+
+    $scope.serveCustomer = () ->
+      if $scope.selected_queuers.length > 0
+        $scope.loading = true
+        $scope.server.startServing($scope.selected_queuers).then () ->
+          $scope.loading = false
+          $scope.getQueuers()
+
+    $scope.serveNext = () ->
+      $scope.loading = true
+      $scope.server.startServing().then () ->
+        $scope.loading = false
+        $scope.getQueuers()
+
+    $scope.extendAppointment = (mins) ->
+      $scope.loading = true
+      $scope.server.serving.extendAppointment(mins).then () ->
+        $scope.loading = false
+        $scope.getQueuers()
+
+    $scope.finishServing = () ->
+      $scope.loading = true
+      $scope.server.finishServing().then () ->
+        $scope.loading = false
+        $scope.getQueuers()
+
+    $scope.loading = true
+    if $scope.server
+      $scope.server.setCurrentCustomer().then () ->
+        $scope.loading = false
 
   {
-    link: link
-    controller: 'bbQueues'
-    # templateUrl: 'queuer_table.html'
+    controller: controller
+    templateUrl: 'queue_server_customer.html'
   }
 
-
-angular.module('BBQueue').directive 'bbQueueServers', ($modal, $log,
-  $rootScope, $compile, $templateCache,
-  ModalForm, BBModel) ->
-
-  link = (scope, element, attrs) ->
-    scope.loggedin.then () ->
-      scope.getServers()
-
-  {
-    link: link
-    controller: 'bbQueueServers'
-    # templateUrl: 'queuer_table.html'
-  }
