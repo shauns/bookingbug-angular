@@ -119,8 +119,8 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
         $scope.selected_day = moment(options.selected_day)
 
 
-  $scope.moment = () ->
-    moment()
+  $scope.moment = (date) ->
+    moment(date)
 
 
   $scope.setDataSource = (source) ->
