@@ -1,5 +1,5 @@
 angular.module('BBClinic').controller 'bbClinicCalController', ($scope, $log, $modal, $q,
-    AdminServiceService, AdminResourceService, AdminPersonService, AdminClinicService, ModalForm, BBModel, $interval, $sessionStorage, $filter, $localStorage) ->
+    AdminServiceService, AdminResourceService, AdminPersonService, AdminAddressService, AdminClinicService, ModalForm, BBModel, $interval, $sessionStorage, $filter, $localStorage) ->
 
   $scope.loading = true
 #  $scope.clinics = []
@@ -19,6 +19,13 @@ angular.module('BBClinic').controller 'bbClinicCalController', ($scope, $log, $m
       $scope.resources = resources
     , (err) ->
       $log.error err.data
+
+
+    AdminAddressService.query(params).then (addresses) ->
+      $scope.addresses = addresses
+    , (err) ->
+      $log.error err.data
+
 
     AdminPersonService.query(params).then (people) =>
       people = people.filter (p) -> p.$has('enabled_services')

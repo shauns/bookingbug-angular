@@ -40,7 +40,7 @@ angular.module('BB.Models').service "BBModel", ($q, $injector) ->
   funcs['Member'] = mfuncs
 
   # admin models
-  admin_models = ['Booking', 'Slot', 'User', 'Administrator', 'Schedule',
+  admin_models = ['Booking', 'Slot', 'User', 'Administrator', 'Schedule', 'Address',
     'Resource', 'Person', 'Service', 'Login', 'EventChain', 'EventGroup', 'Event', 'Queuer', 'ClientQueue', 'Clinic']
   afuncs = {}
   for model in admin_models
