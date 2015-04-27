@@ -22,7 +22,8 @@ app = angular.module('BB', [
   'ui-rangeSlider',
   'uiGmapgoogle-maps',
   'angular.filter',
-  'ngCookies'
+  'ngCookies',
+  'angulartics'
 ]);
 
 
