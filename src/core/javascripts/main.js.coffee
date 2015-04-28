@@ -23,7 +23,8 @@ app = angular.module('BB', [
   'uiGmapgoogle-maps',
   'angular.filter',
   'ngCookies',
-  'angulartics'
+  'angulartics',
+  'pascalprecht.translate'
 ]);
 
 
