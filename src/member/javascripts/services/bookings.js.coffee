@@ -30,7 +30,6 @@ angular.module('BB.Services').factory "MemberBookingService", ($q,
       MemberService.refresh(member).then (member) =>
         member = member
       , (err) =>
-        console.log(err)
       deferred.resolve(b)
     , (err) =>
       deferred.reject(err)

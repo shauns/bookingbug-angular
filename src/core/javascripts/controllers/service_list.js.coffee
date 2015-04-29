@@ -18,9 +18,7 @@ angular.module('BB.Directives').directive 'bbServices', () ->
     return
 
 
-angular.module('BB.Controllers').controller 'ServiceList',
-($scope,  $rootScope, $q, $attrs, $modal, ItemService, FormDataStoreService, ValidatorService,
-  PageControllerService, halClient, AlertService, ErrorService, $filter, CategoryService) ->
+angular.module('BB.Controllers').controller 'ServiceList',($scope,  $rootScope, $q, $attrs, $modal, $sce, ItemService, FormDataStoreService, ValidatorService, PageControllerService, halClient, AlertService, ErrorService, $filter, CategoryService) ->
 
   $scope.controller = "public.controllers.ServiceList"
   FormDataStoreService.init 'ServiceList', $scope, [
@@ -130,6 +128,8 @@ angular.module('BB.Controllers').controller 'ServiceList',
   setServiceItem = (items) ->
     $scope.items = items
     $scope.filtered_items = $scope.items
+    for item in items 
+      item.description = $sce.trustAsHtml(item.description) if item.description and angular.isString(item.description)
     if $scope.service
         _.each items, (item) ->
           if item.id is $scope.service.id
@@ -181,8 +181,8 @@ angular.module('BB.Controllers').controller 'ServiceList',
     if !service
       return false
     else
-      return (!$scope.filters.name or service.category_id is $scope.filters.name.id) and
-        (service.price >= $scope.filters.price.min and service.price <= $scope.filters.price.max )     
+      return (!$scope.filters.name or service.category_id is $scope.filters.name.id) and (!service.price or
+        (service.price >= $scope.filters.price.min and service.price <= $scope.filters.price.max ))
 
   $scope.resetFilters = () ->
     $scope.filters.name = null

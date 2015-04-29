@@ -228,6 +228,9 @@ angular.module('BB.Models').factory "BBWidget", ($q, BBModel, BasketService, $ur
 
       @stacked_items = @stacked_items.filter (i) -> i isnt item
 
+    removeItemFromStack: (item) =>
+      @stacked_items = @stacked_items.filter (i) -> i isnt item
+
     deleteStackedItemByService: (item) =>
       for i in @stacked_items
         if i && i.service && i.service.self == item.self && i.id

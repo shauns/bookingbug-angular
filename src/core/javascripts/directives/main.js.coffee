@@ -70,7 +70,7 @@ app.directive 'bbScrollTo', ($rootScope, AppConfig, BreadcrumbService, $bbug) ->
       current_step = BreadcrumbService.getCurrentStep()
       # if the event is page:loaded or the element is not in view, scroll to it
       if (scroll_to_element)
-        if (evnt == "page:loaded" and current_step > 1) or always_scroll or
+        if (evnt == "page:loaded" and current_step > 1) or always_scroll or (evnt == "widget:restart") or
           (not scroll_to_element.is(':visible') and scroll_to_element.offset().top != 0)
             $bbug("html, body").animate
               scrollTop: scroll_to_element.offset().top
@@ -80,8 +80,7 @@ app.directive 'bbScrollTo', ($rootScope, AppConfig, BreadcrumbService, $bbug) ->
 # bbSlotGrouper
 # group time slots together based on a given start time and end time
 app.directive  'bbSlotGrouper', () ->
-  restrict: 'A',
-  require: ['^?bbTimeRanges?','^?bbTimes'],
+  restrict: 'A'
   scope: true
   link: (scope, element, attrs) ->
     slots = scope.$eval(attrs.slots)
@@ -112,6 +111,7 @@ app.directive 'bbForm', ($bbug) ->
         invalid_input.focus()
         return false
       return true
+
 
 # bbAddressMap
 # Adds behaviour to select first invalid input 

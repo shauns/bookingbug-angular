@@ -27,7 +27,7 @@
         <tr ng-repeat="week in weeks">
           <td ng-repeat="day in week" ng-class="{'bb-today': day.date.isSame(moment(),'day'), 'bb-go-ok': day.spaces > 0, 'bb-no-go': day.date.isBefore(moment(),'day') || day.spaces == 0, 'bb-month-highlight': current_date.isSame(day.date,'month') }" ng-click="selectDay(day)">
             <p class="pull-right" class="time-slot {{day.class(month)}}"  ng-class="{'bb-past': day.date.isBefore(moment(),'day') || day.spaces == 0}">
-              {{day.day()}}            
+              {{day.day()}}
             </p> 
           </td>
         </tr>  

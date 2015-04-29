@@ -1,4 +1,4 @@
-angular.module('BBMember').directive 'memberSsoLogin', ($rootScope, LoginService) ->
+angular.module('BBMember').directive 'memberSsoLogin', ($rootScope, LoginService, $sniffer, $timeout) ->
 
   link = (scope, element, attrs) ->
     $rootScope.bb ||= {}
@@ -9,8 +9,14 @@ angular.module('BBMember').directive 'memberSsoLogin', ($rootScope, LoginService
       root: $rootScope.bb.api_url
       company_id: scope.companyId
     data = {token: scope.token}
-    LoginService.ssoLogin(options, data).then (member) ->
-      scope.member = member
+    if $sniffer.msie && $sniffer.msie < 10 && $rootScope.iframe_proxy_ready == false
+      $timeout () ->
+        LoginService.ssoLogin(options, data).then (member) ->
+          scope.member = member
+      , 2000
+    else
+      LoginService.ssoLogin(options, data).then (member) ->
+        scope.member = member
 
   link: link
   scope:
@@ -20,6 +26,5 @@ angular.module('BBMember').directive 'memberSsoLogin', ($rootScope, LoginService
     member: '='
   transclude: true
   template: """
-<div ng-hide='member'><img src='/BB_wait.gif' class="loader"></div>
 <div ng-if='member' ng-transclude></div>
 """
