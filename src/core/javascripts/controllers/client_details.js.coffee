@@ -60,9 +60,9 @@ angular.module('BB.Controllers').controller 'ClientDetails', ($scope,  $rootScop
       $scope.existing_member = false
       $scope.decideNextPage(route)
     , (err) ->
-      if err.data.error == "Please Login" 
+      if err.data.error == "Please Log in" 
         $scope.existing_member = true
-        AlertService.danger({msg: "You have already registered with this email address. Please login or reset your password using the Forgot Password link below."})
+        AlertService.danger({msg: "You have already registered with this email address. Please log in or reset your password using the Forgot Password link below."})
       $scope.setLoaded $scope
 
   $scope.clientLogin = () =>
