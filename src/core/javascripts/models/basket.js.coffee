@@ -30,7 +30,6 @@ angular.module('BB.Models').factory "BasketModel", ($q, BBModel, BaseModel) ->
     clearItem: (item) ->
       @items = @items.filter (i) -> i isnt item
 
-
     # should we try to checkout ?
     readyToCheckout: ->
       if @items.length > 0
