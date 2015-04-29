@@ -85,8 +85,11 @@
 
           <div class="button-group" ng-if="!selected_tickets">
             <div class="row">
-              <div class="col-sm-offset-9 col-sm-3">
-                <button type="button" class="btn btn-primary pull-right" ng-disabled="event.tickets[0].qty <= 0" ng-click="selectTickets()">Reserve Ticket<span ng-if="event.tickets[0].qty > 1">s</span></button>
+              <div class="col-sm-offset-9 col-sm-3" ng-show="event.getSpacesLeft() > 0">
+                <button type="button" class="btn btn-primary pull-right" ng-disabled="event.tickets[0].qty <= 0 " ng-click="selectTickets()">Reserve Ticket<span ng-if="event.tickets[0].qty > 1">s</span></button>
+              </div>
+              <div class="col-sm-offset-9 col-sm-3" ng-show="event.getSpacesLeft() <= 0 && bb.company.settings.has_waitlists">
+                <button type="button" class="btn btn-primary pull-right" ng-disabled="event.tickets[0].qty <= 0 " ng-click="selectTickets()">Join Waitlist</button>
               </div>
             </div>
           </div> 
@@ -107,6 +110,7 @@
               </form>
             </div>
           </div>
+          
         </div>
       </div>
     </div>
@@ -207,8 +211,11 @@
 
           <div class="button-group bordered">
             <div class="row">
-              <div class="col-sm-offset-9 col-sm-3">
+              <div class="col-sm-offset-9 col-sm-3" ng-show="event.getSpacesLeft() > 0">
                 <button type="submit" class="btn btn-primary pull-right" ng-click="validator.validateForm(booking_form) && checkReady() && routeReady()">Book Ticket<span ng-if="event.tickets[0].qty > 1">s</span></button>
+              </div>
+              <div class="col-sm-offset-9 col-sm-3" ng-show="event.getSpacesLeft() <= 0 && bb.company.settings.has_waitlists">
+                <button type="submit" class="btn btn-primary pull-right" ng-click="validator.validateForm(booking_form) && checkReady() && routeReady()">Confirm</button>
               </div>
             </div>
           </div>

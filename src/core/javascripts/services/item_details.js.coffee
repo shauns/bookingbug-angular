@@ -16,6 +16,13 @@ angular.module('BB.Services').factory "ItemDetailsService",  ($q, BBModel) ->
         deferred.resolve(new BBModel.ItemDetails(details))
       , (err) =>
         deferred.reject(err)
+    else if prms.cItem.deal
+      if !prms.cItem.deal.$has('questions')
+        deferred.resolve(new BBModel.ItemDetails())
+      else prms.cItem.deal.$get('questions').then (details) =>
+        deferred.resolve(new BBModel.ItemDetails(details))
+      , (err) =>
+        deferred.reject(err)
     else
       deferred.reject("No service link found")
     deferred.promise

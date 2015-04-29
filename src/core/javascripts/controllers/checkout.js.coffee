@@ -8,7 +8,7 @@ angular.module('BB.Directives').directive 'bbCheckout', () ->
   controller : 'Checkout'
 
 
-angular.module('BB.Controllers').controller 'Checkout', ($scope, $rootScope, BasketService, $q, $location, $window, FormDataStoreService, $timeout) ->
+angular.module('BB.Controllers').controller 'Checkout', ($scope, $rootScope, BasketService, $q, $location, $window, $bbug, FormDataStoreService, $timeout) ->
   $scope.controller = "public.controllers.Checkout"
   $scope.notLoaded $scope
 
@@ -18,10 +18,11 @@ angular.module('BB.Controllers').controller 'Checkout', ($scope, $rootScope, Bas
   $rootScope.connection_started.then =>
     $scope.bb.basket.setClient($scope.client)
     loading_total_def = $q.defer()
-
+    
     $scope.loadingTotal = BasketService.checkout($scope.bb.company, $scope.bb.basket, {bb: $scope.bb})
     $scope.loadingTotal.then (total) =>
       $scope.total = total
+   
       if total.$has('new_payment')
         $scope.checkStepTitle('Review')
       else
@@ -46,9 +47,11 @@ angular.module('BB.Controllers').controller 'Checkout', ($scope, $rootScope, Bas
 
   # Print by creating popup containing the contents of the specified element
   $scope.printElement = (id, stylesheet) ->
-
-    data = document.getElementById(id).innerHTML
-    mywindow = $window.open('', 'Booking Confirmation', 'height=600,width=800')
+    data = $bbug('#'+ id).html()
+    # window.open(URL,name,specs,replace)
+    # IE8 fix: URL and name params are deliberately left as blank
+    # http://stackoverflow.com/questions/710756/ie8-var-w-window-open-message-invalid-argument
+    mywindow = $window.open('', '', 'height=600,width=800')
 
     $timeout () ->
       mywindow.document.write '<html><head><title>Booking Confirmation</title>'
@@ -57,9 +60,10 @@ angular.module('BB.Controllers').controller 'Checkout', ($scope, $rootScope, Bas
       mywindow.document.write '</head><body>'
       mywindow.document.write data
       mywindow.document.write '</body></html>'
-      mywindow.document.close()
+      #mywindow.document.close()
 
       $timeout () ->
+        mywindow.document.close()
         # necessary for IE >= 10
         mywindow.focus()
         # necessary for IE >= 10

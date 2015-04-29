@@ -4,11 +4,9 @@ angular.module('BBMember').controller 'MemberBookings', ($scope, $modal, $log,
   $scope.loading = true
 
   $scope.getUpcomingBookings = () ->
-    console.log 'get upcoming bookings'
     params =
       start_date: moment().format('YYYY-MM-DD')
     $scope.getBookings(params).then (bookings) ->
-      console.log 'bookings ', bookings
       $scope.upcoming_bookings = bookings
 
   $scope.getPastBookings = (num, type) ->
@@ -54,7 +52,6 @@ angular.module('BBMember').controller 'MemberBookings', ($scope, $modal, $log,
       $scope.cancelBooking(booking)
 
   $scope.getBookings = (params) ->
-    console.log 'get bookings ', params
     $scope.loading = true
     defer = $q.defer()
     MemberBookingService.query($scope.member, params).then (bookings) ->

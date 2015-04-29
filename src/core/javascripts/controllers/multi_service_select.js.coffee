@@ -141,15 +141,24 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
         i.popoverText = i.popover
 
 
-  $scope.removeItem = (item) ->
+  $scope.removeItem = (item, options) ->
     item.selected = false
-    $scope.bb.deleteStackedItem(item)
+
+    if options and options.type is 'BasketItem'
+      $scope.bb.deleteStackedItem(item)
+    else
+      $scope.bb.deleteStackedItemByService(item)
+
     $scope.bb.clearStackedItemsDateTime() # clear any selected date/time as the selection has changed
     $rootScope.$broadcast "multi_service_select:item_removed"
     for i in $scope.items
       if i.self is item.self
         i.selected = false
         break
+
+
+  $scope.removeStackedItem = (item) ->
+    $scope.removeItem(item, {type: 'BasketItem'})
 
 
   $scope.nextStep = () ->

@@ -61,7 +61,7 @@ angular.module('BB.Controllers').controller 'MapCtrl',
 
     $scope.mapBounds = new google.maps.LatLngBounds()
     for comp in $scope.companies
-      if comp.address.lat && comp.address.long
+      if comp.address and comp.address.lat and comp.address.long
         latlong = new google.maps.LatLng(comp.address.lat,comp.address.long)
         $scope.mapBounds.extend(latlong)
 
@@ -79,7 +79,7 @@ angular.module('BB.Controllers').controller 'MapCtrl',
   # load map and create the map markers. the map is hidden at this point
   $scope.map_init.then ->
     for comp in $scope.companies
-      if comp.address.lat && comp.address.long
+      if comp.address and comp.address.lat and comp.address.long
         latlong = new google.maps.LatLng(comp.address.lat,comp.address.long)
         marker = new google.maps.Marker({
           map: $scope.myMap,
@@ -210,6 +210,7 @@ angular.module('BB.Controllers').controller 'MapCtrl',
     pi = Math.PI;
     R = 6371  #equatorial radius
     distances = []
+    distances_kilometres = []
 
     lat1 = latlong.lat();
     lon1 = latlong.lng();
@@ -231,6 +232,7 @@ angular.module('BB.Controllers').controller 'MapCtrl',
               Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(rLat1) * Math.cos(rLat2);
       c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
       d = R * c;
+      k = d
       # convert to miles
       d = d * 0.621371192
 
@@ -238,10 +240,14 @@ angular.module('BB.Controllers').controller 'MapCtrl',
         marker.setVisible(false)
 
       marker.distance = d
+      marker.distance_kilometres = k
       distances.push marker if d < $scope.range_limit
-
-    distances.sort (a,b)->
-      a.distance - b.distance
+      distances_kilometres.push marker if k < $scope.range_limit
+      items = [distances, distances_kilometres]
+      for item in items
+        item.sort (a, b)->
+          a.distance - b.distance
+          a.distance_kilometres - b.distance_kilometres
 
     $scope.shownMarkers = distances.slice(0,$scope.numSearchResults)
     localBounds = new google.maps.LatLngBounds()

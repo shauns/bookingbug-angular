@@ -141,6 +141,13 @@
       </div>
     </div>
 
+   <!--  Gift Cert Button (Needs Styling) -->
+   <div ng-if="bb.company_settings.has_vouchers">
+      <button type="button" ng-click="showPage('deal_list')" class="btn btn-primary btn-block">
+        <span>Buy Gift Certificates </span>
+      </button>
+    </div>
+
     <div class="bb-events-list">
       <div class="panel panel-default bb-event-card" ng-repeat="item in filtered_items | startFrom: (pagination.current_page - 1) * pagination.page_size | limitTo: pagination.page_size" ng-show="pagination.num_items > 0">
         <div class="panel-body">  
@@ -168,9 +175,14 @@
               </ul>
             </div>
             <div class="col-sm-2 event-select">
-              <button type="button" ng-click="selectItem(item)" class="btn btn-primary btn-block" ng-disabled="item.getSpacesLeft() == 0">
+              <button type="button" ng-click="selectItem(item)" class="btn btn-primary btn-block" ng-disabled="item.getSpacesLeft() == 0 && !bb.company.settings.has_waitlists">
                 <span ng-show="item.getSpacesLeft() > 0">Select</span>
-                <span ng-show="item.getSpacesLeft() <= 0" class="status-sold-out">Sold out</span>
+                <div ng-show="item.getSpacesLeft() <= 0 && !bb.company.settings.has_waitlists">
+                  <span class="status-sold-out">Sold out</span>
+                </div>
+                <div ng-show="item.getSpacesLeft() <= 0 && bb.company.settings.has_waitlists">
+                  <span>Join Waitlist</span>
+                </div>
               </button>
             </div>
           </div>

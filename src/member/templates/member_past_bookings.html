@@ -8,7 +8,7 @@
       <h3>You don't currently have any past appointments.</h3>
     </div>
     <div ng-repeat="booking in past_bookings | filter:{deleted: false} |
-      orderBy: booking.datetime.unix()" class="booking-row">
+      orderBy: 'datetime.unix()' " class="booking-row">
       <div class="type col-sm-1">
         <div style="background-color:{{booking.getColour()}}"></div>
       </div>
