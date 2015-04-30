@@ -267,10 +267,3 @@ angular.module('BB.Services').factory 'FormDataStoreService',
     register : register
     setIfUndefined : setIfUndefined
   }
-
-
-
-
-
-
-

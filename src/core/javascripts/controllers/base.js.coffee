@@ -98,7 +98,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     $rootScope, halClient, $window, $http, $localCache, $q, $timeout, BasketService,
     LoginService, AlertService, $sce, $element, $compile, $sniffer, $modal,
     BBModel, BBWidget, SSOService, ErrorService, AppConfig, QueryStringService,
-    QuestionService, LocaleService, PurchaseService, $sessionStorage, $bbug) ->
+    QuestionService, LocaleService, PurchaseService, $sessionStorage, $bbug, SettingsService) ->
   # dont change the cid as we use it in the app to identify this as the widget
   # root scope
   $scope.cid = "BBCtrl"
@@ -273,6 +273,8 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     if prms.template
       $scope.bb.template = prms.template
 
+    if prms.i18n
+      SettingsService.enableInternationalizaton()
 
     @waiting_for_conn_started_def = $q.defer()
     $scope.waiting_for_conn_started = @waiting_for_conn_started_def.promise

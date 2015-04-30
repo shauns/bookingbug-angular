@@ -1,4 +1,4 @@
-angular.module('BB.Services').factory "ErrorService", [ ->
+angular.module('BB.Services').factory 'ErrorService', (SettingsService) ->
 
   errors = [
     {id: 1, type: 'GENERIC',                  title: '', msg: "Sorry, it appears that something went wrong. Please try again or call the business you're booking with if the problem persists."},
@@ -13,10 +13,16 @@ angular.module('BB.Services').factory "ErrorService", [ ->
   ]
 
   getError: (type) ->
-    for error in errors
-      return error if error.type == type
-
-    # if the error type wasn't found, return the generic error
-    return errors[0]
-
-]
+    error = _.findWhere(errors, {type: type})
+    translate = SettingsService.isInternationalizatonEnabled()
+    # if i18n enabled, return the translation key
+    if error and translate
+      return {msg: "ERROR.#{type}"}
+    # else return the error object
+    else if error and !translate
+      return error
+    # if no error with type given found, return generic error
+    else if translate
+      return {msg: 'GENERIC'}
+    else
+      return errors[0]
