@@ -58,6 +58,9 @@ angular.module('BBClinic').controller 'bbClinicCalController', ($scope, $log, $m
       clinics = AdminClinicService.query(prms)
       clinics.then (s) =>
         console.log s
+        for c in s
+          if c.resource_ids.length == 0 && c.person_ids.length == 0
+            c.className = 'noPeopleOrResources'
         callback(s)
 #      s.addCallback (booking) =>
 #        $scope.myCalendar.fullCalendar('renderEvent',booking, true)
@@ -106,15 +109,36 @@ angular.module('BBClinic').controller 'bbClinicCalController', ($scope, $log, $m
       }
     }
 
+  $scope.clinicClick = (clinic) ->
+    $scope.popupClinicAction({ clinic: clinic })
+
+  $scope.updateClinic = (clinic) ->
+    AdminClinicService.update(clinic).then (clinic) ->
+      console.log "updated clinic", clinic
+      $scope.clinics = [$scope.getClinics]
+
   ModalInstanceCtrl = ($scope, $modalInstance, items) ->
     #angular.extend($scope, items)
-    $scope.clinic = new BBModel.Admin.Clinic(items)
+    $scope.existingClinic = items.clinic?
+    if $scope.existingClinic
+      $scope.clinic = items.clinic
+    else
+      $scope.clinic = new BBModel.Admin.Clinic(items) unless $scope.clinic?
     console.log $scope.clinic
     $scope.ok = () ->
       console.log $scope.clinic
-      AdminClinicService.create({company: $scope.company}, $scope.clinic).then (clinic) ->
-        console.log "created clinic", clinic
-        $modalInstance.close();
+      if typeof $scope.clinic._data.$has == 'function' && $scope.clinic.$has('self')
+        $scope.clinic.save().then (clinic) ->
+          if $scope.clinic.resource_ids.length == 0 && $scope.clinic.person_ids.length == 0
+            $scope.clinic.className = 'noPeopleOrResources'
+          $modalInstance.close()
+      else
+        AdminClinicService.create({company: $scope.company}, $scope.clinic).then (clinic) ->
+          console.log "created clinic", clinic
+          if clinic.resource_ids.length == 0 && clinic.person_ids.length == 0
+            clinic.className = 'noPeopleOrResources'
+          $scope.clinics.push clinic
+          $modalInstance.close();
       
     $scope.cancel = () ->
       $modalInstance.dismiss('cancel');
@@ -131,7 +155,7 @@ angular.module('BBClinic').controller 'bbClinicCalController', ($scope, $log, $m
         right: 'today prev,next'
       },
       dayClick: $scope.dayClick,
-      eventClick: $scope.eventClick,
+      eventClick: $scope.clinicClick,
       eventDrop: $scope.alertOnDrop,
       eventResize: $scope.alertOnResize
       selectable: true,

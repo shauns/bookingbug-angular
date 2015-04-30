@@ -39,9 +39,9 @@ angular.module('BBClinic.Services').factory 'AdminClinicService',  ($q, BBModel)
 
   update: (clinic) ->
     deferred = $q.defer()
-    clinic.$put('self', {}, clinic.getPostData()).then  (clinic) =>
-      clinic = new BBModel.Admin.Clinic(clinic)
-      ClinicCollections.checkItems(clinic)
+    clinic.$put('self', {}, clinic.getPostData()).then (c) =>
+      clinic.updateModel(c)
+      clinic.setTimes()
       deferred.resolve(clinic)
     , (err) =>
       deferred.reject(err)
