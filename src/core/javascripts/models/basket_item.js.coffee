@@ -335,6 +335,13 @@ angular.module('BB.Models').factory "BasketItemModel",
       prom.then (group) =>
         @setEventGroup(group)
       @num_book = event.qty
+      if @event.getSpacesLeft() <= 0 && !@company.settings
+        @status = 8 if @company.getSettings().has_waitlists
+      else if @event.getSpacesLeft() <= 0 && @company.settings && @company.settings.has_waitlists 
+        @status = 8
+
+ 
+
 
     # if someone sets a category - we may then later restrict the service list by category
     setCategory: (cat) ->
@@ -519,6 +526,7 @@ angular.module('BB.Models').factory "BasketItemModel",
       data.event_chain_id = @event_chain_id
       data.event_group_id = @event_group_id
       data.qty = @qty   
+      data.status = @status if @status
       data.num_resources = parseInt(@num_resources) if @num_resources?
       data.product = @product
       data.deal = @deal if @deal

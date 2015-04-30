@@ -1046,7 +1046,10 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
 
   $scope.setLoadedAndShowError = (scope, err, error_string) ->
     scope.setLoaded(scope)
-    AlertService.danger(ErrorService.getError('GENERIC'))
+    if err.status == 409
+      AlertService.danger(ErrorService.getError('ITEM_NO_LONGER_AVAILABLE'))
+    else
+      AlertService.danger(ErrorService.getError('GENERIC'))
 
 
   # go around schild scopes - return false if *any* child scope is marked as

@@ -18,10 +18,11 @@ angular.module('BB.Controllers').controller 'Checkout', ($scope, $rootScope, Bas
   $rootScope.connection_started.then =>
     $scope.bb.basket.setClient($scope.client)
     loading_total_def = $q.defer()
-
+    
     $scope.loadingTotal = BasketService.checkout($scope.bb.company, $scope.bb.basket, {bb: $scope.bb})
     $scope.loadingTotal.then (total) =>
       $scope.total = total
+   
       if total.$has('new_payment')
         $scope.checkStepTitle('Review')
       else

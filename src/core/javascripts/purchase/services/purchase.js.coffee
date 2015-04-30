@@ -45,6 +45,21 @@ angular.module('BB.Services').factory "PurchaseService", ($q, halClient, BBModel
       defer.reject(err)
     defer.promise
 
+   bookWaitlistItem: (params) ->
+    defer = $q.defer()
+    if !params.purchase
+      defer.reject("No purchase present")
+      return defer.promise
+    data = {}
+    data.booking = params.booking.getPostData()  if params.booking
+    data.booking_id = data.booking.id
+    params.purchase.$put('book_waitlist_item', {}, data).then (purchase) =>
+      purchase = new BBModel.Purchase.Total(purchase)
+      defer.resolve(purchase)
+    , (err) =>
+      defer.reject(err)
+    defer.promise
+
 
   delete_all: (purchase) ->
 
