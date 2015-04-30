@@ -108,7 +108,7 @@ gulp.task('watch', function() {
   gulp.watch(['./src/**/*', '!./**/*~'], ['assets']);
 });
 
-gulp.task('webserver', function() {
+gulp.task('webserver', ['assets'], function() {
   connect.server({
     root: ['release', 'examples', 'bower_components'],
     port: 8888
