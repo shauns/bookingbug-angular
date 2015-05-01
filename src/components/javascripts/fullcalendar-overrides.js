@@ -24,7 +24,6 @@ $.fullCalendar.Grid.prototype.bindHandlers = function() {
 }
 
 $.fullCalendar.Grid.prototype.renderSelection = function(range) {
-  console.log('grid render selection');
   $.fullCalendar.Grid.prototype.renderSelection.apply(this, [range]);
 }
 

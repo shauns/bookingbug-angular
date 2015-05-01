@@ -18,6 +18,12 @@ angular.module('BB.Models').factory "Admin.ClinicModel", ($q, BBModel, BaseModel
         h[id] = true
         h
       , {})
+      @uncovered = !@person_ids || @person_ids.length == 0
+      if @uncovered
+        @className = "clinic_uncovered" 
+      else
+        @className = "clinic_covered" 
+
 
     setTimes: () ->
       if @start_time
