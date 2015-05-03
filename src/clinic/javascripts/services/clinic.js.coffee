@@ -4,16 +4,20 @@ angular.module('BBClinic.Services').factory 'AdminClinicService',  ($q, BBModel,
     company = params.company
     defer = $q.defer()
 
-    company.$get('clinics').then (collection) ->
-      collection.$get('clinics').then (clinics) ->
-        models = (new BBModel.Admin.Clinic(s) for s in clinics)
-        clinics = new $window.Collection.Clinic(collection, models, params)
-        ClinicCollections.add(clinics)
-        defer.resolve(clinics)
+    existing = ClinicCollections.find(params)
+    if existing
+      defer.resolve(existing)
+    else      
+      company.$get('clinics').then (collection) ->
+        collection.$get('clinics').then (clinics) ->
+          models = (new BBModel.Admin.Clinic(s) for s in clinics)
+          clinics = new $window.Collection.Clinic(collection, models, params)
+          ClinicCollections.add(clinics)
+          defer.resolve(clinics)
+        , (err) ->
+          defer.reject(err)
       , (err) ->
         defer.reject(err)
-    , (err) ->
-      defer.reject(err)
     defer.promise
 
   create: (prms, clinic) ->
