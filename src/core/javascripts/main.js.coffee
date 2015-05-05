@@ -24,6 +24,7 @@ app = angular.module('BB', [
   'angular.filter',
   'ngCookies',
   'angulartics',
+  'angulartics.google.analytics',
   'pascalprecht.translate'
 ]);
 
