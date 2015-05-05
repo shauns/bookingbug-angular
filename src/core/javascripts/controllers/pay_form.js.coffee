@@ -54,15 +54,16 @@ angular.module('BB.Controllers').controller 'PayForm', ($scope, $location) ->
 
 
   sendSubmittingEvent = () =>
-    origin = $location.protocol() + "://" + $location.host() + ":" + $location.port()
     referrer = $location.protocol() + "://" + $location.host()
     if $location.port()
       referrer += ":" + $location.port()
+    target_origin = $scope.referrer
+
     payload = JSON.stringify({
       'type': 'submitting',
       'message': referrer
     })
-    parent.postMessage(payload, origin)
+    parent.postMessage(payload, target_origin)
  
   submitPaymentForm = () =>
     payment_form = angular.element.find('form')
