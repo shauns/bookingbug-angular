@@ -250,7 +250,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
 
 
   $scope.selectItem = (item, route) =>
-    return false unless item.hasSpace()
+    return false unless (item.getSpacesLeft() <= 0 && $scope.bb.company.settings.has_waitlists) || item.hasSpace()
     $scope.notLoaded $scope
     if $scope.$parent.$has_page_control
       $scope.event.unselect() if $scope.event

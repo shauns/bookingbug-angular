@@ -128,6 +128,7 @@ angular.module('BB.Models').factory "ClientModel", ($q, BBModel, BaseModel, Loca
       x.comp_ref = @comp_ref
       x.parent_client_id = @parent_client_id
       x.password = @password
+      x.notifications = @notifications
 
       if @mobile
         @remove_prefix()

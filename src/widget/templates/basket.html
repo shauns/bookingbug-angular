@@ -99,9 +99,9 @@
 							<th class="text-right">{{basket.total_price | pretty_price }}</th>
 							<th>&nbsp;</th>
 						</tr>
-						<tr data-ng-if="basket.total_due_price > 0">
+						<tr data-ng-if="basket.total_due_price != basket.total_price">
 							<th class="text-right">Total Due Now</th>
-							<th class="text-right"> {{basket.total_due_price | pretty_price }}</th>
+							<th class="text-right">{{basket.total_due_price | currency }}</th>
 							<th>&nbsp;</th>
 						</tr>
 					</tbody>

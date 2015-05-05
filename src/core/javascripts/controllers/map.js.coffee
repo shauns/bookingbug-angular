@@ -337,3 +337,9 @@ angular.module('BB.Controllers').controller 'MapCtrl',
       $scope.myMap.setCenter $scope.loc
       $scope.myMap.setZoom 15
       $scope.showClosestMarkers $scope.loc
+
+
+  $rootScope.$on 'widget:restart', () ->
+    $scope.loc = null
+    $scope.reverse_geocode_address = null
+    $scope.address = null

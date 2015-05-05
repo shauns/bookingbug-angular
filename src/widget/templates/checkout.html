@@ -4,8 +4,14 @@
 
       <div class="bb-subcontent">
         <div class="confirmation-header bb-confirmation-border-margin">
-          <h2>Booking Confirmation</h2>
-          <p class="bb-confirmation-p-alignment">Thanks {{ total.client.first_name }}. Your booking is now confirmed. We have you emailed you the details below.</p>
+          <div ng-if="total && !total.containsWaitlistItems()">
+            <h2>Booking Confirmation</h2>
+            <p class="bb-confirmation-p-alignment">Thanks {{ total.client.first_name }}. Your booking is now confirmed. We have emailed you the details below.</p>
+          </div>
+           <div ng-if="total && total.containsWaitlistItems()">
+            <h2>Confirmation</h2>
+            <p class="bb-confirmation-p-alignment">Thanks {{ total.client.first_name }}. Your have successfully made the following bookings. We have you emailed you the details below.</p>
+          </div>
           <div class="row hidden-print text-right">
             <button type="button" class="btn btn-link" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</button>
             <div bb-booking-export class="bb-booking-export"></div>
@@ -36,7 +42,11 @@
             </li>
             <li ng-if="i.price" class="row confirmation-summary-item">
               <div class="col-sm-3">Price:</div>
-              <div class="col-sm-9">£{{i.price}}</div>
+              <div class="col-sm-9">{{i.price | pretty_price }}</div>
+            </li>
+            <li ng-if="i.due_now != i.price" class="row confirmation-summary-item">
+              <div class="col-sm-3">Due Now:</div>
+              <div class="col-sm-9">{{i.due_now | currency }}</div>
             </li>
           </ul>
           <ul ng-show="total.items[0].address.lat" class="confirmation-summary">

@@ -375,7 +375,7 @@ app.directive 'bbPriceFilter', (PathSvc) ->
 
     setPricefilter = (items) ->
       $scope.price_array = _.uniq _.map items, (item) ->
-        return item.price
+        return item.price or 0
       $scope.price_array.sort()
       suitable_max()
       
