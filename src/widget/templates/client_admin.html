@@ -90,10 +90,10 @@
 
   <div class="row bb-step-navigation">
     <div class="col-sm-9 col-sm-push-3 text-right">
-      <button type="submit" class="btn btn-primary pull-right" ng-click="validator.validateForm(client_form) && validateClient(client_form)" translate="CONTINUE"></button>
+      <button type="submit" class="btn btn-primary pull-right" ng-click="validator.validateForm(client_form) && validateClient(client_form)" translate="PROGRESS_NEXT"></button>
     </div>
     <div class="col-sm-3 col-sm-pull-9 col-md-2 col-lg-2 text-left">
-      <button type="button" class="btn btn-default" ng-click="loadPreviousStep()" ng-show="bb.current_step > 1"><span translate="BACK"></span></button>
+      <button type="button" class="btn btn-default" ng-click="loadPreviousStep()" ng-show="bb.current_step > 1"><span translate="PROGRESS_BACK""></span></button>
       <button type="button" class="btn btn-default" ng-click="resetForm()" translate="CLEAR"></button>
     </div>
   </div> 
