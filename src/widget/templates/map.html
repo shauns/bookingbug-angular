@@ -48,7 +48,7 @@
             <span ng-if="currentMarker.company.extra.closing_time"><strong>{{currentMarker.company.extra.closing_time}}</strong></span>
             <span class="distance">{{roundNumberUp(currentMarker.distance,1)}}mi</span>
           </p>
-          <button type="button" ng-click="selectItem(currentMarker.company)" class="btn btn-primary" ng-show="currentMarker.company.live" translate="SELECT"></button>
+          <button type="button" ng-click="selectItem(currentMarker.company)" class="btn btn-primary" ng-show="currentMarker.company.live" translate="PROGRESS_SELECT"></button>
 
         </div>
       </div>
@@ -71,7 +71,7 @@
                 <span class="distance">{{roundNumberUp(marker.distance,1)}}mi</span>
               </li>
             </ul>
-            <button type="button" ng-click="selectItem(marker.company)" class="btn btn-primary pull-right" translate="SELECT"></button>
+            <button type="button" ng-click="selectItem(marker.company)" class="btn btn-primary pull-right" translate="PROGRESS_SELECT"></button>
           </div>
         </div>
 

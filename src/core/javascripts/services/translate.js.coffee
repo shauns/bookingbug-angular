@@ -32,6 +32,10 @@ angular.module('pascalprecht.translate').config ($translateProvider) ->
     SERVICE_CONFIRMATION: '{item} at'
     DATE_TIME_CONFIRMATION: 'Date/Time'
 
+    SOLD_OUT_STATUS: 'Sold out'
+    SOLD_OUT_HIDE: 'Hide Sold Out Events'
+    SOLD_OUT_SHOW: 'Show Sold Out Events'
+
     AVAIL_TITLE: 'Select a date and time for your Colour Consultation'
     APPOINTMENT_DATE: 'Date'
     APPOINTMENT_TIME: 'Time'
@@ -120,8 +124,10 @@ angular.module('pascalprecht.translate').config ($translateProvider) ->
     SERVICE_NAME: '{{item}} bei {{company}}'
     SERVICE_CONFIRMATION: '{{item}} at'
     DATE_TIME_CONFIRMATION: 'Datum / Uhrzeit'
-    CONFIRMATION_INSPIRATION_LINK: 'Besuchen Sie unsere Website Inspiration'
-    CONFIRMATION_HOMEPAGE_LINK: 'Zurück zur Startseite'
+
+    SOLD_OUT_STATUS: 'ausverkauft'
+    SOLD_OUT_HIDE: 'Ausblenden Ausverkauft Events'
+    SOLD_OUT_SHOW: 'Ausverkauft Events anzeigen'
 
     AVAIL_TITLE: 'Wählen Sie ein Datum und die Uhrzeit für Ihre {{item}}'
     APPOINTMENT_DATE: 'Datum'
