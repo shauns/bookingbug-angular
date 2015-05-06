@@ -45,6 +45,8 @@ angular.module('BB.Models').factory "Admin.ClinicModel", ($q, BBModel, BaseModel
       data.person_ids = []
       for id, en of @people
         data.person_ids.push(id) if en
+      console.log @address
+      data.address_id = @address.id if @address
       data
 
     save: () ->
