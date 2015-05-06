@@ -160,7 +160,7 @@
       <div class="col-sm-offset-8 col-sm-2 col-sm-push-2 text-right">
         <button type="button" class="btn btn-primary" ng-click="checkReady() && routeReady()" bb-debounce ng-disabled="!bb.current_item.time"> 
           <span ng-if="!bb.moving_booking" translate="PROGRESS_NEXT"></span>
-          <span ng-if="bb.moving_booking">Move booking</span>
+          <span ng-if="bb.moving_booking" translate="PROGRESS_MOVE_BOOKING"></span>
         </button>
       </div>
       <div class="col-sm-2 col-sm-pull-10 text-left">
