@@ -15,10 +15,6 @@ angular.module('BB.Directives').directive 'bbEvents', () ->
     # 0 = Event summary (gets year summary and loads events a day at a time)
     # 1 = Next 100 events (gets next 100 events)
     # 2 = Next 100 events and event summary (gets event summary, loads next 100 events, and gets more events if requested)
-
-    # TODO need to handle scenario where day selected, but event not loaded, as user scrolls months, grab more events and append to collection!
-    # need to store when last event date is so we know how to adjust time range, index events by date
-    
     scope.mode = if options and options.mode then options.mode else 0
     scope.mode = 0 if scope.summary
     return
@@ -34,6 +30,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
   $scope.filters = {}
   $scope.price_options = [0,1000,2500,5000]
   $scope.pagination = PaginationService.initialise({page_size: 10, max_size: 5})
+  $scope.events = {}
 
   FormDataStoreService.init 'EventList', $scope, [
     'selected_date',
@@ -123,15 +120,15 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
         # clear the selected date if the event group has changed (but only when event group has been explicity set)
         # if $scope.current_item? and $scope.current_item.event_group?
         #   if $scope.current_item.event_group.id != $scope.event_group_id
-        #     $scope.showDate($scope.item_dates[0].date)
+        #     $scope.showDay($scope.item_dates[0].date)
         #   $scope.event_group_id = $scope.current_item.event_group.id
         
         # if the selected date is within range of the dates loaded, show it, else show the first day loaded
         if $scope.mode is 0
           if ($scope.selected_date and ($scope.selected_date.isAfter($scope.item_dates[0].date) or $scope.selected_date.isSame($scope.item_dates[0].date)) and ($scope.selected_date.isBefore($scope.item_dates[$scope.item_dates.length-1].date) || $scope.selected_date.isSame($scope.item_dates[$scope.item_dates.length-1].date)))
-            $scope.showDate($scope.selected_date)
+            $scope.showDay($scope.selected_date)
           else
-            $scope.showDate($scope.item_dates[0].date)
+            $scope.showDay($scope.item_dates[0].date)
 
       deferred.resolve($scope.item_dates)
 
@@ -153,19 +150,23 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
     $scope.notLoaded $scope
     comp ||= $scope.bb.company 
     params = {item: $scope.bb.current_item, start_date:$scope.start_date.toISODate(), end_date:$scope.end_date.toISODate()}
-    EventService.query(comp, params).then (items) ->
-      #debugger
-      $scope.items = items
+    EventService.query(comp, params).then (events) ->
 
+      events = _.groupBy events, (event) -> event.date.toISODate()
+      for key, value of events
+        $scope.events[key] = value
+
+      $scope.items = _.flatten(_.toArray($scope.events))
+      
       # get more event details
       for item in $scope.items
         item.prepEvent()
         # check if the current item already has the same event selected
-        # if $scope.mode is 0 and current_event and current_event.self == item.self 
-        #   item.select() 
-        #   $scope.event = item
+        if $scope.mode is 0 and current_event and current_event.self == item.self 
+          item.select() 
+          $scope.event = item
 
-      # only build item dates if we're 'next 100 event' mode
+      # only build item_dates if we're in 'next 100 event' mode
       if $scope.mode is 1
         item_dates = {}
         if items.length > 0
@@ -188,19 +189,22 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
         # clear the selected date if the event group has changed
         # if $scope.current_item? && $scope.current_item.event_group?
         #   if $scope.current_item.event_group.id != $scope.event_group_id
-        #     $scope.showDate($scope.item_dates[0].date)
+        #     $scope.showDay($scope.item_dates[0].date)
         #   $scope.event_group_id = $scope.current_item.event_group.id
         # if ($scope.selected_date && ($scope.selected_date.isAfter($scope.item_dates[0].date) || $scope.selected_date.isSame($scope.item_dates[0].date)) && ($scope.selected_date.isBefore($scope.item_dates[$scope.item_dates.length-1].date) || $scope.selected_date.isSame($scope.item_dates[$scope.item_dates.length-1].date)))
-        #   $scope.showDate($scope.selected_date)
+        #   $scope.showDay($scope.selected_date)
         # else
-        #   $scope.showDate($scope.item_dates[0].date)
+        #   $scope.showDay($scope.item_dates[0].date)
 
       # determine if all events are fully booked
       isFullyBooked()
 
       $scope.filtered_items = $scope.items
+
       # run the filters to ensure any default filters get applied
       $scope.filterChanged()
+
+      # update the paging
       PaginationService.update($scope.pagination, $scope.filtered_items.length)
 
       $scope.setLoaded $scope
@@ -216,30 +220,29 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
     $scope.fully_booked = true if full_events.length == $scope.items.length
 
 
-  # accepts moment date object
-  $scope.showDate = (date) ->
-    debugger
-    if date
-      # unselect the event if it's not on the day being selected
-      if $scope.event and !$scope.selected_date.isSame(date, 'day')
-        delete $scope.event
+  $scope.showDay = (day) ->
+    return if !day or (day and !day.data)
 
-      if $scope.mode is 0
-        new_date = date
-        $scope.start_date = moment(date)
-        $scope.end_date = moment(date)
-        $scope.loadEventData()
-      else
-        new_date = date if !date.isSame($scope.selected_date, 'day')
+    date = day.date
+    # unselect the event if it's not on the day being selected
+    delete $scope.event if $scope.event and !$scope.selected_date.isSame(date, 'day')
 
-      if new_date
-        $scope.selected_date = new_date
-        $scope.filters.date  = new_date.toDate()
-      else
-        delete $scope.selected_date
-        delete $scope.filters.date
+    if $scope.mode is 0
+      new_date = date
+      $scope.start_date = moment(date)
+      $scope.end_date = moment(date)
+      $scope.loadEventData()
+    else
+      new_date = date if !date.isSame($scope.selected_date, 'day')
 
-      $scope.filterChanged()
+    if new_date
+      $scope.selected_date = new_date
+      $scope.filters.date  = new_date.toDate()
+    else
+      delete $scope.selected_date
+      delete $scope.filters.date
+
+    $scope.filterChanged()
 
    
   $scope.$watch 'pick.date', (new_val, old_val) =>
@@ -298,7 +301,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
 
   $scope.filterDateChanged = () ->
     $scope.filterChanged()
-    $scope.showDate(moment($scope.filters.date))
+    $scope.showDay(moment($scope.filters.date))
 
 
   $scope.resetFilters = () ->
@@ -335,3 +338,11 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
     PaginationService.update($scope.pagination, $scope.filtered_items.length)
     $rootScope.$broadcast "page:changed"
 
+
+  $scope.$on 'month_picker:month_changed', (event, month, last_month_shown) ->
+    return if !$scope.items or $scope.mode is 0
+    last_event = _.last($scope.items).date
+    # if the last event is in the same month as the last one shown, get more events
+    if last_month_shown.start_date.isSame(last_event, 'month')
+      $scope.start_date = last_month_shown.start_date
+      $scope.loadEventData()

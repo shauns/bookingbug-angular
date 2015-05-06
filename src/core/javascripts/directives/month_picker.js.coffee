@@ -1,8 +1,9 @@
 
-angular.module('BB.Directives').directive 'bbMonthPicker', ($rootScope, FormDataStoreService) ->
+angular.module('BB.Directives').directive 'bbMonthPicker', () ->
   restrict: 'AE'
   replace: true
   scope : true
+  require : '^bbEvents'
   link : (scope, el, attrs) ->
 
     scope.picker_settings = scope.$eval(attrs.bbMonthPicker) or {}
@@ -11,7 +12,7 @@ angular.module('BB.Directives').directive 'bbMonthPicker', ($rootScope, FormData
     scope.$watch scope.watch_val, (newval, oldval) ->
       scope.processDates(newval) if newval
 
-  controller : ($scope,  $rootScope,  $q) ->
+  controller : ($scope) ->
 
     $scope.processDates = (dates) ->
       datehash = {}
@@ -23,7 +24,7 @@ angular.module('BB.Directives').directive 'bbMonthPicker', ($rootScope, FormData
       if $scope.picker_settings.start_at_first_available_day
         cur_month = $scope.first_available_day.clone().startOf('month')
       else
-        cur_month = dates[0].date.clone().startOf('month')
+        cur_month = moment().startOf('month')
 
       date = cur_month.startOf('week')
       last_date = _.last dates
@@ -59,7 +60,6 @@ angular.module('BB.Directives').directive 'bbMonthPicker', ($rootScope, FormData
 
     $scope.selectMonth = (month) ->
       $scope.selected_month = month
-
       # select the first day in the month that has some events, but only if we're in summary mode
       if $scope.mode is 0
         for week in month.weeks
@@ -74,7 +74,7 @@ angular.module('BB.Directives').directive 'bbMonthPicker', ($rootScope, FormData
 
       for m in $scope.months
         $scope.selectMonth(m) if m.start_date.month() == month
-      true
+      return true
 
 
     $scope.add = (value) ->
@@ -89,19 +89,64 @@ angular.module('BB.Directives').directive 'bbMonthPicker', ($rootScope, FormData
       $scope.add(-value)
 
 
-    $scope.setMonth = (index) ->
-      $scope.selectMonth($scope.months[index]) if $scope.months[index]
+    $scope.setMonth = (index, slides_to_show) ->
+      if $scope.months[index]
+        $scope.selectMonth($scope.months[index])
+        last_month_shown = $scope.months[index + (slides_to_show - 1)]
+        $scope.$emit 'month_picker:month_changed', $scope.months[index], last_month_shown
 
 
-angular.module('BB.Directives').directive 'bbSlick', ($rootScope, FormDataStoreService) ->
+
+angular.module('BB.Directives').directive 'bbSlick', ($rootScope, $timeout, $bbug, PathSvc, $compile, $templateCache) ->
   restrict: 'A'
   replace: false
   scope : false
   require : '^bbMonthPicker'
+  templateUrl : (element, attrs) ->
+    PathSvc.directivePartial "month_picker"
   link : (scope, element, attrs) ->
 
-    slider = $(element)
+    windowWidth = $bbug(window).width()
+    scope.index = 0
+    breakpoints = scope.$eval attrs.bbSlick
 
-    slider.on 'afterChange', (event, slick, currentSlide, nextSlide) ->
-      scope.setMonth(currentSlide)
-      scope.$apply()
+    $rootScope.connection_started.then ->
+      scope.slidesToShow = getSlidesToShow()
+      register()
+
+    register = ->
+      slider = $bbug('div[slick]')
+      slider.on 'afterChange', (event, slick, currentSlide, nextSlide) ->
+        console.log 'afterChange'
+        scope.index = currentSlide
+        scope.setMonth(currentSlide, slick.options.slidesToShow)
+        scope.$apply()
+
+    $bbug(window).on 'orientationchange.slick.slick', ->
+      checkResponsive()
+
+    $bbug(window).on 'resize.slick.slick', ->
+      if $bbug(window).width() != windowWidth
+        clearTimeout windowDelay
+        windowDelay = window.setTimeout((->
+          windowWidth = $bbug(window).width()
+          checkResponsive()
+        ), 100)
+
+    getSlidesToShow = ->
+      for b in breakpoints
+        if windowWidth <= b.breakpoint
+          slidesToShow = b.settings.slidesToShow
+          break
+      return slidesToShow or 3
+
+    checkResponsive = ->
+      slides_to_show = getSlidesToShow()
+
+      if scope.slidesToShow != slides_to_show
+        scope.slidesToShow = slides_to_show
+        # recompile template to reinit slick
+        html = $templateCache.get('month_picker.html')
+        e = $compile(html) scope, (cloned, scope) =>
+          element.replaceWith(cloned)
+          register()

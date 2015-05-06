@@ -12,37 +12,8 @@
     </div>
     <div class="bb-months">
 
-      <slick init-onload="true" data="months" slides-to-show="3" infinite="false" responsive="[{breakpoint: 991, settings: {slidesToShow: 1}},{breakpoint: 1199, settings: {slidesToShow: 2}}]" prev-arrow=".month-prev" next-arrow=".month-next" bb-slick>
+      <div bb-slick="[{breakpoint: 1199, settings: {slidesToShow: 2}},{breakpoint: 920, settings: {slidesToShow: 1}}]"></div>
 
-        <div class="bb-month" ng-repeat="month in months" ng-class="{'hidden-xs': month.selected}">
-          <table>
-            <thead>
-              <tr>
-                <th colspan="7" class="months">{{month.start_date.format("MMMM")}}</th>
-              </tr>
-              <tr>
-                <th ng-repeat="day in month.weeks[0].days" class="days">{{day.date | datetime: "ddd" : false}}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr ng-repeat="week in month.weeks">
-                <td ng-repeat="day in week.days" 
-                  ng-class="{'available': day.data && day.data.spaces > 0 && month.start_date.isSame(day.date, 'month'), 
-                             'selected': day.date.isSame(filters.date),
-                             'today': day.data.today,
-                             'past': day.date.isBefore(moment(), 'day'),
-                             'disabled': !day.date.isSame(month.start_date, 'month')
-                            }" 
-                    ng-click="showDate(day.date)" 
-                    ng-disabled="day.date.isBefore(moment(), 'day') || !day.date.isSame(month.start_date, 'month')">
-                  <div class="circle">{{day.date.date()}}</div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-      </slick>
     </div>
 
     <div class="bb-month-nav">
@@ -51,9 +22,7 @@
       </button>
     </div>
 
-
   </div>
-
 
   <div class="events" ng-show="items" bb-scroll-to="page:changed" bb-always-scroll>
 
