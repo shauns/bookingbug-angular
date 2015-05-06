@@ -1,6 +1,10 @@
 angular.module('pascalprecht.translate').config ($translateProvider) ->
 
   en_translations = {
+    BACK: 'Back'
+    CLEAR: 'Clear'
+    CONTINUE: 'Continue'
+    
     MAP_TITLE: 'Search for a store to begin your booking.',
     MAP_PLACEHOLDER: 'Enter a town, city, postcode or showroom',
     PROGRESS_BAR_TITLE: 'Step'
@@ -78,7 +82,14 @@ angular.module('pascalprecht.translate').config ($translateProvider) ->
     }
   }
 
+  # Navigation or action
+  # Instruction
+
   de_translations = {
+    BACK: 'zurück'
+    CLEAR: 'klar'
+    CONTINUE: 'fortsetzen'
+
     GEOLOCATE: 'Aktuellen Standort benutzen'
     MAP_TITLE: 'Suchen Sie nach einem Geschäft, um Ihre Reservierung zu beginnen.',
     MAP_PLACEHOLDER: 'Geben Sie eine Stadt , Stadt, Postleitzahl oder Ausstellungsraum'
@@ -88,7 +99,6 @@ angular.module('pascalprecht.translate').config ($translateProvider) ->
     SEARCH: 'Suche'
     SELECT: 'wählen'
     TIMESLOT_TITLE: 'Test'
-
   }
 
   fr_translations = {
