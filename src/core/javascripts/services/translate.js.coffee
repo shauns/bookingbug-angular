@@ -27,6 +27,14 @@ angular.module('pascalprecht.translate').config ($translateProvider) ->
     STORE_PHONE: 'Phone:'
     SHOWROOM: 'Showroom'    
 
+    ITEM_SERVICE: 'Service:'
+    ITEM_RESOURCE: 'Resource:'
+    ITEM_PERSON: 'Person:'
+    ITEM_PRICE: 'Price:'
+    ITEM_DATE: 'Date:'
+    ITEM_TIME: 'Time:'
+    ITEM_DURATION: 'Duration:'
+
     SERVICE: 'Service'
     SERVICE_NAME: '{{service}} at {{company}}'
     SERVICE_CONFIRMATION: '{item} at'
@@ -119,6 +127,14 @@ angular.module('pascalprecht.translate').config ($translateProvider) ->
     GEOLOCATE: 'Aktuellen Standort benutzen'
     STORE_RESULT_TITLE: '{{number}} Ergebnisse für Geschäfte in der Nähe {{address}}'
     STORE_PHONE: 'Telefon:'
+
+    ITEM_SERVICE: 'Service:'
+    ITEM_RESOURCE: 'Ressource:'
+    ITEM_PERSON: 'Person:'
+    ITEM_PRICE: 'Preis:'
+    ITEM_DATE: 'Datum:'
+    ITEM_TIME: 'Zeit:'
+    ITEM_DURATION: 'Dauer:'
 
     SERVICE: 'Service'
     SERVICE_NAME: '{{item}} bei {{company}}'
