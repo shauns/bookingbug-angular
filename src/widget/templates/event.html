@@ -215,7 +215,7 @@
                 <button type="submit" class="btn btn-primary pull-right" ng-click="validator.validateForm(booking_form) && checkReady() && routeReady()">Book Ticket<span ng-if="event.tickets[0].qty > 1">s</span></button>
               </div>
               <div class="col-sm-offset-9 col-sm-3" ng-show="event.getSpacesLeft() <= 0 && bb.company.settings.has_waitlists">
-                <button type="submit" class="btn btn-primary pull-right" ng-click="validator.validateForm(booking_form) && checkReady() && routeReady()">Confirm</button>
+                <button type="submit" class="btn btn-primary pull-right" ng-click="validator.validateForm(booking_form) && checkReady() && routeReady()" translate="PROGRESS_CONFIRM"></button>
               </div>
             </div>
           </div>
