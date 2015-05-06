@@ -57,7 +57,9 @@ angular.module('BB.Services').provider("ie8HttpBackend", function ie8HttpBackend
           url: url
         },
         success: function (respObj) {
-          completeRequest(callback, 200, respObj.responseText, 'Content-Type: ' + respObj.contentType);
+          headers = 'Content-Type: ' + respObj.contentType;
+          headers += '\r\n' + 'Auth-Token: ' + respObj.authToken;
+          completeRequest(callback, 200, respObj.responseText, headers);
         },
         error: function (data) {
           completeRequest(callback, 500, 'Error', 'Content-Type: text/plain');
