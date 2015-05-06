@@ -32,7 +32,7 @@
 
   <div ng-show="loc">
 
-    <h2 class="company-map-header">{{shownMarkers.length}} results for stores near {{address}}</h2>
+    <h2 class="company-map-header" translate="STORE_RESULT_TITLE" translate-values="{number: shownMarkers.length, address: address}"></h2>
 
     <div class="company-map row">
 
@@ -43,12 +43,12 @@
 
           <p><strong>{{currentMarker.company.name}}</strong></p>
           <p>{{currentMarker.company.address | address_single_line}}</p>
-          <p><strong>Phone:</strong> {{currentMarker.company.address.phone | uk_local_number}}</p>
+          <p><strong translate="STORE_PHONE"></strong> {{currentMarker.company.address.phone | uk_local_number}}</p>
           <p>
             <span ng-if="currentMarker.company.extra.closing_time"><strong>{{currentMarker.company.extra.closing_time}}</strong></span>
             <span class="distance">{{roundNumberUp(currentMarker.distance,1)}}mi</span>
           </p>
-          <button type="button" ng-click="selectItem(currentMarker.company)" class="btn btn-primary" ng-show="currentMarker.company.live">select</button>
+          <button type="button" ng-click="selectItem(currentMarker.company)" class="btn btn-primary" ng-show="currentMarker.company.live" translate="SELECT"></button>
 
         </div>
       </div>
@@ -66,12 +66,12 @@
 
             <ul class="store-details" ng-click="openMarkerInfo(marker)">
               <li>{{marker.company.address | address_single_line }}</li>
-              <li><strong>Phone:</strong> {{marker.company.address.phone | uk_local_number}}</li>
+              <li><strong translate="STORE_PHONE"></strong> {{marker.company.address.phone | uk_local_number}}</li>
               <li>
                 <span class="distance">{{roundNumberUp(marker.distance,1)}}mi</span>
               </li>
             </ul>
-            <button type="button" ng-click="selectItem(marker.company)" class="btn btn-primary pull-right">Select</button>
+            <button type="button" ng-click="selectItem(marker.company)" class="btn btn-primary pull-right" translate="SELECT"></button>
           </div>
         </div>
 

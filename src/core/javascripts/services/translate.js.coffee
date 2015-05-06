@@ -6,6 +6,7 @@ angular.module('pascalprecht.translate').config ($translateProvider) ->
     PROGRESS_BAR_TITLE: 'Step'
     PROGRESS_BACK: 'Back'
     PROGRESS_NEXT: 'Continue'
+    STORE_PHONE: 'Phone:'
     STORE_RESULT_TITLE: '{{number}} results for showrooms near {{address}}'
     SHOWROOM: 'Showroom'
     SELECT: 'Select'
@@ -82,7 +83,10 @@ angular.module('pascalprecht.translate').config ($translateProvider) ->
     MAP_TITLE: 'Suchen Sie nach einem Geschäft, um Ihre Reservierung zu beginnen.',
     MAP_PLACEHOLDER: 'Geben Sie eine Stadt , Stadt, Postleitzahl oder Ausstellungsraum'
     PROGRESS_BAR_TITLE: 'Schritt'
+    STORE_PHONE: 'Telefon:'
+    STORE_RESULT_TITLE: '{{number}} Ergebnisse für Geschäfte in der Nähe {{address}}'
     SEARCH: 'Suche'
+    SELECT: 'wählen'
     TIMESLOT_TITLE: 'Test'
 
   }
