@@ -170,3 +170,11 @@ p {
 .angular-google-map-container { 
   height: 200px; 
 }
+
+div[bb-translate] {
+  float: right;
+  a {
+    text-decoration: none;
+    cursor: pointer;
+  }
+}
