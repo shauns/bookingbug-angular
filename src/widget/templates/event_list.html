@@ -176,7 +176,7 @@
             </div>
             <div class="col-sm-2 event-select">
               <button type="button" ng-click="selectItem(item)" class="btn btn-primary btn-block" ng-disabled="item.getSpacesLeft() == 0 && !bb.company.settings.has_waitlists">
-                <span ng-show="item.getSpacesLeft() > 0">Select</span>
+                <span ng-show="item.getSpacesLeft() > 0" translate="SELECT"></span>
                 <div ng-show="item.getSpacesLeft() <= 0 && !bb.company.settings.has_waitlists">
                   <span class="status-sold-out">Sold out</span>
                 </div>
