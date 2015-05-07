@@ -58,6 +58,8 @@
     "jquery-ui": "~1.11.2",
     "jquery": "~1.11.2",
     "fullcalendar": "~2.2.3",
-    "moment": "master"
+    "moment": "master",
+    "angular-translate": "~2.7.0",
+    "angular-translate-storage-cookie": "~2.7.0"
   }
 }

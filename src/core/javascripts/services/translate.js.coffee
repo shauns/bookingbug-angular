@@ -215,7 +215,7 @@ angular.module('pascalprecht.translate').config ($translateProvider) ->
     .translations('de', de_translations)
     .translations('fr', fr_translations)
     .determinePreferredLanguage () ->
-      language = navigator.languages[0] or navigator.language or navigator.browserLanguage or navigator.systemLanguage or navigator.userLanguage or 'en'
+      language = if navigator.languages then navigator.languages[0] else navigator.language or navigator.browserLanguage or navigator.systemLanguage or navigator.userLanguage or 'en'
       language.substr(0,2)
     .fallbackLanguage('en')
     .useCookieStorage()
