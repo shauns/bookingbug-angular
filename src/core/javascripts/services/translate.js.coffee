@@ -56,6 +56,8 @@ angular.module('pascalprecht.translate').config ($translateProvider) ->
     AVAIL_AFTERNOON: 'Afternoon'
     AVAIL_EVENING: 'Evening'
     AVAIL_SLOTS: '{{number}} available'
+    AVAIL_WORD: 'available'
+    AVAIL_NO: 'No Service Available'
 
     PICK_A_DATE: 'Pick a date'
     HOUR: 'hour'
@@ -157,6 +159,8 @@ angular.module('pascalprecht.translate').config ($translateProvider) ->
     AVAIL_AFTERNOON: 'Nachmittag'
     AVAIL_EVENING: 'Abend'
     AVAIL_SLOTS: '{{number}} verfügbar'
+    AVAIL_WORD: 'verfügbar'
+    AVAIL_NO: 'Kein Dienst vorhanden'
 
     PICK_A_DATE: 'Wählen Sie ein Datum'
     HOUR: 'Stunde'

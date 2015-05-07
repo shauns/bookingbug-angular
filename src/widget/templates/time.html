@@ -8,11 +8,11 @@
     <div class="bb-calendar-navigation">
       <button type="button" class="btn btn-link pull-left" ng-click="subtract('days',1)">
         <span class="glyphicon glyphicon-chevron-left pull-left" aria-hidden="true"></span>
-        <span class="hidden-xs" translate="TIME_DAY_PREVIOUS"></span>
+        <span class="hidden-xs" translate="AVAIL_DAY_PREVIOUS"></span>
       </button>
       <button type="button" class="btn btn-link pull-right" ng-click="add('days',1)">
         <span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true" ></span>
-        <span class="hidden-xs" translate="TIME_DAY_NEXT"></span>
+        <span class="hidden-xs" translate="AVAIL_DAY_NEXT"></span>
       </button>
     </div>
 
@@ -22,8 +22,7 @@
       <h2 class="bb-section-title text-center hidden-sm hidden-md hidden-lg">{{format_date('Do MMM')}}</h2>
 
       <div ng-show="!slots || (slots && slots.length == 0)" class="bb-service-unavailable">
-        <p>
-          No Service Available
+        <p translate="AVAIL_NO">
         </p>
       </div>
 
@@ -40,10 +39,10 @@
                     >+</span>
                     <span ng-show="has_availability && is_open"
                     >-</span>
-                      Morning
+                    <span translate="AVAIL_MORNING"></span>
                   </span>
                   <p ng-hide="is_selected || (is_open && has_availability)">
-                    <small>{{accordian_slots.length}} available</small>
+                    <small>{{accordian_slots.length}} <span translate="AVAIL_WORD"></span></small>
                   </p>
                   <p class="selected-time" ng-show="is_selected && !is_open">
                     <small>{{selected_slot.time_12}}</small>
@@ -71,10 +70,10 @@
                     >+</span>
                     <span ng-show="has_availability && is_open"
                     >-</span>
-                      Afternoon
+                    <span translate="AVAIL_AFTERNOON"></span>
                   </span>
                   <p ng-hide="is_selected || (is_open && has_availability)">
-                    <small>{{accordian_slots.length}} available</small>
+                    <small>{{accordian_slots.length}} <span translate="AVAIL_WORD"></span></small>
                   </p>
                   <p class="selected-time" ng-show="is_selected && !is_open">
                     <small>{{selected_slot.time_12}}</small>
@@ -102,10 +101,10 @@
                     >+</span>
                     <span ng-show="has_availability && is_open"
                     >-</span>
-                      Evening
+                    <span translate="AVAIL_EVENING"></span>
                   </span>
                   <p ng-hide="is_selected || (is_open && has_availability)">
-                    <small>{{accordian_slots.length}} available</small>
+                    <small>{{accordian_slots.length}} <span translate="AVAIL_WORD"></span></small>
                   </p>
                   <p class="selected-time" ng-show="is_selected && !is_open">
                     <small>{{selected_slot.time_12}}</small>
