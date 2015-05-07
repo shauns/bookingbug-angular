@@ -97,7 +97,7 @@ angular.module('BB.Directives').directive 'bbMonthPicker', () ->
 
 
 
-angular.module('BB.Directives').directive 'bbSlick', ($rootScope, $timeout, $bbug, PathSvc, $compile, $templateCache) ->
+angular.module('BB.Directives').directive 'bbSlick', ($rootScope, $timeout, $bbug, PathSvc, $compile, $templateCache, $window) ->
   restrict: 'A'
   replace: false
   scope : false
@@ -106,7 +106,7 @@ angular.module('BB.Directives').directive 'bbSlick', ($rootScope, $timeout, $bbu
     PathSvc.directivePartial "month_picker"
   link : (scope, element, attrs) ->
 
-    windowWidth = $bbug(window).width()
+    windowWidth = angular.element($window).width()
     scope.index = 0
     breakpoints = scope.$eval attrs.bbSlick
 
@@ -115,32 +115,30 @@ angular.module('BB.Directives').directive 'bbSlick', ($rootScope, $timeout, $bbu
       register()
 
     register = ->
-      slider = $bbug('div[slick]')
+      slider = angular.element('div[slick]')
       slider.on 'afterChange', (event, slick, currentSlide, nextSlide) ->
-        console.log 'afterChange'
         scope.index = currentSlide
         scope.setMonth(currentSlide, slick.options.slidesToShow)
         scope.$apply()
 
-    $bbug(window).on 'orientationchange.slick.slick', ->
-      checkResponsive()
+    angular.element($window).on 'orientationchange.slick.slick', ->
+      scope.$broadcast 'window:resize'
 
-    $bbug(window).on 'resize.slick.slick', ->
-      if $bbug(window).width() != windowWidth
-        clearTimeout windowDelay
-        windowDelay = window.setTimeout((->
-          windowWidth = $bbug(window).width()
-          checkResponsive()
-        ), 100)
+    angular.element($window).on 'resize.slick.slick', ->
+      scope.$broadcast 'window:resize'
+
+    scope.$on 'window:resize', ->
+      scope.checkResponsive()
+      # TODO need to fine means to wait until final resize then trigger compilation
 
     getSlidesToShow = ->
       for b in breakpoints
-        if windowWidth <= b.breakpoint
+        if angular.element($window).width() <= b.breakpoint
           slidesToShow = b.settings.slidesToShow
           break
       return slidesToShow or 3
 
-    checkResponsive = ->
+    scope.checkResponsive = ->
       slides_to_show = getSlidesToShow()
 
       if scope.slidesToShow != slides_to_show
