@@ -99,7 +99,7 @@ angular.module('BB.Directives').directive 'bbMonthPicker', () ->
 
 angular.module('BB.Directives').directive 'bbSlick', ($rootScope, $timeout, $bbug, PathSvc, $compile, $templateCache, $window) ->
   restrict: 'A'
-  replace: false
+  replace: true
   scope : true
   require : '^bbMonthPicker'
   templateUrl : (element, attrs) ->
@@ -128,8 +128,12 @@ angular.module('BB.Directives').directive 'bbSlick', ($rootScope, $timeout, $bbu
       $scope.$broadcast 'window:resize'
 
     $scope.$on 'window:resize', ->
-      $scope.checkResponsive()
-      # TODO need to fine means to wait until final resize then trigger compilation
+      if angular.element($window).width() != windowWidth
+        clearTimeout($scope.windowDelay)
+        $scope.windowDelay = setTimeout () ->
+          windowWidth = angular.element($window).width()
+          $scope.checkResponsive()
+        , 200
 
     getSlidesToShow = ->
       for b in breakpoints
@@ -140,11 +144,10 @@ angular.module('BB.Directives').directive 'bbSlick', ($rootScope, $timeout, $bbu
 
     $scope.checkResponsive = ->
       slides_to_show = getSlidesToShow()
-
       if $scope.slidesToShow != slides_to_show
         $scope.slidesToShow = slides_to_show
         # recompile template to reinit slick
         html = $templateCache.get('month_picker.html')
-        e = $compile(html) $scope, (cloned, $scope) =>
-          $element.replaceWith(cloned)
-          register()
+        e = $compile(html)($scope)
+        $element.replaceWith(e)
+        register()
