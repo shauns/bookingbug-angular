@@ -100,35 +100,35 @@ angular.module('BB.Directives').directive 'bbMonthPicker', () ->
 angular.module('BB.Directives').directive 'bbSlick', ($rootScope, $timeout, $bbug, PathSvc, $compile, $templateCache, $window) ->
   restrict: 'A'
   replace: false
-  scope : false
+  scope : true
   require : '^bbMonthPicker'
   templateUrl : (element, attrs) ->
     PathSvc.directivePartial "month_picker"
-  link : (scope, element, attrs) ->
+  controller : ($scope, $element, $attrs) ->
 
     windowWidth = angular.element($window).width()
-    scope.index = 0
-    breakpoints = scope.$eval attrs.bbSlick
+    $scope.index = 0
+    breakpoints = $scope.$eval $attrs.bbSlick
 
     $rootScope.connection_started.then ->
-      scope.slidesToShow = getSlidesToShow()
+      $scope.slidesToShow = getSlidesToShow()
       register()
 
     register = ->
       slider = angular.element('div[slick]')
       slider.on 'afterChange', (event, slick, currentSlide, nextSlide) ->
-        scope.index = currentSlide
-        scope.setMonth(currentSlide, slick.options.slidesToShow)
-        scope.$apply()
+        $scope.index = currentSlide
+        $scope.setMonth(currentSlide, slick.options.slidesToShow)
+        $scope.$apply()
 
     angular.element($window).on 'orientationchange.slick.slick', ->
-      scope.$broadcast 'window:resize'
+      $scope.$broadcast 'window:resize'
 
     angular.element($window).on 'resize.slick.slick', ->
-      scope.$broadcast 'window:resize'
+      $scope.$broadcast 'window:resize'
 
-    scope.$on 'window:resize', ->
-      scope.checkResponsive()
+    $scope.$on 'window:resize', ->
+      $scope.checkResponsive()
       # TODO need to fine means to wait until final resize then trigger compilation
 
     getSlidesToShow = ->
@@ -138,13 +138,13 @@ angular.module('BB.Directives').directive 'bbSlick', ($rootScope, $timeout, $bbu
           break
       return slidesToShow or 3
 
-    scope.checkResponsive = ->
+    $scope.checkResponsive = ->
       slides_to_show = getSlidesToShow()
 
-      if scope.slidesToShow != slides_to_show
-        scope.slidesToShow = slides_to_show
+      if $scope.slidesToShow != slides_to_show
+        $scope.slidesToShow = slides_to_show
         # recompile template to reinit slick
         html = $templateCache.get('month_picker.html')
-        e = $compile(html) scope, (cloned, scope) =>
-          element.replaceWith(cloned)
+        e = $compile(html) $scope, (cloned, $scope) =>
+          $element.replaceWith(cloned)
           register()
