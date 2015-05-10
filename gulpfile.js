@@ -103,6 +103,11 @@ gulp.task('fonts', function() {
     .pipe(gulp.dest('release/fonts'));
 });
 
+gulp.task('languages', function() {
+    gulp.src('src/languages/*')
+        .pipe(flatten())
+        .pipe(gulp.dest('release/languages'));
+});
 
 gulp.task('watch', function() {
   gulp.watch(['./src/**/*', '!./**/*~'], ['assets']);
@@ -115,6 +120,6 @@ gulp.task('webserver', function() {
   });
 });
 
-gulp.task('assets', ['clean', 'javascripts', 'images', 'stylesheets','fonts', 'theme', 'shims', 'widget']);
+gulp.task('assets', ['clean', 'javascripts', 'images', 'stylesheets','fonts', 'theme', 'shims', 'widget', 'languages']);
 
 gulp.task('default', ['assets', 'watch', 'webserver']);
