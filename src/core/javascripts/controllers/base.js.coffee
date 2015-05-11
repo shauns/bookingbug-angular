@@ -605,7 +605,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     else if ($scope.bb.company.$has('event_groups') && !$scope.bb.current_item.event_group && !$scope.bb.current_item.service && !$scope.bb.current_item.product && !$scope.bb.current_item.deal) or
             ($scope.bb.company.$has('events') && $scope.bb.current_item.event_group && !$scope.bb.current_item.event? && !$scope.bb.current_item.product && !$scope.bb.current_item.deal)
       return $scope.showPage('event_list')
-    else if ($scope.bb.company.$has('events') && $scope.bb.current_item.event && !$scope.bb.current_item.num_book && !$scope.bb.current_item.tickets && !$scope.bb.current_item.product && !$scope.bb.current_item.deal)
+    else if ($scope.bb.company.$has('events') && $scope.bb.current_item.event && !$scope.bb.current_item.num_book && (!$scope.bb.current_item.tickets || !$scope.bb.current_item.tickets.qty) && !$scope.bb.current_item.product && !$scope.bb.current_item.deal)
       return $scope.showPage('event')
     else if ($scope.bb.company.$has('services') && !$scope.bb.current_item.service && !$scope.bb.current_item.event? && !$scope.bb.current_item.product && !$scope.bb.current_item.deal)
       return if $scope.setPageRoute($rootScope.Route.Service)
