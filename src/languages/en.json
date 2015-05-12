@@ -64,8 +64,6 @@
   "BASKET_GIFT_CERTIFICATE_SELECTED": "Selected Gift Certificates",
   "BASKET_TOTAL":"Total",
   "BASKET_TOTAL_DUE_NOW":"Total Due Now",
-  "SERVICE":"Service",
-  "SERVICE_NAME":"{{service}} at {{company}}",
   "SOLD_OUT_STATUS":"Sold out",
   "SOLD_OUT_HIDE":"Hide Sold Out Events",
   "SOLD_OUT_SHOW":"Show Sold Out Events",

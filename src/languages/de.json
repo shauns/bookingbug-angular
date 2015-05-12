@@ -47,8 +47,6 @@
   "BASKET_GIFT_CERTIFICATE_BALANCE": "Restwert auf Geschenkgutscheine",
   "BASKET_TOTAL": "gesamt",
   "BASKET_TOTAL_DUE_NOW": "Insgesamt Aufgrund Now",
-  "SERVICE": "Service",
-  "SERVICE_NAME": "{{item}} at {{company}}",
   "SERVICE_CONFIRMATION": "Farbberatung am/um",
   "DATE_TIME_CONFIRMATION": "Datum/Uhrzeit:",
   "SOLD_OUT_STATUS": "ausverkauft",
