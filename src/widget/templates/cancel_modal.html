@@ -6,11 +6,11 @@
   
   <ul class="confirmation-summary">
     <li class="row confirmation-summary-item">
-      <div class="col-xs-3" translate="SERVICE"></div>
+      <div class="col-xs-3"><span translate="SERVICE"><span>:</div>
       <div class="col-xs-9">{{booking.service_name}}</div>
     </li>
     <li class="row confirmation-summary-item">
-      <div class="col-xs-3" translate="WHEN"></div>
+      <div class="col-xs-3"><span translate="WHEN"></span>:</div>
       <div class="col-xs-9">{{booking.datetime | datetime: "h:mma dddd Do MMMM" : false}}</div>
     </li>
   </ul>
