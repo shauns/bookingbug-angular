@@ -12,6 +12,7 @@
   "PROGRESS_SELECT":"Select",
   "PROGRESS_CONFIRM":"Confirm",
   "PROGRESS_NEXT":"Continue",
+  "PROGRESS_BOOK":"Book",
   "PROGRESS_OK":"OK",
   "PROGRESS_MOVE_BOOKING":"Move booking",
   "PROGRESS_CANCEL_CANCEL":"Do not cancel",
@@ -95,7 +96,8 @@
   "DETAILS_OTHER_INFO":"Other information",
   "CONFIRMATION_TITLE":"Booking Confirmation",
   "CONFIRMATION_SUBHEADER":"Thanks {{member_name}}. Your booking is now confirmed. We have emailed you the details below.",
-  "PRINT":"Print",
+  "CONFIRMATION_SUBHEADER_WAITLIST":"Thanks {{ member_name }}. You have successully booked onto {{ purchase_item }}.", 
+  "PRINT":"Print"
   "CALENDAR_EXPORT_TITLE":"Export to calendar",
   "BOOKING_REFERENCE":"Booking Reference",
   "CONFIRMATION_INSPIRATION_LINK":"Visit our inspiration site",

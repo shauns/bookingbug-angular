@@ -5,37 +5,37 @@
 <div ng-show="waitlist_bookings">
 <ul class="confirmation-summary" ng-repeat="i in waitlist_bookings">
   <li ng-if="i.id" class="row confirmation-summary-item">
-    <div class="col-sm-3">Booking Reference:</div>
+    <div class="col-sm-3"><span translate="BOOKING_REFERENCE"></span>:</div>
     <div class="col-sm-9">{{i.id}}</div>
   </li>
   <li ng-if="i.full_describe" class="row confirmation-summary-item">
-    <div class="col-sm-3">Service:</div>
+    <div class="col-sm-3"><span translate="ITEM_SERVICE"></span>:</div>
     <div class="col-sm-9">{{i.full_describe}}</div>
   </li>
   <li ng-if="i.describe" class="row confirmation-summary-item">
-    <div class="col-sm-3">Date/Time:</div>
+    <div class="col-sm-3"><span translate="ITEM_DATE"></span>/<span translate="ITEM_TIME"></span>:</div>
     <div class="col-sm-9">{{i.describe}}</div>
   </li>
   <li ng-if="i.price" class="row confirmation-summary-item">
-    <div class="col-sm-3">Price:</div>
+    <div class="col-sm-3"><span translate="ITEM_PRICE"></span>:</div>
     <div class="col-sm-9">{{i.price | pretty_price }}</div>
   </li>
   <li class="row confirmation-summary-item">
   <div class="col-sm-3 pull-right">
-    <button type="button" class="btn btn-primary btn-block" ng-click="bookWaitlistItem(i)">Book</button>
+    <button type="button" class="btn btn-primary btn-block" ng-click="bookWaitlistItem(i)" translate="PROGRESS_BOOK"></button>
   </div>
   </li>
 </ul>
 <ul class="confirmation-summary">
 <li class="row confirmation-summary-item">
   <div class="row">
-    <div class="col-sm-6 col-xs-6 total-label"><strong>Total</strong></div>
+    <div class="col-sm-6 col-xs-6 total-label"><strong translate="BASKET_TOTAL"></strong></div>
     <div class="col-sm-3 col-xs-6"><strong>{{purchase.total_price | pretty_price }}</strong></div>
   </div>
 </li>
 <li class="row confirmation-summary-item">
   <div class="row">
-    <div class="col-sm-6 col-xs-6 total-label"><strong>Total Due Now</strong></div>
+    <div class="col-sm-6 col-xs-6 total-label"><strong translate="BASKET_TOTAL_DUE_NOW"></strong></div>
     <div class="col-sm-3 col-xs-6"><strong>{{purchase.due_now | currency }}</strong></div>
   </div>
 </li>
@@ -44,18 +44,18 @@
 
 <div ng-hide="waitlist_bookings">
  <ul class="confirmation-summary">
-   <p> Thanks {{purchase.client.first_name }}. You have successully booked onto {{purchase.bookings[0].service_name }}. </p>
+   <p translate="CONFIRMATION_SUBHEADER_WAITLIST" translate-values="{member_name: purchase.client.first_name, purchase_item: purchase.bookings[0].service_name}"></p>
 </ul>
 <ul class="confirmation-summary">
 <li class="row confirmation-summary-item">
   <div class="row">
-    <div class="col-sm-6 col-xs-6 total-label"><strong>Total</strong></div>
+    <div class="col-sm-6 col-xs-6 total-label"><strong translate="BASKET_TOTAL">/strong></div>
     <div class="col-sm-3 col-xs-6"><strong>{{purchase.total_price | pretty_price }}</strong></div>
   </div>
 </li>
 <li class="row confirmation-summary-item">
   <div class="row">
-    <div class="col-sm-6 col-xs-6 total-label"><strong>Total Due Now</strong></div>
+    <div class="col-sm-6 col-xs-6 total-label"><strong translate="BASKET_TOTAL_DUE_NOW"></strong></div>
     <div class="col-sm-3 col-xs-6"><strong>{{purchase.due_now | currency }}</strong></div>
   </div>
 </li>
@@ -74,10 +74,10 @@
         decide-next-page="decideNextPage">
       </div>
     </div>
-    <button type="button" class="btn btn-link" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</button>
+    <button type="button" class="btn btn-link" onclick="window.print()"><span class="glyphicon glyphicon-print"></span><span translate="PRINT"></span></button>
     <div bb-booking-export class="bb-booking-export"></div>
     <div class="col-sm-12 pull-left">
-      <button type="button" class="btn btn-default" ng-click="$parent.is_waitlist = false"> Back </button>
+      <button type="button" class="btn btn-default" ng-click="$parent.is_waitlist = false" translate="PROGRESS_BACK"></button>
     </div>
      </div>
 </div>
