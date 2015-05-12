@@ -21,7 +21,7 @@
   "MAP_PLACEHOLDER":"Enter a town, city, postcode or showroom",
   "GEOLOCATE":"Use current location",
   "STORE_RESULT_TITLE":"{{number}} results for showrooms near {{address}}",
-  "STORE_PHONE":"Phone:",
+  "STORE_PHONE":"Phone",
   "SHOWROOM":"Showroom",
   "ITEM_SERVICE":"Service",
   "ITEM_RESOURCE":"Resource",
