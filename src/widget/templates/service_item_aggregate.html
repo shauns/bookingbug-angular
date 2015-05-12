@@ -1,42 +1,42 @@
 <ul class="bb-summary-list">
   <li class="bb-confirmation-summary-item" ng-if="bb.current_item.service.name">
-    <div class="bb-summary-label" translate="ITEM_SERVICE">
+    <div class="bb-summary-label"><span translate="ITEM_SERVICE"></span>:
     </div>
     <div class="bb-summary-value"><span>{{bb.current_item.service.name}}</span>
     </div>
   </li>
   <li class="bb-confirmation-summary-item" ng-if="bb.current_item.resource.name">
-    <div class="bb-summary-label" translate="ITEM_RESOURCE">
+    <div class="bb-summary-label"><span translate="ITEM_RESOURCE"></span>:
     </div>
     <div class="bb-summary-value bb-summary-value"><span>{{bb.current_item.resource.name}}</span>
     </div>
   </li>
   <li class="bb-confirmation-summary-item" ng-if="bb.current_item.person.name">
-    <div class="bb-summary-label" translate="ITEM_PERSON">
+    <div class="bb-summary-label"><span translate="ITEM_PERSON"></span>:
     </div>
     <div class="bb-summary-value"><span>{{bb.current_item.person.name}}</span>
     </div>
   </li>
   <li class="bb-confirmation-summary-item" ng-if="bb.current_item.service.price">
-    <div class="bb-summary-label" translate="ITEM_PRICE">
+    <div class="bb-summary-label"><span translate="ITEM_PRICE"></span>:
     </div>
     <div class="bb-summary-value"><span>{{bb.current_item.service.price | currency: bb.company.currency_code }}</span>
     </div>
   </li>
   <li class="bb-confirmation-summary-item" ng-if="bb.current_item.date.date">
-    <div class="bb-summary-label" translate="ITEM_DATE">
+    <div class="bb-summary-label"><span translate="ITEM_DATE"></span>:
     </div>
     <div class="bb-summary-value"><span>{{bb.current_item.date.date | datetime: 'dddd D MMMM':false}}</span>
     </div>
   </li>
   <li class="bb-confirmation-summary-item" ng-if="bb.current_item.time.time">
-    <div class="bb-summary-label" translate="ITEM_TIME">
+    <div class="bb-summary-label"><span translate="ITEM_TIME"></span>:
     </div>
     <div class="bb-summary-value"><span>{{bb.current_item.start_datetime() | datetime: 'h.mma':false }}</span>
     </div>
   </li>
   <li class="bb-confirmation-summary-item" ng-if="bb.current_item.duration">
-    <div class="bb-summary-label" translate="ITEM_DURATION">
+    <div class="bb-summary-label"><span translate="ITEM_DURATION"></span>:
     </div>
     <div class="bb-summary-value"><span>{{bb.current_item.duration | time_period}}</span>
     </div>
