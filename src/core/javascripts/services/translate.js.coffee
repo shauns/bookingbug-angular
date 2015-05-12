@@ -5,7 +5,6 @@ angular.module('pascalprecht.translate').config ($translateProvider) ->
       prefix: 'languages/',
       suffix: '.json'
     })
-    .preferredLanguage('en')
     .determinePreferredLanguage () ->
       language = navigator.languages[0] or navigator.language or navigator.browserLanguage or navigator.systemLanguage or navigator.userLanguage or 'en'
       language.substr(0,2)
