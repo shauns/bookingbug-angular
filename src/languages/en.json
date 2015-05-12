@@ -31,6 +31,7 @@
   "ITEM_PRICE":"Price",
   "ITEM_DATE":"Date",
   "ITEM_TIME":"Time",
+  "ITEM_FREE":"Free",
   "ITEM_DURATION":"Duration",
   "BASKET_TITLE":"Your basket",
   "BASKET_APPLY":"Apply",

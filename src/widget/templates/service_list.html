@@ -53,7 +53,7 @@
           <div class="col-sm-2 col-xs-6">
             <div class="bb-service-price">
               <span ng-show="item.price > 0">{{item.price | currency: bb.company.currency_code}}</span>
-              <span ng-show="item.price == 0">Free</span>
+              <span ng-show="item.price == 0" translate="ITEM_FREE"></span>
             </div>
           </div>
           <div class="col-xs-12 hidden-sm hidden-md hidden-lg bbb-service-image" ng-if="item.extra.image_url">
@@ -85,6 +85,6 @@
 
 <div class="row bb-step-navigation">
   <div class="col-sm-3">
-    <button type="button" class="btn btn-default" bb-debounce ng-click="loadPreviousStep()" ng-show="bb.current_step > 1" translate="PROGRESS_BACK""></button>
+    <button type="button" class="btn btn-default" bb-debounce ng-click="loadPreviousStep()" ng-show="bb.current_step > 1" translate="PROGRESS_BACK"></button>
   </div>
 </div>
