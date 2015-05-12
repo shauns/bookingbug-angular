@@ -94,7 +94,7 @@
   "DETAILS_VALIDATION_MSG":"This field is required",
   "DETAILS_REQUIRED":"Required",
   "DETAILS_OTHER_INFO":"Other information",
-  "DETAILS_QUESTIONS":"",
+  "DETAILS_QUESTIONS":"Questions",
   "CLIENT_DETAILS_TITLE":"Client details",
   "CLIENT_DETAILS_FIRST_NAME":"Please enter the client's first name",
   "CLIENT_DETAILS_LAST_NAME":"Please enter the client's last name",
@@ -112,6 +112,8 @@
   "BOOKING_DETAILS":"Booking Details",
   "CANCEL_CONFIRMATION":"Your booking has been cancelled.",
   "NEWSLETTER":"Sign up to our email newsletter and be first to hear about events, news and inspiration.",
+  "DASHBOARD":"Dashboard",
+  "DASHBOARD_TITLE":"Pick a Location/Service",
   "ERROR":{
     "GENERIC":"Sorry, it appears that something went wrong. Please try again or call the business you're booking with if the problem persists.",
     "LOCATION_NOT_FOUND":"Sorry, we don't recognise that location",
