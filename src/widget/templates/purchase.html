@@ -8,7 +8,7 @@
 
         <div ng-if="purchase && bookings.length == 0">
           <div class="confirmation-header">
-            <h2 class="confirmation-heading">Your booking has been cancelled</h2>
+            <h2 class="confirmation-heading" translate="CANCEL_CONFIRMATION"></h2>
           </div>
         </div>
 
@@ -18,33 +18,33 @@
           </div>
           <div ng-hide="is_waitlist">
             <div class="confirmation-header">
-              <h2 class="confirmation-heading">Your {{purchase.bookings[0].service_name}} booking</h2>
+              <h2 class="confirmation-heading" translate="CONFIRMATION_PURCHASE_TITLE" translate-values="{service_name: purchase.bookings[0].service_name}"></h2>
               <!-- <p ng-if="bb.current_item.move_done" class="move-done-msg">Your booking has been moved to <strong>{{purchase.bookings[0].datetime | datetime: "h:mma dddd Do MMMM"}}</strong>.</p> -->
               <div class="row hidden-print text-right" >
-              <button type="button" class="btn btn-link" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</button>
+              <button type="button" class="btn btn-link" onclick="window.print()"><span class="glyphicon glyphicon-print"></span><span translate="PRINT"></span></button>
               <div bb-booking-export class="bb-booking-export"></div>
               </div>
             </div>
 
             <ul class="confirmation-summary bb-checkout-top-border">
               <li class="row confirmation-summary-item">
-                <div class="col-xs-3">Name:</div>
+                <div class="col-xs-3"><span translate="RECIPIENT_NAME"></span>:</div>
                 <div class="col-xs-9">{{purchase.client.name}}</div>
               </li>
               <li class="row confirmation-summary-item">
-                <div class="col-xs-3">Email:</div>
+                <div class="col-xs-3"><span translate="DETAILS_EMAIL"></span>:</div>
                 <div class="col-xs-9">{{purchase.client.email}}</div>
               </li>
               <li class="row confirmation-summary-item">
-                <div class="col-xs-3">Service:</div>
+                <div class="col-xs-3"><span translate="ITEM_SERVICE"></span>:</div>
                 <div class="col-xs-9">{{purchase.bookings[0].service_name}}</div>
               </li>
               <li class="row confirmation-summary-item">
-                <div class="col-xs-3">When:</div>
+                <div class="col-xs-3"><span translate="WHEN"></span>:</div>
                 <div class="col-xs-9">{{purchase.bookings[0].datetime | datetime: "h:mma dddd Do MMMM":false}}</div>
               </li>
               <li class="row confirmation-summary-item">
-                <div class="col-xs-3">Where:</div>
+                <div class="col-xs-3"><span translate="WHERE"></span>:</div>
                 <div class="col-xs-9">
                   <ul class="address">
                     <li class="address-item">{{bb.company.name}}</li>
@@ -54,7 +54,7 @@
                 </div>
               </li>
               <li class="row confirmation-summary-item">
-                <div class="col-xs-3">Price:</div>
+                <div class="col-xs-3"><span translate="ITEM_PRICE"></span>:</div>
                 <div class="col-xs-9">{{purchase.total_price | pretty_price }}</div>
               </li>
             </ul>
@@ -74,7 +74,7 @@
                   <button type="button" class="btn btn-primary btn-block" ng-click="move(bookings[0], '', {use_resource: true})" translate="PROGRESS_MOVE_BOOKING"></button>
                 </div>
                 <div ng-show="waitlist_bookings"class="col-sm-4">
-                  <button type="button" class="btn btn-primary btn-block" ng-click="is_waitlist = true">Book Waitlist Items</button>
+                  <button type="button" class="btn btn-primary btn-block" ng-click="is_waitlist = true" translate="PROGRESS_BOOK_WAITLIST_ITEMS"></button>
                 </div>
               </div>
             </div>
