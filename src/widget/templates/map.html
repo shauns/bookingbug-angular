@@ -43,7 +43,7 @@
 
           <p><strong>{{currentMarker.company.name}}</strong></p>
           <p>{{currentMarker.company.address | address_single_line}}</p>
-          <p><strong translate="STORE_PHONE"></strong> {{currentMarker.company.address.phone | uk_local_number}}</p>
+          <p><strong><span translate="STORE_PHONE">s></span>:</strong> {{currentMarker.company.address.phone | uk_local_number}}</p>
           <p>
             <span ng-if="currentMarker.company.extra.closing_time"><strong>{{currentMarker.company.extra.closing_time}}</strong></span>
             <span class="distance">{{roundNumberUp(currentMarker.distance,1)}}mi</span>
