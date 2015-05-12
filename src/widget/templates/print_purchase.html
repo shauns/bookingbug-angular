@@ -29,19 +29,19 @@ end
 
           <ul class="confirmation-summary" ng-repeat="i in purchase.items">
             <li ng-if="i.full_describe" class="row confirmation-summary-item">
-              <div class="col-xs-12 col-sm-3">Item:</div>
+              <div class="col-xs-12 col-sm-3"><span translate="BASKET_ITEM"></span>I:</div>
               <div class="col-xs-12 col-sm-9">{{i.full_describe}}</div>
             </li>
             <li ng-if="i.full_describe" class="row confirmation-summary-item">
-              <div class="col-xs-12 col-sm-3">Date and Time:</div>
+              <div class="col-xs-12 col-sm-3"><span translate="ITEM_DATE"></span> <span translate="AND"></span> <span translate="ITEM_TIME"></span>:</div>
               <div class="col-xs-12 col-sm-9">{{i.describe}}</div>
             </li>
             <li ng-if="i.full_describe" class="row confirmation-summary-item">
-              <div class="col-xs-12 col-sm-3">Quantity:</div>
+              <div class="col-xs-12 col-sm-3"><span translate="ITEM_QUANTITY"></span>:</div>
               <div class="col-xs-12 col-sm-9">{{i.quantity}}</div>
             </li>
             <li ng-if="i.full_describe" class="row confirmation-summary-item">
-              <div class="col-xs-12 col-sm-3">Booking Reference:</div>
+              <div class="col-xs-12 col-sm-3"><span translate="BOOKING_REFERENCE"></span>:</div>
               <div class="col-xs-12 col-sm-9">{{i.id}}</div>
             </li>
           </ul>
@@ -60,7 +60,7 @@ end
 
 <footer>
   <div class="powered-by hidden-print">
-    <p>Bookings powered by <span style="color:#087f94">booking</span><span style="color:#88c66f">bug</p>
+    <p><span translate="POWERED_BY"></span><span style="color:#087f94">booking</span><span style="color:#88c66f">bug</p>
     <a href="http://www.bookingbug.com" style="text-decoration:none" target="_blank"></a>
   </div>
 </footer>
