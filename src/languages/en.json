@@ -97,7 +97,7 @@
   "CONFIRMATION_TITLE":"Booking Confirmation",
   "CONFIRMATION_SUBHEADER":"Thanks {{member_name}}. Your booking is now confirmed. We have emailed you the details below.",
   "CONFIRMATION_SUBHEADER_WAITLIST":"Thanks {{ member_name }}. You have successully booked onto {{ purchase_item }}.", 
-  "PRINT":"Print"
+  "PRINT":"Print",
   "CALENDAR_EXPORT_TITLE":"Export to calendar",
   "BOOKING_REFERENCE":"Booking Reference",
   "CONFIRMATION_INSPIRATION_LINK":"Visit our inspiration site",
