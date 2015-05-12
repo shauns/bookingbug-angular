@@ -26,6 +26,7 @@
   "STORE_RESULT_TITLE":"{{number}} results for showrooms near {{address}}",
   "STORE_PHONE":"Phone",
   "SHOWROOM":"Showroom",
+  "SERVICE_LIST_NO":"No services match your filter criteria.",
   "ITEM_SERVICE":"Service",
   "ITEM_RESOURCE":"Resource",
   "ITEM_PERSON":"Person",
