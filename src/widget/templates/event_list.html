@@ -114,8 +114,8 @@
 
             <div class="form-group">
               <button type="button" class="btn btn-link" ng-click="filters.hide_sold_out_events =! filters.hide_sold_out_events; filterChanged()">
-                <span ng-hide="filters.hide_sold_out_events" translate="SOLD_OUT_HIDE"></span>
-                <span ng-show="filters.hide_sold_out_events" translate="SOLD_OUT_SHOW"></span>
+                <span ng-hide="filters.hide_sold_out_events" translate="EVENT_SOLD_OUT_HIDE"></span>
+                <span ng-show="filters.hide_sold_out_events" translate="EVENT_SOLD_OUT_SHOW"></span>
               </button>
             </div>
 
@@ -178,7 +178,7 @@
               <button type="button" ng-click="selectItem(item)" class="btn btn-primary btn-block" ng-disabled="item.getSpacesLeft() == 0 && !bb.company.settings.has_waitlists">
                 <span ng-show="item.getSpacesLeft() > 0" translate="PROGRESS_SELECT"></span>
                 <div ng-show="item.getSpacesLeft() <= 0 && !bb.company.settings.has_waitlists">
-                  <span class="status-sold-out" translate="SOLD_OUT"></span>
+                  <span class="status-sold-out" translate="EVENT_SOLD_OUT"></span>
                 </div>
                 <div ng-show="item.getSpacesLeft() <= 0 && bb.company.settings.has_waitlists">
                   <span>Join Waitlist</span>
