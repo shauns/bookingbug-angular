@@ -1,7 +1,7 @@
 <div bb-page>
 
   <div class="page-summary">
-    <p>Select a date and time for your {{bb.current_item.service.name}} appointment.</p>
+    <p translate="AVAIL_TITLE" translate-values="{current_item: bb.current_item.service.name}"></p>
     <div bb-include="service_item_aggregate">
     </div>
   </div>
@@ -75,9 +75,9 @@
                     <span class="period-label">
                       <span ng-show="has_availability && !is_open">+</span>
                       <span ng-show="has_availability && is_open">-</span>
-                      Morning
+                      <span translate="AVAIL_MORNING"></span>
                     </span>
-                    <span ng-hide="is_selected || (is_open && has_availability)">{{accordian_slots.length}} available</span>
+                    <span ng-hide="is_selected || (is_open && has_availability)"><span translate="AVAIL_SLOTS" translate-values="{number: accordian_slots.length}"></span></span>
                     <span class="selected-time" ng-show="is_selected && !is_open">{{selected_slot.time_12}}</span>
                   </div>
                 </div>
@@ -100,9 +100,9 @@
                       <span class="period-label">
                       <span ng-show="has_availability && !is_open">+</span>
                       <span ng-show="has_availability && is_open">-</span>
-                      Afternoon
+                      <span translate="AVAIL_AFTERNOON"></span>
                     </span>
-                    <span ng-hide="is_selected || (is_open && has_availability)">{{accordian_slots.length}} available</span>
+                    <span ng-hide="is_selected || (is_open && has_availability)"><span translate="AVAIL_SLOTS" translate-values="{number: accordian_slots.length}"></span></span>
                     <span class="selected-time" ng-show="is_selected && !is_open">{{selected_slot.time_12}}</span>
                   </div>
                 </div>
@@ -124,9 +124,9 @@
                     <span class="period-label">
                       <span ng-show="has_availability && !is_open">+</span>
                       <span ng-show="has_availability && is_open">-</span>
-                      Evening
+                      <span translate="AVAIL_EVENING"></span>
                     </span>
-                    <span ng-hide="is_selected || (is_open && has_availability)">{{accordian_slots.length}} available</span>
+                    <span ng-hide="is_selected || (is_open && has_availability)"><span translate="AVAIL_SLOTS" translate-values="{number: accordian_slots.length}"></span></span>
                     <span class="selected-time" ng-show="is_selected && !is_open">{{selected_slot.time_12}}</span>
                   </div>
                 </div>
@@ -164,7 +164,7 @@
         </button>
       </div>
       <div class="col-sm-2 col-sm-pull-10 text-left">
-        <button type="button" class="btn btn-default" bb-debounce ng-click="loadPreviousStep()" ng-if="!bb.moving_booking" translate="PROGRESS_BACK""></button>
+        <button type="button" class="btn btn-default" bb-debounce ng-click="loadPreviousStep()" ng-if="!bb.moving_booking" translate="PROGRESS_BACK"></button>
       </div>
     </div>
   </div>  

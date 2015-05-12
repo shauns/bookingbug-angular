@@ -62,7 +62,7 @@
   "SOLD_OUT_STATUS":"Sold out",
   "SOLD_OUT_HIDE":"Hide Sold Out Events",
   "SOLD_OUT_SHOW":"Show Sold Out Events",
-  "AVAIL_TITLE":"Select a date and time for your Colour Consultation",
+  "AVAIL_TITLE":"Select a date and time for your {{ current_item }} appointment.",
   "APPOINTMENT_DATE":"Date",
   "APPOINTMENT_TIME":"Time",
   "APPOINTMENT_DURATION":"Duration",
