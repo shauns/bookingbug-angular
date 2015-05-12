@@ -101,6 +101,7 @@
   "WHERE":"Where",
   "BOOKING_DETAILS":"Booking Details",
   "CANCEL_CONFIRMATION":"Your booking has been cancelled.",
+  "NEWSLETTER":"Sign up to our email newsletter and be first to hear about events, news and inspiration.",
   "ERROR":{
     "GENERIC":"Sorry, it appears that something went wrong. Please try again or call the business you're booking with if the problem persists.",
     "LOCATION_NOT_FOUND":"Sorry, we don't recognise that location",
