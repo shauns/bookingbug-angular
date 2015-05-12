@@ -36,6 +36,8 @@
   "ITEM_FREE":"Free",
   "ITEM_DURATION":"Duration",
   "ITEM_QUANTITY":"Quantity",
+  "ITEM_WHEN":"When",
+  "ITEM_WHERE":"Where",
   "BASKET_TITLE":"Your basket",
   "BASKET_APPLY":"Apply",
   "BASKET_BOOKING_FEE":"Booking Fee",
