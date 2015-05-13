@@ -62,6 +62,7 @@
   "ITEM_FREE":"Free",
   "ITEM_DATE":"Date",
   "ITEM_TIME":"Time",
+  "ITEM_DATE_AND_OR_TIME": "Date/Time",
   "ITEM_DURATION":"Duration",
   "ITEM_QTY":"Qty",
   "ITEM_QUANTITY":"Quantity",
