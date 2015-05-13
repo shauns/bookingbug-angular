@@ -135,6 +135,7 @@
   "PAYMENT_DETAILS_TITLE":"Payment Details",
   "PAYMENT_INSTRUCTION":"Please enter your payment details to confirm your booking.",
   "NEWSLETTER":"Sign up to our email newsletter and be first to hear about events, news and inspiration.",
+  "REVIEW":"Review",
   "CONFIRMATION_BOOKING_TITLE":"Booking Confirmation",
   "CONFIRMATION_BOOKING_SUBHEADER":"Thanks {{ member_name }}. Your booking is now confirmed. We have emailed you the details below.",
   "CONFIRMATION_BOOKING_SUBHEADER_WITH_WAITLIST":"Thanks {{ member_name }}. Your have successfully made the following bookings. We have you emailed you the details below.",

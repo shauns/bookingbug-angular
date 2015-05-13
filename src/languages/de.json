@@ -93,6 +93,7 @@
   "PAYMENT_DETAILS_TITLE":"Einzelheiten zur Bezahlung",
   "PAYMENT_INSTRUCTION":"Bitte geben Sie Ihre Zahlungsinformationen, um Ihre Buchung zu bestätigen.",
   "NEWSLETTER":"Abonnieren Sie unseren Newsletter per E-Mail und erfahren Sie als Erste(r) von unseren Events, Nachrichten und Anregungen.",
+  "REVIEW":"Rezension",
   "CONFIRMATION_BOOKING_TITLE": "Buchungsbestätigung",
   "CONFIRMATION_BOOKING_SUBHEADER":"Danke {{member_name}}. Ihre Buchung ist jetzt bestätigt. Wir haben Ihnen die Angaben per E-Mail geschickt.",
   "CONFIRMATION_PAYMENT_TITLE":"Bezahlung Bestätigung",

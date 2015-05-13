@@ -1,8 +1,6 @@
 {
   "CHANGE_LANG":"Changer de langue",
-  "EN":"English",
-  "DE":"Deutsch",
-  "FR":"Français",
+  "POWERED_BY":"Réservations alimenté par",
   "PROGRESS_BAR_TITLE":"Étape",
   "PROGRESS_BAR_COMPLETE": "Terminé",
   "PROGRESS_BACK":"Retour",
@@ -100,6 +98,7 @@
   "PAYMENT_DETAILS_TITLE":"Détails de paiement",
   "PAYMENT_INSTRUCTION":"S'il vous plaît entrez vos informations de paiement pour confirmer votre réservation.",
   "NEWSLETTER":"Abonnez-vous à notre newsletter électronique pour être parmi les premiers à recevoir des infos sur nos évènements, nos actualités et des idées pour vous inspirer",
+  "REVIEW":"Examen",
   "CONFIRMATION_BOOKING_TITLE":"Confirmation de réservation",
   "CONFIRMATION_BOOKING_SUBHEADER":"Merci  {{member_name}}. Votre réservation est à présent confirmée. Nous vous avons envoyé les renseignements ci-dessous dans un mail.",
   "CONFIRMATION_BOOKING_SUBHEADER_WITH_WAITLIST":"Merci {{ member_name }}. Votre ont fait avec succès les réservations suivantes. Nous vous avons envoyé les renseignements ci-dessous dans un mail.",
