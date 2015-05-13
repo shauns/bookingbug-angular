@@ -135,18 +135,20 @@
 		</div>
 
 		<div class="col-sm-12">
-			<div class="row bb-step-navigation">
-				<div class="col-sm-9 col-sm-push-3 text-right">
-					<div ng-if="bb.company.$has('events')">
-						<button type="button" class="btn btn-primary" ng-click="addAnother('event_list')" translate="BASKET_ITEM_ADD"></button>
+			<div class="bb-step-navigation">
+				<div class="row">
+					<div class="col-sm-9 col-sm-push-3 text-right">
+						<div ng-if="bb.company.$has('events')">
+							<button type="button" class="btn btn-primary" ng-click="addAnother('event_list')" translate="BASKET_ITEM_ADD"></button>
+						</div>
+						<div ng-if="bb.company.$has('services')">
+						  <button type="button" class="btn btn-primary" ng-click="addAnother('service_list')" translate="BASKET_ITEM_ADD"></button>
+	          </div>
+						<button type="button" class="btn btn-primary" ng-click="checkout('checkout')" translate="BASKET_CHECKOUT"></button>
 					</div>
-					<div ng-if="bb.company.$has('services')">
-					  <button type="button" class="btn btn-primary" ng-click="addAnother('service_list')" translate="BASKET_ITEM_ADD"></button>
-          </div>
-					<button type="button" class="btn btn-primary" ng-click="checkout('checkout')" translate="BASKET_CHECKOUT"></button>
-				</div>
-				<div class="col-sm-3 col-sm-pull-9">
-					<button type="button" class="btn btn-default" ng-click="loadPreviousStep()" ng-show="bb.current_step > 1"><span translate="PROGRESS_BACK"></span></button>
+					<div class="col-sm-3 col-sm-pull-9">
+						<button type="button" class="btn btn-default" ng-click="loadPreviousStep()" ng-show="bb.current_step > 1"><span translate="PROGRESS_BACK"></span></button>
+					</div>
 				</div>
 			</div>	
 		</div>

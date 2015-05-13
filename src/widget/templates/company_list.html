@@ -17,8 +17,10 @@
 
 </div>
 
-<div class="row bb-step-navigation" ng-show="bb.current_step > 1">
-  <div class="col-sm-2">
-    <button type="button" class="btn btn-default pull-left" bb-debounce ng-click="loadPreviousStep()" ng-show="bb.current_step > 1" translate="PROGRESS_BACK"></button>
+<div class="bb-step-navigation" ng-show="bb.current_step > 1">
+  <div class="row">
+    <div class="col-sm-2">
+      <button type="button" class="btn btn-default pull-left" bb-debounce ng-click="loadPreviousStep()" ng-show="bb.current_step > 1" translate="PROGRESS_BACK"></button>
+    </div>
   </div>
 </div>
