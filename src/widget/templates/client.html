@@ -6,7 +6,7 @@
   <form name="client_form" ng-submit="validator.validateForm(client_form)" class="form-horizontal" role="form" bb-form-resettable bb-form novalidate>
 
     <div>
-      <h2 class="booking-form-header" translate="DETAILS_TITLE"><h2>
+      <h2 class="booking-form-header"><span translate="DETAILS_TITLE"></span><h2>
     </div>
     
     <div class="form-group" ng-class="{'has-error': client_form.first_name.$invalid && (!client_form.first_name.$pristine || client_form.submitted)}">
@@ -47,7 +47,7 @@
     </div>
     <div ng-show="client_details.hasQuestions">
       <div>
-        <h2 class="booking-form-header" translate="DETAILS_OTHER_INFO"></h2>
+        <h2 class="booking-form-header"><span translate="DETAILS_OTHER_INFO"></span></h2>
       </div>
       <div>
         <div class="form-group" ng-repeat="question in client_details.questions" bb-question-line ng-show="question.currentlyShown" ng-class="{'has-error': client_form['q' + question.id].$invalid && (booking_questions_form['q' + question.id].dirty || booking_form.submitted), 'bb-check-space': (question.detail_type == 'check')}">
@@ -63,11 +63,11 @@
     <div class="bb-step-navigation">
       <div class="row">
         <div class="col-sm-9 col-sm-push-3 text-right">
-          <button type="submit" class="btn btn-primary" ng-click="validator.validateForm(client_form) && validateClient(client_form)" translate="PROGRESS_NEXT"></button>
+          <button type="submit" class="btn btn-primary" ng-click="validator.validateForm(client_form) && validateClient(client_form)"><span translate="PROGRESS_NEXT"></span></button>
         </div>
         <div class="col-sm-3 col-sm-pull-9 text-left">
           <button type="button" class="btn btn-default" ng-click="loadPreviousStep()" ng-show="bb.current_step > 1"><span translate="PROGRESS_BACK"></span></button>
-          <button type="button" class="btn btn-default" ng-click="resetForm()" translate="PROGRESS_CLEAR"></button>
+          <button type="button" class="btn btn-default" ng-click="resetForm()"><span translate="PROGRESS_CLEAR"></span></button>
         </div>
       </div>
     </div>
