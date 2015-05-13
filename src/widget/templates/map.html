@@ -1,7 +1,7 @@
 <div id="map" bb-map class="bb-store-search" ng-init="checkStepTitle('Select a company')">
 
   <div class="page-summary">
-    <p translate="MAP_TITLE"></p>
+    <p><span translate="MAP_TITLE"></span></p>
   </div>
 
   <div class="panel panel-default">
@@ -10,7 +10,7 @@
         <div class="col-xs-10 col-sm-6 col-sm-offset-3">
           <form role="form" ng-submit="searchAddress({region: 'GB', componentRestrictions: {'country': 'GB'}, bounds: {sw:{x:'50.064192',y:'-9.711914'}, ne:{x:'61.015725',y:'3.691406'}}});">
             <div class="form-group" style="width: 100%;">
-              <label class="sr-only" for="search-stores" translate="PROGRESS_SEARCH"></label>
+              <label class="sr-only" for="search-stores"><span translate="PROGRESS_SEARCH"></span></label>
               <div class="input-group">
                 <input type="text" ng-model="address" class="form-control input-lg" id="search-stores" placeholder="{{'MAP_PLACEHOLDER' | translate}}">
                 <span class="input-group-btn">
@@ -32,7 +32,7 @@
 
   <div ng-show="loc">
 
-    <h2 class="company-map-header" translate="STORE_RESULT_TITLE" translate-values="{number: shownMarkers.length, address: address}"></h2>
+    <h2 class="company-map-header"><span translate="STORE_RESULT_TITLE" translate-values="{number: shownMarkers.length, address: address}"></span></h2>
 
     <div class="company-map row">
 
@@ -48,7 +48,7 @@
             <span ng-if="currentMarker.company.extra.closing_time"><strong>{{currentMarker.company.extra.closing_time}}</strong></span>
             <span class="distance">{{roundNumberUp(currentMarker.distance,1)}}mi</span>
           </p>
-          <button type="button" ng-click="selectItem(currentMarker.company)" class="btn btn-primary" ng-show="currentMarker.company.live" translate="PROGRESS_SELECT"></button>
+          <button type="button" ng-click="selectItem(currentMarker.company)" class="btn btn-primary" ng-show="currentMarker.company.live"><span translate="PROGRESS_SELECT"></span></button>
 
         </div>
       </div>
@@ -66,12 +66,12 @@
 
             <ul class="store-details" ng-click="openMarkerInfo(marker)">
               <li>{{marker.company.address | address_single_line }}</li>
-              <li><strong translate="STORE_PHONE"></strong> {{marker.company.address.phone | uk_local_number}}</li>
+              <li><strong><span translate="STORE_PHONE"></span></strong> {{marker.company.address.phone | uk_local_number}}</li>
               <li>
                 <span class="distance">{{roundNumberUp(marker.distance,1)}}mi</span>
               </li>
             </ul>
-            <button type="button" ng-click="selectItem(marker.company)" class="btn btn-primary pull-right" translate="PROGRESS_SELECT"></button>
+            <button type="button" ng-click="selectItem(marker.company)" class="btn btn-primary pull-right"><span translate="PROGRESS_SELECT"></span></button>
           </div>
         </div>
 
