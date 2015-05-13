@@ -1,7 +1,7 @@
 <div bb-page ng-init="checkStepTitle('Review')">
   <div bb-item-details>
 
-    <h1 translate="REVIEW"></h1>
+    <h1><span translate="REVIEW"></span></h1>
 
     <div bb-include="service_item_aggregate">
     </div>
@@ -12,7 +12,7 @@
 
         <div ng-form name="client_form" class="bb-form" role="form" novalidate>
 
-          <h2 class="booking-form-header" translate="DETAILS_TITLE"></h2>
+          <h2 class="booking-form-header"><span translate="DETAILS_TITLE"></span></h2>
 
           <div class="form-group" ng-class="{'has-error': client_form.first_name.$invalid && (client_form.first_name.$dirty || booking_form.submitted)}">
             <label for="first_name" class="control-label col-sm-4"><span translate="DETAILS_FIRST_NAME"></span>*:</label>
@@ -81,7 +81,7 @@
 
         <div ng-show="item_details.hasQuestions" ng-form name="booking_questions_form" class="bb-form" role="form" novalidate>
 
-          <h2 class="booking-form-header" translate="DETAILS_OTHER_INFO"></h2>
+          <h2 class="booking-form-header"><span translate="DETAILS_OTHER_INFO"></span></h2>
 
           <div class="form-group" ng-repeat="question in item_details.questions" ng-if="question.id != '17581' && question.currentlyShown" bb-question-line ng-class="{'has-error': booking_questions_form['q' + question.id].$invalid && (booking_questions_form['q' + question.id].$dirty || booking_form.submitted)}">
             <label for="{{question.id}}" class="control-label col-sm-4">{{question.name}}<span ng-show="question.required">*</span></label>
@@ -105,10 +105,10 @@
     <div class="bb-step-navigation">
       <div class="row">
         <div class="col-sm-9 col-sm-push-3 text-right">
-          <button type="button"  class="btn btn-primary pull-right" ng-click="confirm(booking_form) && validator.validateForm(booking_form) && checkReady() && routeReady()" translate="PROGRESS_CONFIRM"></button>
+          <button type="button"  class="btn btn-primary pull-right" ng-click="confirm(booking_form) && validator.validateForm(booking_form) && checkReady() && routeReady()"><span translate="PROGRESS_CONFIRM"></span></button>
         </div>
         <div class="col-sm-3 col-sm-pull-9">
-          <button type="button" class="btn btn-default pull-left" bb-debounce ng-click="loadPreviousStep()" ng-show="bb.current_step > 1" translate="PROGRESS_BACK"></button>
+          <button type="button" class="btn btn-default pull-left" bb-debounce ng-click="loadPreviousStep()" ng-show="bb.current_step > 1"><span translate="PROGRESS_BACK"></span></button>
         </div>
       </div>
     </div>
