@@ -8,7 +8,7 @@
 
         <div ng-if="purchase && bookings.length == 0">
           <div class="confirmation-header">
-            <h2 class="confirmation-heading" translate="CANCEL_CONFIRMATION"></h2>
+            <h2 class="confirmation-heading"><span translate="CANCEL_CONFIRMATION"></span></h2>
           </div>
         </div>
 
@@ -18,7 +18,7 @@
           </div>
           <div ng-hide="is_waitlist">
             <div class="confirmation-header">
-              <h2 class="confirmation-heading" translate="CONFIRMATION_PURCHASE_TITLE" translate-values="{service_name: purchase.bookings[0].service_name}"></h2>
+              <h2 class="confirmation-heading"><span translate="CONFIRMATION_PURCHASE_TITLE" translate-values="{service_name: purchase.bookings[0].service_name}"></span></h2>
               <!-- <p ng-if="bb.current_item.move_done" class="move-done-msg">Your booking has been moved to <strong>{{purchase.bookings[0].datetime | datetime: "h:mma dddd Do MMMM"}}</strong>.</p> -->
               <div class="row hidden-print text-right" >
               <button type="button" class="btn btn-link" onclick="window.print()"><span class="glyphicon glyphicon-print"></span><span translate="PRINT"></span></button>
@@ -68,13 +68,13 @@
             <div class="hidden-print">
               <div class="bb-step-navigation">
                 <div class="col-sm-4">
-                  <button type="button" class="btn btn-secondary btn-block" ng-click="delete(bookings[0])" translate="PROGRESS_CANCEL_BOOKING"></button>
+                  <button type="button" class="btn btn-secondary btn-block" ng-click="delete(bookings[0])"><span translate="PROGRESS_CANCEL_BOOKING"></span></button>
                 </div>
                 <div class="col-sm-4">
-                  <button type="button" class="btn btn-primary btn-block" ng-click="move(bookings[0], '', {use_resource: true})" translate="PROGRESS_MOVE_BOOKING"></button>
+                  <button type="button" class="btn btn-primary btn-block" ng-click="move(bookings[0], '', {use_resource: true})"><span translate="PROGRESS_MOVE_BOOKING"></span></button>
                 </div>
                 <div ng-show="waitlist_bookings"class="col-sm-4">
-                  <button type="button" class="btn btn-primary btn-block" ng-click="is_waitlist = true" translate="PROGRESS_BOOK_WAITLIST_ITEMS"></button>
+                  <button type="button" class="btn btn-primary btn-block" ng-click="is_waitlist = true"><span translate="PROGRESS_BOOK_WAITLIST_ITEMS"></span></button>
                 </div>
               </div>
             </div>
