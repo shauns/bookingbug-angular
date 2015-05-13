@@ -3,49 +3,50 @@
     <div class="col-sm-offset-2 col-sm-8 col-md-offset-2 col-md-8">
 
       <div class="bb-subcontent">
+      
         <div class="confirmation-header bb-confirmation-border-margin">
           <div ng-if="total && !total.containsWaitlistItems()">
-            <h2>Booking Confirmation</h2>
-            <p class="bb-confirmation-p-alignment">Thanks {{ total.client.first_name }}. Your booking is now confirmed. We have emailed you the details below.</p>
+            <h2 translate="CONFIRMATION_BOOKING_TITLE"></h2>
+            <p class="bb-confirmation-p-alignment" translate="CONFIRMATION_BOOKING_SUBHEADER" translate-values="{member_name: total.client.first_name}"></p>
           </div>
            <div ng-if="total && total.containsWaitlistItems()">
-            <h2>Confirmation</h2>
-            <p class="bb-confirmation-p-alignment">Thanks {{ total.client.first_name }}. Your have successfully made the following bookings. We have you emailed you the details below.</p>
+            <h2 translate="ITEM_CONFIRMATION"></h2>
+            <p class="bb-confirmation-p-alignment" translate="CONFIRMATION_BOOKING_SUBHEADER_WITH_WAITLIST" translate-values="{member_name: total.client.first_name}"></p>
           </div>
           <div class="row hidden-print text-right">
-            <button type="button" class="btn btn-link" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</button>
+            <button type="button" class="btn btn-link" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> <span translate="PRINT"></span></button>
             <div bb-booking-export class="bb-booking-export"></div>
           </div>
         </div>
 
         <div ng-show="total">
-          <div ng-if="total.id" class="row confirmation-summary-item">
-            <div class="col-sm-3">Booking Reference:</div>
-            <div class="col-sm-9">{{total.id}}</div>
-         </div>
-         <ul class="confirmation-summary" ng-repeat="i in total.items track by $index">
+          <ul class="confirmation-summary" ng-repeat="i in total.items track by $index">
+            <li ng-if="total.id" class="row confirmation-summary-item">
+              <div class="col-sm-3"><span translate="BOOKING_REFERENCE"></span>:</div>
+              <div class="col-sm-9">{{total.id}}</div>
+            </li>
             <li ng-if="i.name" class="row confirmation-summary-item">
-              <div class="col-sm-3">Name:</div>
+              <div class="col-sm-3"><span translate="RECIPIENT_NAME"></span>:</div>
               <div class="col-sm-9">{{i.name}}</div>
-           </li>
+            </li>
             <li ng-if="i.description" class="row confirmation-summary-item">
-              <div class="col-sm-3">Description:</div>
+              <div class="col-sm-3"><span translate="ITEM_DESCRIPTION"></span>:</div>
             <div class="col-sm-9">{{i.description}}</div>
             </li>
             <li ng-if="i.full_describe" class="row confirmation-summary-item">
-              <div class="col-sm-3">Service:</div>
+              <div class="col-sm-3"><span translate="ITEM_SERVICE"></span>:</div>
               <div class="col-sm-9">{{i.full_describe}}</div>
             </li>
             <li ng-if="i.describe" class="row confirmation-summary-item">
-              <div class="col-sm-3">Date/Time:</div>
+              <div class="col-sm-3"><span translate="ITEM_DATE"></span>/<span translate="ITEM_TIME"></span>:</div>
               <div class="col-sm-9">{{i.describe}}</div>
             </li>
             <li ng-if="i.price" class="row confirmation-summary-item">
-              <div class="col-sm-3">Price:</div>
+              <div class="col-sm-3"><span translate="ITEM_PRICE"></span>:</div>
               <div class="col-sm-9">{{i.price | pretty_price }}</div>
             </li>
             <li ng-if="i.due_now != i.price" class="row confirmation-summary-item">
-              <div class="col-sm-3">Due Now:</div>
+              <div class="col-sm-3"><span translate="ITEM_DUE_NOW"></span>:</div>
               <div class="col-sm-9">{{i.due_now | currency }}</div>
             </li>
           </ul>
@@ -91,6 +92,6 @@
 </div>
 
 <div ng-show="isLoaded" class="powered-by visible-print">
-  <p>Bookings powered by <span style="color:#087f94">booking</span><span style="color:#88c66f">bug</p>
+  <p><span translate="POWERED_BY"></span><span style="color:#087f94">booking</span><span style="color:#88c66f">bug</p>
   <a href="//www.bookingbug.com" style="text-decoration:none" target="_blank"></a>
 </div>
