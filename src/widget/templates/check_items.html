@@ -48,7 +48,7 @@
           </div>
 
           <div class="form-group" ng-class="{'has-error': client_form.mobile.$invalid && ((client_form.mobile.$dirty && !client_form.mobile.$focused) || booking_form.submitted)}">
-            <label for="mobile" class="control-label col-sm-4"><span translate="DETAILS_PHONE"></span>:</label>
+            <label for="mobile" class="control-label col-sm-4"><span translate="DETAILS_PHONE_MOBILE"></span>:</label>
             <div class="col-sm-5">
               <input type="text" name="mobile" id="mobile" ng-pattern="validator.getUKMobilePattern(true)" ng-model="client.mobile" class="form-control" bb-focus/>
             </div>
