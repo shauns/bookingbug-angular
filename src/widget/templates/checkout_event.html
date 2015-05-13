@@ -20,13 +20,13 @@
 
     <div class="panel panel-default event-description">
       <div class="panel-body">
-        <p translate="PAYMENT_INSTRUCTION"></p>
+        <p><span translate="PAYMENT_INSTRUCTION"></span></p>
       </div>
     </div>
 
     <div class="panel panel-default event-tickets">
       <div class="panel-body">
-        <h2 class="heading" translate="EVENT_TICKET_SUMMARY_TITLE"></h2>
+        <h2 class="heading"><span translate="EVENT_TICKET_SUMMARY_TITLE"></span></h2>
         <div ng-form name="ticket_form" class="bb-form" role="form">
           <ul class="ticket-list">
             <li class="header">
@@ -42,7 +42,7 @@
                   <span>{{ticket.fullName()}}</span>
                 </div>
                 <div class="col-sm-3 col-xs-4">
-                  <span ng-if="ticket.price > 0">{{ticket.price | icurrency:"GBP"}}</span><span ng-if="ticket.price == 0" translate="ITEM_FREE"></span>
+                  <span ng-if="ticket.price > 0">{{ticket.price | icurrency:"GBP"}}</span><span ng-if="ticket.price == 0"><span translate="ITEM_FREE"></span></span>
                   <small ng-if="ticket.counts_as"><i>(for {{ticket.counts_as}})</i></small>
                 </div>
                 <div class="col-sm-3 col-xs-2">
@@ -81,7 +81,7 @@
 
     <div class="panel panel-default event-tickets">
       <div class="panel-body">
-        <h2 class="heading" translate="PAYMENT_DETAILS_TITLE"></h2>
+        <h2 class="heading"><span translate="PAYMENT_DETAILS_TITLE"></span></h2>
         <div id="bb-payment">
           <iframe id="bb-widget" ng-src="{{url}}" width="100%" height="930px" scrolling="no" frameborder="0"></iframe>
         </div>
