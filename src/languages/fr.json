@@ -90,7 +90,7 @@
   "BOOKING_REFERENCE":"Référence de la réservation",
   "BOOKING_DETAILS":"Détails de la réservation",
   "PRINT":"Imprimer",
-  "CALENDAR_EXPORT_TITLE":"Exporter dans le calendrier",
+  "CALENDAR_EXPORT_TITLE":" Exporter dans le calendrier",
   "CANCEL_QUESTION":"Êtes-vous sûr que vous voulez annuler cette réservation?",
   "CANCEL_CONFIRMATION":"Votre réservation a été annulée.",
   "ERROR":{

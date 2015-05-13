@@ -1,7 +1,7 @@
 <div bb-events>
 
   <div class="page-header">
-    <h1>Events at {{company.name}}</h1>
+    <h1><span translate="EVENT_LOCATION"></span>{{company.name}}</h1>
   </div>
 
   <div class="bb-month-picker" bb-month-picker="{months:3}" day-data="item_dates" ng-show="items">
@@ -62,21 +62,21 @@
         <div accordion-group is-open="is_open" ng-class="{'expanded': is_open, 'selected': is_selected}" class="store-body">
 
           <div accordion-heading class="filter-header">
-            <span>Filter</span>
+            <span translate="FILTER"></span>
             <span class="glyphicon glyphicon-filter" aria-hidden="true"></span>
           </div>
 
           <form class="form-inline">
 
             <div class="form-group">
-              <label class="sr-only" for="event_group">Category</label>
+              <label class="sr-only" for="event_group" translate="FILTER_CATEGORY"></label>
               <select class="form-control" name="event_group" id="event_group" ng-model="filters.event_group" ng-options="event_group.name for (id, event_group) in event_groups" ng-change="filterChanged()">
-                <option value="">Any Category</option>
+                <option value=""><span translate="FILTER_ANY"></span> <span translate="ITEM_PRICE"></span></option>
               </select>
             </div>
 
             <div class="form-group">
-              <label class="sr-only" for="date">Date</label>
+              <label class="sr-only" for="date" translate="ITEM_DATE"></label>
               <div class="input-group date-picker">
                 <!-- date format: http://docs.angularjs.org/api/ng.filter:date" -->
                 <input type="text" ng-model="filters.date" class="form-control"
@@ -99,16 +99,16 @@
             </div>
 
             <div class="form-group">
-              <label class="sr-only" for="price">Price</label>
+              <label class="sr-only" for="price" translate="ITEM_PRICE"></label>
               <select class="form-control" name="price" id="price" ng-model="filters.price" ng-options="price as (price | ipretty_price) for price in price_options" ng-change="filterChanged()">
-                <option value="">Any Price</option>
+                <option value=""><span translate="FILTER_ANY"></span> <span translate="ITEM_PRICE"></span></option>
               </select>
             </div>
 
             <div class="form-group" ng-repeat="select_filter in dynamic_filters.select" ng-show="has_company_questions">
               <label class="sr-only" for="event_group">{{select_filter.name}}</label>
               <select class="form-control" name="select_filter" id="select_filter" ng-model="dynamic_filters.values[select_filter.name]" ng-options="answer.name for answer in select_filter.question_items" ng-change="filterChanged()">
-                <option value="">Any {{select_filter.name}}</option>
+                <option value=""><span translate="FILTER_ANY"></span>{{select_filter.name}}</option>
               </select>
             </div>
 
@@ -122,7 +122,7 @@
             <div class="form-group">
               <button type="button" class="btn btn-link" ng-click="resetFilters()">
                 <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
-                Reset
+                <span translate="FILTER_RESET"></span>
               </button>
             </div>
 
@@ -134,17 +134,17 @@
     </div>
 
     <div class="panel panel-default bb-filter-summary">
-      <span ng-show="!filter_active">Showing all events</span>
-      <span ng-show="filter_active">Showing filtered events</span>    
+      <span ng-show="!filter_active" translate="FILTER_NONE"></span>
+      <span ng-show="filter_active" translate="FILTER_FILTERED"></span>    
       <div class="pull-right">
-        {{pagination.summary}} Events
+        {{pagination.summary}}<span translate="EVENT_EVENTS"></span>
       </div>
     </div>
 
    <!--  Gift Cert Button (Needs Styling) -->
    <div ng-if="bb.company_settings.has_vouchers">
       <button type="button" ng-click="showPage('deal_list')" class="btn btn-primary btn-block">
-        <span>Buy Gift Certificates </span>
+        <span translate="BASKET_GIFT_CERTIFICATE_BUY"></span>
       </button>
     </div>
 
@@ -165,11 +165,11 @@
                 </li>
                 <li class="tickets" ng-show="item.tickets && item.getSpacesLeft() > 0">
                   <span class="bb-icon icon-ticket"></span>
-                  <span>{{item.getSpacesLeft()}} ticket<span ng-if="item.getSpacesLeft() > 1">s</span> remaining</span>
+                  <span>{{item.getSpacesLeft()}} <span translate="EVENT_TICKET"></span><span ng-if="item.getSpacesLeft() > 1">s</span><span translate="EVENT_SPACES_REMAINING"></span></span>
                 </li>
                 <li class="price" ng-show="item.tickets">
                   <span class="bb-icon icon-price"></span>
-                  <span ng-show="item.price_range && (item.price_range.from != item.price_range.to)">From {{item.price_range.from | ipretty_price}}</span>
+                  <span ng-show="item.price_range && (item.price_range.from != item.price_range.to)"><span translate="EVENT_TICKET_PRICE_START"></span>{{item.price_range.from | ipretty_price}}</span>
                   <span ng-show="item.price_range && (item.price_range.from == item.price_range.to)">{{item.price_range.from | ipretty_price}}</span>
                 </li>
               </ul>
@@ -181,7 +181,7 @@
                   <span class="status-sold-out" translate="EVENT_SOLD_OUT"></span>
                 </div>
                 <div ng-show="item.getSpacesLeft() <= 0 && bb.company.settings.has_waitlists">
-                  <span>Join Waitlist</span>
+                  <span translate="EVENT_JOIN_WAITLIST"></span>
                 </div>
               </button>
             </div>
@@ -190,7 +190,7 @@
       </div>
       <div class="panel panel-default"ng-show="pagination.num_items == 0">
         <div class="panel-body">
-          <p>No events found</p>
+          <p translate="EVENT_NO"></p>
         </div>
       </div>
     </div>

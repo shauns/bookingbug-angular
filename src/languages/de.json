@@ -90,7 +90,7 @@
   "BOOKING_REFERENCE":"Buchungsnummer",
   "BOOKING_DETAILS": "Ihre Buchungsdetails",
   "PRINT": "Drucken",
-  "CALENDAR_EXPORT_TITLE":"In den Kalender exportieren",
+  "CALENDAR_EXPORT_TITLE":" In den Kalender exportieren",
   "CANCEL_QUESTION": "Sind Sie sicher, Sie wollen diesen Buchung stornieren?",
   "CANCEL_CONFIRMATION": "Ihre Buchung storniert wurde.",
   "ERROR":{
