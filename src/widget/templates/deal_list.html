@@ -5,12 +5,12 @@
   </h2>
 
   <div ng-if="bb.stacked_items && bb.stacked_items[0].deal">
-    <h4 translate="BASKET_GIFT_CERTIFICATE_SELECTED"></h4>
+    <h4><span translate="BASKET_GIFT_CERTIFICATE_SELECTED"></span></h4>
     <table class="table table-bordered">
       <thead>
         <tr>
-          <th translate="ITEM"></th>
-          <th translate="ITEM_PRICE"></th>
+          <th><span translate="ITEM"></span></th>
+          <th><span translate="ITEM_PRICE"></span></th>
           <th>&nbsp;</th>
         </tr>
       </thead>
@@ -23,7 +23,7 @@
               <br/> 
               <form ng-if="!bb.company_settings.no_recipient" name="recipient_form" class="form-horizontal" role="form" bb-form-resettable bb-form novalidate>
                 <div ng-hide="recipient_form.submitted && item.recipient">
-                  <small translate="RECIPIENT_ADD"><small>
+                  <small><span translate="RECIPIENT_ADD"></span><small>
                     <br/>
                     <p>
                       <label bb-question-label="question" for="recipient_name" class="control-label col-sm-4"> <small><span translate="RECIPIENT_NAME"></span>:</small> </label> <input type="text" name="recipient_name" id="recipient_name" ng-model="recipient.name" ng-pattern="validator.alpha"/>
@@ -34,16 +34,16 @@
                       <br/>
                     </p> 
                     <p>
-                      <button ng-click="validator.validateForm(recipient_form) && addRecipient(item, recipient)" translate="PROGRESS_ADD"></button>
+                      <button ng-click="validator.validateForm(recipient_form) && addRecipient(item, recipient)"><span translate="PROGRESS_ADD"></span></button>
                       <br/>
                     </p>
                     <br/>
-                    <p ng-show="recipient_form.recipient_name.$invalid && recipient_form.submitted" class="error-message" translate="RECIPIENT_NAME_VALIDATION_MSG"></p>
-                    <p ng-show="recipient_form.recipient_mail.$invalid && recipient_form.submitted" class="error-message" translate="RECIPIENT_EMAIL_VALIDATION_MSG"></p>
+                    <p ng-show="recipient_form.recipient_name.$invalid && recipient_form.submitted" class="error-message"><span translate="RECIPIENT_NAME_VALIDATION_MSG"></span></p>
+                    <p ng-show="recipient_form.recipient_mail.$invalid && recipient_form.submitted" class="error-message"><span translate="RECIPIENT_EMAIL_VALIDATION_MSG"></span></p>
                   </div>
                 </form>
                 <div ng-if="item.recipient">
-                 <h5 translate="RECIPIENT"></h5>
+                 <h5><span translate="RECIPIENT"></span></h5>
                  <p ng-if="item.recipient"><span translate="RECIPIENT_NAME"></span>:<small> {{ item.recipient }} </small> </p>
                  <p ng-if="item.recipient_mail"><span translate="DETAILS_EMAIL"></span>:<small> {{ item.recipient_mail }} </small> </p>
                </div>
@@ -79,7 +79,7 @@
 
         <div class="col-sm-3 deal-select">
           <button type="button" ng-click="selectDeal(deal)" class="btn btn-primary btn-block">
-            <span translate="PROGRESS_BUY"></span>
+            <span><span translate="PROGRESS_BUY"></span></span>
           </button>
         </div>
 
