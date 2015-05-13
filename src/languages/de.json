@@ -108,11 +108,10 @@
   "CANCEL_CONFIRMATION": "Ihre Buchung storniert wurde.",
   "ERROR":{
     "GENERIC":"Leider scheint es, dass etwas schief gelaufen ist. Bitte versuchen Sie es erneut oder rufen Sie das Unternehmen sind Sie bei der Buchung mit, wenn das Problem weiterhin besteht.",
-    "LOCATION_NOT_FOUND":"Leider haben wir nicht, dass die Lage erkennen",
     "MISSING_LOCATION":"Bitte geben Sie Ihren Standort",
     "MISSING_POSTCODE":"Bitte geben Sie eine Postleitzahl ein",
-    "INVALID_POSTCODE":"Please enter a valid postcode",
-    "ITEM_NO_LONGER_AVAILABLE":"Bitte geben Sie eine gültige Postleitzahl an",
+    "INVALID_POSTCODE":"Bitte GEBEN Sie eine Gültige Postleitzahl ein",
+    "ITEM_NO_LONGER_AVAILABLE":"Entschuldigung. Das Element, das Sie versuchten, zu buchen ist nicht mehr verfügbar. Bitte versuchen Sie es erneut.",
     "FORM_INVALID":"Bitte füllen Sie alle Felder aus",
     "GEOLOCATION_ERROR":"Leider konnten wir Dein Ort wurde nicht festzustellen. Bitte versuchen Sie statt.",
     "EMPTY_BASKET_FOR_CHECKOUT":"Es sind keine Artikel im Warenkorb zur Kasse gehen."
