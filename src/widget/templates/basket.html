@@ -7,7 +7,7 @@
 
 				<h2 class="bb-section-title" translate="BASKET_TITLE"></h2>
 				<div class="bb-empty-basket-full-screen" ng-hide="items">
-					<h3 translate="BASKET_ITEMS_NO"></h3>
+					<h3 translate="BASKET_ITEM_NO"></h3>
 					<p translate="BASKET_ITEM_ADD_INSTRUCT"></p>
 				</div>
 				<table class="table table-bordered" ng-show="items">
@@ -119,8 +119,8 @@
                 <a ng-click="show_voucher_box = true" translate='BASKET_GIFT_CERTIFICATE_QUESTION'></a>
               </div>
               <div ng-show="show_voucher_box" class="form-group">
-                <label ng-if="!basket.hasDeal()" for="deal" translate='BASKET_GIFT_CERTIFICATE_APPLY'></label>
-                <label ng-if="basket.hasDeal()" for="deal" translate='BASKET_GIFT_CERTIFICATE_APPLY_ANOTHER'></label>
+                <label ng-if="!basket.hasDeal()" for="deal"><span translate='BASKET_GIFT_CERTIFICATE_APPLY'></span>:</label>
+                <label ng-if="basket.hasDeal()" for="deal"><span translate='BASKET_GIFT_CERTIFICATE_APPLY_ANOTHER'></span>:</label>
                 <div class=" input-group">
                   <input type="text" class="form-control input-sm" id="deal_code" name="deal_code" ng-model="deal_code" placeholder="Enter a voucher code">
                   <span class="input-group-btn">
