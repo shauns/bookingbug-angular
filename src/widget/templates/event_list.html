@@ -169,7 +169,7 @@
                 </li>
                 <li class="price" ng-show="item.tickets">
                   <span class="bb-icon icon-price"></span>
-                  <span ng-show="item.price_range && (item.price_range.from != item.price_range.to)"><span translate="EVENT_TICKET_PRICE_START"></span>{{item.price_range.from | ipretty_price}}</span>
+                  <span ng-show="item.price_range && (item.price_range.from != item.price_range.to)"><span translate="ITEM_FROM"></span> {{item.price_range.from | ipretty_price}}</span>
                   <span ng-show="item.price_range && (item.price_range.from == item.price_range.to)">{{item.price_range.from | ipretty_price}}</span>
                 </li>
               </ul>
