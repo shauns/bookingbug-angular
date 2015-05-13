@@ -6,12 +6,12 @@
       
         <div class="confirmation-header bb-confirmation-border-margin">
           <div ng-if="total && !total.containsWaitlistItems()">
-            <h2 translate="CONFIRMATION_BOOKING_TITLE"></h2>
-            <p class="bb-confirmation-p-alignment" translate="CONFIRMATION_BOOKING_SUBHEADER" translate-values="{member_name: total.client.first_name}"></p>
+            <h2><span translate="CONFIRMATION_BOOKING_TITLE"></span></h2>
+            <p class="bb-confirmation-p-alignment"><span translate="CONFIRMATION_BOOKING_SUBHEADER" translate-values="{member_name: total.client.first_name}"></span></p>
           </div>
            <div ng-if="total && total.containsWaitlistItems()">
-            <h2 translate="ITEM_CONFIRMATION"></h2>
-            <p class="bb-confirmation-p-alignment" translate="CONFIRMATION_BOOKING_SUBHEADER_WITH_WAITLIST" translate-values="{member_name: total.client.first_name}"></p>
+            <h2><span translate="ITEM_CONFIRMATION"></span></h2>
+            <p class="bb-confirmation-p-alignment"><span translate="CONFIRMATION_BOOKING_SUBHEADER_WITH_WAITLIST" translate-values="{member_name: total.client.first_name}"></span></p>
           </div>
           <div class="row hidden-print text-right">
             <button type="button" class="btn btn-link" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> <span translate="PRINT"></span></button>
