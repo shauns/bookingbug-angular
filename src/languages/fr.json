@@ -122,7 +122,6 @@
     "INVALID_POSTCODE":"S'il vous plaît entrer un code postal valide",
     "ITEM_NO_LONGER_AVAILABLE":"Désolé. L'article que vous essayiez de réservation est plus disponible. S'il vous plaît essayer à nouveau.",
     "FORM_INVALID":"S'il vous plaît remplir tous les champs obligatoires",
-    "GEOLOCATION_ERROR":"Désolé, nous ne pouvions pas déterminer votre position . S'il vous plaît essayer de chercher la place.",
     "EMPTY_BASKET_FOR_CHECKOUT":"Il n'y a aucun élément dans le panier pour passer à la caisse."
   }
 }
