@@ -8,7 +8,7 @@
         <ul class="event-summary-list">
           <li class="date-time">
             <span class="bb-icon icon-calendar"></span>
-            <span>{{event.date.format('dddd Do MMMM YYYY')}} at <span class="event-time">{{event.date.format('HH:mm')}}</span></span>
+            <span>{{event.date.format('dddd Do MMMM YYYY')}} <span translate="AT"></span> <span class="event-time">{{event.date.format('HH:mm')}}</span></span>
           </li>
           <li class="location" ng-show="event.chain.address">
             <span class="bb-icon icon-location"></span>
@@ -16,7 +16,7 @@
           </li>
           <li class="tickets" ng-show="event.tickets && event.getSpacesLeft() > 0">
             <span class="bb-icon icon-ticket"></span>
-            <span>{{event.getSpacesLeft()}} ticket<span ng-if="event.getSpacesLeft() > 1">s</span> remaining</span>
+            <span>{{event.getSpacesLeft()}} <span translate="EVENT_TICKET"></span><span ng-if="event.getSpacesLeft() > 1">s</span><span translate="EVENT_SPACES_REMAINING"></span></span>
           </li>
         </ul>
       </div>
@@ -30,15 +30,15 @@
 
     <div class="panel panel-default event-tickets">
       <div class="panel-body">
-        <h2 class="heading">Tickets</h1>
+        <h2 class="heading" translate="EVENT_TICKETS"></h1>
         <div ng-form name="ticket_form" class="bb-form" role="form">
 
           <ul class="ticket-list">
             <li class="header">
               <div class="row">
-                <div class="col-sm-6 col-xs-6">Type</div>
-                <div class="col-sm-3 col-xs-4">Price</div>
-                <div class="col-sm-3 col-xs-2">Qty</div>
+                <div class="col-sm-6 col-xs-6"><span translate="ITEM_TYPE"></span></div>
+                <div class="col-sm-3 col-xs-4"><span translate="ITEM_PRICE"></span></div>
+                <div class="col-sm-3 col-xs-2"><span translate="ITEM_QTY"></span></div>
               </div>
             </li>
             <li ng-repeat="ticket in event.tickets">
@@ -58,25 +58,25 @@
             </li>
             <li ng-if="selected_tickets && bb.basket.questionPrice()">
               <div class="row">
-                <div class="col-sm-6 col-xs-6 total-label">Booking Fee</div>
+                <div class="col-sm-6 col-xs-6 total-label"><span translate="BASKET_BOOKING_FEE"></span></div>
                 <div class="col-sm-3">{{bb.basket.questionPrice() | currency}}</div>
               </div>
             </li>
             <li ng-if="selected_tickets && bb.basket.hasCoupon()">
               <div class="row">
-                <div class="col-sm-6 col-xs-6 total-label">Original Cost</div>
+                <div class="col-sm-6 col-xs-6 total-label"><span translate="BASKET_ORIGINAL"></span> <span translate="ITEM_COST"></span></div>
                 <div class="col-sm-3 col-xs-6">{{bb.basket.fullPrice() | currency}}</div>
               </div>
             </li>
             <li ng-if="selected_tickets && bb.basket.hasCoupon()">
               <div class="row">
-                <div class="col-sm-6 col-xs-6 total-label">Coupon Discount</div>
+                <div class="col-sm-6 col-xs-6 total-label"><span translate="BASKET_COUPON_DISCOUNT"></span></div>
                 <div class="col-sm-3 col-xs-6">{{(bb.basket.fullPrice() - bb.basket.totalPrice()) | currency}}</div>
               </div>
             </li>
             <li ng-if="selected_tickets && (bb.basket.hasCoupon() || bb.basket.totalPrice())">
               <div class="row">
-                <div class="col-sm-6 col-xs-6 total-label">Total</div>
+                <div class="col-sm-6 col-xs-6 total-label"><span translate="BASKET_TOTAL"></span></div>
                 <div class="col-sm-3 col-xs-6"><strong>{{bb.basket.totalPrice() | currency}}</strong>
                 </div>
               </div>
@@ -86,10 +86,10 @@
           <div class="button-group" ng-if="!selected_tickets">
             <div class="row">
               <div class="col-sm-offset-9 col-sm-3" ng-show="event.getSpacesLeft() > 0">
-                <button type="button" class="btn btn-primary pull-right" ng-disabled="event.tickets[0].qty <= 0 " ng-click="selectTickets()">Reserve Ticket<span ng-if="event.tickets[0].qty > 1">s</span></button>
+                <button type="button" class="btn btn-primary pull-right" ng-disabled="event.tickets[0].qty <= 0 " ng-click="selectTickets()"><span translate="EVENT_TICKET_RESERVE"></span><span ng-if="event.tickets[0].qty > 1">s</span></button>
               </div>
               <div class="col-sm-offset-9 col-sm-3" ng-show="event.getSpacesLeft() <= 0 && bb.company.settings.has_waitlists">
-                <button type="button" class="btn btn-primary pull-right" ng-disabled="event.tickets[0].qty <= 0 " ng-click="selectTickets()">Join Waitlist</button>
+                <button type="button" class="btn btn-primary pull-right" ng-disabled="event.tickets[0].qty <= 0 " ng-click="selectTickets()" translate="EVENT_JOIN_WAITLIST"></button>
               </div>
             </div>
           </div> 
@@ -99,11 +99,11 @@
             <div class="col-sm-4 col-sm-offset-8">
               <form class="form-inline">
                 <div class="form-group">
-                  <label for="coupon_code">Apply a coupon:</label>
+                  <label for="coupon_code"><span translate="BASKET_COUPON_APPLY"></span>:</label>
                   <div class="input-group">
                     <input type="text" class="form-control input-sm" id="coupon_code" name="coupon_code" ng-model="coupon_code" placeholder="Enter a coupon code">
                     <span class="input-group-btn">
-                      <button type="button" class="btn btn-primary btn-sm" ng-click="applyCoupon(coupon_code)">Apply</button>
+                      <button type="button" class="btn btn-primary btn-sm" ng-click="applyCoupon(coupon_code)" translate="PROGRESS_APPLY"></button>
                     </span>
                   </div>
                 </div>
@@ -123,46 +123,46 @@
         
           <div ng-form name="client_form" class="bb-form" role="form" novalidate>
 
-            <h2 class="booking-form-header">Your details</h2>
+            <h2 class="booking-form-header" translate="DETAILS_TITLE"></h2>
 
             <div class="form-group" ng-class="{'has-error': client_form.first_name.$invalid && (client_form.first_name.$dirty || booking_form.submitted)}">
-              <label for="first_name" class="control-label col-sm-4">First Name:</label>
+              <label for="first_name" class="control-label col-sm-4"><span translate="DETAILS_FIRST_NAME"></span>:</label>
               <div class="col-sm-5">
                 <input type="text" name="first_name" id="first_name" required ng-model="client.first_name" class="form-control"/>
               </div>
               <div class="col-sm-offset-4 messages">
                 <div class="error-message" ng-show="client_form.first_name.$invalid && booking_form.submitted">
-                  Please enter your first name
+                  <span translate="DETAILS_FIRST_NAME_VALIDATION_MSG"></span>
                 </div>
               </div> 
             </div>
 
             <div class="form-group" ng-class="{'has-error': client_form.last_name.$invalid && (client_form.last_name.$dirty|| booking_form.submitted)}">
-              <label for="last_name" class="control-label col-sm-4">Last Name:</label>
+              <label for="last_name" class="control-label col-sm-4"><span translate="DETAILS_LAST_NAME"></span>:</label>
               <div class="col-sm-5">
                 <input type="text" name="last_name" id="last_name" required ng-model="client.last_name" class="form-control"/>
               </div>
               <div class="col-sm-offset-4 messages">
                 <div class="error-message" ng-show="client_form.last_name.$invalid && booking_form.submitted">
-                  Please enter your last name
+                  <span translate="DETAILS_LAST_NAME_VALIDATION_MSG"></span>
                 </div>          
               </div>
             </div>
 
             <div class="form-group" ng-class="{'has-error': client_form.email.$invalid && (client_form.email.$dirty|| booking_form.submitted)}">
-              <label for="email" class="control-label col-sm-4">Email:</label>
+              <label for="email" class="control-label col-sm-4"><span translate="DETAILS_EMAIL"></span>:</label>
               <div class="col-sm-5">
                 <input type="email" name="email" id="email" required ng-model="client.email" class="form-control"/>
               </div>
               <div class="col-sm-offset-4 messages">
                 <div class="error-message" ng-show="client_form.email.$invalid && booking_form.submitted">
-                  Please enter a valid email address
+                  <span translate="DETAILS_EMAIL_VALIDATION_MSG"></span>
                 </div>          
               </div>
             </div>
 
             <div class="form-group" ng-class="{'has-error': client_form.mobile.$invalid && ((client_form.mobile.$dirty && !client_form.mobile.$focused) || booking_form.submitted)}">
-              <label for="mobile" class="control-label col-sm-4">Mobile:</label>
+              <label for="mobile" class="control-label col-sm-4"><span translate="DETAILS_PHONE"></span>:</label>
               <div class="col-sm-5">
                 <input type="text" name="mobile" id="mobile" ng-pattern="validator.getMobilePattern()" ng-model="client.mobile" class="form-control" bb-focus/>
               </div>
@@ -178,7 +178,7 @@
                 </div>
                 <div class="col-sm-offset-4 messages">
                   <div class="error-message" ng-show="client_form['q' + question.id].$invalid && ( client_form['q' + question.id].$dirty || booking_form.submitted )">
-                    This field is required
+                    <span translate="DETAILS_REQUIRED"></span>
                   </div>
                 </div> 
               </div>   
@@ -189,7 +189,7 @@
 
           <div ng-repeat="item in bb.basket.timeItems()" bb-count-ticket-types="bb.basket.timeItems()">
 
-            <h2 class="booking-form-header">Ticket {{$index + 1}}</h2>
+            <h2 class="booking-form-header capitalise"><span translate="EVENT_TICKET"></span> {{$index + 1}}</h2>
 
             <div bb-item-details="item">
               <div ng-form name="booking_questions_form">
@@ -200,7 +200,7 @@
                   </div>
                   <div class="col-sm-offset-4 messages">
                 <div class="error-message" ng-show="booking_questions_form['q' + question.id].$invalid && ( booking_questions_form['q' + question.id].$dirty || booking_form.submitted )">
-                  This field is required
+                  <span translate="DETAILS_REQUIRED"></span>
                 </div>
               </div> 
                 </div>
@@ -212,7 +212,7 @@
           <div class="button-group bordered">
             <div class="row">
               <div class="col-sm-offset-9 col-sm-3" ng-show="event.getSpacesLeft() > 0">
-                <button type="submit" class="btn btn-primary pull-right" ng-click="validator.validateForm(booking_form) && checkReady() && routeReady()">Book Ticket<span ng-if="event.tickets[0].qty > 1">s</span></button>
+                <button type="submit" class="btn btn-primary pull-right capitalise" ng-click="validator.validateForm(booking_form) && checkReady() && routeReady()"><span translate="PROGRESS_BOOK"> </span><span translate="EVENT_TICKET"></span><span ng-if="event.tickets[0].qty > 1">s</span></button>
               </div>
               <div class="col-sm-offset-9 col-sm-3" ng-show="event.getSpacesLeft() <= 0 && bb.company.settings.has_waitlists">
                 <button type="submit" class="btn btn-primary pull-right" ng-click="validator.validateForm(booking_form) && checkReady() && routeReady()" translate="PROGRESS_CONFIRM"></button>
@@ -228,7 +228,7 @@
     <div class="panel panel-default">
       <div class="panel-body">
         <div ng-show="event.chain.long_description">
-          <h2 class="heading">Event details</h2>
+          <h2 class="heading" translate="EVENT_DETAILS_TITLE"></h2>
           <p class="event-long-description" ng-bind-html="event.chain.long_description" ng-show="event.chain.long_description"></p>
         </div>
         
@@ -253,7 +253,7 @@
     <div class="bb-step-navigation">
       <div class="row">
         <div class="col-sm-6 text-left">
-          <button type="button" class="btn btn-default" bb-debounce ng-click="loadPreviousStep()" translate="PROGRESS_BACK""></button>
+          <button type="button" class="btn btn-default" bb-debounce ng-click="loadPreviousStep()" translate="PROGRESS_BACK"></button>
 <!--           <div class="warning" ng-show="selected_tickets">
             <p>Please note that your tickets will be unreserved if you need to amend your selection.</p>
           </div> -->
