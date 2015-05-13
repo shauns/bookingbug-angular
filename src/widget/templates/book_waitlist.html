@@ -22,20 +22,20 @@
     </li>
     <li class="row confirmation-summary-item">
       <div class="col-sm-3 pull-right">
-        <button type="button" class="btn btn-primary btn-block" ng-click="bookWaitlistItem(i)" translate="PROGRESS_BOOK"></button>
+        <button type="button" class="btn btn-primary btn-block" ng-click="bookWaitlistItem(i)"><span translate="PROGRESS_BOOK"></span></button>
       </div>
     </li>
   </ul>
   <ul class="confirmation-summary">
     <li class="row confirmation-summary-item">
       <div class="row">
-        <div class="col-sm-6 col-xs-6 total-label"><strong translate="BASKET_TOTAL"></strong></div>
+        <div class="col-sm-6 col-xs-6 total-label"><strong><span translate="BASKET_TOTAL"></span></strong></div>
         <div class="col-sm-3 col-xs-6"><strong>{{purchase.total_price | pretty_price }}</strong></div>
       </div>
     </li>
     <li class="row confirmation-summary-item">
       <div class="row">
-        <div class="col-sm-6 col-xs-6 total-label"><strong translate="BASKET_TOTAL_DUE_NOW"></strong></div>
+        <div class="col-sm-6 col-xs-6 total-label"><strong><span translate="BASKET_TOTAL_DUE_NOW"></span></strong></div>
         <div class="col-sm-3 col-xs-6"><strong>{{purchase.due_now | currency }}</strong></div>
       </div>
     </li>
@@ -44,18 +44,18 @@
 
 <div ng-hide="waitlist_bookings">
   <ul class="confirmation-summary">
-    <p translate="CONFIRMATION_WAITLIST_SUBHEADER" translate-values="{member_name: purchase.client.first_name, purchase_item: purchase.bookings[0].service_name}"></p>
+    <p><span translate="CONFIRMATION_WAITLIST_SUBHEADER" translate-values="{member_name: purchase.client.first_name, purchase_item: purchase.bookings[0].service_name}"></span></p>
   </ul>
   <ul class="confirmation-summary">
     <li class="row confirmation-summary-item">
       <div class="row">
-        <div class="col-sm-6 col-xs-6 total-label"><strong translate="BASKET_TOTAL"></strong></div>
+        <div class="col-sm-6 col-xs-6 total-label"><strong><span translate="BASKET_TOTAL"></span></strong></div>
         <div class="col-sm-3 col-xs-6"><strong>{{purchase.total_price | pretty_price }}</strong></div>
       </div>
     </li>
     <li class="row confirmation-summary-item">
       <div class="row">
-        <div class="col-sm-6 col-xs-6 total-label"><strong translate="BASKET_TOTAL_DUE_NOW"></strong></div>
+        <div class="col-sm-6 col-xs-6 total-label"><strong><span translate="BASKET_TOTAL_DUE_NOW"></span></strong></div>
         <div class="col-sm-3 col-xs-6"><strong>{{purchase.due_now | currency }}</strong></div>
       </div>
     </li>
@@ -76,7 +76,7 @@
     <button type="button" class="btn btn-link" onclick="window.print()"><span class="glyphicon glyphicon-print"></span><span translate="PRINT"></span></button>
     <div bb-booking-export class="bb-booking-export"></div>
     <div class="col-sm-12 pull-left">
-      <button type="button" class="btn btn-default" ng-click="$parent.is_waitlist = false" translate="PROGRESS_BACK"></button>
+      <button type="button" class="btn btn-default" ng-click="$parent.is_waitlist = false"><span translate="PROGRESS_BACK"></span></button>
     </div>
   </div>
 </div>
