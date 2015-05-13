@@ -14,9 +14,10 @@
     <span ng-if="bb.current_step != 1 && bb.current_step <  bb.allSteps.length" ng-bind="'Step ' + (bb.current_step - 1) + ' of ' + (bb.allSteps.length - 2)"></span>
     <span ng-if="bb.current_step == bb.allSteps.length" ng-bind="'Complete'"></span>
   </div> -->
+
   <div class="row">
     <div class="col-sm-12">
-      <div class="btn-group" dropdown is-open="status.isopen" bb-translate>
+      <div bb-translate ng-hide="bb.current_page == 'checkout' || bb.current_page == 'checkout_event' " class="btn-group" dropdown is-open="status.isopen" >
         <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle ng-disabled="disabled" title="{{'CHANGE_LANG' | translate}}">
           <span translate="{{selected_language.key}}"></span> <span class="caret"></span>
         </button>
@@ -26,7 +27,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="alerts" bb-scroll-to="alert:raised">
    <div alert ng-repeat="alert in $root.alerts" type="{{alert.type}}">
      <ul>
