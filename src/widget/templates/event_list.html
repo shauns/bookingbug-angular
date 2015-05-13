@@ -165,7 +165,7 @@
                 </li>
                 <li class="tickets" ng-show="item.tickets && item.getSpacesLeft() > 0">
                   <span class="bb-icon icon-ticket"></span>
-                  <span>{{item.getSpacesLeft()}} <span translate="EVENT_TICKET"></span><span ng-if="item.getSpacesLeft() > 1">s</span><span translate="EVENT_SPACES_REMAINING"></span></span>
+                  <span>{{item.getSpacesLeft()}} <span translate="EVENT_TICKET"></span><span ng-if="item.getSpacesLeft() > 1">s</span> <span translate="EVENT_SPACES_REMAINING"></span></span>
                 </li>
                 <li class="price" ng-show="item.tickets">
                   <span class="bb-icon icon-price"></span>
