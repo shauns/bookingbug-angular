@@ -171,10 +171,15 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
       $scope.initWidget2()
       return
     else
-
       # ie 8 hacks
-      setTimeout $scope.initWidget2, 2000
-      return
+      if $rootScope.iframe_proxy_ready
+        $scope.initWidget2()
+        return
+      else
+        $scope.$on 'iframe_proxy_ready', (event, args) ->
+          if args.iframe_proxy_ready
+            $scope.initWidget2()
+        return
 
 
 

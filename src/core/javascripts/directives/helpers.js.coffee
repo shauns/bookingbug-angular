@@ -340,7 +340,7 @@ app.directive 'bbCapitaliseFirstLetter', () ->
         return
 
 
-app.directive 'apiUrl', ($rootScope, $compile, $sniffer, $timeout) ->
+app.directive 'apiUrl', ($rootScope, $compile, $sniffer, $timeout, $window) ->
   restrict: 'A'
   compile: (tElem, tAttrs) ->
     pre: (scope, element, attrs) ->
@@ -354,10 +354,9 @@ app.directive 'apiUrl', ($rootScope, $compile, $sniffer, $timeout) ->
         else
           src = "#{url.protocol}://#{url.host}/ClientProxy.html"
         $rootScope.iframe_proxy_ready = false
-        $timeout () ->
+        $window.iFrameLoaded = () ->
           $rootScope.iframe_proxy_ready = true
-          $rootScope.$broadcast('iframe_proxy_ready')
-        , 2000
+          $rootScope.$broadcast('iframe_proxy_ready', {iframe_proxy_ready: true})
         $compile("<iframe id='ieapiframefix' name='" + url.hostname + "' src='#{src}' style='visibility:false;display:none;'></iframe>") scope, (cloned, scope) =>
           element.append(cloned)
 
