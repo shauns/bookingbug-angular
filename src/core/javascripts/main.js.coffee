@@ -23,6 +23,7 @@ app = angular.module('BB', [
   'uiGmapgoogle-maps',
   'angular.filter',
   'ngCookies',
+  'slick',
   'angulartics',
   'angulartics.google.analytics',
   'pascalprecht.translate'

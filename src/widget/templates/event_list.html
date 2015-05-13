@@ -1,58 +1,28 @@
-<div bb-events>
+<div bb-events="{mode: 2}">
 
   <div class="page-header">
     <h1><span translate="EVENT_LOCATION"></span>{{company.name}}</h1>
   </div>
 
-  <div class="bb-month-picker" bb-month-picker="{months:3}" day-data="item_dates" ng-show="items">
+  <div class="bb-month-picker" bb-month-picker day-data="item_dates">
+    <div class="bb-month-nav">
+      <button type="button" class="btn btn-icon btn-xl month-prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> <span class="sr-only">Previous</span>
+      </button>
+    </div>
+    <div class="bb-months">
 
-<!--       <div class="bb-month-nav col-xs-1" ng-cloak>
-        <span class="glyphicon glyphicon-chevron-left" role="button" ng-click""></span>
-      </div> -->
-
-      <!-- TODO Only show in summary mode-->
-      <div class="bb-months col-xs-12">
-
-        <div class="row">
-        <!-- selected -->
-          <div class="bb-month" ng-repeat="month in months" ng-class="{'hidden-xs': !$first}">
-            <table>
-              <thead>
-                <tr>
-                  <th colspan="7" class="months">{{month.start_date.format("MMMM")}}</th>
-                </tr>
-                <tr>
-                  <th ng-repeat="day in month.weeks[0].days" class="days">{{day.date | datetime: "ddd" : false}}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr ng-repeat="week in month.weeks">
-                  <td ng-repeat="day in week.days" 
-                    ng-class="{'available': day.data && day.data.spaces > 0 &&  month.start_date.isSame(day.date, 'month'), 
-                               'selected': day.date.isSame(filters.date),
-                               'today': day.data.today,
-                               'past': day.date.isBefore(moment(), 'day'),
-                               'disabled': !day.date.isSame(month.start_date, 'month')
-                              }" 
-                      ng-click="showDate(day.date)" 
-                      ng-disabled="day.date.isBefore(moment(), 'day') || !day.date.isSame(month.start_date, 'month')">
-                    <div class="circle">{{day.date.date()}}</div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-        </div>
-
-      </div>
-
-<!--       <div class="bb-month-nav col-xs-1" ng-cloak>
-        <span class="glyphicon glyphicon-chevron-right" role="button" ng-click""></span>
-      </div> -->
+      <div bb-slick="[{breakpoint: 920, settings: {slidesToShow: 1}},{breakpoint: 1199, settings: {slidesToShow: 2}}]"></div>
 
     </div>
 
+    <div class="bb-month-nav">
+      <button type="button" class="btn btn-icon btn-xl month-next">
+        <span class="sr-only">Next</span> <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+      </button>
+    </div>
+
+  </div>
 
   <div class="events" ng-show="items" bb-scroll-to="page:changed" bb-always-scroll>
 

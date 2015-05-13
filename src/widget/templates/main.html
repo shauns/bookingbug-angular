@@ -1,4 +1,4 @@
-<header>
+<div class="header">
 
   <div bb-form-data-store></div>
 
@@ -29,16 +29,16 @@
   </div>
 
   <div class="alerts" bb-scroll-to="alert:raised">
-   <div alert ng-repeat="alert in $root.alerts" type="{{alert.type}}">
+    <div alert ng-repeat="alert in $root.alerts" type="{{alert.type}}">
      <ul>
        <li ng-bind-html="alert.msg"></li>
-     </ul>
-   </div>
- </div>
+      </ul>
+    </div>
+  </div>
 
-</header>
+</div>
 
-<section class="content">
+<div class="content">
 
   <div bb-content class="ng-cloak"></div>
   <div bb-display-mode></div>
@@ -49,10 +49,10 @@
     </div>
   </div>
 
-</section>
+</div>
 
-<footer>
+<div class="footer">
   <div ng-show="isLoaded" class="powered-by">
     <span><span translate="POWERED_BY"></span> <a href="http://www.bookingbug.com" style="text-decoration:none" target="_blank"><span style="color:#087f94">booking</span><span style="color:#88c66f">bug</span></a></span>
   </div>
-</footer>
+</div>

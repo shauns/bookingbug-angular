@@ -64,7 +64,9 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
     # initialise the time range
     # last selected day is set (i.e, a user has already selected a date)
     if !$scope.start_date && $scope.last_selected_date
-      if $scope.original_start_date 
+      # if the time range list was initialised with a selected_day, restore the view so that
+      # selected day remains relative to where the first day that was originally shown
+      if $scope.original_start_date
         diff = $scope.last_selected_date.diff($scope.original_start_date, 'days')
         diff = diff % $scope.time_range_length
         diff = if diff is 0 then diff else diff + 1 
@@ -79,7 +81,7 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
     else if $scope.selected_day
       $scope.original_start_date = $scope.original_start_date or moment($scope.selected_day)
       setTimeRange($scope.selected_day)
-    # set the time range as today
+    # set the time range as today, showing the current week
     else
       $scope.start_at_week_start = true
       setTimeRange(moment())
