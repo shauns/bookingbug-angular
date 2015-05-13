@@ -17,7 +17,7 @@
   "PROGRESS_MOVE_BOOKING": "Modifier la réservation",
   "PROGRESS_CANCEL_CANCEL": "Ne pas annuler",
   "PROGRESS_CANCEL_BOOKING": "Annuler Réservation",
-  "MAP_TITLE":"Trouvez un showroom près de chez vous",
+  "MAP_TITLE":"Trouvez un magasin près de chez vous",
   "MAP_PLACEHOLDER":"Saisissez une ville, un code postal ou un magasin",
   "GEOLOCATE": "Utilisez emplacement actuel",
   "STORE_RESULT_TITLE":"{{number}} Résultats pour les magasins près de chez vous {{address}}",
