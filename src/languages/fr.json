@@ -39,6 +39,7 @@
   "ITEM_RESOURCE": "Resource",
   "ITEM_PERSON": "Personne",
   "ITEM_PRICE": "Prix",
+  "ITEM_FREE":"Gratis",
   "ITEM_DATE": "Date",
   "ITEM_TIME": "Heure",
   "ITEM_DATE_AND_OR_TIME": "Date/Heure",
