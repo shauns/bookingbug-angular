@@ -53,7 +53,7 @@
           <div class="col-sm-2 col-xs-6">
             <div class="bb-service-price">
               <span ng-show="item.price > 0">{{item.price | currency: bb.company.currency_code}}</span>
-              <span ng-show="item.price == 0" translate="ITEM_FREE"></span>
+              <span ng-show="item.price == 0"><span translate="ITEM_FREE"></span></span>
             </div>
           </div>
           <div class="col-xs-12 hidden-sm hidden-md hidden-lg bbb-service-image" ng-if="item.extra.image_url">
@@ -63,7 +63,7 @@
             {{item.description}}
           </div>
           <div class="col-sm-2 col-xs-12">
-            <button type="button" ng-click="selectItem(item)" class="btn btn-primary btn-block" translate="PROGRESS_SELECT"></button>
+            <button type="button" ng-click="selectItem(item)" class="btn btn-primary btn-block"><span translate="PROGRESS_SELECT"></span></button>
           </div>
         </div>
       </div>
@@ -72,7 +72,7 @@
       <div class="panel-body" ng-show="filtered_items && filtered_items.length == 0">
         <div class="col-sm-12 ">
           <div class="bb-service-unavailable">
-            <p translate="SERVICE_LIST_NO">
+            <p><span translate="SERVICE_LIST_NO"></span>
             </p>
           </div>
         </div>
@@ -85,7 +85,7 @@
 <div class="bb-step-navigation">
   <div class="row">
     <div class="col-sm-3">
-      <button type="button" class="btn btn-default" bb-debounce ng-click="loadPreviousStep()" ng-show="bb.current_step > 1" translate="PROGRESS_BACK"></button>
+      <button type="button" class="btn btn-default" bb-debounce ng-click="loadPreviousStep()" ng-show="bb.current_step > 1"><span translate="PROGRESS_BACK"></span></button>
     </div>
   </div>
 </div>

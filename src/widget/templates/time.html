@@ -8,11 +8,11 @@
     <div class="bb-calendar-navigation">
       <button type="button" class="btn btn-link pull-left" ng-click="subtract('days',1)">
         <span class="glyphicon glyphicon-chevron-left pull-left" aria-hidden="true"></span>
-        <span class="hidden-xs" translate="AVAIL_DAY_PREVIOUS"></span>
+        <span class="hidden-xs"><span translate="AVAIL_DAY_PREVIOUS"></span></span>
       </button>
       <button type="button" class="btn btn-link pull-right" ng-click="add('days',1)">
         <span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true" ></span>
-        <span class="hidden-xs" translate="AVAIL_DAY_NEXT"></span>
+        <span class="hidden-xs"><span translate="AVAIL_DAY_NEXT"></span></span>
       </button>
     </div>
 
@@ -22,7 +22,7 @@
       <h2 class="bb-section-title text-center hidden-sm hidden-md hidden-lg">{{format_date('Do MMM')}}</h2>
 
       <div ng-show="!slots || (slots && slots.length == 0)" class="bb-service-unavailable">
-        <p translate="AVAIL_NO">
+        <p><span translate="AVAIL_NO"></span>
         </p>
       </div>
 
@@ -138,7 +138,7 @@
 <div class="bb-step-navigation">
   <div class="row">
     <div class="col-sm-3">
-      <button type="button" class="btn btn-default" bb-debounce ng-click="loadPreviousStep()" ng-show="bb.current_step > 1" translate="PROGRESS_BACK"></button>
+      <button type="button" class="btn btn-default" bb-debounce ng-click="loadPreviousStep()" ng-show="bb.current_step > 1"><span translate="PROGRESS_BACK"></span></button>
     </div>
   </div>
 </div>
