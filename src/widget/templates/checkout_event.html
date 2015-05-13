@@ -20,20 +20,20 @@
 
     <div class="panel panel-default event-description">
       <div class="panel-body">
-        <p>Please enter your payment details to confirm your booking.</p>
+        <p translate="PAYMENT_INSTRUCTION"></p>
       </div>
     </div>
 
     <div class="panel panel-default event-tickets">
       <div class="panel-body">
-        <h2 class="heading">Place Summary</h2>
+        <h2 class="heading" translate="EVENT_TICKET_SUMMARY_TITLE"></h2>
         <div ng-form name="ticket_form" class="bb-form" role="form">
           <ul class="ticket-list">
             <li class="header">
               <div class="row">
-                <div class="col-sm-6 col-xs-6">Type</div>
-                <div class="col-sm-3 col-xs-4">Price</div>
-                <div class="col-sm-3 col-xs-2">Qty</div>
+                <div class="col-sm-6 col-xs-6"><span translate="ITEM_TYPE"></span></div>
+                <div class="col-sm-3 col-xs-4"><span translate="ITEM_PRICE"></span></div>
+                <div class="col-sm-3 col-xs-2"><span translate="ITEM_QTY"></span></div>
               </div>
             </li>
             <li ng-repeat="ticket in bb.event_details.tickets">
@@ -52,25 +52,25 @@
             </li>
             <li ng-if="bb.basket.questionPrice()">
               <div class="row">
-                <div class="col-sm-6 col-xs-6 total-label">Booking Fee</div>
+                <div class="col-sm-6 col-xs-6 total-label"><span translate="BASKET_BOOKING_FEE"></span></div>
                 <div class="col-sm-3 col-xs-6">{{bb.basket.questionPrice() | currency}}</div>
               </div>
             </li>
             <li ng-if="bb.basket.hasCoupon()">
               <div class="row">
-                <div class="col-sm-6 col-xs-6 total-label">Original Cost</div>
+                <div class="col-sm-6 col-xs-6 total-label"><span translate="BASKET_ORIGINAL"></span> <span translate="ITEM_COST"></span></div>
                 <div class="col-sm-3 col-xs-6">{{bb.basket.fullPrice() | currency}}</div>
               </div>
             </li>
             <li ng-if="bb.basket.hasCoupon()">
               <div class="row">
-                <div class="col-sm-6 col-xs-6 total-label">Coupon Discount</div>
+                <div class="col-sm-6 col-xs-6 total-label"><span translate="BASKET_COUPON_DISCOUNT"></span></div>
                 <div class="col-sm-3 col-xs-6">{{(bb.basket.fullPrice() - bb.basket.totalPrice()) | currency}}</div>
               </div>
             </li>
             <li ng-if="bb.basket.hasCoupon() || bb.basket.totalPrice()">
               <div class="row">
-                <div class="col-sm-6 col-xs-6 total-label">Total</div>
+                <div class="col-sm-6 col-xs-6 total-label"><span translate="BASKET_TOTAL"></span></div>
                 <div class="col-sm-3 col-xs-6"><strong>{{bb.basket.totalPrice() | currency}}</strong></div>
               </div>
             </li>
@@ -81,7 +81,7 @@
 
     <div class="panel panel-default event-tickets">
       <div class="panel-body">
-        <h2 class="heading">Payment Details</h2>
+        <h2 class="heading" translate="PAYMENT_DETAILS_TITLE"></h2>
         <div id="bb-payment">
           <iframe id="bb-widget" ng-src="{{url}}" width="100%" height="930px" scrolling="no" frameborder="0"></iframe>
         </div>
