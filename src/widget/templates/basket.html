@@ -5,16 +5,16 @@
 		<div class="col-sm-12">
 			<div class="bb-subcontent">
 
-				<h2 class="bb-section-title" translate="BASKET_TITLE"></h2>
+				<h2 class="bb-section-title"><span translate="BASKET_TITLE"></span></h2>
 				<div class="bb-empty-basket-full-screen" ng-hide="items">
-					<h3 translate="BASKET_ITEM_NO"></h3>
-					<p translate="BASKET_ITEM_ADD_INSTRUCT"></p>
+					<h3><span translate="BASKET_ITEM_NO"></span></h3>
+					<p><span translate="BASKET_ITEM_ADD_INSTRUCT"></span></p>
 				</div>
 				<table class="table table-bordered" ng-show="items">
 					<thead>
 						<tr>
-							<th translate="ITEM"></th>
-							<th translate="ITEM_PRICE"></th>
+							<th><span translate="ITEM"></span></th>
+							<th><span translate="ITEM_PRICE"></span></th>
 							<th>&nbsp;</th>
 						</tr>
 					</thead>
@@ -43,7 +43,7 @@
 							</td>
 			  		</tr>
             <tr ng-if="basket.hasDeal()">
-              <th class="text-left" translate="BASKET_GIFT_CERTIFICATES"></th>
+              <th class="text-left"><span translate="BASKET_GIFT_CERTIFICATES"></span></th>
               <th>&nbsp;</th>
 						  <th>&nbsp;</th>
 					  </tr>
@@ -70,37 +70,37 @@
 						</tr>
             
             <tr data-ng-if="basket.questionPrice()">
-							<th class="text-right" translate="BASKET_BOOKING_FEE"></th>
+							<th class="text-right"><span translate="BASKET_BOOKING_FEE"></span></th>
 							<th class="text-right">{{basket.questionPrice() | currency}}</th>
 							<th>&nbsp;</th>
 						</tr>
 						
 					
 			  	  <tr data-ng-if="basket.hasDeal()">
-							<th class="text-right" translate="BASKET_GIFT_CERTIFICATES_TOTAL"></th>
+							<th class="text-right"><span translate="BASKET_GIFT_CERTIFICATES_TOTAL"></span></th>
 							<th class="text-right">{{basket.totalDeals() | pretty_price }}</th>
 							<th>&nbsp;</th>
 						</tr>
 
 					  <tr data-ng-if="basket.hasDeal()">
-							<th class="text-right" translate="BASKET_GIFT_CERTIFICATE_BALANCE"></th>
+							<th class="text-right"><span translate="BASKET_GIFT_CERTIFICATE_BALANCE"></span></th>
 							<th class="text-right">{{ basket.totalCertificatePaid() | currency }}</th>
 							<th>&nbsp;</th>
 						</tr>
 
 						<tr data-ng-if="basket.hasCoupon()">
-							<th class="text-right" translate="BASKET_COUPON_DISCOUNT"></th>
+							<th class="text-right"><span translate="BASKET_COUPON_DISCOUNT"></span></th>
 							<th class="text-right">{{(bb.basket.fullPrice() - bb.basket.totalPrice()) | currency}}</th>
 							<th>&nbsp;</th>
 						</tr>
 
 						<tr data-ng-if="basket.total_price > 0">
-							<th class="text-right" translate="BASKET_TOTAL"></th>
+							<th class="text-right"><span translate="BASKET_TOTAL"></span></th>
 							<th class="text-right">{{basket.total_price | pretty_price }}</th>
 							<th>&nbsp;</th>
 						</tr>
 						<tr data-ng-if="basket.total_due_price != basket.total_price">
-							<th class="text-right" translate="BASKET_TOTAL_DUE_NOW"></th>
+							<th class="text-right"><span translate="BASKET_TOTAL_DUE_NOW"></span></th>
 							<th class="text-right">{{basket.total_due_price | currency }}</th>
 							<th>&nbsp;</th>
 						</tr>
@@ -110,13 +110,13 @@
 				<div ng-if="bb.company_settings.has_coupons" class="bb-coupon-box">
 					<span translate='BASKET_COUPON_APPLY'></span>
 					<input ng-model="coupon_code"/>
-					<button type="button" class="btn btn-primary btn-xs" ng-click="applyCoupon(coupon_code)">Apply</button>
+					<button type="button" class="btn btn-primary btn-xs" ng-click="applyCoupon(coupon_code)"><span translate="PROGRESS_APPLY"></span></button>
 				</div>
 
           <div class="bb-coupon-box" ng-if="bb.company_settings.has_vouchers">
             <form class="form-inline">
               <div ng-show="!show_voucher_box">
-                <a ng-click="show_voucher_box = true" translate='BASKET_GIFT_CERTIFICATE_QUESTION'></a>
+                <a ng-click="show_voucher_box = true"><span translate='BASKET_GIFT_CERTIFICATE_QUESTION'></span></a>
               </div>
               <div ng-show="show_voucher_box" class="form-group">
                 <label ng-if="!basket.hasDeal()" for="deal"><span translate='BASKET_GIFT_CERTIFICATE_APPLY'></span>:</label>
@@ -124,7 +124,7 @@
                 <div class=" input-group">
                   <input type="text" class="form-control input-sm" id="deal_code" name="deal_code" ng-model="deal_code" placeholder="Enter a voucher code">
                   <span class="input-group-btn">
-                    <button type="button" class="btn btn-primary btn-sm" ng-click="applyDeal(deal_code)" translate='PROGRESS_APPLY'></button>
+                    <button type="button" class="btn btn-primary btn-sm" ng-click="applyDeal(deal_code)"><span translate='PROGRESS_APPLY'></span></button>
                   </span>
                 </div>
               </div>
@@ -139,12 +139,12 @@
 				<div class="row">
 					<div class="col-sm-9 col-sm-push-3 text-right">
 						<div ng-if="bb.company.$has('events')">
-							<button type="button" class="btn btn-primary" ng-click="addAnother('event_list')" translate="BASKET_ITEM_ADD"></button>
+							<button type="button" class="btn btn-primary" ng-click="addAnother('event_list')"><span translate="BASKET_ITEM_ADD"></span></button>
 						</div>
 						<div ng-if="bb.company.$has('services')">
-						  <button type="button" class="btn btn-primary" ng-click="addAnother('service_list')" translate="BASKET_ITEM_ADD"></button>
+						  <button type="button" class="btn btn-primary" ng-click="addAnother('service_list')"><span translate="BASKET_ITEM_ADD"></span></button>
 	          </div>
-						<button type="button" class="btn btn-primary" ng-click="checkout('checkout')" translate="BASKET_CHECKOUT"></button>
+						<button type="button" class="btn btn-primary" ng-click="checkout('checkout')"><span translate="BASKET_CHECKOUT"></span></button>
 					</div>
 					<div class="col-sm-3 col-sm-pull-9">
 						<button type="button" class="btn btn-default" ng-click="loadPreviousStep()" ng-show="bb.current_step > 1"><span translate="PROGRESS_BACK"></span></button>
