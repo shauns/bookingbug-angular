@@ -119,6 +119,7 @@
   "DETAILS_PHONE_MOBILE":"Mobile",
   "DETAILS_PHONE_MOBILE_VALIDATION_MSG":"Please enter a valid mobile number",
   "DETAILS_TERMS":"I agree to the terms and conditions",
+  "DETAILS_TERMS_VALIDATION_MSG":"Please accept the terms and conditions",
   "DETAILS_VALIDATION_MSG":"This field is required",
   "DETAILS_REQUIRED":"Required",
   "DETAILS_OTHER_INFO":"Other information",
