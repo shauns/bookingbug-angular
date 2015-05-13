@@ -38,7 +38,6 @@
   "AVAIL_MORNING":"Morning",
   "AVAIL_AFTERNOON":"Afternoon",
   "AVAIL_EVENING":"Evening",
-  "AVAIL_SLOTS":"{{number}} available",
   "AVAIL_WORD":"available",
   "AVAIL_NO":"No Service Available",
   "PICK_A_DATE":"Pick a date",

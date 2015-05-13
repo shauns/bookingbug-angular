@@ -77,7 +77,7 @@
                       <span ng-show="has_availability && is_open">-</span>
                       <span translate="AVAIL_MORNING"></span>
                     </span>
-                    <span ng-hide="is_selected || (is_open && has_availability)"><span translate="AVAIL_SLOTS" translate-values="{number: accordian_slots.length}"></span></span>
+                    <span ng-hide="is_selected || (is_open && has_availability)">{{ accordian_slots.length }} <span translate="AVAIL_WORD"></span></span>
                     <span class="selected-time" ng-show="is_selected && !is_open">{{selected_slot.time_12}}</span>
                   </div>
                 </div>
@@ -102,7 +102,7 @@
                       <span ng-show="has_availability && is_open">-</span>
                       <span translate="AVAIL_AFTERNOON"></span>
                     </span>
-                    <span ng-hide="is_selected || (is_open && has_availability)"><span translate="AVAIL_SLOTS" translate-values="{number: accordian_slots.length}"></span></span>
+                    <span ng-hide="is_selected || (is_open && has_availability)">{{ accordian_slots.length }} <span translate="AVAIL_WORD"></span></span>
                     <span class="selected-time" ng-show="is_selected && !is_open">{{selected_slot.time_12}}</span>
                   </div>
                 </div>
@@ -126,7 +126,7 @@
                       <span ng-show="has_availability && is_open">-</span>
                       <span translate="AVAIL_EVENING"></span>
                     </span>
-                    <span ng-hide="is_selected || (is_open && has_availability)"><span translate="AVAIL_SLOTS" translate-values="{number: accordian_slots.length}"></span></span>
+                    <span ng-hide="is_selected || (is_open && has_availability)"><{{ accordian_slots.length }} <span translate="AVAIL_WORD"></span></span></span>
                     <span class="selected-time" ng-show="is_selected && !is_open">{{selected_slot.time_12}}</span>
                   </div>
                 </div>

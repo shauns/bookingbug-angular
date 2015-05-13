@@ -26,7 +26,6 @@
   "AVAIL_MORNING":"Matin",
   "AVAIL_AFTERNOON":"Après-midi",
   "AVAIL_EVENING":"Soir",
-  "AVAIL_SLOTS":"{{number}} disponible",
   "AVAIL_WORD": "disponible",
   "AVAIL_NO": "Pas de service disponible",
   "PICK_A_DATE":"Choisissez une date",
