@@ -109,8 +109,8 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
 
   $scope.has_content = $element[0].children.length != 0
   if $scope.apiUrl
-    $rootScope.bb ||= {}
-    $rootScope.bb.api_url = $scope.apiUrl
+    $scope.bb ||= {}
+    $scope.bb.api_url = $scope.apiUrl
   if $rootScope.bb && $rootScope.bb.api_url
     $scope.bb.api_url = $rootScope.bb.api_url
     unless $rootScope.bb.partial_url
@@ -172,6 +172,12 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
       return
     else
       # ie 8 hacks
+      if $scope.bb.api_url
+        url = document.createElement('a')
+        url.href = $scope.bb.api_url
+        if url.host == $window.location.host
+          $scope.initWidget2()
+          return
       if $rootScope.iframe_proxy_ready
         $scope.initWidget2()
         return
