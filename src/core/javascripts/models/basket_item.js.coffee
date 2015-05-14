@@ -689,6 +689,7 @@ angular.module('BB.Models').factory "BasketItemModel",
     setDeal: (deal) ->
       @deal = deal
       @book_link = @deal if @deal.$has('book')
+      @setPrice(deal.price) if deal.price
 
     ####################
     # various status tests

@@ -111,3 +111,11 @@ angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, 
       if err && err.data && err.data.error
         AlertService.clear()
         AlertService.add("danger", { msg: err.data.error })
+
+
+  $scope.setReady = ->
+    if $scope.bb.basket.items.length > 0
+      $scope.setReadyToCheckout(true)
+    else
+      AlertService.add 'info', ErrorService.getError('EMPTY_BASKET_FOR_CHECKOUT')
+      
