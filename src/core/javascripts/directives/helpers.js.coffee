@@ -373,6 +373,9 @@ app.directive 'bbApiUrl', ($rootScope, $compile, $sniffer, $timeout, $window) ->
       url = document.createElement('a')
       url.href = scope.apiUrl
       if (($sniffer.msie && $sniffer.msie < 10) && url.host != $window.location.host)
+        console.log "cors ie proxy"
+        console.log url.host
+        console.log $window.location.host
         if url.protocol[url.protocol.length - 1] == ':'
           src = "#{url.protocol}//#{url.host}/ClientProxy.html"
         else
