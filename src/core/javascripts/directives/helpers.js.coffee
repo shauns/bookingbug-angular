@@ -364,7 +364,7 @@ app.directive 'apiUrl', ($rootScope, $compile, $sniffer, $timeout, $window) ->
           element.append(cloned)
 
 
-app.directive 'bbApiUrl', ($rootScope, $compile, $sniffer, $timeout, $window) ->
+app.directive 'bbApiUrl', ($rootScope, $compile, $sniffer, $timeout, $window, $location) ->
   restrict: 'A'
   scope:
     'apiUrl': '@bbApiUrl'
@@ -374,20 +374,19 @@ app.directive 'bbApiUrl', ($rootScope, $compile, $sniffer, $timeout, $window) ->
       $rootScope.bb.api_url = scope.apiUrl
       url = document.createElement('a')
       url.href = scope.apiUrl
-      if (($sniffer.msie && $sniffer.msie < 10) && url.host != $window.location.host)
-        console.log "cors ie proxy"
-        console.log url.host
-        console.log $window.location.host
-        if url.protocol[url.protocol.length - 1] == ':'
-          src = "#{url.protocol}//#{url.host}/ClientProxy.html"
-        else
-          src = "#{url.protocol}://#{url.host}/ClientProxy.html"
-        $rootScope.iframe_proxy_ready = false
-        $window.iframeLoaded = () ->
-          $rootScope.iframe_proxy_ready = true
-          $rootScope.$broadcast('iframe_proxy_ready', {iframe_proxy_ready: true})
-        $compile("<iframe id='ieapiframefix' name='" + url.hostname + "' src='#{src}' style='visibility:false;display:none;' onload='iframeLoaded()'></iframe>") scope, (cloned, scope) =>
-          element.append(cloned)
+      if $sniffer.msie && $sniffer.msie < 10
+        unless url.host == $location.host() || url.host == "#{$location.host()}:#{$location.port()}"
+          console.log "cors ie proxy"
+          if url.protocol[url.protocol.length - 1] == ':'
+            src = "#{url.protocol}//#{url.host}/ClientProxy.html"
+          else
+            src = "#{url.protocol}://#{url.host}/ClientProxy.html"
+          $rootScope.iframe_proxy_ready = false
+          $window.iframeLoaded = () ->
+            $rootScope.iframe_proxy_ready = true
+            $rootScope.$broadcast('iframe_proxy_ready', {iframe_proxy_ready: true})
+          $compile("<iframe id='ieapiframefix' name='" + url.hostname + "' src='#{src}' style='visibility:false;display:none;' onload='iframeLoaded()'></iframe>") scope, (cloned, scope) =>
+            element.append(cloned)
 
 
 app.directive 'bbPriceFilter', (PathSvc) ->
