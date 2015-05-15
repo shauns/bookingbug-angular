@@ -11,9 +11,7 @@ angular.module('BB.Controllers').controller 'TimeList', ($attrs, $element, $scop
   $scope.controller = "public.controllers.TimeList"
   $scope.notLoaded $scope
 
-  if !$scope.data_source
-    $scope.data_source = $scope.bb.current_item
-
+  $scope.data_source = $scope.bb.current_item if !$scope.data_source
   $scope.options = $scope.$eval($attrs.bbTimes) or {}
 
   $rootScope.connection_started.then =>
@@ -89,7 +87,6 @@ angular.module('BB.Controllers').controller 'TimeList', ($attrs, $element, $scop
   # check the status of the slot to see if it has been selected
   $scope.status = (slot) ->
     return if !slot
-
     status = slot.status()
     return status
 
@@ -112,12 +109,15 @@ angular.module('BB.Controllers').controller 'TimeList', ($attrs, $element, $scop
 
   $scope.loadDay = () =>
 
-    AlertService.clear()
-    $scope.notLoaded $scope
     if $scope.data_source && $scope.data_source.days_link  || $scope.item_link_source
       if !$scope.selected_date && $scope.data_source && $scope.data_source.date
         $scope.selected_date = $scope.data_source.date.date
 
+      if !$scope.selected_date
+        $scope.setLoaded $scope
+        return
+
+      $scope.notLoaded $scope
       pslots = TimeService.query({company: $scope.bb.company, cItem: $scope.data_source, item_link: $scope.item_link_source, date: $scope.selected_date, client: $scope.client, available: 1 })
       
       pslots.finally =>
