@@ -101,7 +101,6 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     QuestionService, LocaleService, PurchaseService, $sessionStorage, $bbug, SettingsService) ->
   # dont change the cid as we use it in the app to identify this as the widget
   # root scope
-  console.log "setuip bbctrl"
   $scope.cid = "BBCtrl"
   $scope.controller = "public.controllers.BBCtrl"
   $scope.bb = new BBWidget()
