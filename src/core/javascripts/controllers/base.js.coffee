@@ -1,7 +1,7 @@
 'use strict';
 
 
-angular.module('BB.Directives').directive 'bbWidget', (PathSvc, $http, $log
+angular.module('BB.Directives').directive 'bbWidget', (PathSvc, $http, $log,
     $templateCache, $compile, $q, AppConfig, $timeout, $bbug) ->
 
   getTemplate = (template) ->
@@ -96,7 +96,7 @@ angular.module('BB.Controllers').controller 'bbContentController', ($scope) ->
 
 angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     $rootScope, halClient, $window, $http, $localCache, $q, $timeout, BasketService,
-    LoginService, AlertService, $sce, $element, $compile, $sniffer, $modal,
+    LoginService, AlertService, $sce, $element, $compile, $sniffer, $modal, $log,
     BBModel, BBWidget, SSOService, ErrorService, AppConfig, QueryStringService,
     QuestionService, LocaleService, PurchaseService, $sessionStorage, $bbug, SettingsService) ->
   # dont change the cid as we use it in the app to identify this as the widget
