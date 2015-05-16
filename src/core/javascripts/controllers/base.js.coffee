@@ -1,7 +1,7 @@
 'use strict';
 
 
-angular.module('BB.Directives').directive 'bbWidget', (PathSvc, $http,
+angular.module('BB.Directives').directive 'bbWidget', (PathSvc, $http, $log
     $templateCache, $compile, $q, AppConfig, $timeout, $bbug) ->
 
   getTemplate = (template) ->
@@ -676,9 +676,9 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     add_defer = $q.defer()
 
     if !$scope.bb.current_item.submitted && !$scope.bb.moving_booking
-      $scope.bb.current_item.submitted = true
       $scope.moveToBasket()
-      $scope.updateBasket().then (basket) ->
+      $scope.bb.current_item.submitted = $scope.updateBasket()
+      $scope.bb.current_item.submitted.then (basket) ->
         add_defer.resolve(basket)
       , (err) ->
         if err.status == 409
@@ -689,8 +689,10 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
           if $scope.bb.current_item.service
             $scope.bb.current_item.setService($scope.bb.current_item.service)
 
-        $scope.bb.current_item.submitted = false
+        $scope.bb.current_item.submitted = null
         add_defer.reject(err)
+    else if $scope.bb.current_item.submitted
+      return $scope.bb.current_item.submitted
     else
       add_defer.resolve()
     add_defer.promise
@@ -1056,6 +1058,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
 
 
   $scope.setLoadedAndShowError = (scope, err, error_string) ->
+    $log.warn(err, error_string)
     scope.setLoaded(scope)
     if err.status == 409
       AlertService.danger(ErrorService.getError('ITEM_NO_LONGER_AVAILABLE'))
