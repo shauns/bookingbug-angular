@@ -1,4 +1,5 @@
-$.fullCalendar.Grid.prototype.bindHandlers = function() {
+if ($.fullCalendar.Grid) {
+  $.fullCalendar.Grid.prototype.bindHandlers = function() {
   var noEventClick = this.view.opt('noEventClick');
   var _this = this;
 
@@ -68,4 +69,5 @@ var agendaSelectAcrossWeek = FC.views.agenda.extend({
 
 });
 
-FC.views.agendaSelectAcrossWeek = agendaSelectAcrossWeek
+FC.views.agendaSelectAcrossWeek = agendaSelectAcrossWeek;
+}
