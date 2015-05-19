@@ -631,9 +631,10 @@ angular.module('BB.Models').factory "BasketItemModel",
 
     # get booking end datetime
     end_datetime: () ->
-      return null if !@date || !@time || !@listed_duration
+      return null if !@date || !@time || (!@listed_duration && !@duration)
+      duration = if @listed_duration then @listed_duration else @duration 
       end_datetime = moment(@date.date.toISODate())
-      end_datetime.minutes(@time.time + @listed_duration)
+      end_datetime.minutes(@time.time + duration)
       end_datetime
 
     # set a booking are to be a move (or a copy?) from a previous booking
