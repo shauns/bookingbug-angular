@@ -535,6 +535,7 @@ angular.module('BB.Models').factory "BasketItemModel",
       data.coupon_id = @coupon_id
       data.is_coupon = @is_coupon
       data.attachment_id = @attachment_id if @attachment_id
+      data.vouchers = @deal_codes if @deal_codes
 
       if @email?
         data.email = @email
