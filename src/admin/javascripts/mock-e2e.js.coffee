@@ -43,6 +43,8 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
      _links:
        self:
          href: 'http://www.bookingbug.com/api/v1/company/123'
+       people:
+         href: 'http://www.bookingbug.com/api/v1/admin/123/people'
        new_person:
          href: 'http://www.bookingbug.com/api/v1/admin/123/people/new{?signup}'
          templated: true
@@ -62,6 +64,10 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
          href: 'http://www.bookingbug.com/api/v1/admin/123/schedules'
        new_schedule:
          href: 'http://www.bookingbug.com/api/v1/admin/123/schedules/new'
+       resources:
+         href: 'http://www.bookingbug.com/api/v1/admin/123/resources'
+       new_resource:
+         href: 'http://www.bookingbug.com/api/v1/admin/123/resources/new'
    $httpBackend.whenGET('http://www.bookingbug.com/api/v1/admin/123/company').respond(company)
 
    people =
