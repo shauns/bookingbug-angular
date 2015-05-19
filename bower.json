@@ -49,6 +49,10 @@
     "angulartics": "~0.17.2",
     "angular-slick": "~0.2.1",
     "angular-translate-storage-cookie": "~2.6.1",
-    "uri-templates": "~0.1.5"
+    "uri-templates": "~0.1.5",
+    "fullcalendar": "~2.3.1"
+  },
+  "resolutions": {
+    "fullcalendar": "~2.3.1"
   }
 }
