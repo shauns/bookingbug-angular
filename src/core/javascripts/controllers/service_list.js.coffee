@@ -18,7 +18,7 @@ angular.module('BB.Directives').directive 'bbServices', () ->
     return
 
 
-angular.module('BB.Controllers').controller 'ServiceList',($scope,  $rootScope, $q, $attrs, $modal, $sce, ItemService, FormDataStoreService, ValidatorService, PageControllerService, halClient, AlertService, ErrorService, $filter, CategoryService) ->
+angular.module('BB.Controllers').controller 'ServiceList',($scope,  $rootScope, $q, $attrs, $modal, $sce, ItemService, FormDataStoreService, ValidatorService, PageControllerService, halClient, AlertService, ErrorService, $filter, CategoryService, BBModel) ->
 
   $scope.controller = "public.controllers.ServiceList"
   FormDataStoreService.init 'ServiceList', $scope, [
@@ -105,7 +105,11 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope,  $rootScope, 
           items = items.filter (x) -> x.api_ref == $scope.booking_item.service_ref
         if $scope.booking_item.group
           items = items.filter (x) -> !x.group_id || x.group_id == $scope.booking_item.group
-        services = (i.item for i in items when i.item?)
+        services = []
+        for item in items
+          if item.$has('item')
+            item.$get('item').then (service) ->
+              services.push(new BBModel.Service(service))
         
         $scope.bookable_services = services
         $scope.bookable_items = items
