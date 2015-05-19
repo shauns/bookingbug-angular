@@ -81,9 +81,6 @@ angular.module('BB.Services').factory "BasketService", ($q, $rootScope, BBModel,
     if !lnk
       deferred.reject("rel book not found for event")
       return deferred.promise
-    console.log("updateBasket")
-    console.log(params)
-    console.log(data)
     MutexService.getLock().then (mutex) ->
       lnk.$post('book', params, data).then (basket) ->
         MutexService.unlock(mutex)
