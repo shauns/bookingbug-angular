@@ -6,7 +6,6 @@ angular.module('BB.Directives').directive 'bbMonthAvailability', () ->
   scope : true
   controller : 'DayList'
 
-
 angular.module('BB.Controllers').controller 'DayList', ($scope,  $rootScope, $q, DayService) ->
   $scope.controller = "public.controllers.DayList"
   $scope.notLoaded $scope
@@ -53,7 +52,10 @@ angular.module('BB.Controllers').controller 'DayList', ($scope,  $rootScope, $q,
       return false
     $scope.setLastSelectedDate(day.date)
     $scope.bb.current_item.setDate(day)
-    $scope.decideNextPage(route)
+    if $scope.$parent.$has_page_control
+      return
+    else
+      $scope.decideNextPage(route)
 
   $scope.setMonth = (month, year) =>
     $scope.current_date = moment().startOf('month').year(year).month(month-1)
