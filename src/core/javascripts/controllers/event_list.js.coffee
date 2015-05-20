@@ -42,7 +42,15 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
   $scope.event_group_set = if !$scope.event_group_set then false else $scope.current_item.event_group?
 
   $rootScope.connection_started.then ->
-    $scope.initialise() if $scope.bb.company
+    if $scope.bb.company
+      if $scope.bb.company.$has('parent') && !$scope.bb.company.$has('company_questions')
+        $scope.bb.company.getParentPromise().then (parent) ->
+          $scope.company_parent = parent
+          $scope.initialise()
+        , (err) -> $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
+      else
+        $scope.initialise()
+      
   , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
   
   $scope.fully_booked = false
@@ -52,9 +60,11 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
     $scope.notLoaded $scope
     promises = []
 
-    # compant question promise
+    # company question promise
     if $scope.bb.company.$has('company_questions')
       promises.push($scope.bb.company.getCompanyQuestionsPromise())
+    else if $scope.company_parent? && $scope.company_parent.$has('company_questions')
+      promises.push($scope.company_parent.getCompanyQuestionsPromise())
     else
       promises.push($q.when([]))
       $scope.has_company_questions = false
@@ -83,6 +93,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
       event_summary     = result[2]
       event_data        = result[3]
 
+      $scope.has_company_questions = company_questions? && company_questions.length > 0
       buildDynamicFilters(company_questions) if company_questions
       $scope.event_groups = _.indexBy(event_groups, 'id') if event_groups
       $scope.setLoaded $scope
