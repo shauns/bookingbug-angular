@@ -604,7 +604,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
       # make sure we set the client to the currently logged in member
       # we should also jsut check the logged in member is  a member of the company they are currently booking with
       $scope.client = new BBModel.Client(LoginService.member()._data)
-    if (($scope.bb.company && $scope.bb.company.companies) || (!$scope.bb.company && $scope.affiliate)) && !$scope.bb.current_item.service
+    if (($scope.bb.company && $scope.bb.company.companies) || (!$scope.bb.company && $scope.affiliate))
       return if $scope.setPageRoute($rootScope.Route.Company)
       return $scope.showPage('company_list')
     else if $scope.bb.total && $scope.bb.payment_status == "complete"

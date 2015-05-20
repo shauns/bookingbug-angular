@@ -105,11 +105,7 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope,  $rootScope, 
           items = items.filter (x) -> x.api_ref == $scope.booking_item.service_ref
         if $scope.booking_item.group
           items = items.filter (x) -> !x.group_id || x.group_id == $scope.booking_item.group
-        services = []
-        for item in items
-          if item.$has('item')
-            item.$get('item').then (service) ->
-              services.push(new BBModel.Service(service))
+        services = (i.item for i in items when i.item?)
         
         $scope.bookable_services = services
         $scope.bookable_items = items
