@@ -51,7 +51,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
       else
         $scope.initialise()
       
-  , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
+  , (err) -> $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
   
   $scope.fully_booked = false
 
