@@ -54,6 +54,7 @@ angular.module('BB.Controllers').controller 'DurationList', ($scope,  $rootScope
 
 
   $scope.selectDuration = (dur, route) =>
+    $scope.duration = dur
     $scope.bb.current_item.setDuration(dur.value)
     if $scope.$parent.$has_page_control
       return
