@@ -56,7 +56,7 @@ angular.module('BB.Controllers').controller 'TimeList', ($attrs, $element, $scop
 
 
   $scope.selectSlot = (slot, route) =>
-
+    debugger
     if slot && slot.availability() > 0
       # if this time cal was also for a specific item source (i.e.a person or resoure- make sure we've selected it)
       if $scope.item_link_source
@@ -65,14 +65,11 @@ angular.module('BB.Controllers').controller 'TimeList', ($attrs, $element, $scop
         $scope.setLastSelectedDate($scope.selected_day.date)
         $scope.data_source.setDate($scope.selected_day)
       $scope.data_source.setTime(slot)
-      if $scope.$parent.$has_page_control
-        $scope.data_source.ready = true
       if $scope.data_source.ready
         $scope.addItemToBasket().then () =>
-          if $scope.$parent.$has_page_control
-            return
-          else
-            $scope.decideNextPage(route)
+          $scope.decideNextPage(route)
+      if $scope.$parent.$has_page_control
+        return
       else
         $scope.decideNextPage(route)
 
