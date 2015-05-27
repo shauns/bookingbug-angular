@@ -128,8 +128,6 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope,  $rootScope, 
   setServiceItem = (items) ->
     $scope.items = items
     $scope.filtered_items = $scope.items
-    for item in items 
-      item.description = $sce.trustAsHtml(item.description) if item.description and angular.isString(item.description)
     if $scope.service
         _.each items, (item) ->
           if item.id is $scope.service.id
