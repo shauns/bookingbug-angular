@@ -148,7 +148,7 @@ angular.module('BB.Directives').directive 'bbSlick', ($rootScope, $timeout, $bbu
         if angular.element($window).width() <= b.breakpoint
           slidesToShow = b.settings.slidesToShow
           break
-      return slidesToShow or 1
+      return slidesToShow or 3
 
     $scope.checkResponsive = ->
       slides_to_show = getSlidesToShow()
