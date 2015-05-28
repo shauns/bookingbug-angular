@@ -35,11 +35,11 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
   FormDataStoreService.init 'EventList', $scope, [
     'selected_date',
     'event_group_id',
-    'event_group_set'
+    'event_group_manually_set'
   ]
   
-  #$scope.$setIfUndefined 'event_group_set', false
-  $scope.event_group_set = if !$scope.event_group_set then false else $scope.current_item.event_group?
+  # has the event group been manually set (i.e. in the step before)
+  $scope.event_group_manually_set = if !$scope.event_group_manually_set? and $scope.current_item.event_group? then true else false
 
   $rootScope.connection_started.then ->
     if $scope.bb.company
@@ -58,6 +58,13 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
 
   $scope.initialise = () ->
     $scope.notLoaded $scope
+
+    if $scope.current_item.event and $scope.mode != 0
+      delete $scope.current_item.event
+      delete $scope.current_item.event_chain
+      delete $scope.current_item.event_group if !$scope.event_group_manually_set
+      delete $scope.current_item.tickets
+
     promises = []
 
     # company question promise
@@ -104,9 +111,6 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
   $scope.loadEventSummary = () ->
     deferred = $q.defer()
     current_event = $scope.current_item.event
-    if $scope.current_item.event
-      delete $scope.current_item.event
-      delete $scope.current_item.event_chain
 
     comp = $scope.bb.company 
     params = {item: $scope.bb.current_item, start_date:$scope.start_date.toISODate(), end_date:$scope.end_date.toISODate()}
@@ -119,16 +123,15 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
         for item in items
           d = moment(item)
           item_dates.push({
-            date:d, 
-            idate:  parseInt(d.format("YYYYDDDD")), 
-            count:1, 
-            spaces:1,
-            today: moment().isSame(d, 'day')
+            date   : d, 
+            idate  : parseInt(d.format("YYYYDDDD")), 
+            count  : 1, 
+            spaces : 1,
           })
 
         $scope.item_dates = item_dates.sort (a,b) -> (a.idate - b.idate) 
 
-        # clear the selected date if the event group has changed (but only when event group has been explicity set)
+        # TODO clear the selected date if the event group has changed (but only when event group has been explicity set)
         # if $scope.current_item? and $scope.current_item.event_group?
         #   if $scope.current_item.event_group.id != $scope.event_group_id
         #     $scope.showDay($scope.item_dates[0].date)
@@ -151,12 +154,6 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
     deferred = $q.defer()
 
     current_event = $scope.current_item.event
-
-    if $scope.current_item.event
-      delete $scope.current_item.event
-      delete $scope.current_item.event_chain
-      delete $scope.current_item.event_group # TODO only delete if the event group wasn't selected explicity
-      delete $scope.current_item.tickets
 
     $scope.notLoaded $scope
     comp ||= $scope.bb.company 
@@ -187,7 +184,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
             item.idate = idate
             if !item_dates[idate]
               item_dates[idate] = {date:item.date, idate: idate, count:0, spaces:0}
-            item_dates[idate].count +=1
+            item_dates[idate].count  += 1
             item_dates[idate].spaces += item.num_spaces
           $scope.item_dates = []
           for x,y of item_dates
@@ -197,7 +194,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
           idate = parseInt($scope.start_date.format("YYYYDDDD"))
           $scope.item_dates = [{date:$scope.start_date, idate: idate, count:0, spaces:0}]
 
-        # clear the selected date if the event group has changed
+        # TODO clear the selected date if the event group has changed
         # if $scope.current_item? && $scope.current_item.event_group?
         #   if $scope.current_item.event_group.id != $scope.event_group_id
         #     $scope.showDay($scope.item_dates[0].date)
@@ -234,6 +231,8 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
   $scope.showDay = (day) ->
     return if !day or (day and !day.data)
 
+    $scope.selected_day.selected = false if $scope.selected_day
+
     date = day.date
     # unselect the event if it's not on the day being selected
     delete $scope.event if $scope.event and !$scope.selected_date.isSame(date, 'day')
@@ -249,6 +248,8 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
     if new_date
       $scope.selected_date = new_date
       $scope.filters.date  = new_date.toDate()
+      $scope.selected_day = day
+      $scope.selected_day.selected = true
     else
       delete $scope.selected_date
       delete $scope.filters.date
