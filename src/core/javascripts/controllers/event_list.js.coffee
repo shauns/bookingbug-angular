@@ -119,11 +119,10 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
         for item in items
           d = moment(item)
           item_dates.push({
-            date:d, 
-            idate:  parseInt(d.format("YYYYDDDD")), 
-            count:1, 
-            spaces:1,
-            today: moment().isSame(d, 'day')
+            date   : d, 
+            idate  : parseInt(d.format("YYYYDDDD")), 
+            count  : 1, 
+            spaces : 1,
           })
 
         $scope.item_dates = item_dates.sort (a,b) -> (a.idate - b.idate) 
@@ -187,7 +186,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
             item.idate = idate
             if !item_dates[idate]
               item_dates[idate] = {date:item.date, idate: idate, count:0, spaces:0}
-            item_dates[idate].count +=1
+            item_dates[idate].count  += 1
             item_dates[idate].spaces += item.num_spaces
           $scope.item_dates = []
           for x,y of item_dates
@@ -234,6 +233,8 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
   $scope.showDay = (day) ->
     return if !day or (day and !day.data)
 
+    $scope.selected_day.selected = false if $scope.selected_day
+
     date = day.date
     # unselect the event if it's not on the day being selected
     delete $scope.event if $scope.event and !$scope.selected_date.isSame(date, 'day')
@@ -249,6 +250,8 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
     if new_date
       $scope.selected_date = new_date
       $scope.filters.date  = new_date.toDate()
+      $scope.selected_day = day
+      $scope.selected_day.selected = true
     else
       delete $scope.selected_date
       delete $scope.filters.date
