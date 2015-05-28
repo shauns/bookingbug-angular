@@ -48,6 +48,7 @@ angular.module('BB.Controllers').controller 'DayList', ($scope,  $rootScope, $q,
       $scope.end_date.format(fmt)
 
   $scope.selectDay = (day, route, force) =>
+    debugger
     if day.spaces == 0 && !force
       return false
     $scope.setLastSelectedDate(day.date)
@@ -126,5 +127,9 @@ angular.module('BB.Controllers').controller 'DayList', ($scope,  $rootScope, $q,
     else
       $scope.setLoaded $scope
 
-
+  $scope.setReady = () =>
+    if $scope.bb.current_item.date
+      return true
+    else
+      return false
 
