@@ -6,7 +6,7 @@ angular.module('BB.Directives').directive 'bbMonthAvailability', () ->
   scope : true
   controller : 'DayList'
 
-angular.module('BB.Controllers').controller 'DayList', ($scope,  $rootScope, $q, DayService) ->
+angular.module('BB.Controllers').controller 'DayList', ($scope,  $rootScope, $q, DayService, AlertService) ->
   $scope.controller = "public.controllers.DayList"
   $scope.notLoaded $scope
 
@@ -48,7 +48,6 @@ angular.module('BB.Controllers').controller 'DayList', ($scope,  $rootScope, $q,
       $scope.end_date.format(fmt)
 
   $scope.selectDay = (day, route, force) =>
-    debugger
     if day.spaces == 0 && !force
       return false
     $scope.setLastSelectedDate(day.date)
@@ -131,5 +130,7 @@ angular.module('BB.Controllers').controller 'DayList', ($scope,  $rootScope, $q,
     if $scope.bb.current_item.date
       return true
     else
+      AlertService.clear()
+      AlertService.add("danger", { msg: "You need to select a date" })
       return false
 
