@@ -131,7 +131,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
 
         $scope.item_dates = item_dates.sort (a,b) -> (a.idate - b.idate) 
 
-        # clear the selected date if the event group has changed (but only when event group has been explicity set)
+        # TODO clear the selected date if the event group has changed (but only when event group has been explicity set)
         # if $scope.current_item? and $scope.current_item.event_group?
         #   if $scope.current_item.event_group.id != $scope.event_group_id
         #     $scope.showDay($scope.item_dates[0].date)
@@ -194,7 +194,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
           idate = parseInt($scope.start_date.format("YYYYDDDD"))
           $scope.item_dates = [{date:$scope.start_date, idate: idate, count:0, spaces:0}]
 
-        # clear the selected date if the event group has changed
+        # TODO clear the selected date if the event group has changed
         # if $scope.current_item? && $scope.current_item.event_group?
         #   if $scope.current_item.event_group.id != $scope.event_group_id
         #     $scope.showDay($scope.item_dates[0].date)
