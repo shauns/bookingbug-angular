@@ -43,7 +43,12 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
 
   $rootScope.connection_started.then ->
     if $scope.bb.company
-      if $scope.bb.company.$has('parent') && !$scope.bb.company.$has('company_questions')
+      # if there's a default event, skip this step
+      if $scope.bb.item_defaults.event
+        $scope.skipThisStep()
+        $scope.decideNextPage()
+        return
+      else if $scope.bb.company.$has('parent') && !$scope.bb.company.$has('company_questions')
         $scope.bb.company.getParentPromise().then (parent) ->
           $scope.company_parent = parent
           $scope.initialise()
@@ -114,6 +119,8 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
 
     comp = $scope.bb.company 
     params = {item: $scope.bb.current_item, start_date:$scope.start_date.toISODate(), end_date:$scope.end_date.toISODate()}
+    params.event_chain_id = $scope.bb.item_defaults.event_chain if $scope.bb.item_defaults.event_chain
+
 
     EventService.summary(comp, params).then (items) ->
 
@@ -157,7 +164,10 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
 
     $scope.notLoaded $scope
     comp ||= $scope.bb.company 
+
     params = {item: $scope.bb.current_item, start_date:$scope.start_date.toISODate(), end_date:$scope.end_date.toISODate()}
+    params.event_chain_id = $scope.bb.item_defaults.event_chain if $scope.bb.item_defaults.event_chain
+
     EventService.query(comp, params).then (events) ->
 
       events = _.groupBy events, (event) -> event.date.toISODate()
