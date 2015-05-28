@@ -31,6 +31,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
   $scope.price_options = [0,1000,2500,5000]
   $scope.pagination = PaginationService.initialise({page_size: 10, max_size: 5})
   $scope.events = {}
+  $scope.fully_booked = false
 
   FormDataStoreService.init 'EventList', $scope, [
     'selected_date',
@@ -38,9 +39,6 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
     'event_group_manually_set'
   ]
   
-  # has the event group been manually set (i.e. in the step before)
-  $scope.event_group_manually_set = if !$scope.event_group_manually_set? and $scope.current_item.event_group? then true else false
-
   $rootScope.connection_started.then ->
     if $scope.bb.company
       # if there's a default event, skip this step
@@ -58,12 +56,14 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
       
   , (err) -> $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
   
-  $scope.fully_booked = false
-
 
   $scope.initialise = () ->
     $scope.notLoaded $scope
 
+    # has the event group been manually set (i.e. in the step before)
+    $scope.event_group_manually_set = if !$scope.event_group_manually_set? and $scope.current_item.event_group? then true else false
+
+    # clear event data unless in summary mode
     if $scope.current_item.event and $scope.mode != 0
       delete $scope.current_item.event
       delete $scope.current_item.event_chain
@@ -120,7 +120,6 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
     comp = $scope.bb.company 
     params = {item: $scope.bb.current_item, start_date:$scope.start_date.toISODate(), end_date:$scope.end_date.toISODate()}
     params.event_chain_id = $scope.bb.item_defaults.event_chain if $scope.bb.item_defaults.event_chain
-
 
     EventService.summary(comp, params).then (items) ->
 
