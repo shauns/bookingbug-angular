@@ -35,11 +35,11 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
   FormDataStoreService.init 'EventList', $scope, [
     'selected_date',
     'event_group_id',
-    'event_group_set'
+    'event_group_manually_set'
   ]
   
-  #$scope.$setIfUndefined 'event_group_set', false
-  $scope.event_group_set = if !$scope.event_group_set then false else $scope.current_item.event_group?
+  # has the event group been manually set (i.e. in the step before)
+  $scope.event_group_manually_set = if !$scope.event_group_manually_set? and $scope.current_item.event_group? then true else false
 
   $rootScope.connection_started.then ->
     if $scope.bb.company
@@ -58,6 +58,13 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
 
   $scope.initialise = () ->
     $scope.notLoaded $scope
+
+    if $scope.current_item.event and $scope.mode != 0
+      delete $scope.current_item.event
+      delete $scope.current_item.event_chain
+      delete $scope.current_item.event_group # TODO only delete if the event group wasn't selected explicity
+      delete $scope.current_item.tickets
+
     promises = []
 
     # company question promise
@@ -104,9 +111,6 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
   $scope.loadEventSummary = () ->
     deferred = $q.defer()
     current_event = $scope.current_item.event
-    if $scope.current_item.event
-      delete $scope.current_item.event
-      delete $scope.current_item.event_chain
 
     comp = $scope.bb.company 
     params = {item: $scope.bb.current_item, start_date:$scope.start_date.toISODate(), end_date:$scope.end_date.toISODate()}
@@ -150,12 +154,6 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
     deferred = $q.defer()
 
     current_event = $scope.current_item.event
-
-    if $scope.current_item.event
-      delete $scope.current_item.event
-      delete $scope.current_item.event_chain
-      delete $scope.current_item.event_group # TODO only delete if the event group wasn't selected explicity
-      delete $scope.current_item.tickets
 
     $scope.notLoaded $scope
     comp ||= $scope.bb.company 
