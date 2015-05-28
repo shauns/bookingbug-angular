@@ -54,11 +54,11 @@ angular.module('BB.Controllers').controller 'DurationList', ($scope,  $rootScope
 
 
   $scope.selectDuration = (dur, route) =>
-    $scope.duration = dur
-    $scope.bb.current_item.setDuration(dur.value)
     if $scope.$parent.$has_page_control
+      $scope.duration = dur
       return
     else
+      $scope.bb.current_item.setDuration(dur.value)
       $scope.decideNextPage(route)
       return true
 
@@ -72,7 +72,7 @@ angular.module('BB.Controllers').controller 'DurationList', ($scope,  $rootScope
       $scope.bb.current_item.setDuration($scope.duration.value)
       return true
     else
-      return true
+      return false
 
 
   # when the current item is updated, reload the duration data
