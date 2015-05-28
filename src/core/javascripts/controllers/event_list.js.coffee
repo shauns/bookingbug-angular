@@ -62,7 +62,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
     if $scope.current_item.event and $scope.mode != 0
       delete $scope.current_item.event
       delete $scope.current_item.event_chain
-      delete $scope.current_item.event_group # TODO only delete if the event group wasn't selected explicity
+      delete $scope.current_item.event_group if !$scope.event_group_manually_set
       delete $scope.current_item.tickets
 
     promises = []
