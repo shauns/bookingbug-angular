@@ -20,7 +20,7 @@ angular.module('BB.Directives').directive 'bbEvents', () ->
     return
 
 
-angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, EventService, $q, PageControllerService, FormDataStoreService, $filter, PaginationService) ->
+angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, EventService, EventChainService, $q, PageControllerService, FormDataStoreService, $filter, PaginationService) ->
   $scope.controller = "public.controllers.EventList"
   $scope.notLoaded $scope
   angular.extend(this, new PageControllerService($scope, $q))
@@ -154,8 +154,28 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
       deferred.resolve($scope.item_dates)
 
     , (err) -> deferred.reject()
-    deferred.promise
+    return deferred.promise
  
+
+
+  $scope.loadEventChainData = (comp) ->
+    deferred = $q.defer()
+
+    if $scope.bb.item_defaults.event_chain
+      deferred.resolve([])
+    else
+      $scope.notLoaded $scope
+      comp ||= $scope.bb.company 
+
+      params = {item: $scope.bb.current_item, start_date:$scope.start_date.toISODate(), end_date:$scope.end_date.toISODate()}
+
+      EventChainService.query(comp, params).then (events) ->
+        $scope.setLoaded $scope
+        deferred.resolve($scope.items)
+      , (err) ->  deferred.reject()
+
+    return deferred.promise
+    
 
   $scope.loadEventData = (comp) ->
     deferred = $q.defer()
@@ -168,6 +188,9 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
     params = {item: $scope.bb.current_item, start_date:$scope.start_date.toISODate(), end_date:$scope.end_date.toISODate()}
     params.event_chain_id = $scope.bb.item_defaults.event_chain if $scope.bb.item_defaults.event_chain
 
+
+    chains = $scope.loadEventChainData(comp)
+
     EventService.query(comp, params).then (events) ->
 
       events = _.groupBy events, (event) -> event.date.toISODate()
@@ -176,57 +199,59 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
 
       $scope.items = _.flatten(_.toArray($scope.events))
       
-      # get more event details
-      for item in $scope.items
-        item.prepEvent()
-        # check if the current item already has the same event selected
-        if $scope.mode is 0 and current_event and current_event.self == item.self 
-          item.select() 
-          $scope.event = item
+      chains.then () ->
+        # get more event details
+        for item in $scope.items
+          item.prepEvent()
+          # check if the current item already has the same event selected
+          if $scope.mode is 0 and current_event and current_event.self == item.self 
+            item.select() 
+            $scope.event = item
 
-      # only build item_dates if we're in 'next 100 event' mode
-      if $scope.mode is 1
-        item_dates = {}
-        if items.length > 0
-          for item in items
-            item.getDuration()
-            idate = parseInt(item.date.format("YYYYDDDD"))
-            item.idate = idate
-            if !item_dates[idate]
-              item_dates[idate] = {date:item.date, idate: idate, count:0, spaces:0}
-            item_dates[idate].count  += 1
-            item_dates[idate].spaces += item.num_spaces
-          $scope.item_dates = []
-          for x,y of item_dates
-            $scope.item_dates.push(y)
-          $scope.item_dates = $scope.item_dates.sort (a,b) -> (a.idate - b.idate)
-        else
-          idate = parseInt($scope.start_date.format("YYYYDDDD"))
-          $scope.item_dates = [{date:$scope.start_date, idate: idate, count:0, spaces:0}]
+        # only build item_dates if we're in 'next 100 event' mode
+        if $scope.mode is 1
+          item_dates = {}
+          if items.length > 0
+            for item in items
+              item.getDuration()
+              idate = parseInt(item.date.format("YYYYDDDD"))
+              item.idate = idate
+              if !item_dates[idate]
+                item_dates[idate] = {date:item.date, idate: idate, count:0, spaces:0}
+              item_dates[idate].count  += 1
+              item_dates[idate].spaces += item.num_spaces
+            $scope.item_dates = []
+            for x,y of item_dates
+              $scope.item_dates.push(y)
+            $scope.item_dates = $scope.item_dates.sort (a,b) -> (a.idate - b.idate)
+          else
+            idate = parseInt($scope.start_date.format("YYYYDDDD"))
+            $scope.item_dates = [{date:$scope.start_date, idate: idate, count:0, spaces:0}]
 
-        # TODO clear the selected date if the event group has changed
-        # if $scope.current_item? && $scope.current_item.event_group?
-        #   if $scope.current_item.event_group.id != $scope.event_group_id
-        #     $scope.showDay($scope.item_dates[0].date)
-        #   $scope.event_group_id = $scope.current_item.event_group.id
-        # if ($scope.selected_date && ($scope.selected_date.isAfter($scope.item_dates[0].date) || $scope.selected_date.isSame($scope.item_dates[0].date)) && ($scope.selected_date.isBefore($scope.item_dates[$scope.item_dates.length-1].date) || $scope.selected_date.isSame($scope.item_dates[$scope.item_dates.length-1].date)))
-        #   $scope.showDay($scope.selected_date)
-        # else
-        #   $scope.showDay($scope.item_dates[0].date)
+          # TODO clear the selected date if the event group has changed
+          # if $scope.current_item? && $scope.current_item.event_group?
+          #   if $scope.current_item.event_group.id != $scope.event_group_id
+          #     $scope.showDay($scope.item_dates[0].date)
+          #   $scope.event_group_id = $scope.current_item.event_group.id
+          # if ($scope.selected_date && ($scope.selected_date.isAfter($scope.item_dates[0].date) || $scope.selected_date.isSame($scope.item_dates[0].date)) && ($scope.selected_date.isBefore($scope.item_dates[$scope.item_dates.length-1].date) || $scope.selected_date.isSame($scope.item_dates[$scope.item_dates.length-1].date)))
+          #   $scope.showDay($scope.selected_date)
+          # else
+          #   $scope.showDay($scope.item_dates[0].date)
 
-      # determine if all events are fully booked
-      isFullyBooked()
+        # determine if all events are fully booked
+        isFullyBooked()
 
-      $scope.filtered_items = $scope.items
+        $scope.filtered_items = $scope.items
 
-      # run the filters to ensure any default filters get applied
-      $scope.filterChanged()
+        # run the filters to ensure any default filters get applied
+        $scope.filterChanged()
 
-      # update the paging
-      PaginationService.update($scope.pagination, $scope.filtered_items.length)
+        # update the paging
+        PaginationService.update($scope.pagination, $scope.filtered_items.length)
 
-      $scope.setLoaded $scope
-      deferred.resolve($scope.items)
+        $scope.setLoaded $scope
+        deferred.resolve($scope.items)
+      , (err) ->  deferred.reject()
     , (err) ->  deferred.reject()
     return deferred.promise
 
