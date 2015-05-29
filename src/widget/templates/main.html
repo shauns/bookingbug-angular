@@ -10,10 +10,10 @@
     ])">
 
     <ol class="breadcrumb"> 
-      <li ng-repeat="step in allSteps" ng-class="{'active': step.active, 'passed': step.passed, 'disabled': isDisabledStep(step)}">
+      <li ng-repeat="step in bb.allSteps" ng-class="{'active': step.active, 'passed': step.passed, 'disabled': isDisabledStep(step)}">
         <button type="button" ng-click="loadStep(step.number)" ng-class="{'active': step.active, 'passed': step.passed}" ng-disabled="isDisabledStep(step)">
-          <span class="step_num">{{step.number}}.</span>
-          <span class="step_title">{{step.title}}</span>
+          <span class="step-num">{{step.number}}.</span>
+          <span class="step-title">{{step.title}}</span>
         </button>
       </li>
     </ol>
@@ -30,8 +30,8 @@
     <span ng-if="bb.current_step == bb.allSteps.length" ng-bind="'Complete'"></span>
   </div> -->
 
-  <div class="alerts" bb-scroll-to="alert:raised">
-    <div alert ng-repeat="alert in $root.alerts" type="{{alert.type}}">
+  <div class="alerts" bb-scroll-to="alert:raised" bb-always-scroll>
+    <div alert ng-repeat="alert in $root.alerts" type="{{alert.type}}" >
      <ul>
        <li ng-bind-html="alert.msg"></li>
       </ul>
