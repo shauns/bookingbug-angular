@@ -125,6 +125,8 @@ app.filter 'currency', ($window, $rootScope) ->
       decimal = ","
       format = "%s%v"
 
+    number = number / 100.0
+
     $window.accounting.formatMoney(number, currency[currencyCode], 2, thousand, decimal, format)
 
 
@@ -166,6 +168,8 @@ app.filter 'pretty_price', ($window, $rootScope) ->
         MIXED: "~"
       }
       symbol = currency[$rootScope.bb_currency]
+
+    price /= 100.0
 
     if parseFloat(price) == 0
       return 'Free'
