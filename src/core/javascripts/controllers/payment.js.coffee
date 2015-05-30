@@ -65,9 +65,10 @@ angular.module('BB.Controllers').controller 'Payment', ($scope,  $rootScope, $q,
 
     $scope.bb.total = $scope.total if $scope.total
 
-    if !$scope.bb.total.total_price or parseFloat($scope.bb.total.total_price) is 0.0
-      $scope.decideNextPage()
-      return
+    if $scope.bb.total
+      if !$scope.bb.total.total_price or parseFloat($scope.bb.total.total_price) is 0.0
+        $scope.decideNextPage()
+        return
 
     $scope.url = $sce.trustAsResourceUrl($scope.bb.total.$href('new_payment'))
 

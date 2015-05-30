@@ -678,12 +678,10 @@ angular.module('BB.Models').factory "BasketItemModel",
 
     # price not including discounts
     fullPrice: =>
-      console.log @
       pr = @base_price
       pr ||= @total_price
       pr ||= @price
       pr ||= 0
-      console.log "fullprice is: ", pr, @questionPrice()
       return pr + @questionPrice()
 
     setProduct: (product) ->
