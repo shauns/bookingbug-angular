@@ -180,7 +180,7 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope,  $rootScope, 
       return false
     else
       return (!$scope.filters.name or service.category_id is $scope.filters.name.id) and (!service.price or
-        (service.price >= $scope.filters.price.min and service.price <= $scope.filters.price.max ))
+        (service.price >= $scope.filters.price.min * 100 and service.price <= $scope.filters.price.max * 100 ))
 
   $scope.resetFilters = () ->
     $scope.filters.name = null
