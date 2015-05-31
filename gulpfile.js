@@ -30,6 +30,7 @@ gulp.task('list', function() {
 gulp.task('javascripts', function() {
   javascripts = gulp.src(mainBowerFiles({filter: new RegExp('.js$')}).concat([
         './bower_components/moment/locale/en-gb.js',
+        './bower_components/angular-recaptcha/release/angular-recaptcha.js',
         './src/javascripts/core/main.js.coffee', 
         './src/*/javascripts/main.js.coffee', 
         './src/*/main.js.coffee', 
