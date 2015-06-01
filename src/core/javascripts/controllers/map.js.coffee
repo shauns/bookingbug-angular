@@ -156,11 +156,14 @@ angular.module('BB.Controllers').controller 'MapCtrl',
 
           if !$scope.geocoder_result or ($scope.geocoder_result and $scope.geocoder_result.partial_match)
             searchPlaces(req)
-            return
+            return 
           else if $scope.geocoder_result
             searchSuccess($scope.geocoder_result)
           else
             searchFailed()
+          $scope.setLoaded $scope
+
+    $scope.setLoaded $scope
 
 
   searchPlaces = (prms) ->
@@ -311,7 +314,9 @@ angular.module('BB.Controllers').controller 'MapCtrl',
   geolocateFail = (error) ->
     switch error.code
       # if the geocode failed because the position was unavailable or the request timed out, raise an alert
-      when 2, 3 then AlertService.danger(ErrorService.getError('GEOLOCATION_ERROR'))
+      when 2, 3 then 
+        $scope.setLoaded $scope
+        AlertService.danger(ErrorService.getError('GEOLOCATION_ERROR'))
       else
         return $scope.setLoaded $scope
 
