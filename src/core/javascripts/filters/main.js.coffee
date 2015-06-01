@@ -103,32 +103,9 @@ app.filter 'map_lat_long', ->
     cord = /([-+]*\d{1,3}[\.]\d*)[, ]([-+]*\d{1,3}[\.]\d*)/.exec(address.map_url)
     return cord[0]
 
-app.filter 'currency', ($window, $rootScope) ->
-
+app.filter 'currency', ($filter) ->
   (number, currencyCode) =>
-    currencyCode ||= $rootScope.bb_currency
-    currency = {
-      USD: "$",
-      GBP: "£",
-      AUD: "$",
-      EUR: "€",
-      CAD: "$",
-      MIXED: "~"
-    }
-
-    if $.inArray(currencyCode, ["USD", "AUD", "CAD", "MIXED", "GBP"]) >= 0
-      thousand = ","
-      decimal = "."
-      format = "%s%v"
-    else
-      thousand = "."
-      decimal = ","
-      format = "%s%v"
-
-    number = number / 100.0
-
-    $window.accounting.formatMoney(number, currency[currencyCode], 2, thousand, decimal, format)
-
+    return $filter('icurrency')(number, currencyCode)
 
 app.filter 'icurrency', ($window, $rootScope) ->
   (number, currencyCode) =>
@@ -156,27 +133,10 @@ app.filter 'icurrency', ($window, $rootScope) ->
     $window.accounting.formatMoney(number, currency[currencyCode], 2, thousand, decimal, format)
 
 
-app.filter 'pretty_price', ($window, $rootScope) ->
+app.filter 'pretty_price', ($filter) ->
   (price, symbol) ->
-    if !symbol
-      currency = {
-        USD: "$",
-        GBP: "£",
-        AUD: "$",
-        EUR: "€",
-        CAD: "$",
-        MIXED: "~"
-      }
-      symbol = currency[$rootScope.bb_currency]
-
-    price /= 100.0
-
-    if parseFloat(price) == 0
-      return 'Free'
-    else if parseFloat(price) % 1 == 0
-      return symbol + parseFloat(price)
-    else
-      return symbol + $window.sprintf("%.2f", parseFloat(price))
+    debugger
+    return $filter('ipretty_price')(price, symbol)
 
 
 app.filter 'ipretty_price', ($window, $rootScope) ->
