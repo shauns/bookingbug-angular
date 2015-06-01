@@ -119,7 +119,7 @@ angular.module('BB.Controllers').controller 'MapCtrl',
   # create title for the map selection step
   $scope.title = ->
     ci = $scope.bb.current_item
-    if ci.cagetgory and ci.category.description
+    if ci.category and ci.category.description
       p1 = ci.category.description
     else
       p1 = $scope.bb.company.extra.department
