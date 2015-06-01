@@ -314,7 +314,7 @@ angular.module('BB.Controllers').controller 'MapCtrl',
   geolocateFail = (error) ->
     switch error.code
       # if the geocode failed because the position was unavailable or the request timed out, raise an alert
-      when 2, 3 then 
+      when 2, 3 
         $scope.setLoaded $scope
         AlertService.danger(ErrorService.getError('GEOLOCATION_ERROR'))
       else
