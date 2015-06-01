@@ -70,6 +70,8 @@ angular.module('BB.Controllers').controller 'TimeList', ($attrs, $element, $scop
         if $scope.data_source.ready
           $scope.addItemToBasket().then () =>
             $scope.decideNextPage(route)
+        else
+          $scope.decideNextPage(route)
 
 
   $scope.highlightSlot = (slot) =>
