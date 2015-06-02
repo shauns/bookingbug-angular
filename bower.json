@@ -57,11 +57,7 @@
     "fullcalendar": "~2.3.1",
     "moment": "master",
     "angular": "~1.2.25",
-<<<<<<< HEAD
-    "jquery": "~1.11.2"
-=======
     "jquery": "~1.11.2",
     "angular-translate": "~2.7.0"
->>>>>>> 165c804814a12b5d4a6a0bcaf2c5bf3380109863
   }
 }
