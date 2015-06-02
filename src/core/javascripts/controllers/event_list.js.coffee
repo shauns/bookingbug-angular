@@ -342,7 +342,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
         for dynamic_filter in $scope.dynamic_filters['check']
           name = dynamic_filter.name.parameterise('_')
           filter = false
-          if item.chain.extra[name]
+          if item.chain and item.chain.extra[name]
             for i in item.chain.extra[name]
               filter = ($scope.dynamic_filters.values[dynamic_filter.name] and i is $scope.dynamic_filters.values[dynamic_filter.name].name) or !$scope.dynamic_filters.values[dynamic_filter.name]?
               break if filter
