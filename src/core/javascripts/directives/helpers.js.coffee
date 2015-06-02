@@ -377,7 +377,6 @@ app.directive 'bbApiUrl', ($rootScope, $compile, $sniffer, $timeout, $window, $l
       url.href = scope.apiUrl
       if $sniffer.msie && $sniffer.msie < 10
         unless url.host == $location.host() || url.host == "#{$location.host()}:#{$location.port()}"
-          console.log "cors ie proxy"
           if url.protocol[url.protocol.length - 1] == ':'
             src = "#{url.protocol}//#{url.host}/ClientProxy.html"
           else
@@ -403,7 +402,7 @@ app.directive 'bbPriceFilter', (PathSvc) ->
 
     setPricefilter = (items) ->
       $scope.price_array = _.uniq _.map items, (item) ->
-        return item.price or 0
+        return item.price / 100 or 0
       $scope.price_array.sort()
       suitable_max()
       

@@ -670,7 +670,7 @@ angular.module('BB.Models').factory "BasketItemModel",
     # price including discounts
     totalPrice: =>
       if @discount_price?
-        return @discount_price
+        return @discount_price + @questionPrice()
       pr = @total_price
       pr ||= @price
       pr ||= 0

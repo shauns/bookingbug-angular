@@ -78,7 +78,7 @@ angular.module('BB.Directives').directive 'bbMinSpend', () ->
     checkMinSpend = () ->
       price = 0
       for item in $scope.bb.stacked_items
-        price += (item.service.price * 100)
+        price += (item.service.price)
 
       if price >= $scope.min_spend
         AlertService.clear()
