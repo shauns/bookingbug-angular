@@ -59,25 +59,25 @@
             <li ng-if="selected_tickets && bb.basket.questionPrice()">
               <div class="row">
                 <div class="col-sm-6 col-xs-6 total-label">Booking Fee</div>
-                <div class="col-sm-3">{{bb.basket.questionPrice() | currency}}</div>
+                <div class="col-sm-3">{{bb.basket.questionPrice() | icurrency:"GBP"}}</div>
               </div>
             </li>
             <li ng-if="selected_tickets && bb.basket.hasCoupon()">
               <div class="row">
                 <div class="col-sm-6 col-xs-6 total-label">Original Cost</div>
-                <div class="col-sm-3 col-xs-6">{{bb.basket.fullPrice() | currency}}</div>
+                <div class="col-sm-3 col-xs-6">{{bb.basket.fullPrice() | icurrency:"GBP"}}</div>
               </div>
             </li>
             <li ng-if="selected_tickets && bb.basket.hasCoupon()">
               <div class="row">
                 <div class="col-sm-6 col-xs-6 total-label">Coupon Discount</div>
-                <div class="col-sm-3 col-xs-6">{{(bb.basket.fullPrice() - bb.basket.totalPrice()) | currency}}</div>
+                <div class="col-sm-3 col-xs-6">{{(bb.basket.fullPrice() - bb.basket.totalPrice()) | icurrency:"GBP"}}</div>
               </div>
             </li>
             <li ng-if="selected_tickets && (bb.basket.hasCoupon() || bb.basket.totalPrice())">
               <div class="row">
                 <div class="col-sm-6 col-xs-6 total-label">Total</div>
-                <div class="col-sm-3 col-xs-6"><strong>{{bb.basket.totalPrice() | currency}}</strong>
+                <div class="col-sm-3 col-xs-6"><strong>{{bb.basket.totalPrice() | icurrency:"GBP"}}</strong>
                 </div>
               </div>
             </li>
