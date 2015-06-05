@@ -116,13 +116,6 @@ angular.module('BB.Models').factory "BasketModel", ($q, BBModel, BaseModel) ->
    # return the total coupon discount applied to the basket
     totalCoupons: ->
       @fullPrice() - @totalPrice() - @totalDealPaid()
-      # @totalDeals() -
-      # TODO look at discount_price vs price for each item
-      # total_discount = 0
-      # for item in @items
-      #   discount = item.price - item.discount_price
-      #   total_discount += discount
-      # return total_discount - totalDealPaid()
     
 
     totalDuration: ->
