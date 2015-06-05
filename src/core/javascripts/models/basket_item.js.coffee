@@ -539,6 +539,10 @@ angular.module('BB.Models').factory "BasketItemModel",
       data.attachment_id = @attachment_id if @attachment_id
       data.vouchers = @deal_codes if @deal_codes
 
+      data.email = @email if @email
+      data.first_name = @first_name if @first_name
+      data.last_name = @last_name if @last_name
+
       if @email?
         data.email = @email
       if @email_admin?
