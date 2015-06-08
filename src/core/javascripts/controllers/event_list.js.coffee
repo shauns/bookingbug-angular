@@ -63,12 +63,11 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
     # has the event group been manually set (i.e. in the step before)
     $scope.event_group_manually_set = if !$scope.event_group_manually_set? and $scope.current_item.event_group? then true else false
 
-    # clear event data unless in summary mode
+    # clear current item unless in summary mode
     if $scope.current_item.event and $scope.mode != 0
-      delete $scope.current_item.event
-      delete $scope.current_item.event_chain
-      delete $scope.current_item.event_group if !$scope.event_group_manually_set
-      delete $scope.current_item.tickets
+      event_group = $scope.current_item.event_group
+      $scope.clearBasketItem()
+      $scope.current_item.setEventGroup(event_group) if $scope.event_group_manually_set
 
     promises = []
 
