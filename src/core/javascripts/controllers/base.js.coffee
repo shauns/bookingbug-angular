@@ -731,7 +731,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
         $scope.bb.current_item.person = null
         $scope.bb.current_item.selected_person = null
         error_modal = $modal.open
-          templateUrl: $scope.getPartial('error_modal')
+          templateUrl: $scope.getPartial('_error_modal')
           controller: ($scope, $modalInstance) ->
             $scope.message = ErrorService.getError('ITEM_NO_LONGER_AVAILABLE').msg
             $scope.ok = () ->

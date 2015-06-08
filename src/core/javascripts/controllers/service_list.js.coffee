@@ -173,7 +173,7 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope,  $rootScope, 
 
   $scope.errorModal = () ->
     error_modal = $modal.open
-      templateUrl: $scope.getPartial('error_modal')
+      templateUrl: $scope.getPartial('_error_modal')
       controller: ($scope, $modalInstance) ->
         $scope.message = ErrorService.getError('GENERIC').msg
         $scope.ok = () ->

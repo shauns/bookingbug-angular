@@ -111,7 +111,7 @@ angular.module('BB.Directives').directive 'bbSlick', ($rootScope, $timeout, $bbu
   scope : true
   require : '^bbMonthPicker'
   templateUrl : (element, attrs) ->
-    PathSvc.directivePartial "month_picker"
+    PathSvc.directivePartial "_month_picker"
   controller : ($scope, $element, $attrs) ->
 
     windowWidth = angular.element($window).width()

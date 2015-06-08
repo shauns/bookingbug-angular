@@ -395,7 +395,7 @@ app.directive 'bbPriceFilter', (PathSvc) ->
   scope: false
   require: '^?bbServices'
   templateUrl : (element, attrs) ->
-    PathSvc.directivePartial "price_filter"
+    PathSvc.directivePartial "_price_filter"
   controller : ($scope, $attrs) ->
     $scope.$watch 'items', (new_val, old_val) ->
       setPricefilter new_val if new_val
@@ -431,7 +431,7 @@ app.directive 'bbPriceFilter', (PathSvc) ->
 app.directive 'bbBookingExport', ($compile) ->
   restrict: 'AE'
   scope: true
-  template: '<div bb-include="popout_export_booking" style="display: inline;"></div>'
+  template: '<div bb-include="_popout_export_booking" style="display: inline;"></div>'
   link: (scope, element, attrs) ->
 
     scope.$watch 'total', (newval, old) ->
