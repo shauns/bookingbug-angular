@@ -73,8 +73,8 @@ app.directive 'bbScrollTo', ($rootScope, AppConfig, BreadcrumbService, $bbug) ->
         if (evnt == "page:loaded" and current_step > 1) or always_scroll or (evnt == "widget:restart") or
           (not scroll_to_element.is(':visible') and scroll_to_element.offset().top != 0)
             if parent.document.getElementById("bbug-iframe")
-              $(parent.document.body).animate
-                scrollTop: scroll_to_element.offset().top + $(parent.document.getElementById("bbug-iframe")).offset().top
+              $bbug(parent.document.body).animate
+                scrollTop: scroll_to_element.offset().top + $bbug(parent.document.getElementById("bbug-iframe")).offset().top
                 , bb_transition_time
             else
               $bbug("html, body").animate
