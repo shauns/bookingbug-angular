@@ -14,7 +14,7 @@ angular.module('BB.Controllers').controller 'Total', ($scope,  $rootScope, $q, $
   $rootScope.connection_started.then =>
     $scope.bb.payment_status = null
 
-    id = if $scope.bb.total then $scope.bb.total.long_id else QueryStringService('booking_id')
+    id = if $scope.bb.total then $scope.bb.total.long_id else QueryStringService('purchase_id')
 
     if id
       PurchaseService.query({url_root: $scope.bb.api_url, purchase_id: id}).then (total) ->
