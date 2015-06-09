@@ -47,7 +47,7 @@
                   <span>{{ticket.fullName()}}</span>
                 </div>
                 <div class="col-sm-3 col-xs-4">
-                  <span ng-if="ticket.price > 0">{{ticket.price | icurrency:"GBP"}}</span><span ng-if="ticket.price == 0">Free</span>
+                  <span ng-if="ticket.price > 0">{{ticket.price | currency}}</span><span ng-if="ticket.price == 0">Free</span>
                   <small ng-if="ticket.counts_as"><i>(for {{ticket.counts_as}})</i></small>
                 </div>
                 <div class="col-sm-3 col-xs-2">
@@ -59,25 +59,25 @@
             <li ng-if="selected_tickets && bb.basket.questionPrice()">
               <div class="row">
                 <div class="col-sm-6 col-xs-6 total-label">Booking Fee</div>
-                <div class="col-sm-3">{{bb.basket.questionPrice() | icurrency:"GBP"}}</div>
+                <div class="col-sm-3">{{bb.basket.questionPrice() | currency}}</div>
               </div>
             </li>
             <li ng-if="selected_tickets && bb.basket.hasCoupon()">
               <div class="row">
                 <div class="col-sm-6 col-xs-6 total-label">Original Cost</div>
-                <div class="col-sm-3 col-xs-6">{{bb.basket.fullPrice() | icurrency:"GBP"}}</div>
+                <div class="col-sm-3 col-xs-6">{{bb.basket.fullPrice() | currency}}</div>
               </div>
             </li>
             <li ng-if="selected_tickets && bb.basket.hasCoupon()">
               <div class="row">
                 <div class="col-sm-6 col-xs-6 total-label">Coupon Discount</div>
-                <div class="col-sm-3 col-xs-6">{{(bb.basket.fullPrice() - bb.basket.totalPrice()) | icurrency:"GBP"}}</div>
+                <div class="col-sm-3 col-xs-6">{{(bb.basket.fullPrice() - bb.basket.totalPrice()) | currency}}</div>
               </div>
             </li>
             <li ng-if="selected_tickets && (bb.basket.hasCoupon() || bb.basket.totalPrice())">
               <div class="row">
                 <div class="col-sm-6 col-xs-6 total-label">Total</div>
-                <div class="col-sm-3 col-xs-6"><strong>{{bb.basket.totalPrice() | icurrency:"GBP"}}</strong>
+                <div class="col-sm-3 col-xs-6"><strong>{{bb.basket.totalPrice() | currency}}</strong>
                 </div>
               </div>
             </li>

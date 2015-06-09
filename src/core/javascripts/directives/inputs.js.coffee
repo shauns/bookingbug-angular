@@ -75,7 +75,7 @@ app.directive 'bbQuestion', ($compile, $timeout) ->
               html = "<div class='checkbox' ng-class='{\"selected\": question.answer}'><label><input name='q#{question.id}' id='#{question.id}' ng-model='question.answer' ng-checked='question.answer == \"1\"' ng-change='recalc()' ng-required='question.currentlyShown && (#{adminRequired} || (question.required && !bb.isAdmin))' type='checkbox' value=1>#{name}</label></div>"
 
             else if question.detail_type is "check-price"
-              html = "<div class='checkbox'><label><input name='q#{question.id}' id='#{question.id}' ng-model='question.answer' ng-checked='question.answer == \"1\"' ng-change='recalc()' ng-required='question.currentlyShown && (#{adminRequired} || (question.required && !bb.isAdmin))' type='checkbox' value=1> ({{question.price | icurrency:'GBP'}})</label></div>"
+              html = "<div class='checkbox'><label><input name='q#{question.id}' id='#{question.id}' ng-model='question.answer' ng-checked='question.answer == \"1\"' ng-change='recalc()' ng-required='question.currentlyShown && (#{adminRequired} || (question.required && !bb.isAdmin))' type='checkbox' value=1> ({{question.price | currency:'GBP'}})</label></div>"
 
             else if question.detail_type is "date"
               html = "
