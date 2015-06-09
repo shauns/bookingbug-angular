@@ -67,6 +67,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
     if $scope.current_item.event and $scope.mode != 0
       event_group = $scope.current_item.event_group
       $scope.clearBasketItem()
+      $scope.emptyBasket()
       $scope.current_item.setEventGroup(event_group) if $scope.event_group_manually_set
 
     promises = []
