@@ -283,6 +283,7 @@ app.directive 'bbDateSplit', ($parse) ->
     }
 
     # split the date if it's already set
+    question.date.splitDate(moment(question.answer)) if question.answer
     question.date.splitDate(moment(ngModel.$viewValue)) if ngModel.$viewValue
  
     # watch self to split date when it changes  
