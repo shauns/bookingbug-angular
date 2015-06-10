@@ -316,6 +316,7 @@ app.directive 'bbCommPref', ($parse) ->
 
 
 # bbCountTicketTypes
+# returns the number of tickets purchased grouped by name
 app.directive 'bbCountTicketTypes', () ->
   restrict: 'A'
   link: (scope, element, attrs) ->
