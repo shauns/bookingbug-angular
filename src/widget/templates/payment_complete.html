@@ -28,7 +28,7 @@
             </li>
             <li ng-if="i.price" class="row confirmation-summary-item">
               <div class="col-sm-3">Price:</div>
-              <div class="col-sm-9">{{i.price}}</div>
+              <div class="col-sm-9">{{i.price | icurrency }}</div>
             </li>
           </ul>
           <ul ng-show="total.items[0].address.lat" class="confirmation-summary">

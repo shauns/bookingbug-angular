@@ -65,6 +65,10 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope,  $rootScope, 
           # of services to ones that are relevant
           items = items.filter (x) -> x.$has('category') && x.$href('category') is $scope.booking_item.category.self
 
+      # filter out event groups unless explicity requested
+      if !$scope.options.show_event_groups
+        items = items.filter (x) -> !x.is_event_group 
+
       if (items.length is 1 && !$scope.allowSinglePick)
         if !$scope.selectItem(items[0], $scope.nextRoute )
           setServiceItem items
@@ -169,7 +173,7 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope,  $rootScope, 
 
   $scope.errorModal = () ->
     error_modal = $modal.open
-      templateUrl: $scope.getPartial('error_modal')
+      templateUrl: $scope.getPartial('_error_modal')
       controller: ($scope, $modalInstance) ->
         $scope.message = ErrorService.getError('GENERIC').msg
         $scope.ok = () ->
@@ -180,7 +184,7 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope,  $rootScope, 
       return false
     else
       return (!$scope.filters.name or service.category_id is $scope.filters.name.id) and (!service.price or
-        (service.price >= $scope.filters.price.min and service.price <= $scope.filters.price.max ))
+        (service.price >= $scope.filters.price.min * 100 and service.price <= $scope.filters.price.max * 100 ))
 
   $scope.resetFilters = () ->
     $scope.filters.name = null

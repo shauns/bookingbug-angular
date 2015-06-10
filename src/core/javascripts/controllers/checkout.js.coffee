@@ -23,11 +23,14 @@ angular.module('BB.Controllers').controller 'Checkout', ($scope, $rootScope, Bas
     $scope.loadingTotal.then (total) =>
       $scope.total = total
    
-      if total.$has('new_payment')
-        $scope.checkStepTitle('Review')
-      else
-        $scope.checkStepTitle('Confirmed')
+      # if no payment is required, route to the next step
+      if !total.$has('new_payment')
         $scope.$emit("processDone")
+        $scope.bb.total = $scope.total
+        $scope.bb.payment_status = 'complete'
+        $scope.skipThisStep()
+        $scope.decideNextPage()
+
       $scope.checkoutSuccess = true
       $scope.setLoaded $scope
       # currently just close the window and refresh the parent if we're in an admin popup
@@ -35,7 +38,7 @@ angular.module('BB.Controllers').controller 'Checkout', ($scope, $rootScope, Bas
       $scope.setLoaded $scope
       $scope.checkoutFailed = true
 
-  , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
+  , (err) -> $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
   # Deprecated - use window.print or $scope.printElement
   # Print booking details using print_purchase.html template

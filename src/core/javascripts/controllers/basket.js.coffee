@@ -63,6 +63,7 @@ angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, 
 
 
   $scope.applyCoupon = (coupon) =>
+    AlertService.clear()
     $scope.notLoaded $scope
     params = {bb: $scope.bb, coupon: coupon }
     BasketService.applyCoupon($scope.bb.company, params).then (basket) ->
@@ -92,6 +93,7 @@ angular.module('BB.Controllers').controller 'BasketList', ($scope,  $rootScope, 
       basket.setSettings($scope.bb.basket.settings)
       $scope.setBasket(basket)
       $scope.items = $scope.bb.basket.items
+      $scope.deal_code = null
     , (err) ->
       if err && err.data && err.data.error
         AlertService.clear()

@@ -500,6 +500,8 @@ angular.module('BB.Models').factory "BasketItemModel",
         data.time = @time.time
         if @time.event_id
           data.event_id = @time.event_id
+        else if @time.event_ids
+          data.event_ids = @time.event_ids
       else if @date and @date.event_id
         data.event_id = @date.event_id
       data.price = @price
@@ -674,10 +676,10 @@ angular.module('BB.Models').factory "BasketItemModel",
     # price including discounts
     totalPrice: =>
       if @discount_price?
-        return @discount_price
+        return @discount_price + @questionPrice()
       pr = @total_price
-      pr ||= @price
-      pr ||= 0
+      pr = @price if !angular.isNumber(pr)
+      pr = 0      if !angular.isNumber(pr)
       return pr + @questionPrice()
 
     # price not including discounts
