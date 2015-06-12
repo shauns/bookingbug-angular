@@ -12,7 +12,7 @@ angular.module('BB.Controllers').controller 'Checkout', ($scope, $rootScope, $at
   $scope.controller = "public.controllers.Checkout"
   $scope.notLoaded $scope
 
-  $scope.options = $scope.$eval $attrs.bbCheckout or {}
+  $scope.options = $scope.$eval($attrs.bbCheckout) or {}
 
   # clear the form data store as we no longer need the data
   FormDataStoreService.destroy($scope)
