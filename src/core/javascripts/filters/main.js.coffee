@@ -135,7 +135,6 @@ app.filter 'icurrency', ($window, $rootScope) ->
 
 app.filter 'pretty_price', ($filter) ->
   (price, symbol) ->
-    debugger
     return $filter('ipretty_price')(price, symbol)
 
 

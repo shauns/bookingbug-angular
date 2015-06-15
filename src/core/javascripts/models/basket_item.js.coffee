@@ -678,8 +678,8 @@ angular.module('BB.Models').factory "BasketItemModel",
       if @discount_price?
         return @discount_price + @questionPrice()
       pr = @total_price
-      pr ||= @price
-      pr ||= 0
+      pr = @price if !angular.isNumber(pr)
+      pr = 0      if !angular.isNumber(pr)
       return pr + @questionPrice()
 
     # price not including discounts

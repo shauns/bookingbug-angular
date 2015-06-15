@@ -157,8 +157,8 @@ app.directive 'bbDate', () ->
     scope.$watch 'bb_date.js_date', (newval, oldval) ->
       ndate = moment(newval)
       if !scope.bb_date.date.isSame(ndate)
-        scope.bb_date.date = ndate 
-        scope.$broadcast('dateChanged', moment(ndate))
+        scope.bb_date.date = ndate
+        scope.$broadcast('dateChanged', moment(ndate)) if moment(ndate).isValid()
 
 
 
@@ -316,6 +316,7 @@ app.directive 'bbCommPref', ($parse) ->
 
 
 # bbCountTicketTypes
+# returns the number of tickets purchased grouped by name
 app.directive 'bbCountTicketTypes', () ->
   restrict: 'A'
   link: (scope, element, attrs) ->
@@ -395,7 +396,7 @@ app.directive 'bbPriceFilter', (PathSvc) ->
   scope: false
   require: '^?bbServices'
   templateUrl : (element, attrs) ->
-    PathSvc.directivePartial "price_filter"
+    PathSvc.directivePartial "_price_filter"
   controller : ($scope, $attrs) ->
     $scope.$watch 'items', (new_val, old_val) ->
       setPricefilter new_val if new_val
@@ -431,7 +432,7 @@ app.directive 'bbPriceFilter', (PathSvc) ->
 app.directive 'bbBookingExport', ($compile) ->
   restrict: 'AE'
   scope: true
-  template: '<div bb-include="popout_export_booking" style="display: inline;"></div>'
+  template: '<div bb-include="_popout_export_booking" style="display: inline;"></div>'
   link: (scope, element, attrs) ->
 
     scope.$watch 'total', (newval, old) ->
