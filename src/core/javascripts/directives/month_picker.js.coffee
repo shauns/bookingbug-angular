@@ -49,7 +49,7 @@ angular.module('BB.Directives').directive 'bbMonthPicker', () ->
               available : day_data and day_data.spaces and day_data.spaces > 0,
               today     : moment().isSame(date, 'day'),
               past      : date.isBefore(moment(), 'day'),
-              disabled  : not month.start_date or not date.isSame(month.start_date, 'month')
+              disabled  : !month.start_date or !date.isSame(month.start_date, 'month')
             })
 
             date.add(1, 'day')
