@@ -278,7 +278,6 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
       $scope.loadEventData()
     else
       new_date = date if !$scope.selected_date or !date.isSame($scope.selected_date, 'day')
-      console.log($scope.selected_date)
 
     if new_date
       $scope.selected_date = new_date
