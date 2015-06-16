@@ -551,10 +551,11 @@ angular.module('BB.Models').factory "BasketItemModel",
     setPrice: (nprice) ->
       if nprice?
         @price = parseFloat(nprice)
-        @printed_price = if @price % 1 == 0 then "£" + parseInt(@price) else $window.sprintf("£%.2f", @price)
+        printed_price = @price / 100
+        @printed_price = if printed_price % 1 == 0 then "£" + parseInt(printed_price) else $window.sprintf("£%.2f", printed_price)
         @printed_vat_cal = @.company.settings.payment_tax if @.company && @.company.settings
-        @printed_vat = @printed_vat_cal / 100 * @price if @printed_vat_cal
-        @printed_vat_inc = @printed_vat_cal / 100 * @price + @price if @printed_vat_cal
+        @printed_vat = @printed_vat_cal / 100 * printed_price if @printed_vat_cal
+        @printed_vat_inc = @printed_vat_cal / 100 * printed_price + printed_price if @printed_vat_cal
       else
         @price = null
         @printed_price = null
