@@ -5,36 +5,34 @@ angular.module('BB.Directives').directive 'bbServices', () ->
   replace: true
   scope : true
   controller : 'ServiceList'
-  link : (scope, element, attrs) ->
 
-    scope.options = scope.$eval(attrs.bbServices) or {}
-
-    if attrs.bbItem
-      scope.booking_item = scope.$eval( attrs.bbItem )
-    if attrs.bbShowAll or scope.options.show_all 
-      scope.show_all = true
-    if scope.options.allow_single_pick
-      scope.allowSinglePick = true
-    return
-
-
-angular.module('BB.Controllers').controller 'ServiceList',($scope,  $rootScope, $q, $attrs, $modal, $sce, ItemService, FormDataStoreService, ValidatorService, PageControllerService, halClient, AlertService, ErrorService, $filter, CategoryService) ->
+angular.module('BB.Controllers').controller 'ServiceList',($scope, $rootScope, $q, $attrs, $modal, $sce, ItemService, FormDataStoreService, ValidatorService, PageControllerService, halClient, AlertService, ErrorService, $filter, CategoryService) ->
 
   $scope.controller = "public.controllers.ServiceList"
+
   FormDataStoreService.init 'ServiceList', $scope, [
     'service'
   ]
+
   $scope.notLoaded $scope
+
   angular.extend(this, new PageControllerService($scope, $q))
 
   $scope.validator = ValidatorService
 
   $scope.filters = {price: {}, name: null}
 
+  $scope.options = $scope.$eval($attrs.bbServices) or {}
+
+  $scope.booking_item = $scope.$eval($attrs.bbItem) if $attrs.bbItem
+  $scope.show_all = true if $attrs.bbShowAll or $scope.options.show_all 
+  $scope.allowSinglePick = true if $scope.options.allow_single_pick
+
+
   $rootScope.connection_started.then () =>
     if $scope.bb.company
       $scope.init($scope.bb.company)
-  , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
+  , (err) -> $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
 
   $scope.init = (comp) ->
@@ -69,6 +67,8 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope,  $rootScope, 
       if !$scope.options.show_event_groups
         items = items.filter (x) -> !x.is_event_group 
 
+      # if there's only one service and single pick hasn't been enabled, 
+      # automatically select the service.
       if (items.length is 1 && !$scope.allowSinglePick)
         if !$scope.selectItem(items[0], $scope.nextRoute )
           setServiceItem items
