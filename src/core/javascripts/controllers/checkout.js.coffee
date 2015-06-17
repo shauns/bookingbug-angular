@@ -26,7 +26,7 @@ angular.module('BB.Controllers').controller 'Checkout', ($scope, $rootScope, $at
       $scope.total = total
    
       # if no payment is required, route to the next step unless instructed otherwise
-      if !total.$has('new_payment')
+      if !total.$has('new_payment') && (total.total_price isnt 0)
         $scope.$emit("processDone")
         $scope.bb.total = $scope.total
         $scope.bb.payment_status = 'complete'
