@@ -193,17 +193,6 @@
 
             <div bb-item-details="item">
               <div ng-form name="booking_questions_form">
-                <div class="form-group" ng-class="{'has-error': booking_questions_form.email.$invalid && (booking_questions_form.email.$dirty|| booking_form.submitted)}">
-                  <label for="email" class="control-label col-sm-4">Attendee {{$index + 1}} Email:</label>
-                  <div class="col-sm-5">
-                    <input type="email" name="email" id="email" required ng-model="item.email" class="form-control"/>
-                  </div>
-                  <div class="col-sm-offset-4 messages">
-                    <div class="error-message" ng-show="booking_questions_form.email.$invalid && booking_form.submitted">
-                      Please enter a valid email address for this attendee
-                    </div>          
-                  </div>
-                </div>
                 <div class="form-group" ng-class="{'has-error': booking_questions_form.first_name.$invalid && (booking_questions_form.first_name.$dirty|| booking_form.submitted)}">
                   <label for="first_name" class="control-label col-sm-4">Attendee {{$index + 1}} First Name:</label>
                   <div class="col-sm-5">
@@ -223,6 +212,17 @@
                   <div class="col-sm-offset-4 messages">
                     <div class="error-message" ng-show="booking_questions_form.last_name.$invalid && booking_form.submitted">
                       Please enter last name for this attendee
+                    </div>          
+                  </div>
+                </div>
+                <div class="form-group" ng-class="{'has-error': booking_questions_form.email.$invalid && (booking_questions_form.email.$dirty|| booking_form.submitted)}">
+                  <label for="email" class="control-label col-sm-4">Attendee {{$index + 1}} Email:</label>
+                  <div class="col-sm-5">
+                    <input type="email" name="email" id="email" required ng-model="item.email" class="form-control"/>
+                  </div>
+                  <div class="col-sm-offset-4 messages">
+                    <div class="error-message" ng-show="booking_questions_form.email.$invalid && booking_form.submitted">
+                      Please enter a valid email address for this attendee
                     </div>          
                   </div>
                 </div>
