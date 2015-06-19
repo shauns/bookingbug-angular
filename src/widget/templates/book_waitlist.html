@@ -18,7 +18,7 @@
   </li>
   <li ng-if="i.price" class="row confirmation-summary-item">
     <div class="col-sm-3">Price:</div>
-    <div class="col-sm-9">{{i.price | pretty_price }}</div>
+    <div class="col-sm-9">{{i.price | currency }}</div>
   </li>
   <li class="row confirmation-summary-item">
   <div class="col-sm-3 pull-right">
@@ -30,7 +30,7 @@
 <li class="row confirmation-summary-item">
   <div class="row">
     <div class="col-sm-6 col-xs-6 total-label"><strong>Total</strong></div>
-    <div class="col-sm-3 col-xs-6"><strong>{{purchase.total_price | pretty_price }}</strong></div>
+    <div class="col-sm-3 col-xs-6"><strong>{{purchase.total_price | currency }}</strong></div>
   </div>
 </li>
 <li class="row confirmation-summary-item">
@@ -50,7 +50,7 @@
 <li class="row confirmation-summary-item">
   <div class="row">
     <div class="col-sm-6 col-xs-6 total-label"><strong>Total</strong></div>
-    <div class="col-sm-3 col-xs-6"><strong>{{purchase.total_price | pretty_price }}</strong></div>
+    <div class="col-sm-3 col-xs-6"><strong>{{purchase.total_price | currency }}</strong></div>
   </div>
 </li>
 <li class="row confirmation-summary-item">

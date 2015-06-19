@@ -23,8 +23,6 @@
 							<td>
 								<p>
 									{{item.describe()}}
-									<br/> 
-									<small>{{item.first_name}} {{item.last_name}}</small>
 									<br/>
 									<small>{{item.date.date | datetime: "h:mma dddd Do MMMM":false}}</small>
 									<br/>
@@ -35,9 +33,9 @@
 								<p></p>
 							</td>
 							<td class="text-right">
-								{{ item.total_price | ipretty_price }}
+								{{ item.total_price | currency }}
 								<div ng-if="item.certificate_paid > 0">
-									<small>Certificate Paid: {{ item.certificate_paid | ipretty_price }}</small>
+									<small>Certificate Paid: {{ item.certificate_paid | currency }}</small>
 								</div>
 							</td>
 							<td class="text-center">
@@ -58,7 +56,7 @@
 								<p></p>
 							</td>
 							<td class="text-right">
-								{{ deal_code.value | ipretty_price }}
+								{{ deal_code.value | currency }}
 							</td>
 							<td class="text-center">
 								<span class="glyphicon glyphicon-trash" aria-hidden="true" ng-click="removeDeal(deal_code)"></span>
@@ -67,7 +65,7 @@
 
 						<tr data-ng-if="basket.hasDeal() || basket.hasCoupon()">
 							<th class="text-right">Original Price</th>
-							<th class="text-right">{{basket.fullPrice() | ipretty_price }}</th>
+							<th class="text-right">{{basket.fullPrice() | currency }}</th>
 							<th>&nbsp;</th>
 						</tr>
 						
@@ -80,7 +78,7 @@
 						
 						<tr data-ng-if="basket.hasDeal()">
 							<th class="text-right">Total Gift Certificates</th>
-							<th class="text-right">{{basket.totalDeals() | ipretty_price }}</th>
+							<th class="text-right">{{basket.totalDeals() | currency }}</th>
 							<th>&nbsp;</th>
 						</tr>
 
@@ -98,7 +96,7 @@
 
 						<tr data-ng-if="basket.total_price > 0">
 							<th class="text-right">Total</th>
-							<th class="text-right">{{basket.total_price | ipretty_price }}</th>
+							<th class="text-right">{{basket.total_price | currency }}</th>
 							<th>&nbsp;</th>
 						</tr>
 						<tr data-ng-if="basket.total_due_price != basket.total_price">
