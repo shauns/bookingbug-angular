@@ -37,8 +37,8 @@ angular.module('BB.Controllers').controller 'Checkout', ($scope, $rootScope, $at
       $scope.checkoutSuccess = true
       $scope.setLoaded $scope
       # currently just close the window and refresh the parent if we're in an admin popup
-    , (err) =>
-      $scope.setLoaded $scope
+    , (err) ->
+      $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
       $scope.checkoutFailed = true
 
   , (err) -> $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
