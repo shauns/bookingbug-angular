@@ -122,6 +122,7 @@ angular.module('BB.Models').factory "BasketItemModel",
 
     # bookable slot based functions
     setDefaults: (defaults) ->
+      debugger
       if defaults.settings
         @settings = defaults.settings
       if defaults.company
@@ -141,7 +142,8 @@ angular.module('BB.Models').factory "BasketItemModel",
       if defaults.time
         @requested_time = parseInt(defaults.time)
       if defaults.date
-        @date = new BBModel.Day({date: defaults.date, spaces: 1})
+        #@date = new BBModel.Day({date: moment(defaults.date), spaces: 1})
+        @requested_date = moment(defaults.date)
       if defaults.service_ref
         @service_ref = defaults.service_ref
       if defaults.group
@@ -424,6 +426,7 @@ angular.module('BB.Models').factory "BasketItemModel",
 
 
     setTime: (time) ->
+      debugger
       @time.unselect() if @time
       @time = time
       if @time
@@ -449,6 +452,7 @@ angular.module('BB.Models').factory "BasketItemModel",
       @checkReady()
 
     setDate: (date) ->
+      debugger
       @date = date
       if @date
         @date.date = moment(@date.date)
@@ -461,11 +465,18 @@ angular.module('BB.Models').factory "BasketItemModel",
 
 
     clearDateTime: () ->
+      debugger
       delete @date
       delete @time
       delete @datetime
       @ready = false
       @reserve_ready = false
+
+
+    clearTime: () ->
+      delete @time
+      @ready = false
+      @reserve_ready = false  
 
 
     setGroup: (group) ->

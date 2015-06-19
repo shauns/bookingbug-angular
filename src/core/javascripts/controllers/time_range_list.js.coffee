@@ -255,6 +255,9 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
 
   # load the time data
   $scope.loadData = ->
+
+    debugger
+    
     curItem = $scope.bb.current_item
 
     # has a service been selected?
@@ -302,6 +305,7 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
       promise.then (dateTimeArr) ->
         $scope.days = []
 
+        # sort time slots to be in chronological order
         for pair in _.sortBy(_.pairs(dateTimeArr), (pair) -> pair[0])
           d = pair[0]
           timeSlotsArr = pair[1]
@@ -327,7 +331,8 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
               if (!dtimes[pad])
                 timeSlotsArr.splice(v, 0, new BBModel.TimeSlot({time: pad, avail: 0}, timeSlotsArr[0].service))
 
-          if (curItem.requested_time or curItem.time) and day.date.isSame(curItem.date.date)
+          debugger
+          if (curItem.requested_time or curItem.time) and curItem.requested_date and day.date.isSame(curItem.requested_date)
             found_time = false
 
             for slot in timeSlotsArr
