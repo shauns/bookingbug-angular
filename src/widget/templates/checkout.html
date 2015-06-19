@@ -10,7 +10,7 @@
           </div>
            <div ng-if="total && total.containsWaitlistItems()">
             <h2>Confirmation</h2>
-            <p class="bb-confirmation-p-alignment">Thanks {{ total.client.first_name }}. Your have successfully made the following bookings. We have you emailed you the details below.</p>
+            <p class="bb-confirmation-p-alignment">Thanks {{ total.client.first_name }}. You have successfully made the following bookings. We have you emailed you the details below.</p>
           </div>
           <div class="row hidden-print text-right">
             <button type="button" class="btn btn-link" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</button>
@@ -42,7 +42,7 @@
             </li>
             <li ng-if="i.price" class="row confirmation-summary-item">
               <div class="col-sm-3">Price:</div>
-              <div class="col-sm-9">{{i.price | ipretty_price }}</div>
+              <div class="col-sm-9">{{i.price | currency }}</div>
             </li>
             <li ng-if="i.due_now != i.price" class="row confirmation-summary-item">
               <div class="col-sm-3">Due Now:</div>
