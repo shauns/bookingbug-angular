@@ -1,7 +1,6 @@
 'use strict'
 
-angular.module('BB.Directives').directive 'bbPayForm', ($window, $timeout,
-    $sce, $http, $compile, $document, $location) ->
+angular.module('BB.Directives').directive 'bbPayForm', ($window, $timeout, $sce, $http, $compile, $document, $location) ->
 
   applyCustomPartials = (custom_partial_url, scope, element) ->
     if custom_partial_url?
@@ -32,6 +31,21 @@ angular.module('BB.Directives').directive 'bbPayForm', ($window, $timeout,
               scope.referrer = data.message
               if data.custom_partial_url
                 applyCustomPartials(event.data.custom_partial_url, scope, element)
+              if data.stylesheet
+
+                css_id = 'custom_css'
+                # you could encode the css path itself to generate id..
+                if !document.getElementById(cssId)
+                  head = document.getElementsByTagName('head')[0]
+                  link = document.createElement('link')
+                  link.id = css_id
+                  link.rel = 'stylesheet'
+                  link.type = 'text/css'
+                  link.href = data.stylesheet
+                  link.media = 'all'
+                  head.appendChild link
+
+
     , false
 
   return {

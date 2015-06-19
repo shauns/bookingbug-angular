@@ -21,7 +21,8 @@ angular.module('BB.Directives').directive 'bbPayment', ($window, $location, $sce
     payload = JSON.stringify({
       'type': 'load',
       'message': referrer,
-      'custom_partial_url': scope.bb.custom_partial_url
+      'custom_partial_url': scope.bb.custom_partial_url,
+      'stylesheet': 'test.css'
     })
     element.find('iframe')[0].contentWindow.postMessage(payload, origin)
 
