@@ -157,8 +157,8 @@ app.directive 'bbDate', () ->
     scope.$watch 'bb_date.js_date', (newval, oldval) ->
       ndate = moment(newval)
       if !scope.bb_date.date.isSame(ndate)
-        scope.bb_date.date = ndate 
-        scope.$broadcast('dateChanged', moment(ndate))
+        scope.bb_date.date = ndate
+        scope.$broadcast('dateChanged', moment(ndate)) if moment(ndate).isValid()
 
 
 

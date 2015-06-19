@@ -8,9 +8,11 @@ angular.module('BB.Directives').directive 'bbCheckout', () ->
   controller : 'Checkout'
 
 
-angular.module('BB.Controllers').controller 'Checkout', ($scope, $rootScope, BasketService, $q, $location, $window, $bbug, FormDataStoreService, $timeout) ->
+angular.module('BB.Controllers').controller 'Checkout', ($scope, $rootScope, $attrs, BasketService, $q, $location, $window, $bbug, FormDataStoreService, $timeout) ->
   $scope.controller = "public.controllers.Checkout"
   $scope.notLoaded $scope
+
+  $scope.options = $scope.$eval($attrs.bbCheckout) or {}
 
   # clear the form data store as we no longer need the data
   FormDataStoreService.destroy($scope)
@@ -23,13 +25,14 @@ angular.module('BB.Controllers').controller 'Checkout', ($scope, $rootScope, Bas
     $scope.loadingTotal.then (total) =>
       $scope.total = total
    
-      # if no payment is required, route to the next step
+      # if no payment is required, route to the next step unless instructed otherwise
       if !total.$has('new_payment')
         $scope.$emit("processDone")
         $scope.bb.total = $scope.total
         $scope.bb.payment_status = 'complete'
-        $scope.skipThisStep()
-        $scope.decideNextPage()
+        if !$scope.options.disable_confirmation
+          $scope.skipThisStep()
+          $scope.decideNextPage()
 
       $scope.checkoutSuccess = true
       $scope.setLoaded $scope
