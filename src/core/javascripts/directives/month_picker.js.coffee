@@ -80,8 +80,11 @@ angular.module('BB.Directives').directive 'bbMonthPicker', () ->
     $scope.selectMonthNumber = (month) ->
       return if $scope.selected_month && $scope.selected_month.start_date.month() == month
 
+      $scope.notLoaded $scope
       for m in $scope.months
         $scope.selectMonth(m) if m.start_date.month() == month
+      $scope.setLoaded $scope
+      
       return true
 
 

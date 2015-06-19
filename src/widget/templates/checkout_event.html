@@ -42,7 +42,7 @@
                   <span>{{ticket.fullName()}}</span>
                 </div>
                 <div class="col-sm-3 col-xs-4">
-                  <span ng-if="ticket.price > 0">{{ticket.price | icurrency:"GBP"}}</span><span ng-if="ticket.price == 0">Free</span>
+                  <span ng-if="ticket.price > 0">{{ticket.price | currency}}</span><span ng-if="ticket.price == 0">Free</span>
                   <small ng-if="ticket.counts_as"><i>(for {{ticket.counts_as}})</i></small>
                 </div>
                 <div class="col-sm-3 col-xs-2">

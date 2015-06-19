@@ -70,7 +70,7 @@
 
             <div class="form-group">
               <label class="sr-only" for="price">Price</label>
-              <select class="form-control" name="price" id="price" ng-model="filters.price" ng-options="price as (price | ipretty_price) for price in price_options" ng-change="filterChanged()">
+              <select class="form-control" name="price" id="price" ng-model="filters.price" ng-options="price as (price | currency) for price in price_options" ng-change="filterChanged()">
                 <option value="">Any Price</option>
               </select>
             </div>
@@ -139,8 +139,8 @@
                 </li>
                 <li class="price" ng-show="item.tickets">
                   <span class="bb-icon icon-price"></span>
-                  <span ng-show="item.price_range && (item.price_range.from != item.price_range.to)">From {{item.price_range.from | ipretty_price}}</span>
-                  <span ng-show="item.price_range && (item.price_range.from == item.price_range.to)">{{item.price_range.from | ipretty_price}}</span>
+                  <span ng-show="item.price_range && (item.price_range.from != item.price_range.to)">From {{item.price_range.from | currency}}</span>
+                  <span ng-show="item.price_range && (item.price_range.from == item.price_range.to)">{{item.price_range.from | currency}}</span>
                 </li>
               </ul>
             </div>
