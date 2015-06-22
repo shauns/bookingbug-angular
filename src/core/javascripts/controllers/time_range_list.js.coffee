@@ -5,7 +5,7 @@ angular.module('BB.Directives').directive 'bbTimeRanges', () ->
   replace: true
   scope : true
   priority: 1
-  controller : 'TimeRangeList',
+  controller : 'TimeRangeList'
 
 
 # TODO Get the add/subtract functions to respect the current time range. Get the time range length to adjust if display mode is preset
