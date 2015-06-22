@@ -425,7 +425,6 @@ angular.module('BB.Models').factory "BasketItemModel",
 
 
     setTime: (time) ->
-      debugger
       @time.unselect() if @time
       @time = time
       if @time
@@ -451,7 +450,6 @@ angular.module('BB.Models').factory "BasketItemModel",
       @checkReady()
 
     setDate: (date) ->
-      debugger
       @date = date
       if @date
         @date.date = moment(@date.date)
@@ -464,7 +462,6 @@ angular.module('BB.Models').factory "BasketItemModel",
 
 
     clearDateTime: () ->
-      debugger
       delete @date
       delete @time
       delete @datetime

@@ -31,7 +31,6 @@ angular.module('BB.Controllers').controller 'Event', ($scope, $attrs, $rootScope
         image.background_css = {'background-image': 'url(' + image.url + ')'}
         $scope.event.image = image
         # TODO pick most promiment image
-        # debugger
         # colorThief = new ColorThief()
         # colorThief.getColor image.url
 
