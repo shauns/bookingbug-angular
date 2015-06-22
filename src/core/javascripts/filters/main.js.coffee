@@ -351,7 +351,6 @@ app.filter 'spaces_remaining', () ->
       return spaces
 
 app.filter 'key_translate', ->
-  debugger
   (input) ->
     upper_case = angular.uppercase(input)
     remove_punctuations = upper_case.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"")

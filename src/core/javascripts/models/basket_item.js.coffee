@@ -141,7 +141,7 @@ angular.module('BB.Models').factory "BasketItemModel",
       if defaults.time
         @requested_time = parseInt(defaults.time)
       if defaults.date
-        @date = new BBModel.Day({date: defaults.date, spaces: 1})
+        @requested_date = moment(defaults.date)
       if defaults.service_ref
         @service_ref = defaults.service_ref
       if defaults.group
@@ -167,6 +167,7 @@ angular.module('BB.Models').factory "BasketItemModel",
     # if it turned out that a requested date, or time was unavailable - we'll have to clear it
     requestedTimeUnavailable: ->
       delete @requested_time
+      delete @requested_date
 
     setSlot: (slot) ->
 
@@ -466,6 +467,12 @@ angular.module('BB.Models').factory "BasketItemModel",
       delete @datetime
       @ready = false
       @reserve_ready = false
+
+
+    clearTime: () ->
+      delete @time
+      @ready = false
+      @reserve_ready = false  
 
 
     setGroup: (group) ->

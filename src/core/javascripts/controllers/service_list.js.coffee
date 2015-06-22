@@ -114,7 +114,7 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope, $rootScope, $
         $scope.bookable_services = services
         $scope.bookable_items = items
         
-        if (services.length == 1 && !$scope.allowSinglePick)
+        if services.length is 1 and !$scope.allowSinglePick
           if !$scope.selectItem(services[0], $scope.nextRoute )
             setServiceItem services
           else if !@skipped
