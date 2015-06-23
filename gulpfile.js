@@ -77,7 +77,7 @@ gulp.task('stylesheets', function() {
 });
 
 gulp.task('widget', function() {
-  gulp.src('src/widget/stylesheets/widget.scss')
+  gulp.src('src/widget/stylesheets/main.scss')
     .pipe(sass({errLogToConsole: true}))
     .pipe(flatten())
     .pipe(concat('bookingbug-widget.css'))
