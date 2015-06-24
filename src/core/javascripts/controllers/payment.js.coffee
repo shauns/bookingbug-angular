@@ -18,15 +18,19 @@ angular.module('BB.Directives').directive 'bbPayment', ($window, $location, $sce
     referrer = $location.protocol() + "://" + $location.host()
     if $location.port()
       referrer += ":" + $location.port()
+    custom_stylesheet = referrer + "/" + scope.payment_options.custom_stylesheet + '.css' if scope.payment_options.custom_stylesheet
     payload = JSON.stringify({
       'type': 'load',
       'message': referrer,
-      'custom_partial_url': scope.bb.custom_partial_url,
-      'stylesheet': 'test.css'
+      'custom_partial_url': scope.bb.custom_partial_url
+      'custom_stylesheet' : custom_stylesheet
     })
     element.find('iframe')[0].contentWindow.postMessage(payload, origin)
 
   linker = (scope, element, attributes) ->
+
+    scope.payment_options = scope.$eval(attributes.bbPayment) or {}
+
     element.find('iframe').bind 'load', (event) =>
       url = scope.bb.total.$href('new_payment')
       origin = getHost(url)
@@ -47,6 +51,8 @@ angular.module('BB.Directives').directive 'bbPayment', ($window, $location, $sce
           when "payment_complete"
             scope.callSetLoaded()
             scope.paymentDone()
+          when "loaded"
+            scope.callSetLoaded()
     , false
 
   return {
@@ -64,6 +70,7 @@ angular.module('BB.Controllers').controller 'Payment', ($scope,  $rootScope, $q,
   $scope.bb.total = $scope.purchase if $scope.purchase
 
   $rootScope.connection_started.then =>
+    $scope.notLoaded $scope
     $scope.bb.total = $scope.total if $scope.total
     $scope.url = $sce.trustAsResourceUrl($scope.bb.total.$href('new_payment'))
   
