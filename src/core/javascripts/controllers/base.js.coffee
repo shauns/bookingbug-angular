@@ -1,7 +1,7 @@
 'use strict';
 
 
-angular.module('BB.Directives').directive 'bbWidget', (PathSvc, $http,
+angular.module('BB.Directives').directive 'bbWidget', (PathSvc, $http, $log,
     $templateCache, $compile, $q, AppConfig, $timeout, $bbug) ->
 
   getTemplate = (template) ->
@@ -100,9 +100,10 @@ angular.module('BB.Controllers').controller 'bbContentController', ($scope) ->
 
 angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     $rootScope, halClient, $window, $http, $localCache, $q, $timeout, BasketService,
-    LoginService, AlertService, $sce, $element, $compile, $sniffer, $modal,
+    LoginService, AlertService, $sce, $element, $compile, $sniffer, $modal, $log,
     BBModel, BBWidget, SSOService, ErrorService, AppConfig, QueryStringService,
-    QuestionService, LocaleService, PurchaseService, $sessionStorage, $bbug) ->
+    QuestionService, LocaleService, PurchaseService, $sessionStorage, $bbug,
+    SettingsService, UriTemplate) ->
   # dont change the cid as we use it in the app to identify this as the widget
   # root scope
   $scope.cid = "BBCtrl"
@@ -113,8 +114,8 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
 
   $scope.has_content = $element[0].children.length != 0
   if $scope.apiUrl
-    $rootScope.bb ||= {}
-    $rootScope.bb.api_url = $scope.apiUrl
+    $scope.bb ||= {}
+    $scope.bb.api_url = $scope.apiUrl
   if $rootScope.bb && $rootScope.bb.api_url
     $scope.bb.api_url = $rootScope.bb.api_url
     unless $rootScope.bb.partial_url
@@ -175,10 +176,21 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
       $scope.initWidget2()
       return
     else
-
       # ie 8 hacks
-      setTimeout $scope.initWidget2, 2000
-      return
+      if $scope.bb.api_url
+        url = document.createElement('a')
+        url.href = $scope.bb.api_url
+        if url.host == $location.host() || url.host == "#{$location.host()}:#{$location.port()}"
+          $scope.initWidget2()
+          return
+      if $rootScope.iframe_proxy_ready
+        $scope.initWidget2()
+        return
+      else
+        $scope.$on 'iframe_proxy_ready', (event, args) ->
+          if args.iframe_proxy_ready
+            $scope.initWidget2()
+        return
 
 
 
@@ -277,6 +289,8 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     if prms.template
       $scope.bb.template = prms.template
 
+    if prms.i18n
+      SettingsService.enableInternationalizaton()
 
     @waiting_for_conn_started_def = $q.defer()
     $scope.waiting_for_conn_started = @waiting_for_conn_started_def.promise
@@ -331,7 +345,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
         else
           comp_category_id = $scope.bb.item_defaults.category
 
-      comp_url = new UriTemplate.parse($scope.bb.api_url + '/api/v1/company/{company_id}{?embed,category_id}').expand({company_id: company_id, category_id: comp_category_id, embed: embed_params})
+      comp_url = new UriTemplate($scope.bb.api_url + '/api/v1/company/{company_id}{?embed,category_id}').fillFromObject({company_id: company_id, category_id: comp_category_id, embed: embed_params})
       comp_promise = halClient.$get(comp_url)
 
       setup_promises.push(comp_promise)
@@ -607,7 +621,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     else if ($scope.bb.company.$has('event_groups') && !$scope.bb.current_item.event_group && !$scope.bb.current_item.service && !$scope.bb.current_item.product && !$scope.bb.current_item.deal) or
             ($scope.bb.company.$has('events') && $scope.bb.current_item.event_group && !$scope.bb.current_item.event? && !$scope.bb.current_item.product && !$scope.bb.current_item.deal)
       return $scope.showPage('event_list')
-    else if ($scope.bb.company.$has('events') && $scope.bb.current_item.event && !$scope.bb.current_item.num_book && !$scope.bb.current_item.tickets && !$scope.bb.current_item.product && !$scope.bb.current_item.deal)
+    else if ($scope.bb.company.$has('events') && $scope.bb.current_item.event && !$scope.bb.current_item.num_book && (!$scope.bb.current_item.tickets || !$scope.bb.current_item.tickets.qty) && !$scope.bb.current_item.product && !$scope.bb.current_item.deal)
       return $scope.showPage('event')
     else if ($scope.bb.company.$has('services') && !$scope.bb.current_item.service && !$scope.bb.current_item.event? && !$scope.bb.current_item.product && !$scope.bb.current_item.deal)
       return if $scope.setPageRoute($rootScope.Route.Service)
@@ -667,9 +681,9 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     add_defer = $q.defer()
 
     if !$scope.bb.current_item.submitted && !$scope.bb.moving_booking
-      $scope.bb.current_item.submitted = true
       $scope.moveToBasket()
-      $scope.updateBasket().then (basket) ->
+      $scope.bb.current_item.submitted = $scope.updateBasket()
+      $scope.bb.current_item.submitted.then (basket) ->
         add_defer.resolve(basket)
       , (err) ->
         if err.status == 409
@@ -680,8 +694,10 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
           if $scope.bb.current_item.service
             $scope.bb.current_item.setService($scope.bb.current_item.service)
 
-        $scope.bb.current_item.submitted = false
+        $scope.bb.current_item.submitted = null
         add_defer.reject(err)
+    else if $scope.bb.current_item.submitted
+      return $scope.bb.current_item.submitted
     else
       add_defer.resolve()
     add_defer.promise
@@ -719,7 +735,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
         $scope.bb.current_item.person = null
         $scope.bb.current_item.selected_person = null
         error_modal = $modal.open
-          templateUrl: $scope.getPartial('error_modal')
+          templateUrl: $scope.getPartial('_error_modal')
           controller: ($scope, $modalInstance) ->
             $scope.message = ErrorService.getError('ITEM_NO_LONGER_AVAILABLE').msg
             $scope.ok = () ->
@@ -828,7 +844,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
         affiliate_id: $scope.bb.affiliate_id
         clear_baskets: if $scope.bb.clear_basket then '1' else null
         clear_member: if $scope.bb.clear_member then '1' else null
-      uri = new $window.UriTemplate.parse(href).expand(params)
+      uri = new UriTemplate(href).fillFromObject(params)
       status = halClient.$get(uri, {"auth_token": auth_token, "no_cache": true})
       status.then (res) =>
         if res.$has('client')
@@ -1047,8 +1063,14 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
 
 
   $scope.setLoadedAndShowError = (scope, err, error_string) ->
+    $log.warn(err, error_string)
     scope.setLoaded(scope)
-    AlertService.danger(ErrorService.getError('GENERIC'))
+    if err.status is 409
+      AlertService.danger(ErrorService.getError('ITEM_NO_LONGER_AVAILABLE'))
+    else if err.data.error is "Number of Bookings exceeds the maximum"
+      AlertService.danger(ErrorService.getError('MAXIMUM_TICKETS'))
+    else
+      AlertService.danger(ErrorService.getError('GENERIC'))
 
 
   # go around schild scopes - return false if *any* child scope is marked as

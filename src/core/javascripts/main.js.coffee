@@ -22,7 +22,12 @@ app = angular.module('BB', [
   'uiGmapgoogle-maps',
   'angular.filter',
   'ui-rangeSlider',
-  'ngCookies'
+  'ngCookies',
+  'slick',
+  'angulartics',
+  'angulartics.google.analytics',
+  'pascalprecht.translate',
+  'vcRecaptcha'
 ]);
 
 
@@ -37,6 +42,7 @@ if (window.use_no_conflict)
 else
   app.value '$bbug', jQuery
 
+app.constant('UriTemplate', window.UriTemplate)
 
 app.config ($locationProvider, $httpProvider, $provide, ie8HttpBackendProvider) ->
 

@@ -33,6 +33,7 @@ gulp.task('javascripts', function() {
         './bower_components/lodash/dist/lodash.js',
         './bower_components/angular-google-maps/dist/angular-google-maps.js',
         './bower_components/webshim/js-webshim/dev/polyfiller.js',
+        './src/javascripts/core/main.js.coffee', 
         './src/*/javascripts/main.js.coffee', 
         './src/*/main.js.coffee', 
         './src/core/javascripts/services/widget.js.coffee', 
@@ -41,7 +42,6 @@ gulp.task('javascripts', function() {
         './src/*/directives/**/*', 
         './src/*/models/**/*', 
         './src/*/services/**/*', 
-        './src/*/templates.js', 
         '!./**/*~',]))
     // .pipe(filelog())
     .pipe(gulpif(/.*coffee$/, coffee().on('error', function (e) {
@@ -53,7 +53,7 @@ gulp.task('javascripts', function() {
     .pipe(templateCache({module: 'BB'}))
   streamqueue({objectMode: true}, javascripts, templates)
     .pipe(concat('bookingbug-angular.js'))
-    // .pipe(uglify({mangle: false}))
+    .pipe(uglify({mangle: false})).on('error', gutil.log)
     .pipe(gulp.dest('release'));
 });
 
@@ -80,7 +80,7 @@ gulp.task('stylesheets', function() {
 });
 
 gulp.task('widget', function() {
-  gulp.src('src/widget/stylesheets/widget.scss')
+  gulp.src('src/widget/stylesheets/main.scss')
     .pipe(sass({errLogToConsole: true}))
     .pipe(flatten())
     .pipe(concat('bookingbug-widget.css'))
