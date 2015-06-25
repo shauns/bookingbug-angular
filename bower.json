@@ -51,7 +51,7 @@
     "angular-timer": "~1.3.1",
     "humanize-duration": "~2.4.0",
     "pusher-angular": "~0.1.4",
-    "pusher": "~2.2.4"
+    "pusher": "~2.2.4",
     "angulartics": "~0.17.2",
     "angular-slick": "~0.2.1",
     "angular-translate-storage-cookie": "~2.6.1",
@@ -63,8 +63,7 @@
     "moment": "master",
     "angular": "~1.2.25",
     "jquery": "~1.11.2",
-    "moment": "master",
-    "fullcalendar": "~2.3.1"
-    "angular-translate": "~2.7.0"
+    "angular-translate": "~2.7.0",
+    "humanize-duration": "~2.8.0"
   }
 }
