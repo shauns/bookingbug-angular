@@ -3,10 +3,6 @@
 angular.module('BB.Directives').directive 'bbPayment', ($window, $location, $sce) ->
 
   error = (scope, message) ->
-    # scope.url = ""
-    # scope.$apply()
-    # scope.url = $sce.trustAsResourceUrl(scope.bb.total.$href('new_payment'))
-    # scope.$apply()
     scope.error(message)
 
   getHost = (url) ->
@@ -35,24 +31,25 @@ angular.module('BB.Directives').directive 'bbPayment', ($window, $location, $sce
       url = scope.bb.total.$href('new_payment')
       origin = getHost(url)
       sendLoadEvent(element, origin, scope)
+      scope.$apply ->
+        scope.callSetLoaded()
 
     $window.addEventListener 'message', (event) =>
       if angular.isObject(event.data)
         data = event.data
-      else
+      else if not event.data.match(/iFrameSizer/)
         data = JSON.parse event.data
       scope.$apply =>
-        switch data.type
-          when "submitting"
-            scope.callNotLoaded()
-          when "error"
-            scope.callSetLoaded()
-            error(scope, event.data.message)
-          when "payment_complete"
-            scope.callSetLoaded()
-            scope.paymentDone()
-          when "loaded"
-            scope.callSetLoaded()
+        if data
+          switch data.type
+            when "submitting"
+              scope.callNotLoaded()
+            when "error"
+              scope.callSetLoaded()
+              error(scope, event.data.message)
+            when "payment_complete"
+              scope.callSetLoaded()
+              scope.paymentDone()
     , false
 
   return {
@@ -67,10 +64,11 @@ angular.module('BB.Controllers').controller 'Payment', ($scope,  $rootScope, $q,
 
   $scope.controller = "public.controllers.Payment"
 
+  $scope.notLoaded $scope
+
   $scope.bb.total = $scope.purchase if $scope.purchase
 
   $rootScope.connection_started.then =>
-    $scope.notLoaded $scope
     $scope.bb.total = $scope.total if $scope.total
     $scope.url = $sce.trustAsResourceUrl($scope.bb.total.$href('new_payment'))
   
