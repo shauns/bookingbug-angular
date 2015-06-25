@@ -14,7 +14,7 @@ angular.module('BB.Directives').directive 'bbPayment', ($window, $location, $sce
     referrer = $location.protocol() + "://" + $location.host()
     if $location.port()
       referrer += ":" + $location.port()
-    custom_stylesheet = referrer + "/" + scope.payment_options.custom_stylesheet + '.css' if scope.payment_options.custom_stylesheet
+    custom_stylesheet = scope.payment_options.custom_stylesheet if scope.payment_options.custom_stylesheet
     payload = JSON.stringify({
       'type': 'load',
       'message': referrer,
