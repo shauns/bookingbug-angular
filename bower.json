@@ -46,17 +46,18 @@
     "es5-shim": "~4.1.0",
     "webshim": "~1.15.7",
     "angular-cookies": "~1.3.15",
-    "angular-slick": "~0.2.1",
     "angular-translate-storage-cookie": "~2.6.1",
     "uri-templates": "~0.1.5",
     "fullcalendar": "2.3.1",
-    "angular-recaptcha": "~2.2.3"
+    "angular-recaptcha": "~2.2.3",
+    "angular-slick": "https://github.com/BookingBug/angular-slick.git#~0.2.2"
   },
   "resolutions": {
     "fullcalendar": "2.3.1",
     "moment": "master",
-    "angular": "~1.2.25",
+    "angular": "~1.3.0",
     "jquery": "~1.11.2",
-    "angular-translate": "~2.7.0"
+    "angular-translate": "~2.7.0",
+    "slick-carousel": "~1.5.5"
   }
 }
