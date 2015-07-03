@@ -27,7 +27,7 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope, $rootScope, $
   $scope.booking_item = $scope.$eval($attrs.bbItem) if $attrs.bbItem
   $scope.show_all = true if $attrs.bbShowAll or $scope.options.show_all 
   $scope.allowSinglePick = true if $scope.options.allow_single_pick
-
+  $scope.price_options = {min: 0, max: 100}
 
   $rootScope.connection_started.then () =>
     if $scope.bb.company
