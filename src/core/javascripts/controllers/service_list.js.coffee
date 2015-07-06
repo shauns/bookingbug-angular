@@ -185,8 +185,9 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope, $rootScope, $
     $scope.service_array = [] 
     $scope.custom_array = (match)->
       if $scope.options.custom_filter
+        match = match.toLowerCase()
         for item in service.extra[$scope.options.custom_filter]
-          item.toLowerCase()
+          item = item.toLowerCase()h
           if item.includes(match)
             $scope.service_array.push service
             return $scope.service_array
