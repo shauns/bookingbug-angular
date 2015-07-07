@@ -201,6 +201,8 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope, $rootScope, $
       (!service.price or (service.price >= $scope.filters.price.min * 100 and service.price <= $scope.filters.price.max * 100 ))
 
   $scope.resetFilters = () ->
+    if $scope.options.clear_results
+      $scope.show_custom_array = false
     $scope.filters.category_name = null
     $scope.filters.service_name = null
     $scope.filters.price.min = null
