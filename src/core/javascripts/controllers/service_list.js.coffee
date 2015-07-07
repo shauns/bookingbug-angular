@@ -21,7 +21,7 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope, $rootScope, $
   $scope.validator = ValidatorService
 
   $scope.filters = {category_name: null, service_name: null, price: {}, custom_array_value: null}
-  $scope.show_custom_array = false
+  # $scope.show_custom_array = false
 
   $scope.options = $scope.$eval($attrs.bbServices) or {}
 
@@ -185,17 +185,14 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope, $rootScope, $
       return false
     $scope.service_array = [] 
     $scope.custom_array = (match)->
+      if !match
+        return false
       if $scope.options.custom_filter
         match = match.toLowerCase()
         for item in service.extra[$scope.options.custom_filter]
           item = item.toLowerCase()
-          if item is match
-            $scope.service_array.push service
-            $scope.show_custom_array = true
-            return $scope.service_array
-      else
-        $scope.service_array = $scope.items
-        return $scope.service_array
+          return true if item is match
+        return false
     return (!$scope.filters.category_name or service.category_id is $scope.filters.category_name.id) and
       (!$scope.filters.service_name or service.name.includes($scope.filters.service_name)) and
       (!$scope.filters.custom_array_value or $scope.custom_array($scope.filters.custom_array_value)) and
@@ -211,4 +208,5 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope, $rootScope, $
 
   $scope.filterChanged = () ->
     $scope.filtered_items = $filter('filter')($scope.items, $scope.filterFunction);
+
 
