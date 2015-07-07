@@ -21,7 +21,7 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope, $rootScope, $
   $scope.validator = ValidatorService
 
   $scope.filters = {category_name: null, service_name: null, price: {}, custom_array_value: null}
-  # $scope.show_custom_array = false
+  $scope.show_custom_array = false
 
   $scope.options = $scope.$eval($attrs.bbServices) or {}
 
@@ -191,7 +191,9 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope, $rootScope, $
         match = match.toLowerCase()
         for item in service.extra[$scope.options.custom_filter]
           item = item.toLowerCase()
-          return true if item is match
+          if item is match
+            $scope.show_custom_array = true
+            return true 
         return false
     return (!$scope.filters.category_name or service.category_id is $scope.filters.category_name.id) and
       (!$scope.filters.service_name or service.name.includes($scope.filters.service_name)) and
