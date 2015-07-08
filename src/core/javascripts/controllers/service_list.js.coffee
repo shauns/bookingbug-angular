@@ -20,7 +20,7 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope, $rootScope, $
 
   $scope.validator = ValidatorService
 
-  $scope.filters = {category_name: null, service_name: null, price: {}, custom_array_value: null}
+  $scope.filters = {category_name: null, service_name: null, price: { min: 0, max: 100}, custom_array_value: null}
   $scope.show_custom_array = false
 
   $scope.options = $scope.$eval($attrs.bbServices) or {}
@@ -195,8 +195,18 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope, $rootScope, $
             $scope.show_custom_array = true
             return true 
         return false
+    $scope.service_name_include = (match) ->
+      if !match
+        return false
+      if match 
+        match = match.toLowerCase()
+        item = service.name.toLowerCase()
+        if item.includes(match)
+          return true
+        else
+          false
     return (!$scope.filters.category_name or service.category_id is $scope.filters.category_name.id) and
-      (!$scope.filters.service_name or service.name.includes($scope.filters.service_name)) and
+      (!$scope.filters.service_name or $scope.service_name_include($scope.filters.service_name)) and
       (!$scope.filters.custom_array_value or $scope.custom_array($scope.filters.custom_array_value)) and
       (!service.price or (service.price >= $scope.filters.price.min * 100 and service.price <= $scope.filters.price.max * 100 ))
 
@@ -205,12 +215,13 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope, $rootScope, $
       $scope.show_custom_array = false
     $scope.filters.category_name = null
     $scope.filters.service_name = null
-    $scope.filters.price.min = null
-    $scope.filters.price.max = null
+    $scope.filters.price.min = 0
+    $scope.filters.price.max = 100
     $scope.filters.custom_array_value = null
     $scope.filterChanged()
 
   $scope.filterChanged = () ->
     $scope.filtered_items = $filter('filter')($scope.items, $scope.filterFunction);
+
 
 
