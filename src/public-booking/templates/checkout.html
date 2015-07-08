@@ -45,10 +45,16 @@
               <div class="col-sm-3">Price:</div>
               <div class="col-sm-9">{{i.price | currency }}</div>
             </li>
-            <li ng-if="i.due_now != i.price" class="row confirmation-summary-item">
+            <li ng-if="i.due_now != 0" class="row confirmation-summary-item">
               <div class="col-sm-3">Due Now:</div>
               <div class="col-sm-9">{{i.due_now | currency }}</div>
             </li>
+            <span ng-repeat="prepaid in available_prepaid_bookings">
+            <li ng-if="i.due_now > 0" class="row confirmation-summary-item">
+              <div class="col-sm-3">PrePaid Booking:</div>
+              <div class="col-sm-9">{{prepaid}}</div>
+            </li>
+            </span>
           </ul>
           <ul ng-show="total.items[0].address.lat" class="confirmation-summary">
             <li class="row confirmation-summary-item">
