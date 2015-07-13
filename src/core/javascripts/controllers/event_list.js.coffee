@@ -189,7 +189,8 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
 
 
     chains = $scope.loadEventChainData(comp)
-
+    $scope.events = {}
+    
     EventService.query(comp, params).then (events) ->
 
       events = _.groupBy events, (event) -> event.date.toISODate()
