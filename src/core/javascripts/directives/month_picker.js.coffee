@@ -73,7 +73,7 @@ angular.module('BB.Directives').directive 'bbMonthPicker', () ->
         for week in month.weeks
           for day in week.days
             if (day.data && day.data.spaces > 0) and (day.date.isSame(month.start_date, 'day') or day.date.isAfter(month.start_date, 'day')) 
-              $scope.showDate(day.date) 
+              $scope.showDay(day) 
               return
 
 
