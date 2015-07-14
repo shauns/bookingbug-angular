@@ -5,7 +5,7 @@ angular.module('BBAdmin.Services').factory 'AdminCompanyService', ($q,
     defer = $q.defer()
     $rootScope.bb ||= {}
 
-    $rootScope.bb.api_url = $sessionStorage.getItem("host")
+    $rootScope.bb.api_url ||= $sessionStorage.getItem("host")
     $rootScope.bb.api_url ||= params.apiUrl
     $rootScope.bb.api_url ||= "http://www.bookingbug.com"
 
