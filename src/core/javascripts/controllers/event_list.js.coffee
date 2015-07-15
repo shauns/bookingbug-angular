@@ -117,6 +117,11 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
     deferred = $q.defer()
     current_event = $scope.current_item.event
 
+    # de-select the event chain if there's one already picked - as it's hiding other events in the same group
+    if $scope.bb.current_item && ($scope.bb.current_item.event_chain_id || $scope.bb.current_item.event_chain)
+      delete $scope.bb.current_item.event_chain
+      delete $scope.bb.current_item.event_chain_id
+
     comp = $scope.bb.company 
     params = {item: $scope.bb.current_item, start_date:$scope.start_date.toISODate(), end_date:$scope.end_date.toISODate()}
     params.event_chain_id = $scope.bb.item_defaults.event_chain if $scope.bb.item_defaults.event_chain
@@ -185,15 +190,16 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
     comp ||= $scope.bb.company 
 
     # de-select the event chain if there's one already picked - as it's hiding other events in the same group
-    if $scope.bb.current_item && $scope.bb.current_item.event_chain
+    if $scope.bb.current_item && ($scope.bb.current_item.event_chain_id || $scope.bb.current_item.event_chain)
       delete $scope.bb.current_item.event_chain
+      delete $scope.bb.current_item.event_chain_id
 
     params = {item: $scope.bb.current_item, start_date:$scope.start_date.toISODate(), end_date:$scope.end_date.toISODate()}
     params.event_chain_id = $scope.bb.item_defaults.event_chain if $scope.bb.item_defaults.event_chain
 
     chains = $scope.loadEventChainData(comp)
     $scope.events = {}
-    
+
     EventService.query(comp, params).then (events) ->
 
       events = _.groupBy events, (event) -> event.date.toISODate()
