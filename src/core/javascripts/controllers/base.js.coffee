@@ -289,6 +289,11 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     if prms.i18n
       SettingsService.enableInternationalizaton()
 
+    # this is used by the bbScrollTo directive so that we can account of
+    # floating headers that might reside on sites where the widget is embedded
+    if prms.scroll_offset
+      SettingsService.setScrollOffset(prms.scroll_offset)
+
     @waiting_for_conn_started_def = $q.defer()
     $scope.waiting_for_conn_started = @waiting_for_conn_started_def.promise
 
