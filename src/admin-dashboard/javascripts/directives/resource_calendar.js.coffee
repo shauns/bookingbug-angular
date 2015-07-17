@@ -12,7 +12,6 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
             end_date: end.format('YYYY-MM-DD')
           AdminBookingService.query(params).then (bookings) ->
             b.resourceId = b.person_id for b in bookings
-            console.log bookings
             callback(bookings)
     ]
 
@@ -20,6 +19,7 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
       calendar:
         editable: true
         # timezone: 'local'
+        height: 800
         header:
           left: 'today,prev,next'
           center: 'title'
@@ -40,19 +40,21 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
       $scope.getCompanyPromise().then (company) ->
         params = {company: company}
         AdminPersonService.query(params).then (people) ->
-          $scope.people = people
-          resources = for p in people
-            id: p.id
-            title: p.name
+          $scope.people = _.sortBy people, 'name'
+          p.title = p.name for p in $scope.people
           uiCalendarConfig.calendars.resourceCalendar.fullCalendar('refetchEvents')
-          callback(resources)
+          callback($scope.people)
 
     $scope.updateBooking = (booking, delta) ->
       booking.person_id = booking.resourceId
-      booking.start = booking.start.add(delta)
-      booking.end = booking.end.add(delta)
-      booking = booking.$update()
-      booking.resourceId = booking.person_id
+      booking.$put('self', {}, booking.getPostData()).then (response) =>
+        new_booking = new BBModel.Admin.Booking(response)
+        booking.person_id = new_booking.person_id
+        booking.resourceId = booking.person_id
+        booking.start = new_booking.start
+        booking.end = new_booking.end
+        uiCalendarConfig.calendars.resourceCalendar.fullCalendar('updateEvent', booking)
+
 
     $scope.editBooking = (booking) ->
       ModalForm.edit
@@ -64,7 +66,6 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
           booking.resourceId = booking.person_id
           booking.start = new_booking.start
           booking.end = new_booking.end
-          console.log 'updated booking ', booking
           uiCalendarConfig.calendars.resourceCalendar.fullCalendar('updateEvent', booking)
 
   link = (scope, element, attrs) ->
