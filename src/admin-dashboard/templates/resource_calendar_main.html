@@ -1,3 +1,6 @@
-<div ui-calendar="options.calendar" ng-model="eventSources"
+<div id='loading_icon' ng-show="loading">
+  <div id='wait_graphic'>&nbsp;</div>
+</div>
+<div id="uicalendar" ui-calendar="options.calendar" ng-model="eventSources"
   ng-if="eventSources" calendar="resourceCalendar"
   class="resource-calendar"></div>

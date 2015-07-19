@@ -5,12 +5,14 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
 
     $scope.eventSources = [
       events: (start, end, timezone, callback) ->
+        $scope.loading = true
         $scope.getCompanyPromise().then (company) ->
           params =
             company: company
             start_date: start.format('YYYY-MM-DD')
             end_date: end.format('YYYY-MM-DD')
           AdminBookingService.query(params).then (bookings) ->
+            $scope.loading = false
             b.resourceId = b.person_id for b in bookings
             callback(bookings)
     ]
@@ -26,6 +28,8 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
           right: 'timelineDay,agendaWeek,month'
         defaultView: 'timelineDay'
         views:
+          month:
+            eventLimit: 5
           timelineDay:
             slotDuration: "00:05"
         resourceLabelText: 'Staff'
@@ -35,17 +39,22 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
           $scope.updateBooking(event, delta)
         eventClick: (event, jsEvent, view) ->
           $scope.editBooking(event)
+        eventResize: (event, delta, revertFunc, jsEvent, ui, view) ->
+          event.duration = event.end.diff(event.start, 'minutes')
+          $scope.updateBooking(event)
 
     $scope.getPeople = (callback) ->
+      $scope.loading = true
       $scope.getCompanyPromise().then (company) ->
         params = {company: company}
         AdminPersonService.query(params).then (people) ->
+          $scope.loading = false
           $scope.people = _.sortBy people, 'name'
           p.title = p.name for p in $scope.people
           uiCalendarConfig.calendars.resourceCalendar.fullCalendar('refetchEvents')
           callback($scope.people)
 
-    $scope.updateBooking = (booking, delta) ->
+    $scope.updateBooking = (booking) ->
       booking.person_id = booking.resourceId
       booking.$put('self', {}, booking.getPostData()).then (response) =>
         new_booking = new BBModel.Admin.Booking(response)
