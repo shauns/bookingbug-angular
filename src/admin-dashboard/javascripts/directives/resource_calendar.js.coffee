@@ -42,6 +42,8 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
         eventResize: (event, delta, revertFunc, jsEvent, ui, view) ->
           event.duration = event.end.diff(event.start, 'minutes')
           $scope.updateBooking(event)
+        eventAfterRender: (event, element, view) ->
+          element.draggable()
 
     $scope.getPeople = (callback) ->
       $scope.loading = true
