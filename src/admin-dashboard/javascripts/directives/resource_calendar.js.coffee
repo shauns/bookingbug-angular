@@ -2,7 +2,7 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
     AdminCompanyService, AdminBookingService, AdminPersonService, $q,
     $sessionStorage, ModalForm, BBModel, AdminBookingPopup, $window, $bbug) ->
 
-  controller = ($scope) ->
+  controller = ($scope, $attrs) ->
 
     $scope.eventSources = [
       events: (start, end, timezone, callback) ->
@@ -19,6 +19,7 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
     ]
 
 
+    $scope.options = $scope.$eval $attrs.bbResourceCalendar
     $scope.options ||= {}
 
     height = if $scope.options.header_height
@@ -148,7 +149,5 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
   {
     controller: controller
     link: link
-    scope:
-      options: '=?bbResourceCalendar'
     templateUrl: 'resource_calendar_main.html'
   }
