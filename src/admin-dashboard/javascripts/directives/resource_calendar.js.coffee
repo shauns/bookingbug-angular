@@ -1,7 +1,6 @@
-angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarConfig,
-    AdminCompanyService, AdminBookingService, AdminPersonService, $q, ModalForm, BBModel) ->
+angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarConfig, AdminCompanyService, AdminBookingService, AdminPersonService, $q, ModalForm, BBModel, $window, $bbug) ->
 
-  controller = ($scope) ->
+  controller = ($scope, $attrs) ->
 
     $scope.eventSources = [
       events: (start, end, timezone, callback) ->
@@ -17,11 +16,14 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
             callback(bookings)
     ]
 
+    options = $scope.$eval $attrs.bbResourceCalendar or {}
+    height = if options.header_height then $bbug(window).height() - options.header_height else 800
+
     $scope.options =
       calendar:
         editable: true
         # timezone: 'local'
-        height: 800
+        height: height
         header:
           left: 'today,prev,next'
           center: 'title'
