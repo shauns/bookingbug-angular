@@ -28,20 +28,30 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
           right: 'timelineDay,agendaWeek,month'
         defaultView: 'timelineDay'
         views:
-          month:
-            eventLimit: 5
           timelineDay:
             slotDuration: "00:05"
+            eventOverlap: false
+            slotWidth: 50
         resourceLabelText: 'Staff'
+        selectable: true
         resources: (callback) ->
           $scope.getPeople(callback)
         eventDrop: (event, delta, revertFunc) ->
           $scope.updateBooking(event, delta)
         eventClick: (event, jsEvent, view) ->
           $scope.editBooking(event)
-        eventResize: (event, delta, revertFunc, jsEvent, ui, view) ->
-          event.duration = event.end.diff(event.start, 'minutes')
-          $scope.updateBooking(event)
+        resourceRender: (resource, resourceTDs, dataTDs) ->
+          for resourceTD in resourceTDs
+            resourceTD.style.height = "44px" 
+            resourceTD.style.verticalAlign = "middle" 
+          dataTD.style.height = "44px" for dataTD in dataTDs
+        eventAfterRender: (event, elements, view) ->
+          if view.type == "timelineDay"
+            element.style.height = "27px" for element in elements
+          elements.draggable()
+        select: (start, end, jsEvent, view, resource) ->
+          view.calendar.unselect()
+          # Do your stuff based on start time (moment object) & resource (person)
 
     $scope.getPeople = (callback) ->
       $scope.loading = true
