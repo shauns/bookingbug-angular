@@ -1,6 +1,8 @@
-angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarConfig, AdminCompanyService, AdminBookingService, AdminPersonService, $q, ModalForm, BBModel, $window, $bbug) ->
+angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarConfig,
+    AdminCompanyService, AdminBookingService, AdminPersonService, $q, $sessionStorage, 
+    ModalForm, BBModel, $window, $bbug) ->
 
-  controller = ($scope, $attrs) ->
+  controller = ($scope) ->
 
     $scope.eventSources = [
       events: (start, end, timezone, callback) ->
@@ -35,7 +37,7 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
           timelineDay:
             slotDuration: "00:05"
             eventOverlap: false
-            slotWidth: 50
+            slotWidth: 44
         resourceLabelText: 'Staff'
         selectable: true
         resources: (callback) ->
@@ -90,6 +92,41 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
           booking.start = new_booking.start
           booking.end = new_booking.end
           uiCalendarConfig.calendars.resourceCalendar.fullCalendar('updateEvent', booking)
+          
+          
+          
+    $scope.pusherSubscribe = () =>
+      if $scope.company? && Pusher? && !$scope.pusher?
+        url = ""
+        url = $scope.$root.bb.api_url if $scope.$root.bb.api_url?
+        $scope.pusher = new Pusher 'c8d8cea659cc46060608',
+          authEndpoint: "#{url}/api/v1/push/#{$scope.company.id}/pusher.json"
+          auth:
+            headers:
+              # These should be put somewhere better - any suggestions?
+              'App-Id' : 'f6b16c23'
+              'App-Key' : 'f0bc4f65f4fbfe7b4b3b7264b655f5eb'
+              'Auth-Token' : $sessionStorage.getItem('auth_token')
+    
+        channelName = "private-c#{$scope.company.id}-w#{$scope.company.numeric_widget_id}"
+      
+        if !$scope.pusher.channel(channelName)?
+          $scope.pusher_channel = $scope.pusher.subscribe(channelName)
+      
+          pusherEvent = (res) =>
+            if res.id?
+              setTimeout (->
+                prms = 
+                  company: $scope.company
+                  id: res.id
+                AdminBookingService.getBooking(prms).then (booking) ->
+                  return
+              ), 2000
+
+          $scope.pusher_channel.bind 'booking', pusherEvent
+          $scope.pusher_channel.bind 'cancellation', pusherEvent
+          $scope.pusher_channel.bind 'updating', pusherEvent
+          console.log "Got here"
 
   link = (scope, element, attrs) ->
 
@@ -100,6 +137,7 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
       else
         AdminCompanyService.query(attrs).then (company) ->
           scope.company = company
+          scope.pusherSubscribe()
           defer.resolve(scope.company)
       defer.promise
 

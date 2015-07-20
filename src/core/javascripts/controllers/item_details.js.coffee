@@ -50,6 +50,7 @@ angular.module('BB.Controllers').controller 'ItemDetails', ($scope, $attrs, $roo
   $scope.loadItem = (item) ->
     confirming = true
     $scope.item = item
+    $scope.item.private_note = $scope.bb.private_note if $scope.bb.private_note
     if $scope.item.item_details
       setItemDetails $scope.item.item_details
       # this will add any values in the querystring
