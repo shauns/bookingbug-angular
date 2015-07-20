@@ -7,7 +7,8 @@ adminbookingapp = angular.module('BBAdminDashboard', [
   'BBAdmin.Services',
   'BBAdminServices',
   'ui.calendar',
-  'ngStorage'
+  'ngStorage',
+  'BBAdminBooking',
 ])
 
 angular.module('BBAdminDashboard').config ($logProvider) ->

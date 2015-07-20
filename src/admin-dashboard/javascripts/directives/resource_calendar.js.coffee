@@ -1,6 +1,6 @@
 angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarConfig,
-    AdminCompanyService, AdminBookingService, AdminPersonService, $q, $sessionStorage, 
-    ModalForm, BBModel, $window, $bbug) ->
+    AdminCompanyService, AdminBookingService, AdminPersonService, $q,
+    $sessionStorage, ModalForm, BBModel, AdminBookingPopup, $window, $bbug) ->
 
   controller = ($scope) ->
 
@@ -23,7 +23,8 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
 
     $scope.options =
       calendar:
-        editable: true
+        eventStartEditable: true
+        eventDurationEditable: false
         # timezone: 'local'
         height: height
         header:
@@ -32,7 +33,7 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
           right: 'timelineDay,agendaWeek,month'
         defaultView: 'timelineDay'
         views:
-          month:		
+          month:
             eventLimit: 5
           timelineDay:
             slotDuration: "00:05"
@@ -48,8 +49,8 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
           $scope.editBooking(event)
         resourceRender: (resource, resourceTDs, dataTDs) ->
           for resourceTD in resourceTDs
-            resourceTD.style.height = "44px" 
-            resourceTD.style.verticalAlign = "middle" 
+            resourceTD.style.height = "44px"
+            resourceTD.style.verticalAlign = "middle"
           dataTD.style.height = "44px" for dataTD in dataTDs
         eventAfterRender: (event, elements, view) ->
           if view.type == "timelineDay"
@@ -57,7 +58,18 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
           elements.draggable()
         select: (start, end, jsEvent, view, resource) ->
           view.calendar.unselect()
-          # Do your stuff based on start time (moment object) & resource (staff member)
+          AdminBookingPopup.open
+            date: datetime.format('YYYY-MM-DD')
+            time: datetime.format('HH:mm')
+            person: resourceObj.id if resourceObj
+        # eventResize: (event, delta, revertFunc, jsEvent, ui, view) ->
+        #   event.duration = event.end.diff(event.start, 'minutes')
+        #   $scope.updateBooking(event)
+        # dayClick: (datetime, jsEvent, view, resourceObj) ->
+        #   AdminBookingPopup.open
+        #     date: datetime.format('YYYY-MM-DD')
+        #     time: datetime.format('HH:mm')
+        #     person: resourceObj.id if resourceObj
 
     $scope.getPeople = (callback) ->
       $scope.loading = true

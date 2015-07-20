@@ -19,10 +19,14 @@ angular.module('BBAdminBooking').directive 'bbAdminBooking', (AdminCompanyServic
 
   link = (scope, element, attrs) ->
     config = scope.$eval attrs.bbAdminBooking
+    config ||= {}
     config.admin = true
-    if config.company_id && !attrs.companyId
-      attrs.companyId = config.company_id
-    unless scope.company
+    unless attrs.companyId
+      if config.company_id
+        attrs.companyId = config.company_id
+      else if scope.company
+        attrs.companyId = scope.company.id
+    if attrs.companyId
       AdminCompanyService.query(attrs).then (company) ->
         scope.company = company
         scope.initWidget(config)
