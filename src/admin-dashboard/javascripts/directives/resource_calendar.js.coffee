@@ -18,14 +18,18 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
             callback(bookings)
     ]
 
-    options = $scope.$eval $attrs.bbResourceCalendar or {}
-    height = if options.header_height then $bbug(window).height() - options.header_height else 800
 
-    $scope.options =
+    $scope.options ||= {}
+
+    height = if $scope.options.header_height
+      $bbug($window).height() - $scope.options.header_height
+    else
+      800
+
+    $scope.uiCalOptions =
       calendar:
         eventStartEditable: true
         eventDurationEditable: false
-        # timezone: 'local'
         height: height
         header:
           left: 'today,prev,next'
@@ -36,7 +40,7 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
           month:
             eventLimit: 5
           timelineDay:
-            slotDuration: "00:05"
+            slotDuration: $scope.options.slotDuration || "00:05"
             eventOverlap: false
             slotWidth: 44
         resourceLabelText: 'Staff'
@@ -55,21 +59,17 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
         eventAfterRender: (event, elements, view) ->
           if view.type == "timelineDay"
             element.style.height = "27px" for element in elements
-          elements.draggable()
+          if 'startEditable' in event && 'ontouchstart' in document.documentElemnt
+            elements.draggable()
         select: (start, end, jsEvent, view, resource) ->
           view.calendar.unselect()
           AdminBookingPopup.open
-            date: datetime.format('YYYY-MM-DD')
-            time: datetime.format('HH:mm')
-            person: resourceObj.id if resourceObj
+            date: start.format('YYYY-MM-DD')
+            time: start.format('HH:mm')
+            person: resource.id if resource
         # eventResize: (event, delta, revertFunc, jsEvent, ui, view) ->
         #   event.duration = event.end.diff(event.start, 'minutes')
         #   $scope.updateBooking(event)
-        # dayClick: (datetime, jsEvent, view, resourceObj) ->
-        #   AdminBookingPopup.open
-        #     date: datetime.format('YYYY-MM-DD')
-        #     time: datetime.format('HH:mm')
-        #     person: resourceObj.id if resourceObj
 
     $scope.getPeople = (callback) ->
       $scope.loading = true
@@ -92,7 +92,6 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
         booking.end = new_booking.end
         uiCalendarConfig.calendars.resourceCalendar.fullCalendar('updateEvent', booking)
 
-
     $scope.editBooking = (booking) ->
       ModalForm.edit
         model: booking
@@ -104,9 +103,7 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
           booking.start = new_booking.start
           booking.end = new_booking.end
           uiCalendarConfig.calendars.resourceCalendar.fullCalendar('updateEvent', booking)
-          
-          
-          
+
     $scope.pusherSubscribe = () =>
       if $scope.company? && Pusher? && !$scope.pusher?
         url = ""
@@ -119,26 +116,21 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
               'App-Id' : 'f6b16c23'
               'App-Key' : 'f0bc4f65f4fbfe7b4b3b7264b655f5eb'
               'Auth-Token' : $sessionStorage.getItem('auth_token')
-    
         channelName = "private-c#{$scope.company.id}-w#{$scope.company.numeric_widget_id}"
-      
         if !$scope.pusher.channel(channelName)?
           $scope.pusher_channel = $scope.pusher.subscribe(channelName)
-      
           pusherEvent = (res) =>
             if res.id?
               setTimeout (->
-                prms = 
+                prms =
                   company: $scope.company
                   id: res.id
                 AdminBookingService.getBooking(prms).then (booking) ->
                   return
               ), 2000
-
           $scope.pusher_channel.bind 'booking', pusherEvent
           $scope.pusher_channel.bind 'cancellation', pusherEvent
           $scope.pusher_channel.bind 'updating', pusherEvent
-          console.log "Got here"
 
   link = (scope, element, attrs) ->
 
@@ -156,5 +148,7 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
   {
     controller: controller
     link: link
+    scope:
+      options: '=?bbResourceCalendar'
     templateUrl: 'resource_calendar_main.html'
   }
