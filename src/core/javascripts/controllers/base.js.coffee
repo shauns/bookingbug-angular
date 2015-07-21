@@ -299,16 +299,16 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
         $scope.client.first_name = result[0]
         $scope.client.last_name = result[1]
 
-    if prms.customer_phone
+    if prms.customer_number
       if $scope.client 
-        $scope.client.mobile = prms.customer_phone
+        $scope.client.mobile = prms.customer_number
       else
         $scope.client = new BBModel.Client()
-        $scope.client.mobile = prms.customer_phone
-
+        $scope.client.mobile = prms.customer_number
 
     if prms.private_note
       $scope.bb.private_note = prms.private_note
+
 
     # this is used by the bbScrollTo directive so that we can account of
     # floating headers that might reside on sites where the widget is embedded
