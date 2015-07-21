@@ -200,9 +200,8 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     # if we've been asked to load any values from the url - do so!
     if prms.query
       for k,v of prms.query
-        console.log(QueryStringService(v))
         prms[k] = QueryStringService(v)
-    console.log(prms)
+
     if prms.custom_partial_url
       $scope.bb.custom_partial_url = prms.custom_partial_url
       $scope.bb.partial_id = prms.custom_partial_url.substring(prms.custom_partial_url.lastIndexOf("/")+1)
@@ -292,7 +291,6 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
 
     if prms.customer_name
       result = prms.customer_name.match(/^(\S+)\s(.*)/).slice(1)
-      console.log(result)
       if $scope.client
         $scope.client.first_name = result[0]
         $scope.client.last_name = result[1]
@@ -307,11 +305,9 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
       else
         $scope.client = new BBModel.Client()
         $scope.client.mobile = prms.customer_number
-    console.log($scope.client)
 
     if prms.private_note
       $scope.bb.private_note = prms.private_note
-    console.log($scope.bb)
 
 
     # this is used by the bbScrollTo directive so that we can account of
