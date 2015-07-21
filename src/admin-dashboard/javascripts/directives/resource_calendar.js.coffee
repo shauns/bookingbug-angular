@@ -39,6 +39,8 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (
           right: 'timelineDay,agendaWeek,month'
         defaultView: 'timelineDay'
         views:
+          agendaWeek:
+            slotDuration: $scope.options.slotDuration || "00:05"
           month:
             eventLimit: 5
           timelineDay:
@@ -59,15 +61,14 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (
             resourceTD.style.verticalAlign = "middle"
           dataTD.style.height = "44px" for dataTD in dataTDs
         eventRender: (event, element) ->
-          person = _.findWhere($scope.people, {id: event.person_id})
-          element.css('background-color', person.color)
-          element.css('color', person.textColor)
-          element.css('border-color', person.textColor)
+          service = _.findWhere($scope.services, {id: event.service_id})
+          element.css('background-color', service.color)
+          element.css('color', service.textColor)
+          element.css('border-color', service.textColor)
         eventAfterRender: (event, elements, view) ->
           if view.type == "timelineDay"
             element.style.height = "27px" for element in elements
-          if 'startEditable' in event && 'ontouchstart' in document.documentElemnt
-            elements.draggable()
+          elements.draggable() if elements.draggable
         select: (start, end, jsEvent, view, resource) ->
           view.calendar.unselect()
           AdminBookingPopup.open
@@ -86,7 +87,6 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (
           $scope.loading = false
           $scope.people = _.sortBy people, 'name'
           p.title = p.name for p in $scope.people
-          ColorPalette.setColors(people)
           uiCalendarConfig.calendars.resourceCalendar.fullCalendar('refetchEvents')
           callback($scope.people)
 
@@ -150,6 +150,12 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (
           scope.pusherSubscribe()
           defer.resolve(scope.company)
       defer.promise
+
+    scope.getCompanyPromise().then (company) ->
+      company.$get('services').then (collection) ->
+        collection.$get('services').then (services) ->
+          scope.services = (new BBModel.Admin.Service(s) for s in services)
+          ColorPalette.setColors(scope.services)
 
   {
     controller: controller
