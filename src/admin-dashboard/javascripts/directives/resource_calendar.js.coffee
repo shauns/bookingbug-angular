@@ -75,7 +75,7 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (
         eventAfterRender: (event, elements, view) ->
           if view.type == "timelineDay"
             element.style.height = "27px" for element in elements
-          elements.draggable() if elements.draggable
+          elements.draggable()
         select: (start, end, jsEvent, view, resource) ->
           view.calendar.unselect()
           AdminBookingPopup.open
