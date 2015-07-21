@@ -1,6 +1,7 @@
-angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarConfig,
-    AdminCompanyService, AdminBookingService, AdminPersonService, $q,
-    $sessionStorage, ModalForm, BBModel, AdminBookingPopup, $window, $bbug, ColorPalette) ->
+angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (
+    uiCalendarConfig, AdminCompanyService, AdminBookingService,
+    AdminPersonService, $q, $sessionStorage, ModalForm, BBModel,
+    AdminBookingPopup, $window, $bbug, ColorPalette, AppConfig) ->
 
   controller = ($scope, $attrs) ->
 
@@ -113,15 +114,12 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
 
     $scope.pusherSubscribe = () =>
       if $scope.company? && Pusher? && !$scope.pusher?
-        url = ""
-        url = $scope.$root.bb.api_url if $scope.$root.bb.api_url?
         $scope.pusher = new Pusher 'c8d8cea659cc46060608',
-          authEndpoint: "#{url}/api/v1/push/#{$scope.company.id}/pusher.json"
+          authEndpoint: $scope.company.$link('pusher').href
           auth:
             headers:
-              # These should be put somewhere better - any suggestions?
-              'App-Id' : 'f6b16c23'
-              'App-Key' : 'f0bc4f65f4fbfe7b4b3b7264b655f5eb'
+              'App-Id' : AppConfig.appId
+              'App-Key' : AppConfig.appKey
               'Auth-Token' : $sessionStorage.getItem('auth_token')
         channelName = "private-c#{$scope.company.id}-w#{$scope.company.numeric_widget_id}"
         if !$scope.pusher.channel(channelName)?

@@ -45,6 +45,8 @@ angular.module('BBAdmin.Services').factory 'AdminBookingService', ($q, $window,
 
   getBooking: (prms) ->
     deferred = $q.defer()
+    if prms.company && !prms.company_id
+      prms.company_id = prms.company.id
     href = "/api/v1/admin/{company_id}/bookings/{id}{?embed}"
     uri = new UriTemplate(href).fillFromObject(prms || {})
     halClient.$get(uri, { no_cache: true }).then (item) ->

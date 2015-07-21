@@ -30,7 +30,10 @@ app = angular.module('BB', [
 
 
 # use this to inject application wide settings around the app
-app.value('AppConfig', {})
+app.value('AppConfig', {
+  appId: 'f6b16c23',
+  appKey: 'f0bc4f65f4fbfe7b4b3b7264b655f5eb'
+})
 
 if (window.use_no_conflict)
   window.bbjq = $.noConflict()
