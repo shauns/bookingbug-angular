@@ -1,6 +1,6 @@
 angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarConfig,
     AdminCompanyService, AdminBookingService, AdminPersonService, $q,
-    $sessionStorage, ModalForm, BBModel, AdminBookingPopup, $window, $bbug) ->
+    $sessionStorage, ModalForm, BBModel, AdminBookingPopup, $window, $bbug, ColorPalette) ->
 
   controller = ($scope, $attrs) ->
 
@@ -57,6 +57,11 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
             resourceTD.style.height = "44px"
             resourceTD.style.verticalAlign = "middle"
           dataTD.style.height = "44px" for dataTD in dataTDs
+        eventRender: (event, element) ->
+          person = _.findWhere($scope.people, {id: event.person_id})
+          element.css('background-color', person.color)
+          element.css('color', person.textColor)
+          element.css('border-color', person.textColor)
         eventAfterRender: (event, elements, view) ->
           if view.type == "timelineDay"
             element.style.height = "27px" for element in elements
@@ -80,6 +85,7 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
           $scope.loading = false
           $scope.people = _.sortBy people, 'name'
           p.title = p.name for p in $scope.people
+          ColorPalette.setColors(people)
           uiCalendarConfig.calendars.resourceCalendar.fullCalendar('refetchEvents')
           callback($scope.people)
 
@@ -132,6 +138,7 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (uiCalendarCo
           $scope.pusher_channel.bind 'booking', pusherEvent
           $scope.pusher_channel.bind 'cancellation', pusherEvent
           $scope.pusher_channel.bind 'updating', pusherEvent
+
 
   link = (scope, element, attrs) ->
 
