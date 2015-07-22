@@ -288,30 +288,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
 
     if prms.i18n
       SettingsService.enableInternationalizaton()
-
-    # if prms.customer_name
-    #   result = prms.customer_name.match(/^(\S+)\s(.*)/).slice(1)
-    #   if $scope.client
-    #     $scope.client.first_name = result[0]
-    #     $scope.client.last_name = result[1]
-    #   else
-    #     $scope.client = new BBModel.Client()
-    #     $scope.client.first_name = result[0]
-    #     $scope.client.last_name = result[1]
-
-    # if prms.customer_phone
-    #   if $scope.client 
-    #     $scope.client.mobile = prms.customer_phone
-    #   else
-    #     $scope.client = new BBModel.Client()
-    #     $scope.client.mobile = prms.customer_phone
-
-    # if prms.customer_email
-    #   if $scope.client
-    #     $scope.client.email = prms.customer_email
-    #   else
-    #     $scope.client = new BBModel.Client()
-    #     $scope.client.email = prms.customer_email
+      
 
     if prms.private_note
       $scope.bb.private_note = prms.private_note
