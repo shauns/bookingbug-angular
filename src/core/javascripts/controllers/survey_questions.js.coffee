@@ -183,5 +183,8 @@ angular.module('BB.Controllers').controller 'SurveyQuestions', ($scope,  $rootSc
       if id
         $scope.loadSurveyFromPurchaseID(id)
       else
-        return
+        if $scope.bb.total
+          $scope.loadSurveyFromPurchaseID($scope.bb.total.long_id)
+        else
+          return
 
