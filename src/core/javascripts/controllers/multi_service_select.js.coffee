@@ -6,7 +6,7 @@ angular.module('BB.Directives').directive 'bbMultiServiceSelect', () ->
   controller : 'MultiServiceSelect'
 
 angular.module('BB.Controllers').controller 'MultiServiceSelect',
-($scope, $rootScope, $q, $attrs, BBModel, AlertService, CategoryService, FormDataStoreService) ->
+($scope, $rootScope, $q, $attrs, BBModel, AlertService, CategoryService, FormDataStoreService, $modal) ->
 
   FormDataStoreService.init 'MultiServiceSelect', $scope, [
     'selected_category_name'
@@ -125,7 +125,7 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
       $rootScope.$broadcast "multi_service_select:category_changed"
 
 
-  $scope.addItem = (item) ->
+  $scope.addItem = (item, duration) ->
     if $scope.bb.stacked_items.length < $scope.options.max_services
       $scope.bb.clearStackedItemsDateTime() # clear any selected date/time as the selection has changed
       item.selected = true
@@ -190,3 +190,24 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
       AlertService.clear()
       AlertService.add("danger", { msg: "You need to select at least one treatment to continue" })
       return false
+
+
+  $scope.selectDuration = (service) ->
+    modalInstance = $modal.open
+      templateUrl: $scope.getPartial('_select_duration_modal')
+      scope: $scope
+      controller: ($scope, $modalInstance, service) ->
+
+        debugger
+        $scope.durations = _.map(_.range(service.max_bookings)) (x) -> service.listed_durations * (x + 1)
+
+        $scope.cancel = ->
+          $modalInstance.dismiss 'cancel'
+        $scope.setDuration = (duration) ->
+          $modalInstance.close($scope.service, duration)
+      resolve:
+        service: ->
+          service
+
+    modalInstance.result.then (service, duration) ->
+      $scope.addItem(service, duration)
