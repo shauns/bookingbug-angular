@@ -18,7 +18,7 @@ angular.module('BB.Controllers').controller 'Checkout', ($scope, $rootScope, $at
   FormDataStoreService.destroy($scope)
 
   $rootScope.connection_started.then =>
-    $scope.bb.basket.setClient($scope.client)    
+    $scope.bb.basket.setClient($scope.client)
     $scope.loadingTotal = BasketService.checkout($scope.bb.company, $scope.bb.basket, {bb: $scope.bb})
     $scope.loadingTotal.then (total) =>
       $scope.total = total
