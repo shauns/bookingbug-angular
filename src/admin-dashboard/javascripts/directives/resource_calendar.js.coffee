@@ -100,21 +100,10 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (
         booking.end = new_booking.end
         uiCalendarConfig.calendars.resourceCalendar.fullCalendar('updateEvent', booking)
 
-    $scope.cancelBooking = (booking) ->
-      booking.person_id = booking.resourceId
-      booking.$del('self', {}, booking.getPostData()).then (response) =>
-        new_booking = new BBModel.Admin.Booking(response)
-        booking.person_id = new_booking.person_id
-        booking.resourceId = booking.person_id
-        booking.start = new_booking.start
-        booking.end = new_booking.end
-        uiCalendarConfig.calendars.resourceCalendar.fullCalendar('updateEvent', booking)
-
     $scope.editBooking = (booking) ->
       ModalForm.edit
         model: booking
         title: 'Edit Booking'
-        templateUrl: "admin_booking_edit.html"
         success: (response) =>
           new_booking = new BBModel.Admin.Booking(response)
           booking.person_id = new_booking.person_id
