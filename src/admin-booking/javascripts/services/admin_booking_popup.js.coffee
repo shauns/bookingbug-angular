@@ -2,6 +2,7 @@ angular.module('BBAdminBooking').factory 'AdminBookingPopup', ($modal, $timeout)
 
   open: (config) ->
     $modal.open
+      size: config.size || 'lg'
       controller: ($scope, $modalInstance, config) ->
         $scope.config = angular.extend
           company_id: $scope.company.id
@@ -14,6 +15,5 @@ angular.module('BBAdminBooking').factory 'AdminBookingPopup', ($modal, $timeout)
         $scope.cancel = () ->
           $modalInstance.dismiss('cancel')
       templateUrl: 'admin_booking_popup.html'
-      scope: $scope
       resolve:
         config: () -> config
