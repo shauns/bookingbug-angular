@@ -1,18 +1,21 @@
-angular.module('BBAdmin.Services').factory 'AdminPersonService',  ($q, $window,
-    $rootScope, halClient, SlotCollections, BBModel, LoginService) ->
+angular.module('BBAdminServices').factory 'AdminPersonService',  ($q, $window,
+    $rootScope, halClient, SlotCollections, BBModel, LoginService, $log) ->
 
   query: (params) ->
     company = params.company
     defer = $q.defer()
-    company.$get('people').then (collection) ->
-      collection.$get('people').then (people) ->
-        models = (new BBModel.Admin.Person(p) for p in people)
-        console.log models
-        defer.resolve(models)
+    if company.$has('people')
+      company.$get('people').then (collection) ->
+        collection.$get('people').then (people) ->
+          models = (new BBModel.Admin.Person(p) for p in people)
+          defer.resolve(models)
+        , (err) ->
+          defer.reject(err)
       , (err) ->
         defer.reject(err)
-    , (err) ->
-      defer.reject(err)
+    else
+      $log.warn('company has no people link')
+      defer.reject('company has no people link')
     defer.promise
 
   block: (company, person, data) ->

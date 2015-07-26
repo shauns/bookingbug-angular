@@ -1,5 +1,5 @@
-angular.module('BBAdmin.Services').factory 'AdminBookingService',
-($q, $window, halClient, BookingCollections, BBModel) ->
+angular.module('BBAdmin.Services').factory 'AdminBookingService', ($q, $window,
+    halClient, BookingCollections, BBModel, UriTemplate) ->
 
   query: (prms) ->
     if prms.slot
@@ -16,7 +16,7 @@ angular.module('BBAdmin.Services').factory 'AdminBookingService',
     if existing
       deferred.resolve(existing)
     else if prms.company
-      prms.company.$get('bookings').then (collection) ->
+      prms.company.$get('bookings', prms).then (collection) ->
         collection.$get('bookings').then (bookings) ->
           models = (new BBModel.Admin.Booking(b) for b in bookings)
           deferred.resolve(models)
@@ -28,7 +28,7 @@ angular.module('BBAdmin.Services').factory 'AdminBookingService',
       url = ""
       url = prms.url if prms.url
       href = url + "/api/v1/admin/{company_id}/bookings{?slot_id,start_date,end_date,service_id,resource_id,person_id,page,per_page,include_cancelled}"
-      uri = new $window.UriTemplate.parse(href).expand(prms || {})
+      uri = new UriTemplate(href).fillFromObject(prms || {})
 
       halClient.$get(uri, {}).then  (found) =>
         found.$get('bookings').then (items) =>
@@ -45,8 +45,10 @@ angular.module('BBAdmin.Services').factory 'AdminBookingService',
 
   getBooking: (prms) ->
     deferred = $q.defer()
+    if prms.company && !prms.company_id
+      prms.company_id = prms.company.id
     href = "/api/v1/admin/{company_id}/bookings/{id}{?embed}"
-    uri = new $window.UriTemplate.parse(href).expand(prms || {})
+    uri = new UriTemplate(href).fillFromObject(prms || {})
     halClient.$get(uri, { no_cache: true }).then (item) ->
       booking  = new BBModel.Admin.Booking(item)
       BookingCollections.checkItems(booking)
@@ -63,7 +65,7 @@ angular.module('BBAdmin.Services').factory 'AdminBookingService',
     notify = prms.notify
     notify ?= true
     
-    uri = new $window.UriTemplate.parse(href).expand(prms || {})
+    uri = new UriTemplate(href).fillFromObject(prms || {})
     halClient.$del(uri, { notify: notify }).then (item) ->
       booking = new BBModel.Admin.Booking(item)
       BookingCollections.checkItems(booking)
@@ -77,7 +79,7 @@ angular.module('BBAdmin.Services').factory 'AdminBookingService',
     href = "/api/v1/admin/{company_id}/bookings/{id}"
     prms.id ?= booking.id
     
-    uri = new $window.UriTemplate.parse(href).expand(prms || {})
+    uri = new UriTemplate(href).fillFromObject(prms || {})
     halClient.$put(uri, {}, prms).then (item) ->
       booking = new BBModel.Admin.Booking(item)
       BookingCollections.checkItems(booking)
@@ -91,7 +93,7 @@ angular.module('BBAdmin.Services').factory 'AdminBookingService',
     href = "/api/v1/admin/{company_id}/people/{person_id}/block"
     prms.person_id ?= person.id
     prms.booking = true
-    uri = new $window.UriTemplate.parse(href).expand(prms || {})
+    uri = new UriTemplate(href).fillFromObject(prms || {})
     halClient.$put(uri, {}, prms).then (item) ->
       booking = new BBModel.Admin.Booking(item)
       BookingCollections.checkItems(booking)
@@ -104,7 +106,7 @@ angular.module('BBAdmin.Services').factory 'AdminBookingService',
     deferred = $q.defer()
     href = "/api/v1/admin/{company_id}/bookings/{booking_id}/multi_status"
     prms.booking_id ?= booking.id
-    uri = new $window.UriTemplate.parse(href).expand(prms || {})
+    uri = new UriTemplate(href).fillFromObject(prms || {})
     halClient.$put(uri, {}, { status: status }).then (item) ->
       booking  = new BBModel.Admin.Booking(item)
       BookingCollections.checkItems(booking)
@@ -121,7 +123,7 @@ angular.module('BBAdmin.Services').factory 'AdminBookingService',
     noteParam = note.note if note.note?
     noteParam ?= note
     
-    uri = new $window.UriTemplate.parse(href).expand(prms || {})
+    uri = new UriTemplate(href).fillFromObject(prms || {})
     halClient.$put(uri, {}, { note: noteParam }).then (item) ->
       booking  = new BBModel.Admin.Booking(item)
       BookingCollections.checkItems(booking)
@@ -136,7 +138,7 @@ angular.module('BBAdmin.Services').factory 'AdminBookingService',
     prms.booking_id ?= booking.id
     prms.id ?= note.id
     
-    uri = new $window.UriTemplate.parse(href).expand(prms || {})
+    uri = new UriTemplate(href).fillFromObject(prms || {})
     halClient.$put(uri, {}, { note: note.note }).then (item) ->
       booking  = new BBModel.Admin.Booking(item)
       BookingCollections.checkItems(booking)
@@ -151,7 +153,7 @@ angular.module('BBAdmin.Services').factory 'AdminBookingService',
     prms.booking_id ?= booking.id
     prms.id ?= note.id
     
-    uri = new $window.UriTemplate.parse(href).expand(prms || {})
+    uri = new UriTemplate(href).fillFromObject(prms || {})
     halClient.$del(uri, {}).then (item) ->
       booking  = new BBModel.Admin.Booking(item)
       BookingCollections.checkItems(booking)

@@ -23,7 +23,7 @@ angular.module('BB.Models').factory "ClientModel", ($q, BBModel, BaseModel, Loca
         @phone  = "0" + @phone if @phone && @phone[0] != "0"
 
 
-    setClientDetails: (details) =>
+    setClientDetails: (details) ->
       @client_details = details
       @questions = @client_details.questions
 
@@ -45,6 +45,13 @@ angular.module('BB.Models').factory "ClientModel", ($q, BBModel, BaseModel, Loca
       @address5 = values.address5 if values.address5
       @postcode = values.postcode if values.postcode
       @country = values.country if values.country
+      @default_answers = values.answers if values.answers
+
+    pre_fill_answers: (details) ->
+      return if !@default_answers
+      for q in details.questions
+        if @default_answers[q.name]
+          q.answer = @default_answers[q.name]
 
     getName:  ->
       str = ""
@@ -128,6 +135,7 @@ angular.module('BB.Models').factory "ClientModel", ($q, BBModel, BaseModel, Loca
       x.comp_ref = @comp_ref
       x.parent_client_id = @parent_client_id
       x.password = @password
+      x.notifications = @notifications
 
       if @mobile
         @remove_prefix()
@@ -172,3 +180,19 @@ angular.module('BB.Models').factory "ClientModel", ($q, BBModel, BaseModel, Loca
       if pref_arr
         @mobile.replace pref_arr[0], ""
         @mobile_prefix = pref_arr[0]
+
+    getPrePaidBookingsPromise: (params) ->
+      defer = $q.defer()
+      if @$has('pre_paid_bookings')
+        @$get('pre_paid_bookings', params).then (collection) ->
+          collection.$get('pre_paid_bookings').then (prepaids) ->
+            defer.resolve((new BBModel.PrePaidBooking(prepaid) for prepaid in prepaids))
+          , (err) ->
+            defer.reject(err)
+        , (err) ->
+          defer.reject(err)
+      else
+        defer.resolve([])
+#        defer.reject('missing pre_paid_bookings link')
+      defer.promise
+

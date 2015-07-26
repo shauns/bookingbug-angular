@@ -1,5 +1,5 @@
 angular.module('BBMember').controller 'MemberBookings', ($scope, $modal, $log,
-    MemberBookingService, $q, ModalForm) ->
+    MemberBookingService, $q, ModalForm, MemberPrePaidBookingService) ->
 
   $scope.loading = true
 
@@ -63,8 +63,22 @@ angular.module('BBMember').controller 'MemberBookings', ($scope, $modal, $log,
     defer.promise
 
   $scope.cancelBooking = (booking) ->
+    $scope.loading = true
     MemberBookingService.cancel($scope.member, booking).then () ->
       if $scope.bookings
         $scope.bookings = $scope.bookings.filter (b) -> b.id != booking.id
       if $scope.removeBooking
         $scope.removeBooking(booking)
+      $scope.loading = false
+
+  $scope.getPrePaidBookings = (params) ->
+    $scope.loading = true
+    defer = $q.defer()
+    MemberPrePaidBookingService.query($scope.member, params).then (bookings) ->
+      $scope.loading = false
+      $scope.pre_paid_bookings = bookings
+      defer.resolve(bookings)
+    , (err) ->
+      $log.error err.data
+      $scope.loading = false
+    defer.promise

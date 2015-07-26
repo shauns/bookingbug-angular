@@ -22,14 +22,18 @@ app = angular.module('BB', [
   'uiGmapgoogle-maps',
   'angular.filter',
   'ui-rangeSlider',
-  'ngCookies'
+  'ngCookies',
+  'slick',
+  'pascalprecht.translate',
+  'vcRecaptcha'
 ]);
 
 
 # use this to inject application wide settings around the app
-app.value 'AppConfig',
-  'App-Id': 'f6b16c23',
-  'App-Key': 'f0bc4f65f4fbfe7b4b3b7264b655f5eb'
+app.value('AppConfig', {
+  appId: 'f6b16c23',
+  appKey: 'f0bc4f65f4fbfe7b4b3b7264b655f5eb'
+})
 
 if (window.use_no_conflict)
   window.bbjq = $.noConflict()
@@ -37,6 +41,7 @@ if (window.use_no_conflict)
 else
   app.value '$bbug', jQuery
 
+app.constant('UriTemplate', window.UriTemplate)
 
 app.config ($locationProvider, $httpProvider, $provide, ie8HttpBackendProvider) ->
 

@@ -7,7 +7,7 @@ angular.module('BBAdmin.Services').factory 'AdminCompanyService', ($q,
 
     $rootScope.bb.api_url ||= $sessionStorage.getItem("host")
     $rootScope.bb.api_url ||= params.apiUrl
-    $rootScope.bb.api_url ||= "http://www.bookingbug.com"
+    $rootScope.bb.api_url ||= ""
 
     AdminLoginService.checkLogin(params).then () ->
       if $rootScope.user && $rootScope.user.company_id
