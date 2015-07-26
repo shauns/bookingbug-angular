@@ -54,7 +54,7 @@ agendaSelectAcrossWeek = FC.views.agenda.class.extend({
   renderSelection: function(range) {
     var ranges = this.view.splitRange(range);
     if (this.view.opt('selectHelper')) {
-			_.each(ranges, this.renderRangeHelper, this);
+      _.each(ranges, this.renderRangeHelper, this);
     }
     else {
       segs = _.reduce(ranges, function(s, r) {

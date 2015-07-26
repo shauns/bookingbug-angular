@@ -573,7 +573,7 @@ angular.module('BBAdminMockE2E').run ($httpBackend) ->
                href: "http://www.bookingbug.com/api/v1/admin/123/event_chains/1/edit"
            _embedded: {}
          }
-       ]
+       ] 
      _links:
        self:
          href: "http://www.bookingbug.com/api/v1/admin/123/event_chains"
