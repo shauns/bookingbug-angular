@@ -1,10 +1,8 @@
 'use strict'
 
 adminbookingapp = angular.module('BBAdminDashboard', [
-  'BB',
   'trNgGrid',
   'BBAdmin',
-  'BBAdmin.Services',
   'BBAdminServices',
   'ui.calendar',
   'ngStorage',

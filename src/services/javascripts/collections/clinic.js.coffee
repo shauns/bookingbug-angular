@@ -17,7 +17,7 @@ class window.Collection.Clinic extends window.Collection.Base
     return true
 
 
-angular.module('BBClinic.Services').provider "ClinicCollections", () ->
+angular.module('BBAdmin.Services').provider "ClinicCollections", () ->
   $get: ->
     new  window.BaseCollections()
 

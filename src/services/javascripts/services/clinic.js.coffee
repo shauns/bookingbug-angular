@@ -1,4 +1,4 @@
-angular.module('BBClinic.Services').factory 'AdminClinicService',  ($q, BBModel, ClinicCollections, $window) ->
+angular.module('BBAdmin.Services').factory 'AdminClinicService',  ($q, BBModel, ClinicCollections, $window) ->
 
   query: (params) ->
     company = params.company

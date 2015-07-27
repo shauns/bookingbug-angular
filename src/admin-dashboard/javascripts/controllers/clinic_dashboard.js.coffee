@@ -1,4 +1,4 @@
-angular.module('BBClinic').controller 'bbClinicDashboardController', ($scope, $log,
+angular.module('BBAdminDashboard').controller 'bbClinicDashboardController', ($scope, $log,
     AdminServiceService, AdminResourceService, AdminPersonService, ModalForm, BBModel, $interval, $sessionStorage) ->
 
   $scope.loading = true
