@@ -1,7 +1,7 @@
 angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (
     uiCalendarConfig, AdminCompanyService, AdminBookingService,
     AdminPersonService, $q, $sessionStorage, ModalForm, BBModel,
-    AdminBookingPopup, $window, $bbug, ColorPalette, AppConfig) ->
+    AdminBookingPopup, $window, $bbug, ColorPalette, AppConfig, Dialog) ->
 
   controller = ($scope, $attrs) ->
 
@@ -52,7 +52,13 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (
         resources: (callback) ->
           $scope.getPeople(callback)
         eventDrop: (event, delta, revertFunc) ->
-          $scope.updateBooking(event, delta)
+          Dialog.confirm
+            model: event
+            body: "Are you sure you want to move this booking?"
+            success: (model) =>
+              $scope.updateBooking(event)
+            fail: () ->
+              revertFunc()
         eventClick: (event, jsEvent, view) ->
           $scope.editBooking(event)
         resourceRender: (resource, resourceTDs, dataTDs) ->
@@ -92,25 +98,21 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (
 
     $scope.updateBooking = (booking) ->
       booking.person_id = booking.resourceId
-      booking.$put('self', {}, booking.getPostData()).then (response) =>
-        new_booking = new BBModel.Admin.Booking(response)
-        booking.person_id = new_booking.person_id
+      booking.$update().then (response) ->
         booking.resourceId = booking.person_id
-        booking.start = new_booking.start
-        booking.end = new_booking.end
         uiCalendarConfig.calendars.resourceCalendar.fullCalendar('updateEvent', booking)
 
     $scope.editBooking = (booking) ->
       ModalForm.edit
+        templateUrl: 'edit_booking_modal_form.html'
         model: booking
         title: 'Edit Booking'
         success: (response) =>
-          new_booking = new BBModel.Admin.Booking(response)
-          booking.person_id = new_booking.person_id
-          booking.resourceId = booking.person_id
-          booking.start = new_booking.start
-          booking.end = new_booking.end
-          uiCalendarConfig.calendars.resourceCalendar.fullCalendar('updateEvent', booking)
+          if response.is_cancelled
+            uiCalendarConfig.calendars.resourceCalendar.fullCalendar('removeEvents', [response.id])
+          else
+            booking.resourceId = booking.person_id
+            uiCalendarConfig.calendars.resourceCalendar.fullCalendar('updateEvent', booking)
 
     $scope.pusherSubscribe = () =>
       if $scope.company? && Pusher? && !$scope.pusher?

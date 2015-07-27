@@ -243,7 +243,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
       prms.clear_member ||= true
     $scope.bb.client_defaults = prms.client if prms.client
     
-    if $scope.bb.client_defaults.name
+    if $scope.bb.client_defaults && $scope.bb.client_defaults.name
       result = $scope.bb.client_defaults.name.match(/^(\S+)\s(.*)/).slice(1)
       $scope.bb.client_defaults.first_name =  result[0]
       $scope.bb.client_defaults.last_name =  result[1]
