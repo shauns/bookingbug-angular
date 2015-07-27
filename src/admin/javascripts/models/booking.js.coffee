@@ -58,7 +58,7 @@ angular.module('BB.Models').factory "Admin.BookingModel", ($q, BBModel, BaseMode
 
 
 
-    $update: () ->
-      data = @getPostData()
+    $update: (data) ->
+      data ||= @getPostData()
       @$put('self', {}, data).then (res) =>
         @constructor(res)

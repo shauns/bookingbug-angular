@@ -1,4 +1,4 @@
-angular.module('BBAdminServices').factory 'AdminResourceService',
+angular.module('BBAdmin.Services').factory 'AdminResourceService',
 ($q, $window, halClient, SlotCollections, BBModel) ->
 
   query: (params) ->
@@ -6,7 +6,7 @@ angular.module('BBAdminServices').factory 'AdminResourceService',
     defer = $q.defer()
     company.$get('resources').then (collection) ->
       collection.$get('resources').then (resources) ->
-        models = (new BBModel.Resource(r) for r in resources)
+        models = (new BBModel.Admin.Resource(r) for r in resources)
         defer.resolve(models)
       , (err) ->
         defer.reject(err)

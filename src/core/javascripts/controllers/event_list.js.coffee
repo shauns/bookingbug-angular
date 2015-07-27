@@ -356,6 +356,8 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
             for i in item.chain.extra[name]
               filter = ($scope.dynamic_filters.values[dynamic_filter.name] and i is $scope.dynamic_filters.values[dynamic_filter.name].name) or !$scope.dynamic_filters.values[dynamic_filter.name]?
               break if filter
+          else if (item.chain.extra[name] is undefined && !item.chain?)
+            filter = true;
           result = result and filter
       else
         for dynamic_filter in $scope.dynamic_filters[type]

@@ -49,11 +49,15 @@ angular.module('BB.Directives').directive 'bbWidget', (PathSvc, $http, $log,
   scope:
     client: '=?'
     apiUrl: '@?'
+    useParent:'='
   transclude: true
   controller: 'BBCtrl'
   link: (scope, element, attrs) ->
     scope.client = attrs.member if attrs.member?
-    init_params = scope.$eval( attrs.bbWidget )
+    evaluator = scope
+    if scope.useParent && scope.$parent?
+      evaluator = scope.$parent
+    init_params = evaluator.$eval( attrs.bbWidget )
     scope.initWidget(init_params)
     prms = scope.bb
     if prms.custom_partial_url
@@ -238,6 +242,11 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
       # if setup is defined - blank the member -a s we're probably setting it - unless specifically defined as false
       prms.clear_member ||= true
     $scope.bb.client_defaults = prms.client if prms.client
+    
+    if $scope.bb.client_defaults && $scope.bb.client_defaults.name
+      result = $scope.bb.client_defaults.name.match(/^(\S+)\s(.*)/).slice(1)
+      $scope.bb.client_defaults.first_name =  result[0]
+      $scope.bb.client_defaults.last_name =  result[1]
 
     if prms.clear_member
       $scope.bb.clear_member = prms.clear_member
@@ -291,6 +300,9 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
 
     if prms.private_note
       $scope.bb.private_note = prms.private_note
+
+    if prms.qudini_booking_id
+      $scope.bb.qudini_booking_id = prms.qudini_booking_id
 
 
     # this is used by the bbScrollTo directive so that we can account of
