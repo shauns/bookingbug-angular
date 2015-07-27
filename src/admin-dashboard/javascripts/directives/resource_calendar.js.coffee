@@ -1,7 +1,8 @@
 angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (
     uiCalendarConfig, AdminCompanyService, AdminBookingService,
     AdminPersonService, $q, $sessionStorage, ModalForm, BBModel,
-    AdminBookingPopup, $window, $bbug, ColorPalette, AppConfig, Dialog) ->
+    AdminBookingPopup, $window, $bbug, ColorPalette, AppConfig, Dialog,
+    $timeout, $compile, $templateCache) ->
 
   controller = ($scope, $attrs) ->
 
@@ -81,9 +82,12 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (
             date: start.format('YYYY-MM-DD')
             time: start.format('HH:mm')
             person: resource.id if resource
-        # eventResize: (event, delta, revertFunc, jsEvent, ui, view) ->
-        #   event.duration = event.end.diff(event.start, 'minutes')
-        #   $scope.updateBooking(event)
+        viewRender: (view, element) ->
+          date = uiCalendarConfig.calendars.resourceCalendar.fullCalendar('getDate')
+          $scope.currentDate = moment(date).format('YYYY-MM-DD')
+        eventResize: (event, delta, revertFunc, jsEvent, ui, view) ->
+          event.duration = event.end.diff(event.start, 'minutes')
+          $scope.updateBooking(event)
 
     $scope.getPeople = (callback) ->
       $scope.loading = true
@@ -139,6 +143,22 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (
           $scope.pusher_channel.bind 'cancellation', pusherEvent
           $scope.pusher_channel.bind 'updating', pusherEvent
 
+    $scope.openDatePicker = ($event) ->
+        $event.preventDefault()
+        $event.stopPropagation()
+        $scope.datePickerOpened = true
+
+    $scope.updateDate = (date) ->
+      if uiCalendarConfig.calendars.resourceCalendar
+        uiCalendarConfig.calendars.resourceCalendar.fullCalendar('gotoDate', date)
+
+    $scope.lazyUpdateDate = _.debounce($scope.updateDate, 400)
+
+    $scope.datePickerOptions = {showButtonBar: false}
+
+    $scope.$watch 'currentDate', (newDate, oldDate) ->
+      $scope.lazyUpdateDate(newDate)
+
 
   link = (scope, element, attrs) ->
 
@@ -158,6 +178,15 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (
         collection.$get('services').then (services) ->
           scope.services = (new BBModel.Admin.Service(s) for s in services)
           ColorPalette.setColors(scope.services)
+
+    $timeout () ->
+      uiCalElement = angular.element(element.children()[1])
+      toolbarElement = angular.element(uiCalElement.children()[0])
+      toolbarLeftElement = angular.element(toolbarElement.children()[0])
+      scope.currentDate = moment().format()
+      datePickerElement = $compile($templateCache.get('calendar_date_picker.html'))(scope)
+      toolbarLeftElement.append(datePickerElement)
+    , 0
 
   {
     controller: controller
