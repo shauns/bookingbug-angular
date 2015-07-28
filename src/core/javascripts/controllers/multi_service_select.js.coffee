@@ -206,7 +206,7 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
         $scope.cancel = ->
           $modalInstance.dismiss 'cancel'
         $scope.setDuration = (duration) ->
-          $modalInstance.close($scope.service, duration)
+          $modalInstance.close($scope.service, $scope.duration)
       resolve:
         service: ->
           service
