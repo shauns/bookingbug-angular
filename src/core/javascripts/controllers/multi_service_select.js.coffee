@@ -126,6 +126,7 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
 
 
   $scope.addItem = (item, duration) ->
+    debugger
     if $scope.bb.stacked_items.length < $scope.options.max_services
       $scope.bb.clearStackedItemsDateTime() # clear any selected date/time as the selection has changed
       item.selected = true
@@ -200,16 +201,23 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
       controller: ($scope, $modalInstance, service) ->
 
         debugger
-        $scope.durations = _.map(_.range(service.max_bookings)) (x) -> service.listed_durations * (x + 1)
+        
+        range = _.range(3)
+
+        $scope.durations = _.map(range, (x) -> service.listed_durations * (x + 1))
+        #$scope.durations = [5,10,15,20]
         $scope.duration = $scope.durations[0]
+        $scope.service = service
 
         $scope.cancel = ->
           $modalInstance.dismiss 'cancel'
-        $scope.setDuration = (duration) ->
-          $modalInstance.close($scope.service, $scope.duration)
+        $scope.setDuration = () ->
+          debugger
+          $modalInstance.close({service: $scope.service, duration: $scope.duration})
       resolve:
         service: ->
           service
 
-    modalInstance.result.then (service, duration) ->
-      $scope.addItem(service, duration)
+    modalInstance.result.then (result) ->
+      debugger
+      $scope.addItem(result.service, result.duration)
