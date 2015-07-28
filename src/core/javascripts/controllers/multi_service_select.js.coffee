@@ -132,6 +132,7 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
       iitem = new BBModel.BasketItem(null, $scope.bb)
       iitem.setDefaults($scope.bb.item_defaults)
       iitem.setService(item)
+      iitem.setDuration(duration) if duration
       iitem.setGroup(item.group)
       $scope.bb.stackItem(iitem)
       $rootScope.$broadcast "multi_service_select:item_added"
@@ -200,6 +201,7 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
 
         debugger
         $scope.durations = _.map(_.range(service.max_bookings)) (x) -> service.listed_durations * (x + 1)
+        $scope.duration = $scope.durations[0]
 
         $scope.cancel = ->
           $modalInstance.dismiss 'cancel'
