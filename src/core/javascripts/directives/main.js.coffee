@@ -157,3 +157,27 @@ app.directive 'bbAddressMap', ($document) ->
           longitude: map_item.long
         }
       }
+
+
+angular.module('BB.Directives').directive 'bbMergeDuplicateQuestions', () ->
+  restrict: 'A'
+  scope: true
+  controller: ($scope, $rootScope) ->
+
+    debugger
+
+    questions = {}
+
+    for item in $scope.bb.stacked_items
+      if item.item_details and item.item_details.questions
+        item.item_details.hide_questions = false
+        for question in item.item_details.questions
+          if questions[question.id]
+            # this is a duplicate, setup clone and hide it
+            item.setCloneAnswers(questions[question.id].item)
+            item.item_details.hide_questions = true
+            break
+          else
+            questions[question.id] = {question: question, item: item}
+
+    $scope.has_questions = _.pluck(questions, 'question').length > 0
