@@ -6,7 +6,7 @@ angular.module('BB.Directives').directive 'bbMultiServiceSelect', () ->
   controller : 'MultiServiceSelect'
 
 angular.module('BB.Controllers').controller 'MultiServiceSelect',
-($scope, $rootScope, $q, $attrs, BBModel, AlertService, CategoryService, FormDataStoreService) ->
+($scope, $rootScope, $q, $attrs, BBModel, AlertService, CategoryService, FormDataStoreService, $modal) ->
 
   FormDataStoreService.init 'MultiServiceSelect', $scope, [
     'selected_category_name'
@@ -125,13 +125,14 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
       $rootScope.$broadcast "multi_service_select:category_changed"
 
 
-  $scope.addItem = (item) ->
+  $scope.addItem = (item, duration) ->
     if $scope.bb.stacked_items.length < $scope.options.max_services
       $scope.bb.clearStackedItemsDateTime() # clear any selected date/time as the selection has changed
       item.selected = true
       iitem = new BBModel.BasketItem(null, $scope.bb)
       iitem.setDefaults($scope.bb.item_defaults)
       iitem.setService(item)
+      iitem.setDuration(duration) if duration
       iitem.setGroup(item.group)
       $scope.bb.stackItem(iitem)
       $rootScope.$broadcast "multi_service_select:item_added"
@@ -190,3 +191,25 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
       AlertService.clear()
       AlertService.add("danger", { msg: "You need to select at least one treatment to continue" })
       return false
+
+
+  $scope.selectDuration = (service) ->
+    modalInstance = $modal.open
+      templateUrl: $scope.getPartial('_select_duration_modal')
+      scope: $scope
+      controller: ($scope, $modalInstance, service) ->
+        range = _.range(service.max_bookings)
+        $scope.durations = _.map(range, (x) -> service.listed_durations * (x + 1))
+        $scope.duration = $scope.durations[0]
+        $scope.service = service
+
+        $scope.cancel = ->
+          $modalInstance.dismiss 'cancel'
+        $scope.setDuration = () ->
+          $modalInstance.close({service: $scope.service, duration: $scope.duration})
+      resolve:
+        service: ->
+          service
+
+    modalInstance.result.then (result) ->
+      $scope.addItem(result.service, result.duration)
