@@ -1,5 +1,5 @@
 angular.module('BBAdmin.Services').factory 'AdminResourceService',
-($q, $window, halClient, SlotCollections, BBModel) ->
+($q, UriTemplate, halClient, SlotCollections, BBModel) ->
 
   query: (params) ->
     company = params.company
@@ -19,7 +19,7 @@ angular.module('BBAdmin.Services').factory 'AdminResourceService',
 
     deferred = $q.defer()
     href = "/api/v1/admin/{company_id}/resource/{id}/block"
-    uri = new $window.UriTemplate.parse(href).expand(prms || {})
+    uri = new UriTemplate(href).fillFromObject(prms || {})
 
     halClient.$put(uri, {}, data).then  (slot) =>
       slot = new BBModel.Admin.Slot(slot)
