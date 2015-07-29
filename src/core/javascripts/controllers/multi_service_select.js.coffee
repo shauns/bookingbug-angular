@@ -9,64 +9,76 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
 ($scope, $rootScope, $q, $attrs, BBModel, AlertService, CategoryService, FormDataStoreService, $modal) ->
 
   FormDataStoreService.init 'MultiServiceSelect', $scope, [
-    'selected_category_name'
   ]
 
   $scope.options                    = $scope.$eval($attrs.bbMultiServiceSelect) or {}
-  $scope.options.max_services       = $scope.options.max_services or 3
+  $scope.options.max_services       = $scope.options.max_services or Infinity
   $scope.options.ordered_categories = $scope.options.ordered_categories or false
   $scope.options.services           = $scope.options.services or 'items'
 
-  # Get the categories
-  CategoryService.query($scope.bb.company).then (items) =>
-    for item in items
-      if $scope.options.ordered_categories
-        item.order = parseInt(item.name.slice(0,2))
-        item.name  = item.name.slice(3)
-    $scope.all_categories = _.indexBy(items, 'id')
-  , (err) -> $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
-
-
-  # wait for items and all_categories before for we begin initialisation
-  $scope.$watch $scope.options.services, (newval, oldval) ->
-    if newval and angular.isArray(newval) and $scope.all_categories and !$scope.initialised
-      $scope.items = newval
-      initialise()
-  $scope.$watch 'all_categories', (newval, oldval) ->
-    if newval and angular.isArray(newval) and $scope.items and !$scope.initialised
-      initialise()
+  $rootScope.connection_started.then ->
+    debugger
+    if $scope.bb.company.$has('parent') && !$scope.bb.company.$has('company_questions')
+      $scope.bb.company.getParentPromise().then (parent) ->
+        $scope.company = parent
+        initialise()
+    else
+      $scope.company = $scope.bb.company
+ 
+    # wait for services before we begin initialisation
+    $scope.$watch $scope.options.services, (newval, oldval) ->
+      if newval and angular.isArray(newval)
+        $scope.items = newval
+        initialise()
 
 
   initialise = () ->
 
+    debugger
+
+    return if !$scope.items or !$scope.company
+
     $scope.initialised = true
 
-    collectCategories()
+    promises = []
 
-    if ($scope.bb.basket and $scope.bb.basket.items.length > 0) || ($scope.bb.stacked_items and $scope.bb.stacked_items.length > 0)
-      # if the basket already has some items, set the stacked items
-      if $scope.bb.basket and $scope.bb.basket.items.length > 0 and $scope.bb.basket.items[0].service
-        if !$scope.bb.stacked_items || $scope.bb.stacked_items.length == 0
-          $scope.bb.setStackedItems($scope.bb.basket.items)
+    promises.push(CategoryService.query($scope.bb.company))
 
-      # if there's already some stacked items (i.e. we've come back to this page,
-      # make sure they're selected)
-      if $scope.bb.stacked_items and $scope.bb.stacked_items.length > 0
-        for stacked_item in $scope.bb.stacked_items
-          for item in $scope.items
-            if item.self is stacked_item.service.self
-              stacked_item.service = item
-              stacked_item.service.selected = true
-              break
-    else
-      # check item defaults
-      checkItemDefaults()
+    # company question promise
+    promises.push($scope.company.getCompanyQuestionsPromise()) if $scope.company.$has('company_questions')
+    
+    $q.all(promises).then (result) ->
 
-    if $scope.bb.moving_booking
-      # if we're moving the booking just move to the next step
-      $scope.nextStep()
+      $scope.company_questions = result[1]
 
-    $scope.setLoaded $scope
+      initialiseCategories(result[0])
+
+      if ($scope.bb.basket and $scope.bb.basket.items.length > 0) || ($scope.bb.stacked_items and $scope.bb.stacked_items.length > 0)
+        # if the basket already has some items, set the stacked items
+        if $scope.bb.basket and $scope.bb.basket.items.length > 0 and $scope.bb.basket.items[0].service
+          if !$scope.bb.stacked_items || $scope.bb.stacked_items.length == 0
+            $scope.bb.setStackedItems($scope.bb.basket.items)
+
+        # if there's already some stacked items (i.e. we've come back to this page,
+        # make sure they're selected)
+        if $scope.bb.stacked_items and $scope.bb.stacked_items.length > 0
+          for stacked_item in $scope.bb.stacked_items
+            for item in $scope.items
+              if item.self is stacked_item.service.self
+                stacked_item.service = item
+                stacked_item.service.selected = true
+                break
+      else
+        # check item defaults
+        checkItemDefaults()
+
+      # if we're moving the booking, just move to the next step
+      if $scope.bb.moving_booking
+        $scope.nextStep()
+
+      $scope.setLoaded $scope
+
+    , (err) -> $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
 
   checkItemDefaults = () ->
@@ -77,36 +89,69 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
         return
 
 
-  collectCategories = () ->
+  initialiseCategories = (categories) ->
 
+    # extract order from category name if we're using ordered categories
+    if $scope.options.ordered_categories
+      for category in categories
+          category.order = parseInt(category.name.slice(0,2))
+          category.name  = category.name.slice(3)
+    
+    # index categories by their id
+    $scope.all_categories = _.indexBy(categories, 'id')
+
+    # group services by category id
     all_categories = _.groupBy($scope.items, (item) -> item.category_id)
+    
+    # find any sub categories
+    sub_categories = _.findWhere($scope.company_questions, {name: 'Extra Category'})
+    sub_categories = _.map(sub_categories.question_items, (sub_category) -> sub_category.name) if sub_categories
 
     # filter categories that have no services
     categories = {}
     for own key, value of all_categories
       categories[key] = value if value.length > 0
 
-    # group services by their sub category
+    # build the catagories array
     $scope.categories = []
     for category_id, services of categories
-      sub_categories = _.groupBy(services, (service) -> service.extra.extra_category)
 
+      # group services by their subcategory
+      grouped_sub_categories = []
+      if sub_categories
+        for sub_category in sub_categories
+          grouped_sub_category = {
+            name: sub_category,
+            services: _.filter(services, (service) -> service.extra.extra_category is sub_category) 
+          }
+
+          # only add the sub category if it has some services
+          grouped_sub_categories.push(grouped_sub_category) if grouped_sub_category.services.length > 0
+
+      # get the name and description
       category_details = {name: $scope.all_categories[category_id].name, description: $scope.all_categories[category_id].description} if $scope.all_categories[category_id]
 
+      # set the category
       category = {
         name           : category_details.name 
         description    : category_details.description 
-        sub_categories : sub_categories
+        sub_categories : grouped_sub_categories
         }
+      
+      # get the order if instruccted
       category.order = $scope.all_categories[category_id].order if $scope.options.ordered_categories
 
       $scope.categories.push(category)
 
+      # check it a category is already selected
       if $scope.selected_category_name and $scope.selected_category_name is category_details.name
         $scope.selected_category = $scope.categories[$scope.categories.length - 1]
+      # or if there's a default category
       else if $scope.bb.item_defaults.category and $scope.bb.item_defaults.category.name is category_details.name and !$scope.selected_category 
         $scope.selected_category = $scope.categories[$scope.categories.length - 1]
         $scope.selected_category_name = $scope.selected_category.name
+
+    debugger
 
 
   $scope.changeCategory = (category_name, services) ->
@@ -194,22 +239,28 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
 
 
   $scope.selectDuration = (service) ->
-    modalInstance = $modal.open
-      templateUrl: $scope.getPartial('_select_duration_modal')
-      scope: $scope
-      controller: ($scope, $modalInstance, service) ->
-        range = _.range(service.max_bookings)
-        $scope.durations = _.map(range, (x) -> service.listed_durations * (x + 1))
-        $scope.duration = $scope.durations[0]
-        $scope.service = service
 
-        $scope.cancel = ->
-          $modalInstance.dismiss 'cancel'
-        $scope.setDuration = () ->
-          $modalInstance.close({service: $scope.service, duration: $scope.duration})
-      resolve:
-        service: ->
-          service
+    if service.max_bookings is 1
+      $scope.addItem(service)
+    else
 
-    modalInstance.result.then (result) ->
-      $scope.addItem(result.service, result.duration)
+      modalInstance = $modal.open
+        templateUrl: $scope.getPartial('_select_duration_modal')
+        scope: $scope
+        controller: ($scope, $modalInstance, service) ->
+          range = _.range(service.max_bookings)
+          #$scope.durations = service.durations
+          $scope.durations = _.map(range, (x) -> service.listed_durations * (x + 1))
+          $scope.duration = $scope.durations[0]
+          $scope.service = service
+
+          $scope.cancel = ->
+            $modalInstance.dismiss 'cancel'
+          $scope.setDuration = () ->
+            $modalInstance.close({service: $scope.service, duration: $scope.duration})
+        resolve:
+          service: ->
+            service
+
+      modalInstance.result.then (result) ->
+        $scope.addItem(result.service, result.duration)

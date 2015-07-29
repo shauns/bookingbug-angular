@@ -41,7 +41,7 @@ angular.module('BB.Controllers').controller 'ItemDetails', ($scope, $attrs, $roo
   confirming = false
 
 
-  $rootScope.connection_started.then ->
+  $rootScope.connection_started.then () ->
     $scope.product = $scope.bb.current_item.product
     $scope.loadItem($scope.bb.current_item) if !confirming
   , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
