@@ -9,6 +9,7 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
 ($scope, $rootScope, $q, $attrs, BBModel, AlertService, CategoryService, FormDataStoreService, $modal) ->
 
   FormDataStoreService.init 'MultiServiceSelect', $scope, [
+    'selected_category_name'
   ]
 
   $scope.options                    = $scope.$eval($attrs.bbMultiServiceSelect) or {}
@@ -17,7 +18,6 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
   $scope.options.services           = $scope.options.services or 'items'
 
   $rootScope.connection_started.then ->
-    debugger
     if $scope.bb.company.$has('parent') && !$scope.bb.company.$has('company_questions')
       $scope.bb.company.getParentPromise().then (parent) ->
         $scope.company = parent
@@ -33,8 +33,6 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
 
 
   initialise = () ->
-
-    debugger
 
     return if !$scope.items or !$scope.company
 
@@ -150,8 +148,6 @@ angular.module('BB.Controllers').controller 'MultiServiceSelect',
       else if $scope.bb.item_defaults.category and $scope.bb.item_defaults.category.name is category_details.name and !$scope.selected_category 
         $scope.selected_category = $scope.categories[$scope.categories.length - 1]
         $scope.selected_category_name = $scope.selected_category.name
-
-    debugger
 
 
   $scope.changeCategory = (category_name, services) ->
