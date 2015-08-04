@@ -2,7 +2,7 @@ angular.module('BBAdminBooking').factory 'AdminBookingPopup', ($modal, $timeout)
 
   open: (config) ->
     $modal.open
-      size: config.size || 'lg'
+      size: if config then config.size else 'lg'
       controller: ($scope, $modalInstance, config) ->
         if $scope.bb && $scope.bb.current_item 
           delete $scope.bb.current_item
