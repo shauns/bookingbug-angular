@@ -16,8 +16,8 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (
             end_date: end.format('YYYY-MM-DD')
           AdminBookingService.query(params).then (bookings) ->
             $scope.loading = false
-            b.resourceId = b.person_id for b in bookings
-            callback(bookings)
+            b.resourceId = b.person_id for b in bookings.items
+            callback(bookings.items)
     ]
 
 
@@ -69,9 +69,10 @@ angular.module('BBAdminDashboard').directive 'bbResourceCalendar', (
           dataTD.style.height = "44px" for dataTD in dataTDs
         eventRender: (event, element) ->
           service = _.findWhere($scope.services, {id: event.service_id})
-          element.css('background-color', service.color)
-          element.css('color', service.textColor)
-          element.css('border-color', service.textColor)
+          if service
+            element.css('background-color', service.color)
+            element.css('color', service.textColor)
+            element.css('border-color', service.textColor)
         eventAfterRender: (event, elements, view) ->
           if view.type == "timelineDay"
             element.style.height = "27px" for element in elements
