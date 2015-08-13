@@ -63,4 +63,10 @@ angular.module('BB.Models').factory "Admin.BookingModel", ($q, BBModel, BaseMode
       @$put('self', {}, data).then (res) =>
         @constructor(res) 
         BookingCollections.checkItems(@)
- 
+
+    $refetch: () ->
+      @$flush('self')
+      @$get('self').then (res) =>
+        @constructor(res)
+        BookingCollections.checkItems(@)
+
