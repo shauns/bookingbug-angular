@@ -92,6 +92,8 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
 
 
   setTimeRange = (selected_date, start_date) ->
+
+    console.log "set range", selected_date, start_date
     if start_date
       $scope.start_date = start_date
     else if $scope.day_of_week
@@ -114,6 +116,7 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
 
   # deprecated, please use bbSelectedDay to initialise the selected_day
   $scope.init = (options = {}) ->
+    console.log "init", options
     if options.selected_day?
       unless options.selected_day._isAMomementObject
         $scope.selected_day = moment(options.selected_day)
@@ -153,7 +156,7 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
 
   # deprecated due to performance issues, use $scope.is_subtract_valid and $scope.subtract_length instead
   $scope.isSubtractValid = (type, amount) ->
-    return true if !$scope.start_date
+    return true if !$scope.start_date || $scope.isAdmin()
     date = $scope.start_date.clone().subtract(amount, type)
     return !date.isBefore(moment(), 'day')
 
@@ -260,16 +263,17 @@ angular.module('BB.Controllers').controller 'TimeRangeList',
 
     # has a service been selected?
     if current_item.service and !$scope.options.ignore_min_advance_datetime
+
       $scope.min_date = current_item.service.min_advance_datetime
       $scope.max_date = current_item.service.max_advance_datetime
       # if the selected day is before the services min_advance_datetime, adjust the time range
-      setTimeRange(current_item.service.min_advance_datetime) if $scope.selected_day && $scope.selected_day.isBefore(current_item.service.min_advance_datetime, 'day')
+      setTimeRange(current_item.service.min_advance_datetime) if $scope.selected_day && $scope.selected_day.isBefore(current_item.service.min_advance_datetime, 'day') && !$scope.isAdmin()
 
 
     date = $scope.start_date
     edate = moment(date).add($scope.time_range_length, 'days')
     $scope.end_date = moment(edate).add(-1, 'days')
-
+ 
     AlertService.clear()
     # We may not want the current item duration to be the duration we query by
     # If min_duration is set, pass that into the api, else pass in the duration
