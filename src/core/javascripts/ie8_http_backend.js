@@ -21,6 +21,7 @@ angular.module('BB.Services').provider("ie8HttpBackend", function ie8HttpBackend
     var isLocalCall = function (reqUrl) {
       var reqHost = getHostName(reqUrl),
         localHost = getHostName($browser.url());
+      if (reqHost == '') return true;
  
       patt = new RegExp( localHost + "$", 'i'); 
       return patt.test(reqHost);

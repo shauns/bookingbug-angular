@@ -181,7 +181,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
       if $scope.bb.api_url
         url = document.createElement('a')
         url.href = $scope.bb.api_url
-        if url.host == $location.host() || url.host == "#{$location.host()}:#{$location.port()}"
+        if url.host == '' || url.host == $location.host() || url.host == "#{$location.host()}:#{$location.port()}"
           $scope.initWidget2()
           return
       if $rootScope.iframe_proxy_ready
