@@ -8,7 +8,7 @@ angular.module('BBAdmin.Services').factory 'AdminClinicService',  ($q, BBModel, 
     if existing
       defer.resolve(existing)
     else      
-      company.$get('clinics').then (collection) ->
+      company.$get('clinics', params).then (collection) ->
         collection.$get('clinics').then (clinics) ->
           models = (new BBModel.Admin.Clinic(s) for s in clinics)
           clinics = new $window.Collection.Clinic(collection, models, params)
