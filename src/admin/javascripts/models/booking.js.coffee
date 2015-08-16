@@ -16,7 +16,7 @@ angular.module('BB.Models').factory "Admin.BookingModel", ($q, BBModel, BaseMode
         @className = "status_blocked"
       else if @status == 4
         @className = "status_booked"
-
+ 
     getPostData: () ->
       data = {}
       data.date = @start.format("YYYY-MM-DD")
@@ -56,7 +56,13 @@ angular.module('BB.Models').factory "Admin.BookingModel", ($q, BBModel, BaseMode
           return Math.floor((moment().unix() - s) / 60)
       return Math.floor((moment().unix() - start) / 60)
 
-
+    answer: (q) ->
+      if @answers_summary
+        for a in @answers_summary
+          if a.name == q
+            return a.answer
+      return null
+ 
 
     $update: (data) ->
       data ||= @getPostData()

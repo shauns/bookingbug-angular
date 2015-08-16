@@ -8,7 +8,8 @@ angular.module('BB.Models').factory "Admin.ClinicModel", ($q, BBModel, BaseModel
       super(data)
       @setTimes()
       @setResourcesAndPeople()
-
+      @settings ||= {}
+ 
     setResourcesAndPeople: () ->
       @resources = _.reduce(@resource_ids, (h, id) ->
         h[id] = true
@@ -45,8 +46,8 @@ angular.module('BB.Models').factory "Admin.ClinicModel", ($q, BBModel, BaseModel
       data.person_ids = []
       for id, en of @people
         data.person_ids.push(id) if en
-      console.log @address
       data.address_id = @address.id if @address
+      data.settings = @settings if @settings
       data
 
     save: () ->
