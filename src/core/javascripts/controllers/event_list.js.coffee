@@ -63,12 +63,12 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
     # has the event group been manually set (i.e. in the step before)
     $scope.event_group_manually_set = if !$scope.event_group_manually_set? and $scope.current_item.event_group? then true else false
 
-    # clear event data unless in summary mode
+    # clear current item unless in summary mode
     if $scope.current_item.event and $scope.mode != 0
-      delete $scope.current_item.event
-      delete $scope.current_item.event_chain
-      delete $scope.current_item.event_group if !$scope.event_group_manually_set
-      delete $scope.current_item.tickets
+      event_group = $scope.current_item.event_group
+      $scope.clearBasketItem()
+      $scope.emptyBasket()
+      $scope.current_item.setEventGroup(event_group) if $scope.event_group_manually_set
 
     promises = []
 
@@ -116,6 +116,11 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
   $scope.loadEventSummary = () ->
     deferred = $q.defer()
     current_event = $scope.current_item.event
+
+    # de-select the event chain if there's one already picked - as it's hiding other events in the same group
+    if $scope.bb.current_item && ($scope.bb.current_item.event_chain_id || $scope.bb.current_item.event_chain)
+      delete $scope.bb.current_item.event_chain
+      delete $scope.bb.current_item.event_chain_id
 
     comp = $scope.bb.company 
     params = {item: $scope.bb.current_item, start_date:$scope.start_date.toISODate(), end_date:$scope.end_date.toISODate()}
@@ -184,11 +189,16 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
     $scope.notLoaded $scope
     comp ||= $scope.bb.company 
 
+    # de-select the event chain if there's one already picked - as it's hiding other events in the same group
+    if $scope.bb.current_item && ($scope.bb.current_item.event_chain_id || $scope.bb.current_item.event_chain)
+      delete $scope.bb.current_item.event_chain
+      delete $scope.bb.current_item.event_chain_id
+
     params = {item: $scope.bb.current_item, start_date:$scope.start_date.toISODate(), end_date:$scope.end_date.toISODate()}
     params.event_chain_id = $scope.bb.item_defaults.event_chain if $scope.bb.item_defaults.event_chain
 
-
     chains = $scope.loadEventChainData(comp)
+    $scope.events = {}
 
     EventService.query(comp, params).then (events) ->
 
@@ -277,7 +287,7 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
       $scope.end_date = moment(date)
       $scope.loadEventData()
     else
-      new_date = date if !date.isSame($scope.selected_date, 'day')
+      new_date = date if !$scope.selected_date or !date.isSame($scope.selected_date, 'day')
 
     if new_date
       $scope.selected_date = new_date
@@ -346,6 +356,8 @@ angular.module('BB.Controllers').controller 'EventList', ($scope, $rootScope, Ev
             for i in item.chain.extra[name]
               filter = ($scope.dynamic_filters.values[dynamic_filter.name] and i is $scope.dynamic_filters.values[dynamic_filter.name].name) or !$scope.dynamic_filters.values[dynamic_filter.name]?
               break if filter
+          else if (item.chain.extra[name] is undefined && (_.isEmpty($scope.dynamic_filters.values) || !$scope.dynamic_filters.values[dynamic_filter.name]?))
+            filter = true;
           result = result and filter
       else
         for dynamic_filter in $scope.dynamic_filters[type]

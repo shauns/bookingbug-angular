@@ -141,7 +141,7 @@ angular.module('BB.Models').factory "BasketItemModel",
       if defaults.time
         @requested_time = parseInt(defaults.time)
       if defaults.date
-        @date = new BBModel.Day({date: defaults.date, spaces: 1})
+        @requested_date = moment(defaults.date)
       if defaults.service_ref
         @service_ref = defaults.service_ref
       if defaults.group
@@ -164,9 +164,10 @@ angular.module('BB.Models').factory "BasketItemModel",
       return @defaults.service
       # @defaults = defaults
 
-    # if it turned out that a requested date, or time was unavailable - we'll have to clear it
+    # if it turned out that a requested date or time was unavailablem, we'll have to clear it
     requestedTimeUnavailable: ->
       delete @requested_time
+      delete @requested_date
 
     setSlot: (slot) ->
 
@@ -296,6 +297,7 @@ angular.module('BB.Models').factory "BasketItemModel",
       if @event_chain.isSingleBooking()
         # if you can only book one ticket - just use that
         @tickets = {name: "Admittance", max: 1, type: "normal", price: @base_price}
+        @tickets.pre_paid_booking_id = @pre_paid_booking_id
         @tickets.qty = @num_book if @num_book
 
 
@@ -468,6 +470,12 @@ angular.module('BB.Models').factory "BasketItemModel",
       @reserve_ready = false
 
 
+    clearTime: () ->
+      delete @time
+      @ready = false
+      @reserve_ready = false  
+
+
     setGroup: (group) ->
       @group = group
 
@@ -492,6 +500,8 @@ angular.module('BB.Models').factory "BasketItemModel",
           for m_question in @item_details.questions
             if m_question.id == o_question.id
               m_question.answer = o_question.answer
+              # mark questionds as asked if we're cloning
+              @setAskedQuestions()
 
       data = {}
       if @date
@@ -522,9 +532,12 @@ angular.module('BB.Models').factory "BasketItemModel",
       data.length = @length
       if @event
         data.event_id = @event.id
-        if @event.pre_paid_booking?
-          data.pre_paid_booking = @event.pre_paid_booking
+        if @event.pre_paid_booking_id?
+          data.pre_paid_booking_id = @event.pre_paid_booking_id
+        else if @tickets && @tickets.pre_paid_booking_id?
+          data.pre_paid_booking_id = @tickets.pre_paid_booking_id
         data.tickets = @tickets
+      data.pre_paid_booking_id = @pre_paid_booking_id if @pre_paid_booking_id?
       data.event_chain_id = @event_chain_id
       data.event_group_id = @event_group_id
       data.qty = @qty   
@@ -539,6 +552,10 @@ angular.module('BB.Models').factory "BasketItemModel",
       data.attachment_id = @attachment_id if @attachment_id
       data.vouchers = @deal_codes if @deal_codes
 
+      data.email = @email if @email
+      data.first_name = @first_name if @first_name
+      data.last_name = @last_name if @last_name
+
       if @email?
         data.email = @email
       if @email_admin?
@@ -551,10 +568,11 @@ angular.module('BB.Models').factory "BasketItemModel",
     setPrice: (nprice) ->
       if nprice?
         @price = parseFloat(nprice)
-        @printed_price = if @price % 1 == 0 then "£" + parseInt(@price) else $window.sprintf("£%.2f", @price)
+        printed_price = @price / 100
+        @printed_price = if printed_price % 1 == 0 then "£" + parseInt(printed_price) else $window.sprintf("£%.2f", printed_price)
         @printed_vat_cal = @.company.settings.payment_tax if @.company && @.company.settings
-        @printed_vat = @printed_vat_cal / 100 * @price if @printed_vat_cal
-        @printed_vat_inc = @printed_vat_cal / 100 * @price + @price if @printed_vat_cal
+        @printed_vat = @printed_vat_cal / 100 * printed_price if @printed_vat_cal
+        @printed_vat_inc = @printed_vat_cal / 100 * printed_price + printed_price if @printed_vat_cal
       else
         @price = null
         @printed_price = null
@@ -671,11 +689,13 @@ angular.module('BB.Models').factory "BasketItemModel",
 
     # price including discounts
     totalPrice: =>
+      if @tickets && @tickets.pre_paid_booking_id
+        return 0
       if @discount_price?
-        return @discount_price
+        return @discount_price + @questionPrice()
       pr = @total_price
-      pr ||= @price
-      pr ||= 0
+      pr = @price if !angular.isNumber(pr)
+      pr = 0      if !angular.isNumber(pr)
       return pr + @questionPrice()
 
     # price not including discounts

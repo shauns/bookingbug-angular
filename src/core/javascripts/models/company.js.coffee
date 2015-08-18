@@ -1,13 +1,16 @@
 'use strict';
 
 # helpful functions about a company
-angular.module('BB.Models').factory "CompanyModel", ($q, BBModel, BaseModel) ->
+angular.module('BB.Models').factory "CompanyModel", ($q, BBModel, BaseModel, halClient, AppConfig, $sessionStorage) ->
 
   class Company extends BaseModel
 
     constructor: (data) ->
       super(data)
-      @test = 1
+
+      # instantiate each child company as a hal resource
+      if @companies
+        @companies = _.map @companies, (c) -> new BBModel.Company(halClient.$parse(c))
 
     getCompanyByRef: (ref) ->
       defer = $q.defer()
@@ -51,4 +54,19 @@ angular.module('BB.Models').factory "CompanyModel", ($q, BBModel, BaseModel) ->
           def.reject("Company has no settings")
       return def.promise
 
-      
+    pusherSubscribe: (callback) =>
+      if Pusher? && !@pusher?
+        @pusher = new Pusher 'c8d8cea659cc46060608',
+          authEndpoint: @$link('pusher').href
+          auth:
+            headers:
+              'App-Id' : AppConfig.appId
+              'App-Key' : AppConfig.appKey
+              'Auth-Token' : $sessionStorage.getItem('auth_token')
+        channelName = "private-c#{@id}-w#{@numeric_widget_id}"
+        unless @pusher.channel(channelName)?
+          @pusher_channel = @pusher.subscribe(channelName)
+          @pusher_channel.bind 'booking', callback
+          @pusher_channel.bind 'cancellation', callback
+          @pusher_channel.bind 'updating', callback
+

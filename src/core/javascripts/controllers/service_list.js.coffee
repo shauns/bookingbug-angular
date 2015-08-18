@@ -5,36 +5,35 @@ angular.module('BB.Directives').directive 'bbServices', () ->
   replace: true
   scope : true
   controller : 'ServiceList'
-  link : (scope, element, attrs) ->
 
-    scope.options = scope.$eval(attrs.bbServices) or {}
-
-    if attrs.bbItem
-      scope.booking_item = scope.$eval( attrs.bbItem )
-    if attrs.bbShowAll or scope.options.show_all 
-      scope.show_all = true
-    if scope.options.allow_single_pick
-      scope.allowSinglePick = true
-    return
-
-
-angular.module('BB.Controllers').controller 'ServiceList',($scope,  $rootScope, $q, $attrs, $modal, $sce, ItemService, FormDataStoreService, ValidatorService, PageControllerService, halClient, AlertService, ErrorService, $filter, CategoryService) ->
+angular.module('BB.Controllers').controller 'ServiceList',($scope, $rootScope, $q, $attrs, $modal, $sce, ItemService, FormDataStoreService, ValidatorService, PageControllerService, halClient, AlertService, ErrorService, $filter, CategoryService) ->
 
   $scope.controller = "public.controllers.ServiceList"
+
   FormDataStoreService.init 'ServiceList', $scope, [
     'service'
   ]
+
   $scope.notLoaded $scope
+
   angular.extend(this, new PageControllerService($scope, $q))
 
   $scope.validator = ValidatorService
 
-  $scope.filters = {price: {}, name: null}
+  $scope.filters = {category_name: null, service_name: null, price: { min: 0, max: 100}, custom_array_value: null}
+  $scope.show_custom_array = false
+
+  $scope.options = $scope.$eval($attrs.bbServices) or {}
+
+  $scope.booking_item = $scope.$eval($attrs.bbItem) if $attrs.bbItem
+  $scope.show_all = true if $attrs.bbShowAll or $scope.options.show_all 
+  $scope.allowSinglePick = true if $scope.options.allow_single_pick
+  $scope.price_options = {min: 0, max: 100}
 
   $rootScope.connection_started.then () =>
     if $scope.bb.company
       $scope.init($scope.bb.company)
-  , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
+  , (err) -> $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
 
   $scope.init = (comp) ->
@@ -69,6 +68,8 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope,  $rootScope, 
       if !$scope.options.show_event_groups
         items = items.filter (x) -> !x.is_event_group 
 
+      # if there's only one service and single pick hasn't been enabled, 
+      # automatically select the service.
       if (items.length is 1 && !$scope.allowSinglePick)
         if !$scope.selectItem(items[0], $scope.nextRoute )
           setServiceItem items
@@ -103,7 +104,7 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope,  $rootScope, 
     if ($scope.booking_item.person && !$scope.booking_item.anyPerson()) ||
        ($scope.booking_item.resource && !$scope.booking_item.anyResource())
 
-      # if we've lready picked a service or a resource - get a more limited service selection
+      # if we've already picked a service or a resource - get a more limited service selection
       ItemService.query({company: $scope.bb.company, cItem: $scope.booking_item, wait: ppromise, item: 'service'}).then (items) =>
         if $scope.booking_item.service_ref
           items = items.filter (x) -> x.api_ref == $scope.booking_item.service_ref
@@ -114,7 +115,7 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope,  $rootScope, 
         $scope.bookable_services = services
         $scope.bookable_items = items
         
-        if (services.length == 1 && !$scope.allowSinglePick)
+        if services.length is 1 and !$scope.allowSinglePick
           if !$scope.selectItem(services[0], $scope.nextRoute )
             setServiceItem services
           else if !@skipped
@@ -173,7 +174,7 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope,  $rootScope, 
 
   $scope.errorModal = () ->
     error_modal = $modal.open
-      templateUrl: $scope.getPartial('error_modal')
+      templateUrl: $scope.getPartial('_error_modal')
       controller: ($scope, $modalInstance) ->
         $scope.message = ErrorService.getError('GENERIC').msg
         $scope.ok = () ->
@@ -182,16 +183,45 @@ angular.module('BB.Controllers').controller 'ServiceList',($scope,  $rootScope, 
   $scope.filterFunction = (service) ->
     if !service
       return false
-    else
-      return (!$scope.filters.name or service.category_id is $scope.filters.name.id) and (!service.price or
-        (service.price >= $scope.filters.price.min and service.price <= $scope.filters.price.max ))
+    $scope.service_array = [] 
+    $scope.custom_array = (match)->
+      if !match
+        return false
+      if $scope.options.custom_filter
+        match = match.toLowerCase()
+        for item in service.extra[$scope.options.custom_filter]
+          item = item.toLowerCase()
+          if item is match
+            $scope.show_custom_array = true
+            return true 
+        return false
+    $scope.service_name_include = (match) ->
+      if !match
+        return false
+      if match 
+        match = match.toLowerCase()
+        item = service.name.toLowerCase()
+        if item.includes(match)
+          return true
+        else
+          false
+    return (!$scope.filters.category_name or service.category_id is $scope.filters.category_name.id) and
+      (!$scope.filters.service_name or $scope.service_name_include($scope.filters.service_name)) and
+      (!$scope.filters.custom_array_value or $scope.custom_array($scope.filters.custom_array_value)) and
+      (!service.price or (service.price >= $scope.filters.price.min * 100 and service.price <= $scope.filters.price.max * 100 ))
 
   $scope.resetFilters = () ->
-    $scope.filters.name = null
-    $scope.filters.price.min = null
-    $scope.filters.price.max = null
+    if $scope.options.clear_results
+      $scope.show_custom_array = false
+    $scope.filters.category_name = null
+    $scope.filters.service_name = null
+    $scope.filters.price.min = 0
+    $scope.filters.price.max = 100
+    $scope.filters.custom_array_value = null
     $scope.filterChanged()
 
   $scope.filterChanged = () ->
     $scope.filtered_items = $filter('filter')($scope.items, $scope.filterFunction);
+
+
 

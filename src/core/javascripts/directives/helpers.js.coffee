@@ -157,8 +157,8 @@ app.directive 'bbDate', () ->
     scope.$watch 'bb_date.js_date', (newval, oldval) ->
       ndate = moment(newval)
       if !scope.bb_date.date.isSame(ndate)
-        scope.bb_date.date = ndate 
-        scope.$broadcast('dateChanged', moment(ndate))
+        scope.bb_date.date = ndate
+        scope.$broadcast('dateChanged', moment(ndate)) if moment(ndate).isValid()
 
 
 
@@ -316,6 +316,7 @@ app.directive 'bbCommPref', ($parse) ->
 
 
 # bbCountTicketTypes
+# returns the number of tickets purchased grouped by name
 app.directive 'bbCountTicketTypes', () ->
   restrict: 'A'
   link: (scope, element, attrs) ->
@@ -376,8 +377,7 @@ app.directive 'bbApiUrl', ($rootScope, $compile, $sniffer, $timeout, $window, $l
       url = document.createElement('a')
       url.href = scope.apiUrl
       if $sniffer.msie && $sniffer.msie < 10
-        unless url.host == $location.host() || url.host == "#{$location.host()}:#{$location.port()}"
-          console.log "cors ie proxy"
+        unless url.host == '' || url.host == $location.host() || url.host == "#{$location.host()}:#{$location.port()}"
           if url.protocol[url.protocol.length - 1] == ':'
             src = "#{url.protocol}//#{url.host}/ClientProxy.html"
           else
@@ -396,15 +396,16 @@ app.directive 'bbPriceFilter', (PathSvc) ->
   scope: false
   require: '^?bbServices'
   templateUrl : (element, attrs) ->
-    PathSvc.directivePartial "price_filter"
+    PathSvc.directivePartial "_price_filter"
   controller : ($scope, $attrs) ->
     $scope.$watch 'items', (new_val, old_val) ->
       setPricefilter new_val if new_val
 
     setPricefilter = (items) ->
       $scope.price_array = _.uniq _.map items, (item) ->
-        return item.price or 0
-      $scope.price_array.sort()
+        return item.price / 100 or 0
+      $scope.price_array.sort (a, b) ->
+        return a - b
       suitable_max()
       
     suitable_max = () ->
@@ -415,7 +416,7 @@ app.directive 'bbPriceFilter', (PathSvc) ->
         when top_number < 51 then 50
         when top_number < 101 then 100
         when top_number < 1000 then ( Math.ceil( top_number / 100 ) ) * 100
-      min_number = _.first($scope.price_array)
+      min_number = 0
       $scope.price_options = {
         min: min_number
         max: max_number
@@ -432,7 +433,7 @@ app.directive 'bbPriceFilter', (PathSvc) ->
 app.directive 'bbBookingExport', ($compile) ->
   restrict: 'AE'
   scope: true
-  template: '<div bb-include="popout_export_booking" style="display: inline;"></div>'
+  template: '<div bb-include="_popout_export_booking" style="display: inline;"></div>'
   link: (scope, element, attrs) ->
 
     scope.$watch 'total', (newval, old) ->

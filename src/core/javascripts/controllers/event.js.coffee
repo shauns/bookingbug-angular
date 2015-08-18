@@ -7,12 +7,13 @@ angular.module('BB.Directives').directive 'bbEvent', () ->
   controller : 'Event'
 
 
-angular.module('BB.Controllers').controller 'Event', ($scope,  $rootScope, EventService, $q, PageControllerService, BBModel, ValidatorService) ->
+angular.module('BB.Controllers').controller 'Event', ($scope, $attrs, $rootScope, EventService, $q, PageControllerService, BBModel, ValidatorService) ->
   $scope.controller = "public.controllers.Event"
   $scope.notLoaded $scope
   angular.extend(this, new PageControllerService($scope, $q))
 
   $scope.validator = ValidatorService
+  $scope.event_options = $scope.$eval($attrs.bbEvent) or {}
 
   $rootScope.connection_started.then ->
     if $scope.bb.company
@@ -23,6 +24,8 @@ angular.module('BB.Controllers').controller 'Event', ($scope,  $rootScope, Event
   $scope.init = (comp) ->
     $scope.event = $scope.bb.current_item.event
     promises = [$scope.current_item.event_group.getImagesPromise(), $scope.event.prepEvent()]
+    if $scope.client
+      promises.push $scope.getPrePaidsForEvent($scope.client, $scope.event)
 
     $q.all(promises).then (result) ->
       if result[0] and result[0].length > 0
@@ -30,12 +33,21 @@ angular.module('BB.Controllers').controller 'Event', ($scope,  $rootScope, Event
         image.background_css = {'background-image': 'url(' + image.url + ')'}
         $scope.event.image = image
         # TODO pick most promiment image
-        # debugger
         # colorThief = new ColorThief()
         # colorThief.getColor image.url
 
+
       for ticket in $scope.event.tickets
-        ticket.qty = 0
+        ticket.qty = if $scope.event_options.default_num_tickets then $scope.event_options.default_num_tickets else 0
+
+      $scope.selectTickets() if $scope.event_options.default_num_tickets and $scope.event_options.auto_select_tickets and $scope.event.tickets.length is 1
+      
+      $scope.tickets = $scope.event.tickets
+      $scope.bb.basket.total_price = $scope.bb.basket.totalPrice()
+      $scope.stopTicketWatch = $scope.$watch 'tickets', (tickets, oldtickets) ->
+        $scope.bb.basket.total_price = $scope.bb.basket.totalPrice()
+        $scope.event.updatePrice()
+      , true
       $scope.setLoaded $scope
 
     , (err) -> $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
@@ -74,6 +86,12 @@ angular.module('BB.Controllers').controller 'Event', ($scope,  $rootScope, Event
       # basket has been saved
       $scope.setLoaded $scope
       $scope.selected_tickets = true
+      $scope.stopTicketWatch()
+      $scope.tickets = (item.tickets for item in $scope.bb.basket.items)
+      $scope.$watch 'bb.basket.items', (items, olditems) ->
+        $scope.bb.basket.total_price = $scope.bb.basket.totalPrice()
+        item.tickets.price = item.totalPrice()
+      , true
     , (err) ->  $scope.setLoadedAndShowError($scope, err, 'Sorry, something went wrong')
 
 
@@ -100,4 +118,14 @@ angular.module('BB.Controllers').controller 'Event', ($scope,  $rootScope, Event
     }
 
     return $scope.updateBasket()
+
+  $scope.getPrePaidsForEvent = (client, event) ->
+    defer = $q.defer()
+    params = {event_id: event.id}
+    client.getPrePaidBookingsPromise(params).then (prepaids) ->
+      $scope.pre_paid_bookings = prepaids
+      defer.resolve(prepaids)
+    , (err) ->
+      defer.reject(err)
+    defer.promise
 

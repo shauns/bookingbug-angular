@@ -49,11 +49,15 @@ angular.module('BB.Directives').directive 'bbWidget', (PathSvc, $http, $log,
   scope:
     client: '=?'
     apiUrl: '@?'
+    useParent:'='
   transclude: true
   controller: 'BBCtrl'
   link: (scope, element, attrs) ->
     scope.client = attrs.member if attrs.member?
-    init_params = scope.$eval( attrs.bbWidget )
+    evaluator = scope
+    if scope.useParent && scope.$parent?
+      evaluator = scope.$parent
+    init_params = evaluator.$eval( attrs.bbWidget )
     scope.initWidget(init_params)
     prms = scope.bb
     if prms.custom_partial_url
@@ -151,6 +155,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     Basket: 10
     Checkout: 11
     Slot: 12
+    Event: 13
   $scope.Route = $rootScope.Route 
 
 
@@ -176,7 +181,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
       if $scope.bb.api_url
         url = document.createElement('a')
         url.href = $scope.bb.api_url
-        if url.host == $location.host() || url.host == "#{$location.host()}:#{$location.port()}"
+        if url.host == '' || url.host == $location.host() || url.host == "#{$location.host()}:#{$location.port()}"
           $scope.initWidget2()
           return
       if $rootScope.iframe_proxy_ready
@@ -236,7 +241,13 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     if $window.bb_setup || prms.client
       # if setup is defined - blank the member -a s we're probably setting it - unless specifically defined as false
       prms.clear_member ||= true
-    $scope.bb.client_defaults = prms.client if prms.client
+    $scope.bb.client_defaults = prms.client or {}
+    
+    if $scope.bb.client_defaults && $scope.bb.client_defaults.name
+      match = $scope.bb.client_defaults.name.match(/^(\S+)(?:\s(\S+))?/)
+      if match
+        $scope.bb.client_defaults.first_name =  match[1]
+        $scope.bb.client_defaults.last_name = match[2] if match[2]?
 
     if prms.clear_member
       $scope.bb.clear_member = prms.clear_member
@@ -276,17 +287,29 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
     if prms.reserve_without_questions
       $scope.bb.reserve_without_questions = prms.reserve_without_questions
 
-    if prms.extra_setup and prms.extra_setup.step
-      $scope.bb.starting_step_number = parseInt(prms.extra_setup.step)
-
-    if prms.extra_setup and prms.extra_setup.return_url
-      $scope.bb.return_url = prms.extra_setup.return_url
+    if prms.extra_setup 
+      $scope.bb.extra_setup          = prms.extra_setup  
+      $scope.bb.starting_step_number = parseInt(prms.extra_setup.step) if prms.extra_setup.step
+      $scope.bb.return_url           = prms.extra_setup.return_url if prms.extra_setup.return_url
 
     if prms.template
       $scope.bb.template = prms.template
 
     if prms.i18n
       SettingsService.enableInternationalizaton()
+      
+
+    if prms.private_note
+      $scope.bb.private_note = prms.private_note
+
+    if prms.qudini_booking_id
+      $scope.bb.qudini_booking_id = prms.qudini_booking_id
+
+
+    # this is used by the bbScrollTo directive so that we can account of
+    # floating headers that might reside on sites where the widget is embedded
+    if prms.scroll_offset
+      SettingsService.setScrollOffset(prms.scroll_offset)
 
     @waiting_for_conn_started_def = $q.defer()
     $scope.waiting_for_conn_started = @waiting_for_conn_started_def.promise
@@ -616,6 +639,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
 
     else if ($scope.bb.company.$has('event_groups') && !$scope.bb.current_item.event_group && !$scope.bb.current_item.service && !$scope.bb.current_item.product && !$scope.bb.current_item.deal) or
             ($scope.bb.company.$has('events') && $scope.bb.current_item.event_group && !$scope.bb.current_item.event? && !$scope.bb.current_item.product && !$scope.bb.current_item.deal)
+      return if $scope.setPageRoute($rootScope.Route.Event)
       return $scope.showPage('event_list')
     else if ($scope.bb.company.$has('events') && $scope.bb.current_item.event && !$scope.bb.current_item.num_book && (!$scope.bb.current_item.tickets || !$scope.bb.current_item.tickets.qty) && !$scope.bb.current_item.product && !$scope.bb.current_item.deal)
       return $scope.showPage('event')
@@ -724,6 +748,7 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
         add_defer.resolve(basket)
     , (err) ->
       add_defer.reject(err)
+      # handle item conflict
       if err.status == 409
         # clear the currently cached time date
         halClient.clearCache("time_data")
@@ -731,14 +756,20 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
         $scope.bb.current_item.person = null
         $scope.bb.current_item.selected_person = null
         error_modal = $modal.open
-          templateUrl: $scope.getPartial('error_modal')
+          templateUrl: $scope.getPartial('_error_modal')
           controller: ($scope, $modalInstance) ->
             $scope.message = ErrorService.getError('ITEM_NO_LONGER_AVAILABLE').msg
             $scope.ok = () ->
               $modalInstance.close()
         error_modal.result.finally () ->
           if $scope.bb.nextSteps
-            $scope.loadPreviousStep()
+            # either go back to the Date/Event routes or load the previous step
+            if $scope.setPageRoute($rootScope.Route.Date)
+              # already routed
+            else if $scope.setPageRoute($rootScope.Route.Event)
+              # already routed
+            else
+              $scope.loadPreviousStep()
           else
             $scope.decideNextPage()
     add_defer.promise
@@ -1061,8 +1092,10 @@ angular.module('BB.Controllers').controller 'BBCtrl', ($scope, $location,
   $scope.setLoadedAndShowError = (scope, err, error_string) ->
     $log.warn(err, error_string)
     scope.setLoaded(scope)
-    if err.status == 409
+    if err.status is 409
       AlertService.danger(ErrorService.getError('ITEM_NO_LONGER_AVAILABLE'))
+    else if err.data and err.data.error is "Number of Bookings exceeds the maximum"
+      AlertService.danger(ErrorService.getError('MAXIMUM_TICKETS'))
     else
       AlertService.danger(ErrorService.getError('GENERIC'))
 

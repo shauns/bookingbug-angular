@@ -30,17 +30,18 @@ gulp.task('list', function() {
 gulp.task('javascripts', function() {
   javascripts = gulp.src(mainBowerFiles({filter: new RegExp('.js$')}).concat([
         './bower_components/moment/locale/en-gb.js',
+        './bower_components/lodash/dist/lodash.js',
+        './bower_components/angular-google-maps/dist/angular-google-maps.js',
+        './bower_components/webshim/js-webshim/dev/polyfiller.js',
         './src/javascripts/core/main.js.coffee', 
         './src/*/javascripts/main.js.coffee', 
         './src/*/main.js.coffee', 
         './src/core/javascripts/services/widget.js.coffee', 
         './src/core/javascripts/collections/base.js.coffee', 
-        './src/widget/templates.js', 
         './src/*/javascripts/**/*', 
         './src/*/directives/**/*', 
         './src/*/models/**/*', 
         './src/*/services/**/*', 
-        './src/*/templates.js', 
         '!./**/*~',]))
     // .pipe(filelog())
     .pipe(gulpif(/.*coffee$/, coffee().on('error', function (e) {
@@ -79,7 +80,7 @@ gulp.task('stylesheets', function() {
 });
 
 gulp.task('widget', function() {
-  gulp.src('src/widget/stylesheets/widget.scss')
+  gulp.src('src/widget/stylesheets/main.scss')
     .pipe(sass({errLogToConsole: true}))
     .pipe(flatten())
     .pipe(concat('bookingbug-widget.css'))
@@ -105,7 +106,7 @@ gulp.task('watch', function() {
   gulp.watch(['./src/**/*', '!./**/*~'], ['assets']);
 });
 
-gulp.task('webserver', function() {
+gulp.task('webserver', ['assets'], function() {
   connect.server({
     root: ['release', 'examples', 'bower_components'],
     port: 8888

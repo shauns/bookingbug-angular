@@ -8,11 +8,13 @@
 angular.module('BB.Models').service "BBModel", ($q, $injector) ->
 
   # the top level models
-  models = ['Address', 'Answer', 'Affiliate', 'Basket', 'BasketItem', 'BookableItem', 
-    'Category', 'Client', 'ClientDetails', 'Company', 'CompanySettings',
-    'Day', 'Event', 'EventChain', 'EventGroup', 'EventTicket', 'EventSequence', 
-    'ItemDetails', 'Person', 'PurchaseItem', 'PurchaseTotal', 
-    'Question', 'Resource', 'Service', 'Slot', 'Space', 'SurveyQuestion','TimeSlot', 'BusinessQuestion', 'Image', 'Deal']
+  models = ['Address', 'Answer', 'Affiliate', 'Basket', 'BasketItem',
+    'BookableItem', 'Category', 'Client', 'ClientDetails', 'Company',
+    'CompanySettings', 'Day', 'Event', 'EventChain', 'EventGroup',
+    'EventTicket', 'EventSequence', 'ItemDetails', 'Person', 'PurchaseItem',
+    'PurchaseTotal', 'Question', 'Resource', 'Service', 'Slot', 'Space',
+    'SurveyQuestion','TimeSlot', 'BusinessQuestion', 'Image', 'Deal',
+    'PrePaidBooking']
 
   funcs = {}
   for model in models
@@ -31,7 +33,7 @@ angular.module('BB.Models').service "BBModel", ($q, $injector) ->
   funcs['Purchase'] = pfuncs
 
   # member models
-  member_models = ['Member', 'Booking', 'PrepaidBooking']
+  member_models = ['Member', 'Booking', 'PrePaidBooking']
   mfuncs = {}
   for model in member_models
     do (model) =>  
@@ -40,8 +42,8 @@ angular.module('BB.Models').service "BBModel", ($q, $injector) ->
   funcs['Member'] = mfuncs
 
   # admin models
-  admin_models = ['Booking', 'Slot', 'User', 'Administrator', 'Schedule',
-    'Resource', 'Person', 'Service', 'Login', 'EventChain', 'EventGroup', 'Event']
+  admin_models = ['Booking', 'Slot', 'User', 'Administrator', 'Schedule', 'Address',
+    'Resource', 'Person', 'Service', 'Login', 'EventChain', 'EventGroup', 'Event', 'Queuer', 'ClientQueue', 'Clinic']
   afuncs = {}
   for model in admin_models
     do (model) =>  
@@ -66,7 +68,9 @@ angular.module('BB.Models').service "BaseModel", ($q, $injector, $rootScope, $ti
 
     constructor: (data) ->
       @deleted = false
-    
+      @updateModel(data)
+
+    updateModel: (data) ->
       if data
         @_data = data
       if data
